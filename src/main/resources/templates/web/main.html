@@ -5,20 +5,29 @@
 	layout:decorate="~{web/layout/layout}">
 
 	<th:block layout:fragment="content">
-			<article class="post featured">
-								<header class="major">
-									<span class="date">April 25, 2017</span>
-									<h2><a href="#">And this is a<br />
-									massive headline</a></h2>
-									<p>Aenean ornare velit lacus varius enim ullamcorper proin aliquam<br />
-									facilisis ante sed etiam magna interdum congue. Lorem ipsum dolor<br />
-									amet nullam sed etiam veroeros.</p>
-								</header>
-								<a href="#" class="image main"><img src="images/pic01.jpg" alt="" /></a>
-								<ul class="actions special">
-									<li><a href="#" class="button large">Full Story</a></li>
-								</ul>
-							</article>
+		<article class="post featured">
+			<form method="post" action="#">
+				<div class="fields search">
+					<div class="field" id="field-area">
+						<label for="area">지역</label>
+						<select name="area">
+							<option value="1">1<option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+						</select>
+					</div>
+											
+					<div class="field keyword" id="field-keyword">
+						<label for="keyword">검색창</label>
+						<input type="text" name="keyword" id="name" placeholder="트레이너 명 혹은 헬스장 명을 입력해주세요" />
+					</div>
+			
+					<div class="field" id="field-button">
+						<input type="submit" value="Send Message" />
+					</div>
+				</div>
+			</form>		
+		</article>
 
 						<!-- Posts -->
 							<section class="posts">

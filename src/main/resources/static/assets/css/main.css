@@ -33,6 +33,7 @@ body {
 	line-height: 1;
 }
 
+
 ol, ul {
 	list-style: none;
 }
@@ -564,6 +565,25 @@ input, select, textarea {
 				.row.gtr-200.gtr-uniform > * {
 					padding-top: 3rem;
 				}
+				
+.search {
+	display: flex;
+    justify-content: space-around;
+    flex-direction: row;	
+}
+
+#field-button {
+	width:20%; margin-top: 3.4%;
+}
+
+#field-keyword {
+	width:55%;
+}
+
+#field-area {
+	width:20%;
+}
+
 
 		@media screen and (max-width: 1680px) {
 
