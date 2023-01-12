@@ -1,7 +1,9 @@
 package com.example.deukgeun.trainer.service;
 
-import org.springframework.http.ResponseEntity;
+import java.util.ArrayList;
+
 
 public interface MainService {
-	ResponseEntity<?> getList(String keyword);
+	ArrayList<?> getList(String keyword);
+	
 }

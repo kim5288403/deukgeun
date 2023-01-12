@@ -1,7 +1,8 @@
 package com.example.deukgeun.trainer.service.implement;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.deukgeun.trainer.repository.TrainerUserRepository;
@@ -14,7 +15,8 @@ public class MainServiceImpl implements MainService{
 	private TrainerUserRepository trainerUserRepository;
 	
 	@Override
-	public ResponseEntity<?> getList(String keyword) {
-		return (ResponseEntity<?>) trainerUserRepository.findAll();
+	public ArrayList<?> getList(String keyword) {
+		
+		return (ArrayList<?>) trainerUserRepository.findAll(); 
 	}
 }
