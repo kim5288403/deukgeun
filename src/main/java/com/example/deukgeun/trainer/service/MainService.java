@@ -1,9 +1,10 @@
 package com.example.deukgeun.trainer.service;
 
-import java.util.ArrayList;
+
+
+import com.example.deukgeun.trainer.entity.TrainerUser;
 
 
 public interface MainService {
-	ArrayList<?> getList(String keyword);
-	
+	TrainerUser getList(String keyword);
 }

@@ -1,11 +1,12 @@
 package com.example.deukgeun.trainer.controller;
 
-import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.deukgeun.trainer.response.TrainerUserResponse;
 import com.example.deukgeun.trainer.service.MainService;
 
 
@@ -17,9 +18,12 @@ public class MainController {
 	private MainService mainService;
 	
 	@RequestMapping("/")
-	public ArrayList<?>  list() {
-		ArrayList<?> list = mainService.getList(null);
-		return list;
+	public ResponseEntity<TrainerUserResponse> list() {
+		TrainerUserResponse list = TrainerUserResponse.fromEntity(mainService.getList("김트레이너"));
+		
+		return ResponseEntity
+				.ok()
+				.body(list);
 	}
 	
 }
