@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.deukgeun.trainer.entity.TrainerUser;
 import com.example.deukgeun.trainer.response.TrainerUserResponse;
 import com.example.deukgeun.trainer.service.MainService;
 
@@ -18,12 +19,12 @@ public class MainController {
 	private MainService mainService;
 	
 	@RequestMapping("/")
-	public ResponseEntity<TrainerUserResponse> list() {
-		TrainerUserResponse list = TrainerUserResponse.fromEntity(mainService.getList("김트레이너"));
+	public ResponseEntity<TrainerUserResponse> list(String keyword) {
+		TrainerUser list = mainService.getList(keyword);
+		TrainerUserResponse result = TrainerUserResponse.fromEntity(list);
 		
 		return ResponseEntity
 				.ok()
-				.body(list);
+				.body(result);
 	}
-	
 }
