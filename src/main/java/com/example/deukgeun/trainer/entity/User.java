@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "trainer_user")
-public class TrainerUser {
+public class User {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,10 +28,10 @@ public class TrainerUser {
     private String name;
 
     @Column(length = 100, nullable = false)
-    private String password;
+    private String email;
 
     @Column(length = 50, nullable = false)
-    private String email;
+    private String password;
     
     @Column(length = 50, nullable = false, name="profile_image")
     private String profileImage;
@@ -45,10 +45,10 @@ public class TrainerUser {
     
     //빌더
     @Builder
-    public TrainerUser(String name, String password, String email, String profileImage, GroupStatus groupStatus, String groupName) {
+    public User(String name, String email ,String password, String profileImage, GroupStatus groupStatus, String groupName) {
         this.name = name;
-        this.password = password;
         this.email = email;
+        this.password = password;
         this.profileImage = profileImage;
         this.groupStatus = groupStatus;
         this.groupName = groupName;

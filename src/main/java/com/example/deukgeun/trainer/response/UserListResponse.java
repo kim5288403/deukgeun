@@ -2,7 +2,7 @@ package com.example.deukgeun.trainer.response;
 
 
 import com.example.deukgeun.trainer.entity.GroupStatus;
-import com.example.deukgeun.trainer.entity.TrainerUser;
+import com.example.deukgeun.trainer.entity.User;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +13,7 @@ import lombok.Getter;
 @Data
 @Builder
 @Getter
-public class TrainerUserResponse {
+public class UserListResponse {
     private Long id;
 
     private String name;
@@ -24,8 +24,8 @@ public class TrainerUserResponse {
     
     private String groupName;
     
-    public static TrainerUserResponse fromEntity(TrainerUser trainerUser) {
-    	return TrainerUserResponse.builder()
+    public static UserListResponse fromEntity(User trainerUser) {
+    	return UserListResponse.builder()
     			.id(trainerUser.getId())
     			.name(trainerUser.getName())
     			.profileImage(trainerUser.getProfileImage())

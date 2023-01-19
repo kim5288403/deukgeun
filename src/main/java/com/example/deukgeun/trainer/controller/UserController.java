@@ -1,19 +1,42 @@
 package com.example.deukgeun.trainer.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.deukgeun.trainer.entity.User;
+import com.example.deukgeun.trainer.request.UserRequest;
+import com.example.deukgeun.trainer.response.UserListResponse;
+import com.example.deukgeun.trainer.service.implement.UserServiceImpl;
+
 @RestController("trainer.controller.UserController")
-@RequestMapping("/trainer/user")
+@RequestMapping("/trainer")
 public class UserController {
 	
+	@Autowired
+	private UserServiceImpl userService;
+	
+	@RequestMapping(method = RequestMethod.GET, path = "/")
+	public ResponseEntity<UserListResponse> list(String keyword) {
+		User list = userService.getList(keyword);
+		UserListResponse result = UserListResponse.fromEntity(list);
+		
+		return ResponseEntity
+				.ok()
+				.body(result);
+	}
+	
 	@RequestMapping(method = RequestMethod.POST, path = "/")
-	public ResponseEntity<?> save() {
-		System.out.println("Gd");
+	public ResponseEntity<?> save(@RequestBody UserRequest request) {
+		User user = UserRequest.create(request);
+		userService.save(user);
+		
 		return ResponseEntity
 				.ok()
 				.body("");
 	}
 }
+
