@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "trainer_user")
-public class User {
+public class User extends BaseEntity{
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,9 +33,6 @@ public class User {
     @Column(length = 50, nullable = false)
     private String password;
     
-    @Column(length = 50, nullable = false, name="profile_image")
-    private String profileImage;
-    
     @Column(name="group_status")
     @Enumerated(EnumType.STRING)
     private GroupStatus groupStatus;
@@ -43,13 +40,11 @@ public class User {
     @Column(length = 50, nullable = false)
     private String groupName;
     
-    //빌더
     @Builder
-    public User(String name, String email ,String password, String profileImage, GroupStatus groupStatus, String groupName) {
+    public User(String name, String email ,String password, GroupStatus groupStatus, String groupName) {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.profileImage = profileImage;
         this.groupStatus = groupStatus;
         this.groupName = groupName;
     }

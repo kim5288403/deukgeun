@@ -36,14 +36,13 @@ public class UserRequest {
 		this.groupName = groupName;
 	}
 	
-	public static User create(UserRequest userRequest) {
+	public static User create(UserRequest request) {
 		return User.builder()
-				.name(userRequest.getName())
-				.email(userRequest.getEmail())
-				.password(userRequest.getPassword())
-				.profileImage(userRequest.getProfileImage())
-				.groupStatus(userRequest.getGroupStatus())
-				.groupName(userRequest.getGroupName())
+				.name(request.getName())
+				.email(request.getEmail())
+				.password(request.getPassword())
+				.groupStatus(request.getGroupStatus())
+				.groupName(request.getGroupName())
 				.build();
 				
 	

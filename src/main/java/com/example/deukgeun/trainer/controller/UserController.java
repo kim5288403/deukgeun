@@ -7,9 +7,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.entity.User;
+import com.example.deukgeun.trainer.request.ProfileRequest;
 import com.example.deukgeun.trainer.request.UserRequest;
 import com.example.deukgeun.trainer.response.UserListResponse;
+import com.example.deukgeun.trainer.service.ProfileService;
+import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
 import com.example.deukgeun.trainer.service.implement.UserServiceImpl;
 
 @RestController("trainer.controller.UserController")
@@ -18,6 +22,7 @@ public class UserController {
 	
 	@Autowired
 	private UserServiceImpl userService;
+	private ProfileServiceImpl profileService; 
 	
 	@RequestMapping(method = RequestMethod.GET, path = "/")
 	public ResponseEntity<UserListResponse> list(String keyword) {
@@ -32,7 +37,15 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.POST, path = "/")
 	public ResponseEntity<?> save(@RequestBody UserRequest request) {
 		User user = UserRequest.create(request);
-		userService.save(user);
+		Long userId = userService.save(user);
+		
+		
+		
+//		ProfileRequest profileRequest = new ProfileRequest(userId, request.getProfileImage());
+		ProfileRequest profileRequest = new ProfileRequest(10L ,"DG");
+		Profile profile = ProfileRequest.create(profileRequest);
+		System.out.println(profile.getTrainerUserId());
+		profileService.save(profile);
 		
 		return ResponseEntity
 				.ok()

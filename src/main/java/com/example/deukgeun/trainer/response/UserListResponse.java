@@ -17,9 +17,7 @@ public class UserListResponse {
     private Long id;
 
     private String name;
-    
-    private String profileImage;
-    
+       
     private GroupStatus groupStatus;
     
     private String groupName;
@@ -28,7 +26,6 @@ public class UserListResponse {
     	return UserListResponse.builder()
     			.id(trainerUser.getId())
     			.name(trainerUser.getName())
-    			.profileImage(trainerUser.getProfileImage())
     			.groupName(trainerUser.getGroupName())
     			.groupStatus(trainerUser.getGroupStatus())
     			.build();

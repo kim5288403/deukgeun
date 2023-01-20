@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.repository.UserRepository;
-import com.example.deukgeun.trainer.request.UserRequest;
 import com.example.deukgeun.trainer.service.UserService;
 
 @Service
@@ -19,8 +18,9 @@ public class UserServiceImpl implements UserService{
 		return trainerUserRepository.findByNameOrGroupName(keyword, keyword); 
 	}
 	
-	public void save(User user) {
-		trainerUserRepository.save(user);
+	public Long save(User user) {
+		User res = trainerUserRepository.save(user);
+		return res.getId();
 	}
 	
 	
