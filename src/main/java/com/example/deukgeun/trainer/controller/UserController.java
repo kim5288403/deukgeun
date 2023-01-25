@@ -2,6 +2,7 @@ package com.example.deukgeun.trainer.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,6 +23,7 @@ public class UserController {
 	
 	@Autowired
 	private UserServiceImpl userService;
+	@Autowired
 	private ProfileServiceImpl profileService; 
 	
 	@RequestMapping(method = RequestMethod.GET, path = "/")
@@ -35,21 +37,26 @@ public class UserController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, path = "/")
+	@Transactional
 	public ResponseEntity<?> save(@RequestBody UserRequest request) {
-		User user = UserRequest.create(request);
-		Long userId = userService.save(user);
-		
-		
-		
-//		ProfileRequest profileRequest = new ProfileRequest(userId, request.getProfileImage());
-		ProfileRequest profileRequest = new ProfileRequest(10L ,"DG");
-		Profile profile = ProfileRequest.create(profileRequest);
-		System.out.println(profile.getTrainerUserId());
-		profileService.save(profile);
-		
-		return ResponseEntity
-				.ok()
-				.body("");
+		try {
+			
+			User user = UserRequest.create(request);
+			Long userId = userService.save(user);
+			
+			ProfileRequest profileRequest = new ProfileRequest(userId, request.getProfileImage());
+			Profile profile = ProfileRequest.create(profileRequest);
+			profileService.save(profile);
+			
+			return ResponseEntity
+					.ok()
+					.body("회원가입 성공했습니다.");
+		} catch(Exception $exception) {
+			return ResponseEntity
+					.badRequest()
+					.body($exception);
+		}
+	
 	}
 }
 

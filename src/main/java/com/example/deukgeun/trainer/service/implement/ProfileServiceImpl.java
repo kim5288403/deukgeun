@@ -14,7 +14,7 @@ public class ProfileServiceImpl implements ProfileService {
 	private ProfileRepository profileRepository;
 	
 	public void save(Profile profile) {
-//		profileRepository.save(profile);
+		profileRepository.save(profile);
 	}
 	
 }
