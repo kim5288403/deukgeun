@@ -1,11 +1,7 @@
 package com.example.deukgeun.trainer.controller;
 
-import java.nio.charset.Charset;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,12 +38,9 @@ public class UserController {
 				.body(result);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, path = "/")
 	@Transactional
-	public ResponseEntity<Message> save(@RequestBody UserRequest request) {
-		HttpHeaders headers= new HttpHeaders();
-		headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-		
+	@RequestMapping(method = RequestMethod.POST, path = "/")
+	public ResponseEntity<?> save(@RequestBody UserRequest request) {
 		try {
 			User user = UserRequest.create(request);
 			Long userId = userService.save(user);
@@ -60,21 +53,26 @@ public class UserController {
 			Profile profile = ProfileRequest.create(profileRequest);
 			profileService.save(profile);
 			
-			Message message = Message.builder()
-					.data(user)
-					.message("회원 가입 성공 했습니다.")
-					.status(StatusEnum.OK)
-					.build();
-
-			return new ResponseEntity<>(message, headers, HttpStatus.OK);
-		} catch(Exception $exception) {
-			Message message = Message.builder()
-					.data(request)
-					.message("회원 가입 실패 했습니다.")
-					.status(StatusEnum.BAD_REQUEST)
-					.build();
+			return ResponseEntity
+					.ok()
+					.body(
+							Message.builder()
+							.data(user)
+							.message("회원 가입 성공 했습니다.")
+							.status(StatusEnum.OK)
+							.build()
+							);
 			
-			return new ResponseEntity<>(message, headers, HttpStatus.BAD_REQUEST);
+		} catch(Exception $exception) {
+			return ResponseEntity
+					.badRequest()
+					.body(
+							Message.builder()
+							.data(request)
+							.message("회원 가입 실패 했습니다.")
+							.status(StatusEnum.BAD_REQUEST)
+							.build()
+							);
 		}
 
 	}
