@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{web/layout/layout}">
+
+<th:block layout:fragment="content">
+	<!-- Posts -->
+	<section class="post">
+		<header class="major">
+			<h1>
+				트레이너 <br> 회원가입
+			</h1>
+			<p>
+				Aenean ornare velit lacus varius enim ullamcorper proin aliquam<br>
+				facilisis ante sed etiam magna interdum congue. Lorem ipsum dolor<br>
+				amet nullam sed etiam veroeros.
+			</p>
+		</header>
+		<form method="post" action="#">
+			<div class="row gtr-uniform">
+				<div class="col-6 col-12-xsmall">
+					<label>이름</label>
+					<input type="text" name="name" id="name" value=""
+						placeholder="이름">
+				</div>
+				<div class="col-6 col-12-xsmall">
+					<label>이메일</label>
+					<input type="email" name="email" id="email" value=""
+						placeholder="이메일">
+				</div>
+				<div class="col-6 col-12-xsmall">
+					<label>비밀번호</label>
+					<input type="password" name="password" id="password" value=""
+						placeholder="비밀번호">
+				</div>
+				<div class="col-6 col-12-xsmall">
+					<label>비밀번호 확인</label>
+					<input type="password" name="passwordConfirm " id="passwordConfirm" value=""
+						placeholder="비밀번호 확인">
+				</div>
+				<!-- Break -->
+				<div class="col-12">
+					<label>활동 지역</label>
+					<select name="workAddress" id="workAddress">
+						<option value="">- 지역 -</option>
+						<option value="1">Manufacturing</option>
+						<option value="1">Shipping</option>
+						<option value="1">Administration</option>
+						<option value="1">Human Resources</option>
+					</select>
+				</div>
+				<!-- Break -->
+				
+				<div class="col-6">
+					<label>성별</label>
+					<div>
+						<input type="radio" id="1" name="gender"
+							checked=""> <label for="1">남</label>
+					</div>
+					<div>
+						<input type="radio" id="2" name="gender">
+						<label for="2">여</label>
+					</div>
+				</div>
+
+				<!-- Break -->
+				<div class="col-6">
+					<label>소속</label>
+					<div>
+						<input type="radio" id="Y" name="group"
+							checked=""> <label for="Y">유</label>
+					</div>
+					<div>
+						<input type="radio" id="N" name="group">
+						<label for="N">무</label>
+					</div>
+				</div>
+				
+				<!-- Break -->
+				<div class="col-12">
+					<textarea name="demo-message" id="demo-message"
+						placeholder="Enter your message" rows="6"></textarea>
+				</div>
+				<!-- Break -->
+				<div class="col-12">
+					<ul class="actions">
+						<li><input type="submit" value="Send Message" class="primary"></li>
+						<li><input type="reset" value="Reset"></li>
+					</ul>
+				</div>
+			</div>
+		</form>
+	</section>
+</th:block>
+</html>

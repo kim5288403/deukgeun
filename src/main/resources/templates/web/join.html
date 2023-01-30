@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{web/layout/layout}">
+
+<th:block layout:fragment="content">
+	<!-- Posts -->
+	<section class="posts">
+		<article>
+			<header>
+				<span class="date"></span>
+				<h2>
+					<a href="#">일반<br /> 회원가입
+					</a>
+				</h2>
+			</header>
+			<a href="#" class="image fit"><img src="/images/user.jpg" alt="" /></a>
+			<p></p>
+			<ul class="actions special">
+				<li><a href="#" class="button">회원가입</a></li>
+			</ul>
+		</article>
+		<article>
+			<header>
+				<span class="date"></span>
+				<h2>
+					<a href="#">트레이너<br /> 회원가입
+					</a>
+				</h2>
+			</header>
+			<a href="#" class="image fit"><img src="/images/trainer.jpg" alt="" /></a>
+			<p></p>
+			<ul class="actions special">
+				<li><a href="/trainer/join" class="button">회원가입</a></li>
+			</ul>
+		</article>
+	</section>
+</th:block>
+</html>

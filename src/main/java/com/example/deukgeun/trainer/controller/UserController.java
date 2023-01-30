@@ -29,13 +29,32 @@ public class UserController {
 	private ProfileServiceImpl profileService; 
 
 	@RequestMapping(method = RequestMethod.GET, path = "/")
-	public ResponseEntity<UserListResponse> list(String keyword) {
-		User list = userService.getList(keyword);
-		UserListResponse result = UserListResponse.fromEntity(list);
-
-		return ResponseEntity
-				.ok()
-				.body(result);
+	public ResponseEntity<?> list(String keyword) {
+		try {
+			User list = userService.getList(keyword);
+			UserListResponse result = UserListResponse.fromEntity(list);
+			
+			return ResponseEntity
+					.ok()
+					.body(
+							Message.builder()
+							.data(result)
+							.message("트레이너 조회 성공 했습니다.")
+							.status(StatusEnum.OK)
+							.build()
+							);
+			
+		} catch (Exception e) {
+			return ResponseEntity
+					.badRequest()
+					.body(
+							Message.builder()
+							.data(keyword)
+							.message(e.getMessage())
+							.status(StatusEnum.BAD_REQUEST)
+							.build()
+							);
+		}
 	}
 
 	@Transactional
@@ -63,18 +82,18 @@ public class UserController {
 							.build()
 							);
 			
-		} catch(Exception $exception) {
+		} catch(Exception e) {
 			return ResponseEntity
 					.badRequest()
 					.body(
 							Message.builder()
 							.data(request)
-							.message("회원 가입 실패 했습니다.")
+							.message(e.getMessage())
 							.status(StatusEnum.BAD_REQUEST)
 							.build()
 							);
 		}
-
 	}
+	
 }
 

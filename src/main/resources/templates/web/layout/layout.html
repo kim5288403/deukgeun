@@ -2,23 +2,31 @@
 <html lang="ko"
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-	<th:block th:replace="web/layout/fragment/head :: headFragment"></th:block>
+	<th:block th:replace="/web/layout/fragment/head :: headFragment"></th:block>
 
 	<body class="is-preload" >
 		<div id="wrapper" class="fade-in">
 		
-			<th:block th:replace="web/layout/fragment/intro :: introFragment"></th:block>
+			<th:block th:replace="/web/layout/fragment/intro :: introFragment"></th:block>
 			
-			<th:block th:replace="web/layout/fragment/top :: topFragment"></th:block>
+			<th:block th:replace="/web/layout/fragment/top :: topFragment"></th:block>
 			
 			<div id="main">
 				<th:block layout:fragment="content"></th:block>
-				<th:block th:replace="web/layout/fragment/pagination :: paginationFragment"></th:block>
+				<!-- <th:block th:replace="web/layout/fragment/pagination :: paginationFragment"></th:block> -->
 			</div>
-			<th:block th:replace="web/layout/fragment/footer :: footerFragment"></th:block>
-			<th:block th:replace="web/layout/fragment/script :: scriptFragment"></th:block>
+			<th:block th:replace="/web/layout/fragment/footer :: footerFragment"></th:block>
+			<th:block th:replace="/web/layout/fragment/script :: scriptFragment"></th:block>
 		</div>
 	</body>
-
-
+	<script th:inline="javascript">
+	$(document).ready(function(){
+		/*<![CDATA[*/
+        let menu = /*[[ ${menu} ]]*/;
+        /*]]*/
+        $("ul[class=links]").find("li[id=" + menu + "]").addClass("active");
+	});
+	
+	</script>
 </html>
+
