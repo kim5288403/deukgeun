@@ -19,14 +19,14 @@
 			<th:block th:replace="/web/layout/fragment/script :: scriptFragment"></th:block>
 		</div>
 	</body>
+	<th:block layout:fragment="script"></th:block>
 	<script th:inline="javascript">
-	$(document).ready(function(){
-		/*<![CDATA[*/
-        let menu = /*[[ ${menu} ]]*/;
-        /*]]*/
-        $("ul[class=links]").find("li[id=" + menu + "]").addClass("active");
-	});
-	
+		$(document).ready(function(){
+			/*<![CDATA[*/
+	        let menu = /*[[ ${menu} ]]*/;
+	        /*]]*/
+	        $("ul[class=links]").find("li[id=" + menu + "]").addClass("active");
+		});
 	</script>
 </html>
 

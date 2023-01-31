@@ -44,8 +44,6 @@ public class UserRequest {
 				.groupStatus(request.getGroupStatus())
 				.groupName(request.getGroupName())
 				.build();
-				
-	
 	}
 
 }
