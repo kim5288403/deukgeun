@@ -2,6 +2,8 @@ package com.example.deukgeun.commom.response;
 
 
 
+import com.example.deukgeun.commom.enums.StatusEnum;
+
 import lombok.Builder;
 import lombok.Data;
 

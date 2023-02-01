@@ -1,4 +1,4 @@
-package com.example.deukgeun.commom.response;
+package com.example.deukgeun.commom.enums;
 
 public enum StatusEnum {
 	OK(200, "OK"),

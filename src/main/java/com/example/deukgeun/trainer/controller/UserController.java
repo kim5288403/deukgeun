@@ -6,9 +6,14 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.NumberFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,8 +21,8 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.deukgeun.commom.enums.StatusEnum;
 import com.example.deukgeun.commom.response.Message;
-import com.example.deukgeun.commom.response.StatusEnum;
 import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.request.ProfileRequest;
@@ -26,14 +31,19 @@ import com.example.deukgeun.trainer.response.UserListResponse;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
 import com.example.deukgeun.trainer.service.implement.UserServiceImpl;
 
+
 @RestController("trainer.controller.UserController")
 @RequestMapping("/trainer")
 public class UserController {
 
 	@Autowired
 	private UserServiceImpl userService;
+	
 	@Autowired
-	private ProfileServiceImpl profileService; 
+	private ProfileServiceImpl profileService;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	@RequestMapping(method = RequestMethod.GET, path = "/")
 	public ResponseEntity<?> list(String keyword) {
@@ -66,14 +76,19 @@ public class UserController {
 
 	@RequestMapping(method = RequestMethod.POST, path = "/join")
 	public ResponseEntity<?> save(
-			@Valid @RequestPart UserJoinRequest request,
-			Errors errors,
-			@RequestPart(required = false) MultipartFile profileImg
+			@RequestPart
+			@Valid
+			UserJoinRequest request,
+			BindingResult bindingResult,
+			@RequestPart
+			MultipartFile profile
 			) {
 		
-		if (errors.hasErrors()) {
+		bindingResult = profileService.validator(profile, bindingResult);
+		
+		if (bindingResult.hasErrors()) {
 			/* 유효성 통과 못한 필드와 메시지를 핸들링 */
-			Map<String, String> validatorResult = userService.validateHandling(errors);
+			Map<String, String> validatorResult = userService.validateHandling(bindingResult);
 			
 			return ResponseEntity
 					.ok()
@@ -86,17 +101,19 @@ public class UserController {
 							);
 		}
 		
-		
 		//구현할 내용
 		//1. 코드 정리
-		//2. enum custom validator
-		//3. file custom validator
-		//4. file save
-		//5. front 연동
+		//2. enum custom validator // ok
+		//3. file custom validator // ok
+		//4. 비밀번호 암호화 저장
+		//4-1. 비밀번호 비밀번호 확인 validate
+		//5. file save
+		//6. front 연동
+		//7. 코드 스타일
+		
 		try {
 			userService.checkEmailDuplication(request);
-			
-			User user = UserJoinRequest.create(request);
+			User user = UserJoinRequest.create(request, passwordEncoder);
 			Long userId = userService.save(user);
 
 			//			ProfileRequest profileRequest = ProfileRequest.builder().
