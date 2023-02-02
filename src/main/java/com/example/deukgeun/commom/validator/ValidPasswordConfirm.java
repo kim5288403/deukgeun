@@ -7,15 +7,13 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-@Constraint(validatedBy = EnumValidator.class)
-@Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidEnum {
-  String message() default "Enum에 없는 값입니다.";
+@Constraint(validatedBy = PasswordConfirmValidator.class)
+public @interface ValidPasswordConfirm {
+  String message() default "비밀번호와 비밀번호 확인이 일치하지 않습니다.";
 
   Class<?>[] groups() default {};
 
   Class<? extends Payload>[] payload() default {};
-
-  Class<? extends java.lang.Enum<?>> enumClass();
 }

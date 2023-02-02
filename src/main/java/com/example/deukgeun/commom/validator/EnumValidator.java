@@ -14,20 +14,20 @@ public class EnumValidator implements ConstraintValidator<ValidEnum, Enum>{
 
 	@Override
 	public boolean isValid(Enum value, ConstraintValidatorContext context) {
-		boolean result = false;
+		boolean flag = false;
 		
 		Object[] enumValues = this.annotation.enumClass().getEnumConstants();
 		
 		if (enumValues != null) {
 			for (Object enumValue : enumValues) {
 				if (value == enumValue) {
-					result = true;
+					flag = true;
 					break;
 				}
 			}
 		}
 		
-		return result;
+		return flag;
 	}
 
 

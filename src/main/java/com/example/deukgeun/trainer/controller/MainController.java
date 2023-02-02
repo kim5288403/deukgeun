@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller("trainer.controller.MainController")
 @RequestMapping("/trainer")
 public class MainController {
-	
-	@GetMapping("/join")
-	public String join(Model model) {
-		model.addAttribute("menu", "join");
-		return "tainer/join";
-	}
+
+  @GetMapping("/join")
+  public String join(Model model) {
+    model.addAttribute("menu", "join");
+    return "tainer/join";
+  }
 }
