@@ -1,6 +1,7 @@
 package com.example.deukgeun.trainer.controller;
 
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import javax.validation.Valid;
@@ -41,15 +42,19 @@ public class UserController {
   @RequestMapping(method = RequestMethod.GET, path = "/")
   public ResponseEntity<?> list(String keyword) {
     try {
-      User list = userService.getList(keyword);
-      UserListResponse result = UserListResponse.fromEntity(list);
-
+      List<UserListResponse> list = userService.getList(keyword);
+      
       return ResponseEntity.ok().body(
-          Message.builder().data(result).message("트레이너 조회 성공 했습니다.").status(StatusEnum.OK).build());
+          Message.builder().
+          data(list).
+          message("트레이너 조회 성공 했습니다.").
+          code(StatusEnum.OK.getCode()).
+          status(StatusEnum.OK.getStatus()).
+          build());
 
     } catch (Exception e) {
-      return ResponseEntity.badRequest().body(Message.builder().data(keyword)
-          .message(e.getMessage()).status(StatusEnum.BAD_REQUEST).build());
+      return ResponseEntity.badRequest().body(Message.builder().code(StatusEnum.BAD_REQUEST.getCode()).data(keyword)
+          .message(e.getMessage()).status(StatusEnum.BAD_REQUEST.getStatus()).build());
     }
   }
   
@@ -65,14 +70,14 @@ public class UserController {
       Map<String, String> validatorResult = userService.validateHandling(bindingResult);
 
       return ResponseEntity.ok().body(Message.builder().data(validatorResult)
-          .message("회원 가입 실패 했습니다.").status(StatusEnum.BAD_REQUEST).build());
+          .message("회원 가입 실패 했습니다.").status(StatusEnum.BAD_REQUEST.getStatus()).build());
     }
 
     try {
       userService.checkEmailDuplication(request);
       User user = UserJoinRequest.create(request, passwordEncoder);
       Long userId = userService.save(user);
-
+      
       UUID uuid = UUID.randomUUID();
       ProfileRequest profileRequest = ProfileRequest.builder().trainerUserId(userId)
           .path(uuid.toString() + "_" + profile.getOriginalFilename()).build();
@@ -82,11 +87,11 @@ public class UserController {
       profileService.serverSave(profile, profileRequest.getPath());
 
       return ResponseEntity.ok().body(
-          Message.builder().data(user).message("회원 가입 성공 했습니다.").status(StatusEnum.OK).build());
+          Message.builder().data(user).message("회원 가입 성공 했습니다.").status(StatusEnum.OK.getStatus()).build());
 
     } catch (Exception e) {
       return ResponseEntity.badRequest().body(Message.builder().data(request)
-          .message(e.getMessage()).status(StatusEnum.BAD_REQUEST).build());
+          .message(e.getMessage()).status(StatusEnum.BAD_REQUEST.getStatus()).build());
     }
   }
 

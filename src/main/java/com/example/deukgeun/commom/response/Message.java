@@ -2,7 +2,6 @@ package com.example.deukgeun.commom.response;
 
 
 
-import com.example.deukgeun.commom.enums.StatusEnum;
 
 import lombok.Builder;
 import lombok.Data;
@@ -10,12 +9,14 @@ import lombok.Data;
 @Data
 public class Message {
 
-	private StatusEnum status;
+	private String status;
+	private int code;
 	private String message;
 	private Object data;
 	
 	@Builder
-	public Message(StatusEnum status, String message, Object data) {
+	public Message(int code ,String status, String message, Object data) {
+		this.code = code;
 		this.status = status;
 		this.data = data;
 		this.message = message;

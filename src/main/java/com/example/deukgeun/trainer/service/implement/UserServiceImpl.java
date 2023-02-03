@@ -2,8 +2,8 @@ package com.example.deukgeun.trainer.service.implement;
 
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +14,7 @@ import org.springframework.validation.ObjectError;
 import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.repository.UserRepository;
 import com.example.deukgeun.trainer.request.UserJoinRequest;
+import com.example.deukgeun.trainer.response.UserListResponse;
 import com.example.deukgeun.trainer.service.UserService;
 
 @Service
@@ -22,7 +23,7 @@ public class UserServiceImpl implements UserService{
 	@Autowired
 	private UserRepository userRepository;
 
-	public User getList(String keyword) {
+	public List<UserListResponse> getList(String keyword) {
 		return userRepository.findByNameOrGroupName(keyword, keyword); 
 	}
 
