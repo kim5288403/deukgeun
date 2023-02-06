@@ -2,12 +2,10 @@ package com.example.deukgeun.trainer.request;
 
 import com.example.deukgeun.trainer.entity.Profile;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 public class ProfileRequest {
   private Long trainerUserId;

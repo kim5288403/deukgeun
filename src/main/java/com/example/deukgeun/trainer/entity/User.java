@@ -7,6 +7,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,6 +40,10 @@ public class User extends BaseEntity {
 
   @Column(length = 50, nullable = false)
   private String groupName;
+  
+  @OneToOne(optional = false)
+  @JoinColumn(name = "profile_id", referencedColumnName = "trainer_user_id", nullable = false)
+  private Profile profile;
 
   @Builder
   public User(String name, String email, String password, GroupStatus groupStatus,

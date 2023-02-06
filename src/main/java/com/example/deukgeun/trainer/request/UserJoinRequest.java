@@ -17,7 +17,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@ValidPasswordConfirm
+//@ValidPasswordConfirm
 public class UserJoinRequest {
 
   @NotBlank(message = "이름 필수 입력 값입니다.")
