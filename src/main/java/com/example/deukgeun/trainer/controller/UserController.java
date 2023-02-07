@@ -39,7 +39,6 @@ public class UserController {
   private PasswordEncoder passwordEncoder;
 
   // 구현할 내용
-  // 1. list -> profile 테이블 관계
   // 2. front 통신
   // 3. php, java enum 포스팅
   // 4. 인증 메일
@@ -48,26 +47,34 @@ public class UserController {
   // 트레이너 리스트 조건 검색
   @RequestMapping(method = RequestMethod.GET, path = "/")
   public ResponseEntity<?> list(String keyword) {
+    Message response = null;
+    
     try {
       List<UserListResponse> list = userService.getList(keyword);
       
-      Message response = Message.builder()
+      response = Message
+          .builder()
           .data(list)
-          .message("트레이너 조회 성공 했습니다.")
+          .message("조회 성공 했습니다.")
           .code(StatusEnum.OK.getCode())
           .status(StatusEnum.OK.getStatus())
           .build();
 
-      return ResponseEntity.ok().body(response);
+      return ResponseEntity
+          .ok()
+          .body(response);
+      
     } catch (Exception e) {
-      Message response = Message.builder()
+      response = Message
+          .builder()
           .data(keyword)
           .message(e.getMessage())
           .code(StatusEnum.BAD_REQUEST.getCode())
           .status(StatusEnum.BAD_REQUEST.getStatus())
           .build();
       
-      return ResponseEntity.badRequest()
+      return ResponseEntity
+          .badRequest()
           .body(response);
     }
   }
@@ -75,37 +82,69 @@ public class UserController {
   // 트레이너 회원 가입
   @RequestMapping(method = RequestMethod.POST, path = "/join")
   public ResponseEntity<?> save(@RequestPart @Valid UserJoinRequest request,
-      BindingResult bindingResult, @RequestPart("profile") MultipartFile profile) {
+      BindingResult bindingResult, @RequestPart(name = "profile", required = false) MultipartFile profile) {
 
+    Message response = null;
     bindingResult = profileService.validator(profile, bindingResult);
-
+    bindingResult = userService.checkEmailDuplication(request, bindingResult);
+    
     if (bindingResult.hasErrors()) {
       /* 유효성 통과 못한 필드와 메시지를 핸들링 */
       Map<String, String> validatorResult = userService.validateHandling(bindingResult);
-
-      return ResponseEntity.ok().body(Message.builder().data(validatorResult)
-          .message("회원 가입 실패 했습니다.").status(StatusEnum.BAD_REQUEST.getStatus()).build());
+      
+      response = Message
+          .builder()
+          .data(validatorResult)
+          .message("회원 가입 실패 했습니다.")
+          .code(StatusEnum.BAD_REQUEST.getCode())
+          .status(StatusEnum.BAD_REQUEST.getStatus())
+          .build();
+      
+      return ResponseEntity
+          .ok()
+          .body(response);
     }
 
     try {
-      userService.checkEmailDuplication(request);
-      User user = UserJoinRequest.create(request, passwordEncoder);
-      Long userId = userService.save(user);
 
       UUID uuid = UUID.randomUUID();
-      ProfileRequest profileRequest = ProfileRequest.builder().trainerUserId(userId)
-          .path(uuid.toString() + "_" + profile.getOriginalFilename()).build();
+      ProfileRequest profileRequest = ProfileRequest
+          .builder()
+          .path(uuid.toString() + "_" + profile.getOriginalFilename())
+          .build();
 
       Profile profileCreate = ProfileRequest.create(profileRequest);
-      profileService.save(profileCreate);
+      Long profileSaveId = profileService.save(profileCreate);
       profileService.serverSave(profile, profileRequest.getPath());
+      
+      
+      User user = UserJoinRequest.create(request, passwordEncoder, profileSaveId);
+      userService.save(user);
 
-      return ResponseEntity.ok().body(Message.builder().data(user).message("회원 가입 성공 했습니다.")
-          .status(StatusEnum.OK.getStatus()).build());
+      
+      response = Message
+          .builder()
+          .data(user)
+          .message("회원 가입 성공 했습니다.")
+          .code(StatusEnum.OK.getCode())
+          .status(StatusEnum.OK.getStatus())
+          .build();
+
+      return ResponseEntity
+          .ok()
+          .body(response);
 
     } catch (Exception e) {
-      return ResponseEntity.badRequest().body(Message.builder().data(request)
-          .message(e.getMessage()).status(StatusEnum.BAD_REQUEST.getStatus()).build());
+      
+      response = Message
+          .builder()
+          .data(request)
+          .message(e.getMessage())
+          .code(StatusEnum.BAD_REQUEST.getCode())
+          .status(StatusEnum.BAD_REQUEST.getStatus())
+          .build();
+      
+      return ResponseEntity.badRequest().body(response);
     }
   }
 

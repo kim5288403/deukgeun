@@ -2,7 +2,14 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{web/layout/layout}">
-
+<th:block layout:fragment="css">
+	<style>
+		.errorMessage {
+			color: red;
+			margin-left: 10px;
+		}
+	</style>
+</th:block>
 <th:block layout:fragment="content">
 	<!-- Posts -->
 	<section class="post">
@@ -20,97 +27,108 @@
 			enctype="multipart/form-data">
 			<div class="row gtr-uniform">
 				<div class="col-6 col-12-xsmall">
-					<label>이름</label> <input type="text" name="name" value=""
-						placeholder="이름">
+					<label>이름</label>
+					<input type="text" name="name" value="" placeholder="이름">
+					<span class="errorMessage" id="valid_name"></span>
 				</div>
 
 				<div class="col-6 col-12-xsmall">
-					<label>이메일</label> <input type="email" name="email" value=""
-						placeholder="이메일">
+					<label>이메일</label>
+					<input type="email" name="email" value="" placeholder="이메일">
+					<span class="errorMessage" id="valid_email"></span>
 				</div>
 
 				<div class="col-6 col-12-xsmall">
-					<label>비밀번호</label> <input type="password" name="password"
-						id="password" value="" placeholder="비밀번호">
+					<label>비밀번호</label> 
+					<input type="password" name="password" id="password" value="" placeholder="비밀번호">
+					<span class="errorMessage" id="valid_password"></span>
 				</div>
 
 				<div class="col-6 col-12-xsmall">
-					<label>비밀번호 확인</label> <input type="password"
-						name="passwordConfirm " id="passwordConfirm" value=""
-						placeholder="비밀번호 확인">
+					<label>비밀번호 확인</label>
+					<input type="password" name="passwordConfirm" id="passwordConfirm" value="" placeholder="비밀번호 확인">
+					<span class="errorMessage" id="valid_passwordConfirm"></span>
 				</div>
 
 				<!-- Break -->
 				<div class="col-12">
 					<label>활동 주소 / 직장 주소</label>
 					<ul class="actions">
-						<li><input type="text" id="sample4_postcode" name="postcode"
-							placeholder="우편번호"></li>
-						<li><input type="button" onclick="sample4_execDaumPostcode()"
-							value="우편번호 찾기"></li>
+						<li>
+							<input type="text" id="sample4_postcode" name="postcode" placeholder="우편번호" readonly="readonly" disabled="disabled">
+							<span class="errorMessage" id="valid_postcode"></span>
+						</li>
+						<li>
+							<input type="button" onclick="sample4_execDaumPostcode()" value="우편번호 찾기">
+						</li>
 					</ul>
 				</div>
 
 				<div class="col-6">
-					<input type="text" id="sample4_roadAddress" name="roadAddress"
-						placeholder="도로명주소"> <input type="text"
-						id="sample4_jibunAddress" name="jibunAddress" placeholder="지번주소">
+					<input type="text" id="sample4_roadAddress" name="roadAddress" placeholder="도로명주소">
+					<input type="text" id="sample4_jibunAddress" name="jibunAddress" placeholder="지번주소">
 					<span id="guide" style="color: #999; display: none"></span>
 				</div>
 
 				<div class="col-6">
-					<input type="text" id="sample4_detailAddress" name="detailAddress"
-						placeholder="상세주소"> <input type="text"
-						id="sample4_extraAddress" name="extraAddress" placeholder="참고항목">
+					<input type="text" id="sample4_detailAddress" name="detailAddress" placeholder="상세주소">
+					<input type="text" id="sample4_extraAddress" name="extraAddress" placeholder="참고항목">
 				</div>
 
 				<!-- Break -->
 				<div class="col-6">
 					<label>프로필 이미지</label>
 					<ul class="actions">
-						<li><input type="text" id="fileName" readonly="readonly"
-							disabled="disabled"></li>
-						<li><a href="#" class="button primary icon solid fa-search"
-							id="fileUpload">file</a></li>
+						<li>
+							<input type="text" id="fileName" readonly="readonly" disabled="disabled">
+							<span class="errorMessage" id="valid_profile"></span>
+						</li>
+						<li>
+							<a href="#" class="button primary icon solid fa-search" id="fileUpload">file</a>
+						</li>
 					</ul>
 
 				</div>
 
 				<!-- Break -->
 				<div class="col-6">
-					<label>PT 가격 (1회 기준)</label> <input type="text" name="price"
-						maxlength=6 oninput="checkNumber(this)" placeholder="가격">
+					<label>PT 가격 (1회 기준)</label>
+					<input type="text" name="price" maxlength=6 oninput="checkNumber(this)" placeholder="가격">
+					<span class="errorMessage" id="valid_price"></span>
 				</div>
 
 				<!-- Break -->
 				<div class="col-6">
 					<label>성별</label>
 					<div>
-						<input type="radio" id="male" name="gender" value=0
-							checked="checked"> <label for="male">남</label>
+						<input type="radio" id="male" name="gender" value="M" checked="checked">
+						<label for="male">남</label>
 					</div>
 					<div>
-						<input type="radio" id="female" value=1 name="gender"> <label
-							for="female">여</label>
+						<input type="radio" id="female" value=1 name="F">
+						<label for="female">여</label>
 					</div>
+					<span class="errorMessage" id="valid_gender"></span>
 				</div>
 
 				<!-- Break -->
 				<div class="col-6">
 					<label>소속</label>
 					<div>
-						<input type="radio" id="Y" name="groupStatus" value="Y"
-							checked="checked"> <label for="Y">유</label>
+						<input type="radio" id="Y" name="groupStatus" value="Y" checked="checked">
+						<label for="Y">유</label>
 					</div>
 					<div>
-						<input type="radio" id="N" value="N" name="groupStatus"> <label
-							for="N">무</label>
+						<input type="radio" id="N" value="N" name="groupStatus">
+						<label for="N">무</label>
 					</div>
+					<span class="errorMessage" id="valid_groupStatus"></span>
 				</div>
 
 				<div class="col-6">
-					<label>소속명</label> <input type="text" name="groupName" value=""
-						placeholder="소속명">
+					<label>소속명</label>
+					<input type="text" name="groupName" value="" placeholder="소속명">
+					<span class="errorMessage" id="valid_groupName"></span>
 				</div>
 
 				<!-- Break -->
@@ -129,19 +147,35 @@
 </th:block>
 
 <th:block layout:fragment="script">
-	<script
-		src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 	<script type="text/javascript">
+	
 		function join() {
 			let formData = new FormData();
 			let profile = $("input[name=profileImage]")[0].files[0];
-			
 			let data = {
-				id : $("input[name=name]").val(), 
+				name : $("input[name=name]").val(),
+				email : $("input[name=email]").val(),
+				password : $("input[name=password]").val(),
+				passwordConfirm : $("input[name=passwordConfirm]").val(),
+				postcode : $("input[name=postcode]").val(),
+				jibunAddress : $("input[name=jibunAddress]").val(),
+				roadAddress : $("input[name=roadAddress]").val(),
+				detailAddress : $("input[name=detailAddress]").val(),
+				extraAddress : $("input[name=extraAddress]").val(),
+				price : $("input[name=price]").val(),
+				gender : $("input[name=gender]:checked").val(),
+				groupStatus : $("input[name=groupStatus]:checked").val(),
+				groupName : $("input[name=groupName]").val(),
 			};
 			
 			formData.append("profile", profile);
 			formData.append("request", new Blob([JSON.stringify(data)], {type: "application/json"}));
+			
+			joinAjax(formData);
+		}
+		
+		function joinAjax(formData) {
 			
 			$.ajax({
 				URL : "/join",
@@ -152,11 +186,24 @@
 				data :formData,
 				dataType: "json",
 				success : function(res) {
-					console.log(res);
+					if (res.code === 400) {
+						errorMessage(res.data);
+					}
+					
+					if (res. cood === 200) {
+						defalutSuccessAlert(res.message, "회원가입 성공");
+					}
 				}
-
 			});
 		}
+		
+		function errorMessage(data) {
+			$("span[class=errorMessage]").text("");
+			$.each(data, function (index, item) {
+				$("span[class=errorMessage][id='" + index + "']").text(item);
+			});
+		}
+		
 
 		$("a[id=fileUpload]").on("click", function(e) {
 			e.preventDefault()

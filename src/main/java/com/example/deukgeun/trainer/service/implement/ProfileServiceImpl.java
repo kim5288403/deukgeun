@@ -23,14 +23,20 @@ public class ProfileServiceImpl implements ProfileService {
 
   //file custom validate 
   public BindingResult validator(MultipartFile file, BindingResult bindingResult) {
-    if (file.isEmpty()) {
+    if(file == null) {
       bindingResult.addError(new FieldError("profile", "profile", "프로필 이미지는 필수입니다."));
-    }
+    } else {
+      
+      if (file.isEmpty()) {
+        bindingResult.addError(new FieldError("profile", "profile", "프로필 이미지는 필수입니다."));
+      }
 
-    if (!isSupportedContentType(file.getContentType())) {
-      bindingResult.addError(new FieldError("profile", "profile", "이미지 파일만 업로드 가능합니다."));
+      if (!isSupportedContentType(file.getContentType())) {
+        bindingResult.addError(new FieldError("profile", "profile", "이미지 파일만 업로드 가능합니다."));
+      }
+      
     }
-
+    
     return bindingResult;
   }
   
@@ -53,8 +59,9 @@ public class ProfileServiceImpl implements ProfileService {
     }
   }
 
-  public void save(Profile profile) {
-    profileRepository.save(profile);
+  public Long save(Profile profile) {
+    Profile res = profileRepository.save(profile);
+    return res.getId();
   }
 
 }

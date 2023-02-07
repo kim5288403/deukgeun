@@ -52,10 +52,12 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Transactional(readOnly = true)
-	public void checkEmailDuplication(UserJoinRequest request) {
+	public BindingResult checkEmailDuplication(UserJoinRequest request, BindingResult bindingResult) {
 		boolean emailDuplicate = userRepository.existsByEmail(request.getEmail());
 		if (emailDuplicate) {
-			throw new IllegalStateException("이미 존재하는 이메일입니다.");
+		  bindingResult.addError(new FieldError("email", "email", "이미 존재하는 이메일입니다."));
 		}
+		
+		return bindingResult;
 	}
 }

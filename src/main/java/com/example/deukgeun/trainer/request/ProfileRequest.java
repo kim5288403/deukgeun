@@ -8,18 +8,17 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class ProfileRequest {
-  private Long trainerUserId;
+  private Long id;
 
   private String path;
 
   @Builder
-  public ProfileRequest(Long trainerUserId, String path) {
-    this.trainerUserId = trainerUserId;
+  public ProfileRequest(String path) {
     this.path = path;
   }
 
   public static Profile create(ProfileRequest request) {
-    return Profile.builder().trainerUserId(request.getTrainerUserId()).path(request.getPath())
+    return Profile.builder().path(request.getPath())
         .build();
   }
 }

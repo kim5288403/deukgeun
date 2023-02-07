@@ -32,9 +32,9 @@ public class PasswordConfirmValidator implements ConstraintValidator<ValidPasswo
       dateField = clazz.getDeclaredField(fieldName);
       dateField.setAccessible(true);
       Object target = dateField.get(object);
-
+      
       if (!(target instanceof String)) {
-        throw new ClassCastException("casting exception");
+        return "";
       }
 
       return (String) target;

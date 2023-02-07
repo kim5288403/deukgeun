@@ -10,14 +10,10 @@ import com.example.deukgeun.commom.validator.ValidEnum;
 import com.example.deukgeun.commom.validator.ValidPasswordConfirm;
 import com.example.deukgeun.trainer.entity.GroupStatus;
 import com.example.deukgeun.trainer.entity.User;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
-@NoArgsConstructor
-//@ValidPasswordConfirm
+@Data
+@ValidPasswordConfirm
 public class UserJoinRequest {
 
   @NotBlank(message = "이름 필수 입력 값입니다.")
@@ -37,8 +33,11 @@ public class UserJoinRequest {
   @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}",
       message = "비밀번호 확인은 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
   private String passwordConfirm;
-
+  
+  @NotBlank(message = "우편번호는 필수 입력 값입니다.")
   private String postcode;
+
+  private String jibunAddress;
 
   private String roadAddress;
 
@@ -47,7 +46,7 @@ public class UserJoinRequest {
   private String extraAddress;
 
   @NotNull(message = "PT 가격은 필수 입력 값입니다.")
-  private int price;
+  private Integer price;
 
   @ValidEnum(enumClass = Gender.class, message = "잘못된 성별 값입니다.")
   private Gender gender;
@@ -57,10 +56,21 @@ public class UserJoinRequest {
 
   private String groupName;
 
-  public static User create(UserJoinRequest request, PasswordEncoder passwordEncoder) {
-    return User.builder().name(request.getName()).email(request.getEmail())
+  public static User create(UserJoinRequest request, PasswordEncoder passwordEncoder, Long profileId) {
+    return User
+        .builder()
+        .name(request.getName())
+        .email(request.getEmail())
         .password(passwordEncoder.encode(request.getPassword()))
-        .groupStatus(request.getGroupStatus()).groupName(request.getGroupName()).build();
+        .groupStatus(request.getGroupStatus())
+        .groupName(request.getGroupName())
+        .postcode(request.getPostcode())
+        .jibunAddress(request.getJibunAddress())
+        .roadAddress(request.getRoadAddress())
+        .detailAddress(request.getDetailAddress())
+        .extraAddress(request.getExtraAddress())
+        .profileId(profileId)
+        .build();
   }
 
 }
