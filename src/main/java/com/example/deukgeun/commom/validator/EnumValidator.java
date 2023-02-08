@@ -29,6 +29,4 @@ public class EnumValidator implements ConstraintValidator<ValidEnum, Enum>{
 		
 		return flag;
 	}
-
-
 }

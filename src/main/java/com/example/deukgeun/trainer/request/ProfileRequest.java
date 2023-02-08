@@ -3,10 +3,8 @@ package com.example.deukgeun.trainer.request;
 import com.example.deukgeun.trainer.entity.Profile;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 public class ProfileRequest {
   private Long id;
 

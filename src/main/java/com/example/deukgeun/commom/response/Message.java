@@ -1,8 +1,5 @@
 package com.example.deukgeun.commom.response;
 
-
-
-
 import lombok.Builder;
 import lombok.Data;
 

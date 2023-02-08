@@ -39,10 +39,7 @@ public class UserController {
   private PasswordEncoder passwordEncoder;
 
   // 구현할 내용
-  // 2. front 통신
-  // 3. php, java enum 포스팅
-  // 4. 인증 메일
-  // 5. 어노테이션 정리
+  // - 인증 메일
 
   // 트레이너 리스트 조건 검색
   @RequestMapping(method = RequestMethod.GET, path = "/")
