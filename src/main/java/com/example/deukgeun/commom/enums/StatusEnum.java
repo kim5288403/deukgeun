@@ -1,8 +1,11 @@
 package com.example.deukgeun.commom.enums;
 
 public enum StatusEnum {
-  OK(200, "OK"), BAD_REQUEST(400, "BAD_REQUEST"), NOT_FOUND(404,
-      "NOT_FOUND"), INTERNAL_SERER_ERROR(500, "INTERNAL_SERVER_ERROR");
+  OK(200, "OK"),
+  NO_CONTENT(204, "NO_CONTENT"),
+  BAD_REQUEST(400, "BAD_REQUEST"),
+  NOT_FOUND(404, "NOT_FOUND"),
+  INTERNAL_SERER_ERROR(500, "INTERNAL_SERVER_ERROR");
 
   int code;
   String status;

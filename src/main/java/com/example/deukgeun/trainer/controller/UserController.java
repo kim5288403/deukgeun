@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.example.deukgeun.commom.enums.StatusEnum;
 import com.example.deukgeun.commom.response.Message;
+import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
 import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.request.ProfileRequest;
@@ -37,9 +38,9 @@ public class UserController {
 
   @Autowired
   private PasswordEncoder passwordEncoder;
-
-  // 구현할 내용
-  // - 인증 메일
+  
+  @Autowired
+  private ValidateServiceImpl validateService;
 
   // 트레이너 리스트 조건 검색
   @RequestMapping(method = RequestMethod.GET, path = "/")
@@ -62,17 +63,9 @@ public class UserController {
           .body(response);
       
     } catch (Exception e) {
-      response = Message
-          .builder()
-          .data(keyword)
-          .message(e.getMessage())
-          .code(StatusEnum.BAD_REQUEST.getCode())
-          .status(StatusEnum.BAD_REQUEST.getStatus())
-          .build();
-      
       return ResponseEntity
           .badRequest()
-          .body(response);
+          .body(e.getMessage());
     }
   }
 
@@ -87,7 +80,7 @@ public class UserController {
     
     if (bindingResult.hasErrors()) {
       /* 유효성 통과 못한 필드와 메시지를 핸들링 */
-      Map<String, String> validatorResult = userService.validateHandling(bindingResult);
+      Map<String, String> validatorResult = validateService.errorMessageHandling(bindingResult);
       
       response = Message
           .builder()
@@ -114,10 +107,8 @@ public class UserController {
       Long profileSaveId = profileService.save(profileCreate);
       profileService.serverSave(profile, profileRequest.getPath());
       
-      
       User user = UserJoinRequest.create(request, passwordEncoder, profileSaveId);
       userService.save(user);
-
       
       response = Message
           .builder()
@@ -130,18 +121,10 @@ public class UserController {
       return ResponseEntity
           .ok()
           .body(response);
-
     } catch (Exception e) {
-      
-      response = Message
-          .builder()
-          .data(request)
-          .message(e.getMessage())
-          .code(StatusEnum.BAD_REQUEST.getCode())
-          .status(StatusEnum.BAD_REQUEST.getStatus())
-          .build();
-      
-      return ResponseEntity.badRequest().body(response);
+      return ResponseEntity
+          .badRequest()
+          .body(e.getMessage());
     }
   }
 
