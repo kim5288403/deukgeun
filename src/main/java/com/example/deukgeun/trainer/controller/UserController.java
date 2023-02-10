@@ -2,7 +2,6 @@ package com.example.deukgeun.trainer.controller;
 
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.example.deukgeun.commom.enums.StatusEnum;
+import com.example.deukgeun.commom.exception.RequestValidException;
 import com.example.deukgeun.commom.response.Message;
 import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
 import com.example.deukgeun.trainer.entity.Profile;
@@ -74,35 +74,19 @@ public class UserController {
   public ResponseEntity<?> save(@RequestPart @Valid UserJoinRequest request,
       BindingResult bindingResult, @RequestPart(name = "profile", required = false) MultipartFile profile) {
 
-    Message response = null;
     bindingResult = profileService.validator(profile, bindingResult);
     bindingResult = userService.checkEmailDuplication(request, bindingResult);
     
-    if (bindingResult.hasErrors()) {
-      /* 유효성 통과 못한 필드와 메시지를 핸들링 */
-      Map<String, String> validatorResult = validateService.errorMessageHandling(bindingResult);
-      
-      response = Message
-          .builder()
-          .data(validatorResult)
-          .message("회원 가입 실패 했습니다.")
-          .code(StatusEnum.BAD_REQUEST.getCode())
-          .status(StatusEnum.BAD_REQUEST.getStatus())
-          .build();
-      
-      return ResponseEntity
-          .ok()
-          .body(response);
-    }
-
     try {
+      if (bindingResult.hasErrors()) {
+        validateService.errorMessageHandling(bindingResult);
+      }
 
       UUID uuid = UUID.randomUUID();
       ProfileRequest profileRequest = ProfileRequest
           .builder()
           .path(uuid.toString() + "_" + profile.getOriginalFilename())
           .build();
-
       Profile profileCreate = ProfileRequest.create(profileRequest);
       Long profileSaveId = profileService.save(profileCreate);
       profileService.serverSave(profile, profileRequest.getPath());
@@ -110,7 +94,7 @@ public class UserController {
       User user = UserJoinRequest.create(request, passwordEncoder, profileSaveId);
       userService.save(user);
       
-      response = Message
+      Message response = Message
           .builder()
           .data(user)
           .message("회원 가입 성공 했습니다.")
@@ -121,7 +105,13 @@ public class UserController {
       return ResponseEntity
           .ok()
           .body(response);
+    } catch (RequestValidException e) {
+      
+      return ResponseEntity
+          .badRequest()
+          .body(e.getResponse());
     } catch (Exception e) {
+      
       return ResponseEntity
           .badRequest()
           .body(e.getMessage());

@@ -32,7 +32,7 @@ public class MailController {
   public ResponseEntity<?> send(@Valid EmailRequest request, BindingResult bindingResult) {
     try {
       if (bindingResult.hasErrors()) {
-        validateService.errorMessageHandling2(bindingResult);
+        validateService.errorMessageHandling(bindingResult);
       }
       
       String authCode = mailservice.sendMail(request.getEmail());
@@ -63,12 +63,13 @@ public class MailController {
   //구현할 내용
   //- 프로젝트 내에 애러 메세지 핸들링 수정
   //- 인증메일 확인 error view 작업
+  
   @RequestMapping(method = RequestMethod.POST, path = "/confirm")
   public ResponseEntity<?> confirm(@Valid AuthMailRequest request, BindingResult bindingResult) {
     Message response = null;
     try {
       if (bindingResult.hasErrors()) {
-        validateService.errorMessageHandling2(bindingResult);
+        validateService.errorMessageHandling(bindingResult);
       }
       
       boolean confirmMailRes = mailservice.confirmMail(request);
