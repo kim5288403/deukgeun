@@ -28,6 +28,7 @@ public class MailController {
   @Autowired
   private ValidateServiceImpl validateService;
   
+  //인증 이메일 보내기
   @RequestMapping(method = RequestMethod.POST, path = "/send")
   public ResponseEntity<?> send(@Valid EmailRequest request, BindingResult bindingResult) {
     try {
@@ -64,37 +65,26 @@ public class MailController {
   //- 프로젝트 내에 애러 메세지 핸들링 수정
   //- 인증메일 확인 error view 작업
   
+  //인증 이메일 확인
   @RequestMapping(method = RequestMethod.POST, path = "/confirm")
   public ResponseEntity<?> confirm(@Valid AuthMailRequest request, BindingResult bindingResult) {
     Message response = null;
+    
     try {
       if (bindingResult.hasErrors()) {
         validateService.errorMessageHandling(bindingResult);
       }
       
-      boolean confirmMailRes = mailservice.confirmMail(request);
-      
-      if (confirmMailRes) {
-        mailservice.updateMailStatus(request, MailStatus.Y);
+      mailservice.updateMailStatus(request, MailStatus.Y);
         
-        response = Message
-            .builder()
-            .code(StatusEnum.OK.getCode())
-            .status(StatusEnum.OK.getStatus())
-            .message("메일 인증 성공 했습니다.")
-            .data(null)
-            .build();
+      response = Message
+          .builder()
+          .code(StatusEnum.OK.getCode())
+          .status(StatusEnum.OK.getStatus())
+          .message("메일 인증 성공 했습니다.")
+          .data(request)
+          .build();
         
-      } else {
-        response = Message
-            .builder()
-            .code(StatusEnum.NO_CONTENT.getCode())
-            .status(StatusEnum.NO_CONTENT.getStatus())
-            .message("메일 인증 실패 했습니다.")
-            .data(null)
-            .build();
-      }
-      
       return ResponseEntity
           .ok()
           .body(response);

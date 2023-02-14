@@ -12,9 +12,11 @@ import com.example.deukgeun.commom.enums.MailStatus;
 import com.example.deukgeun.trainer.entity.BaseEntity;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor
 @Table(name = "auth_mail")
 public class AuthMail extends BaseEntity{
   
@@ -34,9 +36,10 @@ public class AuthMail extends BaseEntity{
   private MailStatus status;
   
   @Builder
-  public AuthMail(String email, String code) {
+  public AuthMail(String email, String code, MailStatus status) {
     this.email = email;
     this.code = code;
+    this.status = status;
   }
   
 }

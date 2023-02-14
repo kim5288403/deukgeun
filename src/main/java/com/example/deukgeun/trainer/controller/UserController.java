@@ -75,7 +75,6 @@ public class UserController {
       BindingResult bindingResult, @RequestPart(name = "profile", required = false) MultipartFile profile) {
 
     bindingResult = profileService.validator(profile, bindingResult);
-    bindingResult = userService.checkEmailDuplication(request, bindingResult);
     
     try {
       if (bindingResult.hasErrors()) {
@@ -117,6 +116,7 @@ public class UserController {
           .body(e.getMessage());
     }
   }
+  
 
 }
 

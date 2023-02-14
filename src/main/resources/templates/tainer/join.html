@@ -23,19 +23,43 @@
 				amet nullam sed etiam veroeros.
 			</p>
 		</header>
-		<form id="join" method="post" action="/trainer/join"
+		<form id="join" method="post" action=""
 			enctype="multipart/form-data">
 			<div class="row gtr-uniform">
-				<div class="col-6 col-12-xsmall">
+				<div class="col-6">
 					<label>이름</label>
 					<input type="text" name="name" value="" placeholder="이름">
 					<span class="errorMessage" id="valid_name"></span>
 				</div>
+				
+				<div class="col-6"></div>
 
 				<div class="col-6 col-12-xsmall">
 					<label>이메일</label>
-					<input type="email" name="email" value="" placeholder="이메일">
-					<span class="errorMessage" id="valid_email"></span>
+					<ul class="actions">
+						<li>
+							<input type="email" name="email" value="" placeholder="이메일">
+							<span class="errorMessage" id="valid_email"></span>
+						</li>
+						<li>
+							<input type="button" onclick="codeSendAjax()" value="인증 번호 보내기">
+						</li>	
+					</ul>
+				</div>
+				
+				<div class="col-6 col-12-xsmall">
+					<label>인증 번호</label>
+					<ul class="actions">
+						<li>
+							<input type="text" name="code" value="" placeholder="인증번호">
+							<span class="errorMessage" id="valid_code"></span>
+							<span class="errorMessage" id="valid_AuthMailCode"></span>
+							<span class="errorMessage" id="valid_AuthEmail"></span>
+						</li>
+						<li>
+							<input type="button" onclick="codeConfirmAjax()" value="인증 확인">
+						</li>	
+					</ul>
 				</div>
 
 				<div class="col-6 col-12-xsmall">
@@ -135,7 +159,7 @@
 				<div class="col-12">
 					<ul class="actions" style="justify-content: center;">
 						<li><input type="button" value="Join" class="primary"
-							onclick="join()"></li>
+							onclick="joinAjax()"></li>
 						<li><input type="reset" value="Reset"></li>
 					</ul>
 				</div>
@@ -167,17 +191,22 @@
 				gender : $("input[name=gender]:checked").val(),
 				groupStatus : $("input[name=groupStatus]:checked").val(),
 				groupName : $("input[name=groupName]").val(),
+				code : $("input[name=code]").val(),
 			};
 			
 			formData.append("profile", profile);
 			formData.append("request", new Blob([JSON.stringify(data)], {type: "application/json"}));
 			
-			joinAjax(formData);
+			return formData;
 		}
 		
-		function joinAjax(formData) {
+		function joinAjax() {
+			errorMessageReset();
+			
+			let formData = join();
+			
 			$.ajax({
-				URL : "/join",
+				url : "/trainer/join",
 				type : "post",
 				processData : false,
 				contentType : false,
@@ -185,23 +214,87 @@
 				data :formData,
 				dataType: "json",
 				success : function(res) {
-					if (res.code === 400) {
-						errorMessage(res.data);
+					if (res.code === 200) {
+						defalutSuccessAlert(res.message, "성공").then(function (){
+							window.location.replace("http://localhost:8080/");
+						});
 					}
-					
-					if (res. cood === 200) {
-						defalutSuccessAlert(res.message, "회원가입 성공");
+				},
+				error : function(res) {
+					if (res.responseJSON.code === 400) {
+						errorMessage(res.responseJSON.data);
+					}
+				}
+			});
+		}
+		
+		function codeSendAjax() {
+			let email = $("input[name=email]").val();
+			
+			$.ajax({
+				url : "/mail/send",
+				type : "post",
+				data : {email : email},
+			    beforeSend: function() {
+			        //마우스 커서를 로딩 중 커서로 변경
+			        $('html').css("cursor", "wait");
+			    },
+				success : function(res) {
+					 $('html').css("cursor", "auto");
+					if (res.code === 200) {
+						defalutSuccessAlert(res.message, "성공");
+					}
+				},
+				error : function(res) {
+					if (res.responseJSON.code === 400) {
+						errorMessage(res.responseJSON.data);
+					} else {
+						defalutErrorAlert(res.responseJSON.message);
+					}
+				}
+			});
+		}
+		
+		function codeConfirmAjax() {
+			let email = $("input[name=email]").val();
+			let code = $("input[name=code]").val();
+		
+			$.ajax({
+				url : "/mail/confirm",
+				type : "post",
+				data : {
+					email : email,
+					code : code
+					},
+				success : function(res) {
+					if (res.code === 200) {
+						defalutSuccessAlert(res.message, "성공");
+					}
+				},
+				error : function(res) {
+					if (res.responseJSON.code === 400) {
+						errorMessage(res.responseJSON.data);
+					} else {
+						defalutErrorAlert(res.responseJSON.message);
 					}
 				}
 			});
 		}
 		
 		function errorMessage(data) {
-			$("span[class=errorMessage]").text("");
+			errorMessageReset();
 			$.each(data, function (index, item) {
 				$("span[class=errorMessage][id='" + index + "']").text(item);
 			});
 		}
+		
+		function errorMessageReset() {
+			$("span[class=errorMessage]").text("");
+		}
+		
+		$("input").on("change", function () {
+			$(this).siblings("span[class=errorMessage]").text("");
+		})
 		
 
 		$("a[id=fileUpload]").on("click", function(e) {

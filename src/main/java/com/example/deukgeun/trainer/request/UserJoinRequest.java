@@ -6,6 +6,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.example.deukgeun.commom.enums.Gender;
+import com.example.deukgeun.commom.validator.ValidAuthEmail;
+import com.example.deukgeun.commom.validator.ValidDupliEmail;
 import com.example.deukgeun.commom.validator.ValidEnum;
 import com.example.deukgeun.commom.validator.ValidPasswordConfirm;
 import com.example.deukgeun.trainer.entity.GroupStatus;
@@ -14,6 +16,7 @@ import lombok.Data;
 
 @Data
 @ValidPasswordConfirm
+@ValidAuthEmail
 public class UserJoinRequest {
 
   @NotBlank(message = "이름 필수 입력 값입니다.")
@@ -22,6 +25,7 @@ public class UserJoinRequest {
 
   @NotBlank(message = "이메일 필수 입력 값입니다.")
   @Email(message = "이메일 형식이 아닙니다.")
+  @ValidDupliEmail(message = "이미 존재하는 이메일 입니다.")
   private String email;
 
   @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
@@ -55,6 +59,8 @@ public class UserJoinRequest {
   private GroupStatus groupStatus;
 
   private String groupName;
+  
+  private String code;
 
   public static User create(UserJoinRequest request, PasswordEncoder passwordEncoder, Long profileId) {
     return User

@@ -11,7 +11,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import com.example.deukgeun.commom.entity.AuthMail;
 import com.example.deukgeun.commom.enums.MailStatus;
-import com.example.deukgeun.commom.repository.MailRepository;
+import com.example.deukgeun.commom.repository.AuthMailRepository;
 import com.example.deukgeun.commom.request.AuthMailRequest;
 import com.example.deukgeun.commom.service.MailService;
 import lombok.RequiredArgsConstructor;
@@ -21,17 +21,13 @@ import lombok.RequiredArgsConstructor;
 public class MailServiceImpl implements MailService{
   
   @Autowired
-  private MailRepository mailRepository;
+  private AuthMailRepository authMailRepository;
   
-  //의존성 주입을 통해서 필요한 객체를 가져온다.
   private final JavaMailSender emailSender;
-  // 타임리프를사용하기 위한 객체를 의존성 주입으로 가져온다
   private final SpringTemplateEngine templateEngine;
-  //랜덤 인증 코드
+  
   private String authCode; 
-  //보내는 이메일
-  private String fromEmail = "kim5288403@gmail.com";
-  //메일 제목
+  private String fromEmail = "kim5288403@gmail.com"; // 보내는 이메일
   private String title = "득근득근 회원가입 인증 번호";
   
   //랜덤 인증 코드 생성
@@ -59,13 +55,12 @@ public class MailServiceImpl implements MailService{
   
   //메일 양식 작성
   public MimeMessage createMailForm(String toEmail) throws MessagingException, UnsupportedEncodingException {
-
-      createCode(); //인증 코드 생성
+      createCode();
 
       MimeMessage message = emailSender.createMimeMessage();
-      message.addRecipients(MimeMessage.RecipientType.TO, toEmail); //보낼 이메일 설정
-      message.setSubject(title); //제목 설정
-      message.setFrom(fromEmail); //보내는 이메일
+      message.addRecipients(MimeMessage.RecipientType.TO, toEmail);
+      message.setSubject(title);
+      message.setFrom(fromEmail);
       message.setText(setContext(authCode), "utf-8", "html");
 
       return message;
@@ -73,19 +68,20 @@ public class MailServiceImpl implements MailService{
 
   //실제 메일 전송
   public String sendMail(String toEmail) throws MessagingException, UnsupportedEncodingException {
-  
-      //메일전송에 필요한 정보 설정
-      MimeMessage emailForm = createMailForm(toEmail);
-      //실제 메일 전송
-      emailSender.send(emailForm);
+      //중복 인증 정보 제거
+      if(authMailRepository.existsByEmail(toEmail)) {
+        deleteAuthMail(toEmail);
+      }
       
-      AuthMail authMail = AuthMailRequest.create(toEmail, authCode);
+      MimeMessage emailForm = createMailForm(toEmail);
+      emailSender.send(emailForm);
+      AuthMail authMail = AuthMailRequest.create(toEmail, authCode, MailStatus.N);
       createAuthMail(authMail);
       
       return authCode; //인증 코드 반환
   }
 
-  //타임리프를 이용한 context 설정
+  //mail view 설정
   public String setContext(String code) {
       Context context = new Context();
       context.setVariable("code", code);
@@ -94,17 +90,22 @@ public class MailServiceImpl implements MailService{
   
   //인증 메일 정보 저장
   public void createAuthMail(AuthMail authMail) {
-    mailRepository.save(authMail);
+    authMailRepository.save(authMail);
   }
   
+  //인증 메일 정보 삭제
+  public void deleteAuthMail(String email) {
+    authMailRepository.deleteByEmail(email);
+  }
   
   //메일 인증 확인
   public boolean confirmMail(AuthMailRequest request) {
-    return mailRepository.existsByEmailAndCode(request.getEmail(), request.getCode());
+    return authMailRepository.existsByEmailAndCode(request.getEmail(), request.getCode());
   }
   
+  //메일인증 상태 업데이트
   public void updateMailStatus(AuthMailRequest request, MailStatus status) {
-    mailRepository.updateStatusByEmailAndCode(request.getEmail(), request.getCode(), status);
+    authMailRepository.updateStatusByEmailAndCode(request.getEmail(), request.getCode(), status);
   }
 
   

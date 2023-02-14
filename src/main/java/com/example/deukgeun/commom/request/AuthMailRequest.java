@@ -4,9 +4,12 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.Length;
 import com.example.deukgeun.commom.entity.AuthMail;
+import com.example.deukgeun.commom.enums.MailStatus;
+import com.example.deukgeun.commom.validator.ValidAuthMailCode;
 import lombok.Data;
 
 @Data
+@ValidAuthMailCode
 public class AuthMailRequest {
   
   @NotBlank(message = "이메일 필수 입력 값입니다.")
@@ -16,13 +19,15 @@ public class AuthMailRequest {
   @NotBlank(message = "인증번호는 필수 입력 값입니다.")
   @Length(min = 8, max = 8, message = "인증번호는 8글자 입니다.")
   private String code;
-
   
-  public static AuthMail create(String email, String code) {
+  private MailStatus status;
+  
+  public static AuthMail create(String email, String code, MailStatus status) {
     return AuthMail
         .builder()
         .email(email)
         .code(code)
+        .status(status)
         .build();
   }
 

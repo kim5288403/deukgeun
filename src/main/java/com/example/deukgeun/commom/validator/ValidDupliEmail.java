@@ -7,15 +7,13 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-@Constraint(validatedBy = EnumValidator.class)
+@Constraint(validatedBy = EmailDupliValidator.class)
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidEnum {
+public @interface ValidDupliEmail {
   String message() default "중복된 이메일 입니다.";
 
   Class<?>[] groups() default {};
 
   Class<? extends Payload>[] payload() default {};
-
-  Class<? extends java.lang.Enum<?>> enumClass();
 }
