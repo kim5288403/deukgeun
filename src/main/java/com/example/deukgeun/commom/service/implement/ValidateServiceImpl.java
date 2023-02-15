@@ -39,15 +39,18 @@ public class ValidateServiceImpl implements ValidateService{
     Class<?> clazz = object.getClass();
     Field dateField;
     try {
-
       dateField = clazz.getDeclaredField(fieldName);
       dateField.setAccessible(true);
       Object target = dateField.get(object);
       
+      if ((target instanceof Enum)) {
+        return target.toString();
+      }
+      
       if (!(target instanceof String)) {
         return "";
       }
-
+      
       return (String) target;
     } catch (NoSuchFieldException e) {
       System.out.println("NoSuchFieldException : " + e.getMessage());

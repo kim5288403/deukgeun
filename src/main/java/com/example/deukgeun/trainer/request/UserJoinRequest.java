@@ -12,11 +12,13 @@ import com.example.deukgeun.commom.validator.ValidEnum;
 import com.example.deukgeun.commom.validator.ValidPasswordConfirm;
 import com.example.deukgeun.trainer.entity.GroupStatus;
 import com.example.deukgeun.trainer.entity.User;
+import com.example.deukgeun.trainer.validator.ValidGroupName;
 import lombok.Data;
 
 @Data
 @ValidPasswordConfirm
 @ValidAuthEmail
+@ValidGroupName
 public class UserJoinRequest {
 
   @NotBlank(message = "이름 필수 입력 값입니다.")
