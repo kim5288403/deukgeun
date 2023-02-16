@@ -4,7 +4,6 @@ package com.example.deukgeun.trainer.controller;
 import java.util.List;
 import java.util.UUID;
 import javax.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
@@ -17,6 +16,7 @@ import com.example.deukgeun.commom.enums.StatusEnum;
 import com.example.deukgeun.commom.exception.RequestValidException;
 import com.example.deukgeun.commom.response.Message;
 import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
+import com.example.deukgeun.global.provider.JwtTokenProvider;
 import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.request.ProfileRequest;
@@ -24,24 +24,20 @@ import com.example.deukgeun.trainer.request.UserJoinRequest;
 import com.example.deukgeun.trainer.response.UserListResponse;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
 import com.example.deukgeun.trainer.service.implement.UserServiceImpl;
+import lombok.RequiredArgsConstructor;
 
 
 @RestController("trainer.controller.UserController")
 @RequestMapping("/trainer")
+@RequiredArgsConstructor
 public class UserController {
 
-  @Autowired
-  private UserServiceImpl userService;
-
-  @Autowired
-  private ProfileServiceImpl profileService;
-
-  @Autowired
-  private PasswordEncoder passwordEncoder;
+  private final UserServiceImpl userService;
+  private final ProfileServiceImpl profileService;
+  private final PasswordEncoder passwordEncoder;
+  private final ValidateServiceImpl validateService;
+  private final JwtTokenProvider jwtTokenProvider;
   
-  @Autowired
-  private ValidateServiceImpl validateService;
-
   // 트레이너 리스트 조건 검색
   @RequestMapping(method = RequestMethod.GET, path = "/")
   public ResponseEntity<?> list(String keyword) {
@@ -117,6 +113,11 @@ public class UserController {
     }
   }
   
+  @RequestMapping(method = RequestMethod.POST, path = "/login")
+  public String login() {
+    
+    return jwtTokenProvider.createToken("kim5288403@gmail.com", "admin");
+  }
 
 }
 

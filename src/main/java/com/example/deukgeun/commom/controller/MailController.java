@@ -3,7 +3,6 @@ package com.example.deukgeun.commom.controller;
 import java.io.UnsupportedEncodingException;
 import javax.mail.MessagingException;
 import javax.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,16 +16,15 @@ import com.example.deukgeun.commom.request.EmailRequest;
 import com.example.deukgeun.commom.response.Message;
 import com.example.deukgeun.commom.service.implement.MailServiceImpl;
 import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
+import lombok.RequiredArgsConstructor;
 
 @RestController()
 @RequestMapping("/mail")
+@RequiredArgsConstructor
 public class MailController {
   
-  @Autowired
-  private MailServiceImpl mailservice;
-  
-  @Autowired
-  private ValidateServiceImpl validateService;
+  private final MailServiceImpl mailservice;
+  private final ValidateServiceImpl validateService;
   
   //인증 이메일 보내기
   @RequestMapping(method = RequestMethod.POST, path = "/send")
@@ -60,10 +58,6 @@ public class MailController {
           .body(e.getResponse());
     }
   }
-  
-  //구현할 내용
-  //- 프로젝트 내에 애러 메세지 핸들링 수정
-  //- 인증메일 확인 error view 작업
   
   //인증 이메일 확인
   @RequestMapping(method = RequestMethod.POST, path = "/confirm")

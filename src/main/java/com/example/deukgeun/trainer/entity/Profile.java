@@ -8,10 +8,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @Table(name = "trainer_user_profile")
+@NoArgsConstructor
 public class Profile extends BaseEntity {
 
   @Id

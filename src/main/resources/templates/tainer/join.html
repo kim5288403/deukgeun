@@ -53,8 +53,6 @@
 						<li>
 							<input type="text" name="code" value="" placeholder="인증번호">
 							<span class="errorMessage" name="valid_code"></span>
-							<span class="errorMessage" name="valid_AuthMailCode"></span>
-							<span class="errorMessage" name="valid_AuthEmail"></span>
 						</li>
 						<li>
 							<input type="button" onclick="codeConfirmAjax()" value="인증 확인">
@@ -280,18 +278,7 @@
 				}
 			});
 		}
-		
-		function errorMessage(data) {
-			errorMessageReset();
-			$.each(data, function (index, item) {
-				$("span[class=errorMessage][name='" + index + "']").text(item);
-			});
-		}
-		
-		function errorMessageReset() {
-			$("span[class=errorMessage]").text("");
-		}
-		
+
 		$("input").on("change", function () {
 			$(this).siblings("span[class=errorMessage]").text("");
 		})
@@ -320,8 +307,7 @@
 		});
 
 		function checkNumber(obj) {
-			obj.value = obj.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g,
-					'$1');
+			obj.value = obj.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
 		}
 
 		function sample4_execDaumPostcode() {

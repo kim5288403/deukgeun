@@ -14,4 +14,9 @@ public class MainController {
     model.addAttribute("menu", "join");
     return "tainer/join";
   }
+  
+  @GetMapping("/test")
+  public String test() {
+    return "tainer/join";
+  }
 }
