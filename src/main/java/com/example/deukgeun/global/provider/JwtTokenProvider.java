@@ -18,10 +18,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Component
 public class JwtTokenProvider {
-  private String secretKey = "myprojectsecret";
-
-  // 토큰 유효시간
-  private long tokenValidTime = 30 * 60 * 1000L;
+  
+  private String secretKey = "deuckgeunproject";
+  private long authTokenTime = 30 * 60 * 1000L;
+//  private long authTokenTime = 1000L;
+  private long refreshTokenTime = 30 * 60 * 3000L;
+//  private long refreshTokenTime = 1000L;
   private final UserServiceImpl userService;
 
   @PostConstruct
@@ -29,19 +31,35 @@ public class JwtTokenProvider {
       secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
   }
 
-  // JWT 토큰 생성 
-  public String createToken(String userPk, String roles) {
+  // auth 토큰 생성 
+  public String createAuthToken(String userPk, String roles) {
       Claims claims = Jwts.claims().setSubject(userPk);
       claims.put("roles", roles);
       Date now = new Date();
+      
       return Jwts.builder()
               .setClaims(claims)
               .setIssuedAt(now)
-              .setExpiration(new Date(now.getTime() + tokenValidTime))
+              .setExpiration(new Date(now.getTime() + authTokenTime))
+              .signWith(SignatureAlgorithm.HS256, secretKey)
+              .compact();
+  }
+  
+  // refresh 토큰 생성 
+  public String createRefreshToken(String userPk) {
+      Claims claims = Jwts.claims().setSubject(userPk);
+      Date now = new Date();
+      
+      return Jwts.builder()
+              .setClaims(claims)
+              .setIssuedAt(now)
+              .setExpiration(new Date(now.getTime() + refreshTokenTime))
               .signWith(SignatureAlgorithm.HS256, secretKey)
               .compact();
   }
 
+  
+  
   // JWT 토큰에서 인증 정보 조회
   public Authentication getAuthentication(String token) {
       UserDetails userDetails = userService.loadUserByUsername(this.getUserPk(token));
@@ -53,9 +71,14 @@ public class JwtTokenProvider {
       return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
   }
   
-  //Request의 Header에서 token 값을 가져옵니다.
-  public String resolveToken(HttpServletRequest request) {
+  //Request의 Header에서 auth token 값을 가져옵니다.
+  public String resolveAuthToken(HttpServletRequest request) {
       return request.getHeader("Authorization");
+  }
+  
+  //Request의 Header에서 refresh token 값을 가져옵니다.
+  public String resolveRefreshToken(HttpServletRequest request) {
+      return request.getHeader("RefreshToken");
   }
 
   // 토큰의 유효성 + 만료일자 확인
@@ -67,4 +90,5 @@ public class JwtTokenProvider {
           return false;
       }
   }
+  
 }

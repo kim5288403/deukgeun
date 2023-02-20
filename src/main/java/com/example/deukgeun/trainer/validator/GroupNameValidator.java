@@ -2,12 +2,12 @@ package com.example.deukgeun.trainer.validator;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class GroupNameValidator implements ConstraintValidator<ValidGroupName, Object>{
-  @Autowired
-  private ValidateServiceImpl validateService;
+  private final ValidateServiceImpl validateService;
   
 
   @Override

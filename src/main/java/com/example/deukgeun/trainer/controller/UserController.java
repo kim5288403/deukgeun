@@ -14,11 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.example.deukgeun.commom.enums.StatusEnum;
 import com.example.deukgeun.commom.exception.RequestValidException;
-import com.example.deukgeun.commom.response.Message;
+import com.example.deukgeun.commom.response.JwtTokenResponse;
+import com.example.deukgeun.commom.response.MessageResponse;
 import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
 import com.example.deukgeun.global.provider.JwtTokenProvider;
 import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.entity.User;
+import com.example.deukgeun.trainer.request.LoginRequest;
 import com.example.deukgeun.trainer.request.ProfileRequest;
 import com.example.deukgeun.trainer.request.UserJoinRequest;
 import com.example.deukgeun.trainer.response.UserListResponse;
@@ -31,7 +33,8 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/trainer")
 @RequiredArgsConstructor
 public class UserController {
-
+  
+  private final String role = "trainer";
   private final UserServiceImpl userService;
   private final ProfileServiceImpl profileService;
   private final PasswordEncoder passwordEncoder;
@@ -41,12 +44,12 @@ public class UserController {
   // 트레이너 리스트 조건 검색
   @RequestMapping(method = RequestMethod.GET, path = "/")
   public ResponseEntity<?> list(String keyword) {
-    Message response = null;
+    MessageResponse response = null;
     
     try {
       List<UserListResponse> list = userService.getList(keyword);
       
-      response = Message
+      response = MessageResponse
           .builder()
           .data(list)
           .message("조회 성공 했습니다.")
@@ -89,7 +92,7 @@ public class UserController {
       User user = UserJoinRequest.create(request, passwordEncoder, profileSaveId);
       userService.save(user);
       
-      Message response = Message
+      MessageResponse response = MessageResponse
           .builder()
           .data(user)
           .message("회원 가입 성공 했습니다.")
@@ -114,9 +117,44 @@ public class UserController {
   }
   
   @RequestMapping(method = RequestMethod.POST, path = "/login")
-  public String login() {
+  public ResponseEntity<?> login(@Valid LoginRequest request, BindingResult bindingResult) {
+    try {
+      if (bindingResult.hasErrors()) {
+        validateService.errorMessageHandling(bindingResult);
+      }
+      
+      String authToken = jwtTokenProvider.createAuthToken(request.getEmail(), role);
+      String refreshToken = jwtTokenProvider.createRefreshToken(request.getEmail());
+      
+      JwtTokenResponse jwtTokenResponse = JwtTokenResponse
+          .builder()
+          .authToken(authToken)
+          .refreshTokne(refreshToken)
+          .build();
+      
+      MessageResponse response = MessageResponse
+          .builder()
+          .data(jwtTokenResponse)
+          .message("로그인 성공 했습니다.")
+          .code(StatusEnum.OK.getCode())
+          .status(StatusEnum.OK.getStatus())
+          .build();
+      
+      return ResponseEntity
+          .ok()
+          .body(response);
+    } catch (RequestValidException e) {
+      
+      return ResponseEntity
+          .badRequest()
+          .body(e.getResponse());
+    } catch (Exception e) {
+      
+      return ResponseEntity
+          .badRequest()
+          .body(e.getMessage());
+    }
     
-    return jwtTokenProvider.createToken("kim5288403@gmail.com", "admin");
   }
 
 }

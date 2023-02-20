@@ -13,7 +13,7 @@ import com.example.deukgeun.commom.enums.StatusEnum;
 import com.example.deukgeun.commom.exception.RequestValidException;
 import com.example.deukgeun.commom.request.AuthMailRequest;
 import com.example.deukgeun.commom.request.EmailRequest;
-import com.example.deukgeun.commom.response.Message;
+import com.example.deukgeun.commom.response.MessageResponse;
 import com.example.deukgeun.commom.service.implement.MailServiceImpl;
 import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +35,7 @@ public class MailController {
       }
       
       String authCode = mailservice.sendMail(request.getEmail());
-      Message response = Message
+      MessageResponse response = MessageResponse
           .builder()
           .data(authCode)
           .message("인증 메일 보내기 성공했습니다.")
@@ -62,7 +62,7 @@ public class MailController {
   //인증 이메일 확인
   @RequestMapping(method = RequestMethod.POST, path = "/confirm")
   public ResponseEntity<?> confirm(@Valid AuthMailRequest request, BindingResult bindingResult) {
-    Message response = null;
+    MessageResponse response = null;
     
     try {
       if (bindingResult.hasErrors()) {
@@ -71,7 +71,7 @@ public class MailController {
       
       mailservice.updateMailStatus(request, MailStatus.Y);
         
-      response = Message
+      response = MessageResponse
           .builder()
           .code(StatusEnum.OK.getCode())
           .status(StatusEnum.OK.getStatus())

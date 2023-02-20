@@ -2,16 +2,14 @@ package com.example.deukgeun.commom.validator;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.example.deukgeun.commom.repository.AuthMailRepository;
 import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class AuthMailCodeValidator implements ConstraintValidator<ValidAuthMailCode, Object>{
-  @Autowired
-  private AuthMailRepository authMailRepository;
-  
-  @Autowired
-  private ValidateServiceImpl validateService;
+  private final AuthMailRepository authMailRepository;
+  private final ValidateServiceImpl validateService;
   
   @Override
   public boolean isValid(Object object, ConstraintValidatorContext context) {

@@ -2,7 +2,7 @@ package com.example.deukgeun.commom.exception;
 
 import java.util.Map;
 import com.example.deukgeun.commom.enums.StatusEnum;
-import com.example.deukgeun.commom.response.Message;
+import com.example.deukgeun.commom.response.MessageResponse;
 
 public class RequestValidException extends RuntimeException{
 
@@ -22,8 +22,8 @@ public class RequestValidException extends RuntimeException{
     return result;
   }
   
-  public Message getResponse() {
-    return Message
+  public MessageResponse getResponse() {
+    return MessageResponse
         .builder()
         .code(StatusEnum.BAD_REQUEST.getCode())
         .status(StatusEnum.BAD_REQUEST.getStatus())

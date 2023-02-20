@@ -2,13 +2,13 @@ package com.example.deukgeun.commom.validator;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class PasswordConfirmValidator implements ConstraintValidator<ValidPasswordConfirm, Object> {
 
-  @Autowired
-  private ValidateServiceImpl validateService;
+  private final ValidateServiceImpl validateService;
   
   @Override
   public void initialize(ValidPasswordConfirm constraintAnnotation) {}
