@@ -4,10 +4,13 @@ import java.util.Base64;
 import java.util.Date;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import com.example.deukgeun.commom.request.TokenRequest;
+import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
 import com.example.deukgeun.trainer.service.implement.UserServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -20,11 +23,12 @@ import lombok.RequiredArgsConstructor;
 public class JwtTokenProvider {
   
   private String secretKey = "deuckgeunproject";
-  private long authTokenTime = 30 * 60 * 1000L;
+  private long authTokenTime = 1 * 60 * 1000L;
 //  private long authTokenTime = 1000L;
   private long refreshTokenTime = 30 * 60 * 3000L;
 //  private long refreshTokenTime = 1000L;
   private final UserServiceImpl userService;
+  private final JwtServiceImpl jwtService;
 
   @PostConstruct
   protected void init() {
@@ -46,8 +50,9 @@ public class JwtTokenProvider {
   }
   
   // refresh 토큰 생성 
-  public String createRefreshToken(String userPk) {
+  public String createRefreshToken(String userPk, String roles) {
       Claims claims = Jwts.claims().setSubject(userPk);
+      claims.put("roles", roles);
       Date now = new Date();
       
       return Jwts.builder()
@@ -57,8 +62,20 @@ public class JwtTokenProvider {
               .signWith(SignatureAlgorithm.HS256, secretKey)
               .compact();
   }
-
   
+  public void createTokenEntity(String authToken, String refreshToken) {
+    jwtService.createToken(TokenRequest.create(authToken, refreshToken));
+  }
+  
+  // auth 토큰 헤더 설정
+  public void setHeaderAccessToken(HttpServletResponse response, String accessToken) {
+      response.setHeader("Authorization", "bearer "+ accessToken);
+  }
+
+  // refresh 토큰 헤더 설정
+  public void setHeaderRefreshToken(HttpServletResponse response, String refreshToken) {
+      response.setHeader("RefreshToken", "bearer "+ refreshToken);
+  }
   
   // JWT 토큰에서 인증 정보 조회
   public Authentication getAuthentication(String token) {
@@ -71,14 +88,18 @@ public class JwtTokenProvider {
       return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
   }
   
+  // 토큰에서 회원 정보 추출
+  public String getUserRole(String token) {
+    return (String) Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("roles");
+  }
+  
   //Request의 Header에서 auth token 값을 가져옵니다.
   public String resolveAuthToken(HttpServletRequest request) {
       return request.getHeader("Authorization");
   }
   
-  //Request의 Header에서 refresh token 값을 가져옵니다.
-  public String resolveRefreshToken(HttpServletRequest request) {
-      return request.getHeader("RefreshToken");
+  public String getRefreshToken(String authToken) {
+    return jwtService.findByAuthToken(authToken).getRefreshToken();
   }
 
   // 토큰의 유효성 + 만료일자 확인

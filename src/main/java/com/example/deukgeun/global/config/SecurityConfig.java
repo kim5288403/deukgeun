@@ -10,8 +10,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import com.example.deukgeun.global.filter.JwtAuthenticationFilter;
-import com.example.deukgeun.global.handler.CustomAccessDeniedHandler;
-import com.example.deukgeun.global.handler.CustomAuthenticationEntryPoint;
 import com.example.deukgeun.global.provider.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 
@@ -40,8 +38,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 		.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
             UsernamePasswordAuthenticationFilter.class);
 		
-		http.exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler());
-	    http.exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint());
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
 

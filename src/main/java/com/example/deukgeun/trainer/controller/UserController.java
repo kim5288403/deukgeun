@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.example.deukgeun.commom.enums.StatusEnum;
 import com.example.deukgeun.commom.exception.RequestValidException;
+import com.example.deukgeun.commom.request.TokenRequest;
 import com.example.deukgeun.commom.response.JwtTokenResponse;
 import com.example.deukgeun.commom.response.MessageResponse;
+import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
 import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
 import com.example.deukgeun.global.provider.JwtTokenProvider;
 import com.example.deukgeun.trainer.entity.Profile;
@@ -37,9 +39,10 @@ public class UserController {
   private final String role = "trainer";
   private final UserServiceImpl userService;
   private final ProfileServiceImpl profileService;
-  private final PasswordEncoder passwordEncoder;
   private final ValidateServiceImpl validateService;
+  private final JwtServiceImpl jwtService;
   private final JwtTokenProvider jwtTokenProvider;
+  private final PasswordEncoder passwordEncoder;
   
   // 트레이너 리스트 조건 검색
   @RequestMapping(method = RequestMethod.GET, path = "/")
@@ -122,14 +125,15 @@ public class UserController {
       if (bindingResult.hasErrors()) {
         validateService.errorMessageHandling(bindingResult);
       }
+      String email = request.getEmail();
+      String authToken = jwtTokenProvider.createAuthToken(email, role);
+      String refreshToken = jwtTokenProvider.createRefreshToken(email, role);
       
-      String authToken = jwtTokenProvider.createAuthToken(request.getEmail(), role);
-      String refreshToken = jwtTokenProvider.createRefreshToken(request.getEmail());
+      jwtService.createToken(TokenRequest.create(authToken, refreshToken));
       
       JwtTokenResponse jwtTokenResponse = JwtTokenResponse
           .builder()
           .authToken(authToken)
-          .refreshTokne(refreshToken)
           .build();
       
       MessageResponse response = MessageResponse
