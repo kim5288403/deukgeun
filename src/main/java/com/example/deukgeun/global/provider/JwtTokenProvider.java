@@ -21,12 +21,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Component
 public class JwtTokenProvider {
-  
+
   private String secretKey = "deuckgeunproject";
+  
   private long authTokenTime = 1 * 60 * 1000L;
-//  private long authTokenTime = 1000L;
   private long refreshTokenTime = 30 * 60 * 3000L;
-//  private long refreshTokenTime = 1000L;
+  
   private final UserServiceImpl userService;
   private final JwtServiceImpl jwtService;
 
@@ -69,12 +69,12 @@ public class JwtTokenProvider {
   
   // auth 토큰 헤더 설정
   public void setHeaderAccessToken(HttpServletResponse response, String accessToken) {
-      response.setHeader("Authorization", "bearer "+ accessToken);
+      response.setHeader("Authorization", "bearer " + accessToken);
   }
 
   // refresh 토큰 헤더 설정
   public void setHeaderRefreshToken(HttpServletResponse response, String refreshToken) {
-      response.setHeader("RefreshToken", "bearer "+ refreshToken);
+      response.setHeader("RefreshToken", "bearer " + refreshToken);
   }
   
   // JWT 토큰에서 인증 정보 조회

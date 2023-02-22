@@ -12,7 +12,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
-import com.example.deukgeun.commom.entity.Token;
 import com.example.deukgeun.commom.enums.StatusEnum;
 import com.example.deukgeun.commom.response.MessageResponse;
 import com.example.deukgeun.global.provider.JwtTokenProvider;
@@ -25,14 +24,17 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
   private final JwtTokenProvider jwtTokenProvider;
 
   @Override
-  public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+  public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
       throws IOException, ServletException, AccessDeniedException {
     
-    String servletPath = ((HttpServletRequest) request).getServletPath();
-    if (!servletPath.equals("/trainer/test")) {
+    HttpServletRequest request = (HttpServletRequest) req;
+    HttpServletResponse response = (HttpServletResponse) res;
+    String servletPath = request.getServletPath();
+    
+    if (!servletPath.equals("/trainer/test") && !servletPath.equals("/jwt/check")) {
       chain.doFilter(request, response);
     } else {
-      String authToken = jwtTokenProvider.resolveAuthToken((HttpServletRequest) request);
+      String authToken = jwtTokenProvider.resolveAuthToken(request).replace("bearer ", "");
       
       // 유효한 auth token인지 확인합니다.
       if (jwtTokenProvider.validateToken(authToken)) {
@@ -42,21 +44,31 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
       // 유효하지 않은 auth token일 경우
       else {
          String refreshToken = jwtTokenProvider.getRefreshToken(authToken);
+         
          //유효한 refresh token인지 확인합니다.
          if (jwtTokenProvider.validateToken(refreshToken)) {
            String email = jwtTokenProvider.getUserPk(refreshToken);
            String role = jwtTokenProvider.getUserRole(refreshToken);
-           
            String newAuthToken = jwtTokenProvider.createAuthToken(email, role);
+           
            jwtTokenProvider.createTokenEntity(newAuthToken, refreshToken);
-           jwtTokenProvider.setHeaderAccessToken((HttpServletResponse) response, newAuthToken);
+           jwtTokenProvider.setHeaderAccessToken(response, newAuthToken);
            
            this.setAuthentication(newAuthToken);
            chain.doFilter(request, response);
-         } else {
-           
+         } 
+         // auth token and refresh token이 유효 하지 않은 경우
+         else {
+           response.setContentType("application/json");
+           response.setCharacterEncoding("utf-8");
+
+           MessageResponse messageResponse = MessageResponse.builder()
+               .code(StatusEnum.FORBIDDEN.getCode()).status(StatusEnum.FORBIDDEN.getStatus())
+               .message("로그인 유효기간이 초과했습니다. 재로그인 해주세요.").data(null).build();
+
+           new ObjectMapper().writeValue(response.getOutputStream(),
+               ResponseEntity.status(403).body(messageResponse));
          }
-         
       }
     }
   }

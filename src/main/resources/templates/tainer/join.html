@@ -29,7 +29,7 @@
 				<div class="col-6">
 					<label>이름</label>
 					<input type="text" name="name" value="" placeholder="이름">
-					<span class="errorMessage" name="valid_name"></span>
+					<span class="errorMessage" id="valid_name"></span>
 				</div>
 				
 				<div class="col-6"></div>
@@ -39,7 +39,7 @@
 					<ul class="actions">
 						<li>
 							<input type="email" name="email" value="" placeholder="이메일">
-							<span class="errorMessage" name="valid_email"></span>
+							<span class="errorMessage" id="valid_email"></span>
 						</li>
 						<li>
 							<input type="button" onclick="codeSendAjax()" value="인증 번호 보내기">
@@ -52,7 +52,7 @@
 					<ul class="actions">
 						<li>
 							<input type="text" name="code" value="" placeholder="인증번호">
-							<span class="errorMessage" name="valid_code"></span>
+							<span class="errorMessage" id="valid_code"></span>
 						</li>
 						<li>
 							<input type="button" onclick="codeConfirmAjax()" value="인증 확인">
@@ -63,13 +63,13 @@
 				<div class="col-6 col-12-xsmall">
 					<label>비밀번호</label> 
 					<input type="password" name="password" id="password" value="" placeholder="비밀번호">
-					<span class="errorMessage" name="valid_password"></span>
+					<span class="errorMessage" id="valid_password"></span>
 				</div>
 
 				<div class="col-6 col-12-xsmall">
 					<label>비밀번호 확인</label>
 					<input type="password" name="passwordConfirm" id="passwordConfirm" value="" placeholder="비밀번호 확인">
-					<span class="errorMessage" name="valid_passwordConfirm"></span>
+					<span class="errorMessage" id="valid_passwordConfirm"></span>
 				</div>
 
 				<!-- Break -->
@@ -78,7 +78,7 @@
 					<ul class="actions">
 						<li>
 							<input type="text" id="sample4_postcode" name="postcode" placeholder="우편번호" readonly="readonly" disabled="disabled">
-							<span class="errorMessage" name="valid_postcode"></span>
+							<span class="errorMessage" id="valid_postcode"></span>
 						</li>
 						<li>
 							<input type="button" onclick="sample4_execDaumPostcode()" value="우편번호 찾기">
@@ -103,20 +103,19 @@
 					<ul class="actions">
 						<li>
 							<input type="text" id="fileName" readonly="readonly" disabled="disabled">
-							<span class="errorMessage" name="valid_profile"></span>
+							<span class="errorMessage" id="valid_profile"></span>
 						</li>
 						<li>
 							<a href="#" class="button primary icon solid fa-search" id="fileUpload">file</a>
 						</li>
 					</ul>
-
 				</div>
 
 				<!-- Break -->
 				<div class="col-6">
 					<label>PT 가격 (1회 기준)</label>
 					<input type="text" name="price" maxlength=6 oninput="checkNumber(this)" placeholder="가격">
-					<span class="errorMessage" name="valid_price"></span>
+					<span class="errorMessage" id="valid_price"></span>
 				</div>
 
 				<!-- Break -->
@@ -130,7 +129,7 @@
 						<input type="radio" id="female" value=1 name="F">
 						<label for="female">여</label>
 					</div>
-					<span class="errorMessage" name="valid_gender"></span>
+					<span class="errorMessage" id="valid_gender"></span>
 				</div>
 
 				<!-- Break -->
@@ -144,13 +143,13 @@
 						<input type="radio" id="N" value="N" name="groupStatus">
 						<label for="N">무</label>
 					</div>
-					<span class="errorMessage" name="valid_groupStatus"></span>
+					<span class="errorMessage" id="valid_groupStatus"></span>
 				</div>
 
 				<div class="col-6">
 					<label>소속명</label>
 					<input type="text" name="groupName" value="" placeholder="소속명">
-					<span class="errorMessage" name="valid_GroupName"></span>
+					<span class="errorMessage" id="valid_GroupName"></span>
 				</div>
 
 				<!-- Break -->

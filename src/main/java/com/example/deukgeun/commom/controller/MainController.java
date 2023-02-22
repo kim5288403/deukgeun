@@ -1,4 +1,4 @@
-package com.example.deukgeun.web.controller;
+package com.example.deukgeun.commom.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,4 +30,10 @@ public class MainController {
 		model.addAttribute("menu", "join");
 		return "web/join";
 	}
+	
+	@GetMapping("/login")
+    public String login(Model model) {
+	  model.addAttribute("menu", "login");
+	  return "web/login";
+    }
 }

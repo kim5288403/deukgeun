@@ -3,6 +3,7 @@ package com.example.deukgeun.trainer.controller;
 
 import java.util.List;
 import java.util.UUID;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -120,7 +121,7 @@ public class UserController {
   }
   
   @RequestMapping(method = RequestMethod.POST, path = "/login")
-  public ResponseEntity<?> login(@Valid LoginRequest request, BindingResult bindingResult) {
+  public ResponseEntity<?> login(@Valid LoginRequest request, BindingResult bindingResult, HttpServletResponse response) {
     try {
       if (bindingResult.hasErrors()) {
         validateService.errorMessageHandling(bindingResult);
@@ -128,7 +129,7 @@ public class UserController {
       String email = request.getEmail();
       String authToken = jwtTokenProvider.createAuthToken(email, role);
       String refreshToken = jwtTokenProvider.createRefreshToken(email, role);
-      
+      jwtTokenProvider.setHeaderAccessToken(response, authToken);
       jwtService.createToken(TokenRequest.create(authToken, refreshToken));
       
       JwtTokenResponse jwtTokenResponse = JwtTokenResponse
@@ -136,7 +137,7 @@ public class UserController {
           .authToken(authToken)
           .build();
       
-      MessageResponse response = MessageResponse
+      MessageResponse messageResponse = MessageResponse
           .builder()
           .data(jwtTokenResponse)
           .message("로그인 성공 했습니다.")
@@ -146,7 +147,7 @@ public class UserController {
       
       return ResponseEntity
           .ok()
-          .body(response);
+          .body(messageResponse);
     } catch (RequestValidException e) {
       
       return ResponseEntity
