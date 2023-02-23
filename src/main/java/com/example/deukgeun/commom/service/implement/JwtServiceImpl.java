@@ -16,6 +16,10 @@ public class JwtServiceImpl implements JwtService{
     tokenRepository.save(refreshToken);
   }
   
+  public void deleteToken(String authToken) {
+    tokenRepository.deleteByAuthToken(authToken);
+  }
+  
   public Token findByAuthToken(String authToken) {
     return tokenRepository.findByAuthToken(authToken).orElse(null);
   }

@@ -32,11 +32,43 @@ function errorMessageReset() {
 }
 
 function setCookie(key, value) {
-	document.cookie = key + "=" + value;
+	//const d = new Date();
+ 	//d.setTime(d.getTime() + (1*60*1000));
+  	//let expires = "expires="+ d.toUTCString();
+	//document.cookie = key + "=" + value + ";" + expires;
+	document.cookie = key + "=" + value + ";";
 }
 
 function getCookie(key) {
 	let cookie = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
 	return cookie !== null ? cookie[0].replace(key + "=", "") : null;
 }
+
+function deleteCookie(key) {
+	document.cookie = key + "=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+}
+
+function setAuthToken(authToken) {
+	deleteCookie("authToken");
+	let newAuthToken = authToken.replace("Bearer ", "");
+	setCookie("authToken", newAuthToken);
+}
+
+function expirationAuthToken(message) {
+	deleteCookie("authToken");
+	defalutErrorAlert(message).then(function() {
+		window.location.replace("http://localhost:8080/login");
+	});
+}
+
+function loginSetMenu() {
+	$("li[class=1]").hide();
+	$("li[class=2]").show();
+}
+
+function logoutSetMenu() {
+	$("li[class=2]").hide();
+	$("li[class=1]").show();
+}
+
 	

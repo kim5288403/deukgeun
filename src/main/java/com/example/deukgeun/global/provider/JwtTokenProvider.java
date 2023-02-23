@@ -9,6 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import com.example.deukgeun.commom.entity.Token;
 import com.example.deukgeun.commom.request.TokenRequest;
 import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
 import com.example.deukgeun.trainer.service.implement.UserServiceImpl;
@@ -67,14 +68,18 @@ public class JwtTokenProvider {
     jwtService.createToken(TokenRequest.create(authToken, refreshToken));
   }
   
+  public void deleteTokenEntity(String authToken) {
+    jwtService.deleteToken(authToken);
+  }
+  
   // auth 토큰 헤더 설정
   public void setHeaderAccessToken(HttpServletResponse response, String accessToken) {
-      response.setHeader("Authorization", "bearer " + accessToken);
+      response.setHeader("Authorization", "Bearer " + accessToken);
   }
 
   // refresh 토큰 헤더 설정
   public void setHeaderRefreshToken(HttpServletResponse response, String refreshToken) {
-      response.setHeader("RefreshToken", "bearer " + refreshToken);
+      response.setHeader("RefreshToken", "Bearer " + refreshToken);
   }
   
   // JWT 토큰에서 인증 정보 조회
@@ -99,7 +104,8 @@ public class JwtTokenProvider {
   }
   
   public String getRefreshToken(String authToken) {
-    return jwtService.findByAuthToken(authToken).getRefreshToken();
+    Token refreshToken = jwtService.findByAuthToken(authToken);
+    return refreshToken != null ? refreshToken.getRefreshToken() : null;
   }
 
   // 토큰의 유효성 + 만료일자 확인

@@ -29,17 +29,15 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     
     HttpServletRequest request = (HttpServletRequest) req;
     HttpServletResponse response = (HttpServletResponse) res;
+    
     String servletPath = request.getServletPath();
     
-    if (!servletPath.equals("/trainer/test") && !servletPath.equals("/jwt/check")) {
-      chain.doFilter(request, response);
-    } else {
-      String authToken = jwtTokenProvider.resolveAuthToken(request).replace("bearer ", "");
+    if (servletPath.equals("/jwt/check")) {
+      String authToken = jwtTokenProvider.resolveAuthToken(request).replace("Bearer ", "");
       
       // 유효한 auth token인지 확인합니다.
       if (jwtTokenProvider.validateToken(authToken)) {
         this.setAuthentication(authToken);
-        chain.doFilter(request, response);
       }
       // 유효하지 않은 auth token일 경우
       else {
@@ -51,26 +49,33 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
            String role = jwtTokenProvider.getUserRole(refreshToken);
            String newAuthToken = jwtTokenProvider.createAuthToken(email, role);
            
+           jwtTokenProvider.deleteTokenEntity(authToken);
            jwtTokenProvider.createTokenEntity(newAuthToken, refreshToken);
            jwtTokenProvider.setHeaderAccessToken(response, newAuthToken);
            
            this.setAuthentication(newAuthToken);
-           chain.doFilter(request, response);
-         } 
+         }
          // auth token and refresh token이 유효 하지 않은 경우
          else {
+           jwtTokenProvider.deleteTokenEntity(authToken);
+           
            response.setContentType("application/json");
            response.setCharacterEncoding("utf-8");
-
-           MessageResponse messageResponse = MessageResponse.builder()
-               .code(StatusEnum.FORBIDDEN.getCode()).status(StatusEnum.FORBIDDEN.getStatus())
-               .message("로그인 유효기간이 초과했습니다. 재로그인 해주세요.").data(null).build();
+           
+           MessageResponse messageResponse = MessageResponse
+               .builder()
+               .code(StatusEnum.FORBIDDEN.getCode())
+               .status(StatusEnum.FORBIDDEN.getStatus())
+               .message("로그인 유효기간이 초과했습니다. 재로그인 해주세요.")
+               .data(null)
+               .build();
 
            new ObjectMapper().writeValue(response.getOutputStream(),
                ResponseEntity.status(403).body(messageResponse));
          }
       }
     }
+    chain.doFilter(request, response);
   }
   
   // SecurityContext 에 Authentication 객체를 저장합니다.

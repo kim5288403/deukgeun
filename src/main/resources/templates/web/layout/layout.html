@@ -32,27 +32,31 @@
 			// 2. 저장된 토큰 있을 경우 백으로 토큰 유효성 검사를 넘김
 			// 2-1. 성공 시 로그인된 경우에 필요 없는 메뉴들 하이드
 			// 2-2. 실패 시 로그인 페이지로 이동 및 쿠키 삭제
-			// 1. 없을 경우 아무일도 일어나지 않는다.
-			
+			// 3. 없을 경우 아무일도 일어나지 않는다.
 			let authToken = getCookie("authToken");
+			
 			if (authToken !== null) {
 				$.ajax({
 					url : "/jwt/check",
 					type : "post",
 					beforeSend: function (xhr) {
-				    	xhr.setRequestHeader("Authorization","bearer " + authToken);
+				    	xhr.setRequestHeader("Authorization","Bearer " + authToken);
 				    },
 					success : function(res, status, request) {
-						console.log(res);
-						console.log(request.getResponseHeader("Authorization"));
-						//setCookie("authToken", res.data.authToken);
-						//window.location.replace("http://localhost:8080/");
-					},
-					error : function(res) {
-				
+						loginSetMenu();
+						
+						if (res !== "" && res.body.code === 403) {
+							expirationAuthToken(res.body.message);
+							logoutSetMenu();
+						} 
+						
+						if (request.getResponseHeader("Authorization") !== null) {
+							setAuthToken(request.getResponseHeader("Authorization"));
+						}
 					}
-					
 				});
+			} else {
+				logoutSetMenu();
 			}
 
 		});
