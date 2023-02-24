@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.example.deukgeun.commom.enums.StatusEnum;
 import com.example.deukgeun.commom.request.TokenRequest;
-import com.example.deukgeun.commom.response.JwtTokenResponse;
+import com.example.deukgeun.commom.response.LoginResponse;
 import com.example.deukgeun.commom.response.MessageResponse;
 import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
 import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
-import com.example.deukgeun.global.provider.JwtTokenProvider;
+import com.example.deukgeun.global.provider.JwtProvider;
 import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.request.LoginRequest;
@@ -41,7 +41,7 @@ public class UserController {
   private final ProfileServiceImpl profileService;
   private final ValidateServiceImpl validateService;
   private final JwtServiceImpl jwtService;
-  private final JwtTokenProvider jwtTokenProvider;
+  private final JwtProvider jwtProvider;
   private final PasswordEncoder passwordEncoder;
 
   // 트레이너 리스트 조건 검색
@@ -115,19 +115,20 @@ public class UserController {
     }
 
     String email = request.getEmail();
-    String authToken = jwtTokenProvider.createAuthToken(email, role);
-    String refreshToken = jwtTokenProvider.createRefreshToken(email, role);
+    String authToken = jwtProvider.createAuthToken(email, role);
+    String refreshToken = jwtProvider.createRefreshToken(email, role);
     
-    jwtTokenProvider.setHeaderAccessToken(response, authToken);
+    jwtProvider.setHeaderAccessToken(response, authToken);
     jwtService.createToken(TokenRequest.create(authToken, refreshToken));
 
-    JwtTokenResponse jwtTokenResponse = JwtTokenResponse.builder()
+    LoginResponse loginResponse = LoginResponse.builder()
         .authToken(authToken)
+        .role(role)
         .build();
 
     MessageResponse messageResponse = MessageResponse
         .builder()
-        .data(jwtTokenResponse)
+        .data(loginResponse)
         .message("로그인 성공 했습니다.")
         .code(StatusEnum.OK.getCode())
         .status(StatusEnum.OK.getStatus())

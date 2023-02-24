@@ -14,14 +14,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 import com.example.deukgeun.commom.enums.StatusEnum;
 import com.example.deukgeun.commom.response.MessageResponse;
-import com.example.deukgeun.global.provider.JwtTokenProvider;
+import com.example.deukgeun.global.provider.JwtProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends GenericFilterBean {
 
-  private final JwtTokenProvider jwtTokenProvider;
+  private final JwtProvider jwtProvider;
 
   @Override
   public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
@@ -31,33 +31,39 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     HttpServletResponse response = (HttpServletResponse) res;
     
     String servletPath = request.getServletPath();
+   
     
     if (servletPath.equals("/jwt/check")) {
-      String authToken = jwtTokenProvider.resolveAuthToken(request).replace("Bearer ", "");
+      String authToken = jwtProvider.resolveAuthToken(request).replace("Bearer ", "");
       
       // 유효한 auth token인지 확인합니다.
-      if (jwtTokenProvider.validateToken(authToken)) {
+      if (jwtProvider.validateToken(authToken)) {
+        String role = jwtProvider.getUserRole(authToken);
+        
+        jwtProvider.setHeaderRole(response, role);
+        jwtProvider.setHeaderAccessToken(response, authToken);
+        
         this.setAuthentication(authToken);
       }
       // 유효하지 않은 auth token일 경우
       else {
-         String refreshToken = jwtTokenProvider.getRefreshToken(authToken);
+         String refreshToken = jwtProvider.getRefreshToken(authToken);
          
          //유효한 refresh token인지 확인합니다.
-         if (jwtTokenProvider.validateToken(refreshToken)) {
-           String email = jwtTokenProvider.getUserPk(refreshToken);
-           String role = jwtTokenProvider.getUserRole(refreshToken);
-           String newAuthToken = jwtTokenProvider.createAuthToken(email, role);
+         if (jwtProvider.validateToken(refreshToken)) {
+           String newAuthToken = getNewAuthToken(refreshToken);
+           String role = jwtProvider.getUserRole(newAuthToken);
            
-           jwtTokenProvider.deleteTokenEntity(authToken);
-           jwtTokenProvider.createTokenEntity(newAuthToken, refreshToken);
-           jwtTokenProvider.setHeaderAccessToken(response, newAuthToken);
+           jwtProvider.deleteTokenEntity(authToken);
+           jwtProvider.createTokenEntity(newAuthToken, refreshToken);
+           jwtProvider.setHeaderRole(response, role);
+           jwtProvider.setHeaderAccessToken(response, newAuthToken);
            
            this.setAuthentication(newAuthToken);
          }
          // auth token and refresh token이 유효 하지 않은 경우
          else {
-           jwtTokenProvider.deleteTokenEntity(authToken);
+           jwtProvider.deleteTokenEntity(authToken);
            
            response.setContentType("application/json");
            response.setCharacterEncoding("utf-8");
@@ -75,14 +81,23 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
          }
       }
     }
+    
     chain.doFilter(request, response);
   }
   
   // SecurityContext 에 Authentication 객체를 저장합니다.
-  public void setAuthentication(String token) {
+  private void setAuthentication(String token) {
       // 토큰으로부터 유저 정보를 받아옵니다.
-      Authentication authentication = jwtTokenProvider.getAuthentication(token);
+      Authentication authentication = jwtProvider.getAuthentication(token);
       // SecurityContext 에 Authentication 객체를 저장합니다.
       SecurityContextHolder.getContext().setAuthentication(authentication);
+  }
+  
+  private String getNewAuthToken(String refreshToken) {
+    String email = jwtProvider.getUserPk(refreshToken);
+    String role = jwtProvider.getUserRole(refreshToken);
+    String newAuthToken = jwtProvider.createAuthToken(email, role);
+    
+    return newAuthToken;
   }
 }

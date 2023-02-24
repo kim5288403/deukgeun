@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Component
-public class JwtTokenProvider {
+public class JwtProvider {
 
   private String secretKey = "deuckgeunproject";
   
@@ -82,6 +82,11 @@ public class JwtTokenProvider {
       response.setHeader("RefreshToken", "Bearer " + refreshToken);
   }
   
+  // role 헤더 설정
+  public void setHeaderRole(HttpServletResponse response, String role) {
+      response.setHeader("role", role);
+  }
+  
   // JWT 토큰에서 인증 정보 조회
   public Authentication getAuthentication(String token) {
       UserDetails userDetails = userService.loadUserByUsername(this.getUserPk(token));
@@ -103,6 +108,7 @@ public class JwtTokenProvider {
       return request.getHeader("Authorization");
   }
   
+  //저장된 refreshToken 가져옵니다.  
   public String getRefreshToken(String authToken) {
     Token refreshToken = jwtService.findByAuthToken(authToken);
     return refreshToken != null ? refreshToken.getRefreshToken() : null;

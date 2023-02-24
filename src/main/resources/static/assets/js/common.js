@@ -36,7 +36,7 @@ function setCookie(key, value) {
  	//d.setTime(d.getTime() + (1*60*1000));
   	//let expires = "expires="+ d.toUTCString();
 	//document.cookie = key + "=" + value + ";" + expires;
-	document.cookie = key + "=" + value + ";";
+	document.cookie = key + "=" + value;
 }
 
 function getCookie(key) {
@@ -48,14 +48,9 @@ function deleteCookie(key) {
 	document.cookie = key + "=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
 }
 
-function setAuthToken(authToken) {
+function logoutCookie(message) {
 	deleteCookie("authToken");
-	let newAuthToken = authToken.replace("Bearer ", "");
-	setCookie("authToken", newAuthToken);
-}
-
-function expirationAuthToken(message) {
-	deleteCookie("authToken");
+	deleteCookie("role");
 	defalutErrorAlert(message).then(function() {
 		window.location.replace("http://localhost:8080/login");
 	});
@@ -70,5 +65,4 @@ function logoutSetMenu() {
 	$("li[class=2]").hide();
 	$("li[class=1]").show();
 }
-
 	

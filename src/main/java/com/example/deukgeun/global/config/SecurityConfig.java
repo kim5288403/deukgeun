@@ -10,7 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import com.example.deukgeun.global.filter.JwtAuthenticationFilter;
-import com.example.deukgeun.global.provider.JwtTokenProvider;
+import com.example.deukgeun.global.provider.JwtProvider;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
   
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtProvider jwtTokenProvider;
   
 	@Bean
 	public PasswordEncoder getPasswordEncoder() {

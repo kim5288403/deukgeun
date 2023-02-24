@@ -36,6 +36,8 @@
 			let authToken = getCookie("authToken");
 			
 			if (authToken !== null) {
+				authToken = authToken.replace("Bearer ", "").replace(";", ""); 
+				
 				$.ajax({
 					url : "/jwt/check",
 					type : "post",
@@ -43,21 +45,49 @@
 				    	xhr.setRequestHeader("Authorization","Bearer " + authToken);
 				    },
 					success : function(res, status, request) {
-						loginSetMenu();
-						
 						if (res !== "" && res.body.code === 403) {
-							expirationAuthToken(res.body.message);
+							logoutCookie(res.body.message);
 							logoutSetMenu();
 						} 
 						
 						if (request.getResponseHeader("Authorization") !== null) {
-							setAuthToken(request.getResponseHeader("Authorization"));
+							let newAuthToken = request.getResponseHeader("Authorization");
+							setCookie("authToken", newAuthToken);
+							loginSetMenu();
+						}
+						
+						if (request.getResponseHeader("role") !== null) {
+							let role = request.getResponseHeader("role");
+							setCookie("role", role);
 						}
 					}
 				});
 			} else {
 				logoutSetMenu();
 			}
+			
+			$("a[id=logout]").on("click", function(e) {
+				e.preventDefault();
+				
+				if (authToken !== null) {
+					$.ajax({
+						url : "/jwt/logout",
+						type : "get",
+						beforeSend : function (xhr) {
+							xhr.setRequestHeader("Authorization","Bearer " + authToken);
+						},
+						success : function(res) {
+							if (res.code === 200) {
+								defalutSuccessAlert(res.message).then(function() {
+									deleteCookie("authToken");
+									deleteCookie("role");
+									window.location.replace("http://localhost:8080/login");
+								});
+							}
+						}
+					});
+				}
+			});
 
 		});
 	</script>
