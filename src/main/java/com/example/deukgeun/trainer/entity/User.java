@@ -13,6 +13,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import com.example.deukgeun.commom.enums.Gender;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,6 +43,10 @@ public class User extends BaseEntity implements UserDetails{
   @Column(name = "group_status", nullable = false)
   @Enumerated(EnumType.STRING)
   private GroupStatus groupStatus;
+  
+  @Column(name = "gender", nullable = false)
+  @Enumerated(EnumType.STRING)
+  private Gender gender;
 
   @Column(length = 50, nullable = false)
   private String groupName;
@@ -64,13 +69,16 @@ public class User extends BaseEntity implements UserDetails{
   @Column(name = "profile_id")
   private Long profileId;
   
+  @Column(length = 50, nullable = false)
+  private Integer price;
+  
   @OneToOne
   @JoinColumn(name = "profile_id", insertable = false, updatable = false, nullable = false)
   private Profile profile;
 
   @Builder
-  public User(String name, String email, String password, GroupStatus groupStatus,
-      String groupName, String postcode, String jibunAddress, String roadAddress, String detailAddress, String extraAddress, Long profileId) {
+  public User(String name, String email, String password, GroupStatus groupStatus, Gender gender
+      , Integer price,String groupName, String postcode, String jibunAddress, String roadAddress, String detailAddress, String extraAddress, Long profileId) {
     this.name = name;
     this.email = email;
     this.password = password;
@@ -82,6 +90,8 @@ public class User extends BaseEntity implements UserDetails{
     this.detailAddress = detailAddress;
     this.extraAddress = extraAddress;
     this.profileId = profileId;
+    this.gender = gender;
+    this.price = price;
   }
 
   @Override

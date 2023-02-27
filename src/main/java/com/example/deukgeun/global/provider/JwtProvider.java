@@ -25,8 +25,8 @@ public class JwtProvider {
 
   private String secretKey = "deuckgeunproject";
   
-  private long authTokenTime = 1 * 60 * 1000L;
-  private long refreshTokenTime = 30 * 60 * 3000L;
+  private long authTokenTime = 30 * 60 * 1000L;
+  private long refreshTokenTime = 60 * 60 * 3000L;
   
   private final UserServiceImpl userService;
   private final JwtServiceImpl jwtService;
@@ -105,7 +105,7 @@ public class JwtProvider {
   
   //Request의 Header에서 auth token 값을 가져옵니다.
   public String resolveAuthToken(HttpServletRequest request) {
-      return request.getHeader("Authorization");
+      return request.getHeader("Authorization").replace("Bearer ", "");
   }
   
   //저장된 refreshToken 가져옵니다.  

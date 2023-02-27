@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{web/layout/layout}">
+<th:block layout:fragment="css">
+	<style>
+		.errorMessage {
+			color: red;
+			margin-left: 10px;
+		}
+	</style>
+</th:block>
+<th:block layout:fragment="content">
+	<!-- Posts -->
+	<section class="post">
+		<header class="major">
+			<h1>
+				마이 페이지
+			</h1>
+			<p>
+				Aenean ornare velit lacus varius enim ullamcorper proin aliquam<br>
+				facilisis ante sed etiam magna interdum congue. Lorem ipsum dolor<br>
+				amet nullam sed etiam veroeros.
+			</p>
+		</header>
+		<form id="join" method="post" action=""
+			enctype="multipart/form-data">
+			<div class="row gtr-uniform">
+			
+				<div class="col-6">
+				<label>프로필 이미지</label>
+					<p>
+						<span class="image left">
+							<img id="profile" src="/images/pic08.jpg" alt="" style="border: solid #eeeeee; cursor: pointer;">
+						</span>
+					</p>
+				</div>
+				
+				<div class="col-6">
+				</div>
+				
+				<div class="col-6">
+					<label>이름</label>
+					<input type="text" name="name" value="" placeholder="이름">
+					<span class="errorMessage" id="valid_name"></span>
+				</div>
+				
+				<div class="col-6">
+					<label>이메일</label>
+					<input type="text" name="email" value="" placeholder="이메일" disabled="disabled">
+					<input type="hidden" name="email" value="" >
+					<span class="errorMessage" id="valid_email"></span>
+				</div>
+
+				<!-- Break -->
+				<div class="col-12">
+					<label>활동 주소 / 직장 주소</label>
+					<ul class="actions">
+						<li>
+							<input type="text" id="sample4_postcode" name="postcode" placeholder="우편번호" readonly="readonly" disabled="disabled">
+							<span class="errorMessage" id="valid_postcode"></span>
+						</li>
+						<li>
+							<input type="button" onclick="sample4_execDaumPostcode()" value="우편번호 찾기">
+						</li>
+					</ul>
+				</div>
+
+				<div class="col-6">
+					<input type="text" id="sample4_roadAddress" name="roadAddress" placeholder="도로명주소">
+					<input type="text" id="sample4_jibunAddress" name="jibunAddress" placeholder="지번주소">
+					<span id="guide" style="color: #999; display: none"></span>
+				</div>
+
+				<div class="col-6">
+					<input type="text" id="sample4_detailAddress" name="detailAddress" placeholder="상세주소">
+					<input type="text" id="sample4_extraAddress" name="extraAddress" placeholder="참고항목">
+				</div>
+
+				<!-- Break -->
+				<div class="col-6">
+					<label>PT 가격 (1회 기준)</label>
+					<input type="text" name="price" maxlength=6 oninput="checkNumber(this)" placeholder="가격">
+					<span class="errorMessage" id="valid_price"></span>
+				</div>
+				
+				<!-- Break -->
+				<div class="col-6">
+				</div>
+
+				<!-- Break -->
+				<div class="col-6">
+					<label>성별</label>
+					<div>
+						<input type="radio" id="M" name="gender" value="M">
+						<label for="M">남</label>
+					</div>
+					<div>
+						<input type="radio" id="F" value="F" name="gender">
+						<label for="F">여</label>
+					</div>
+					<span class="errorMessage" id="valid_gender"></span>
+				</div>
+
+				<!-- Break -->
+				<div class="col-6">
+					<label>소속</label>
+					<div>
+						<input type="radio" id="Y" name="groupStatus" value="Y">
+						<label for="Y">유</label>
+					</div>
+					<div>
+						<input type="radio" id="N" value="N" name="groupStatus">
+						<label for="N">무</label>
+					</div>
+					<span class="errorMessage" id="valid_groupStatus"></span>
+				</div>
+
+				<div class="col-6">
+					<label>소속명</label>
+					<input type="text" name="groupName" value="" placeholder="소속명">
+					<span class="errorMessage" id="valid_GroupName"></span>
+				</div>
+
+				<!-- Break -->
+				<div class="col-12">
+					<ul class="actions" style="justify-content: center;">
+						<li><input type="button" value="update" class="primary"
+							onclick="updateAjax()" ></li>
+						<li><input type="reset" value="Reset"></li>
+					</ul>
+				</div>
+
+			</div>
+		</form>
+		<input type="file" name="profileImage" accept="image/*" hidden="">
+	</section>
+</th:block>
+<th:block layout:fragment="script">
+	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function () {
+			let authToken = getCookie("authToken");
+			$("input:disabled").css("background-color", "#eeeeee");
+			
+			if (authToken !== null) {
+				authToken = authToken.replace("Bearer ", "").replaceAll(";", "").replaceAll(" ", "");
+				$.ajax({
+					url : "/trainer/my-page",
+					type : "get",
+					beforeSend: function (xhr) {
+				    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);
+				    },
+					success : function(res, status, request) {
+						$.each(res.data, function (key, value) {
+							if (key === "gender") {
+								$("input:radio[id='" + value + "']").prop("checked", true);
+							} else if (key === "groupStatus") {
+								$("input:radio[id='" + value + "']").prop("checked", true);
+							} else if (key === "profile") {
+								console.log(value.path);
+								$("img[id=profile]").attr("src", "/images/trainer/profile/" + value.path);
+							} else {
+								$("input[name='" + key + "']").val(value);
+							}
+						})
+					}
+				});
+			}
+			
+			$("img[id=profile]").on("click", function () {
+				$("input[name=profileImage]").click();
+			});
+			
+			$("input[name=profileImage]").change(function () {
+				let file = $(this)[0].files[0];
+				let reader = new FileReader();
+				reader.onload = function(e) {
+					$("img[id=profile]").attr("src", e.target.result);
+				};
+				reader.readAsDataURL(file);
+			});
+			
+			$("input:radio[id=N]").on("click", function() {
+				$("input[name=groupName]").val("");
+			})
+		});
+		
+		function update() {
+			let formData = new FormData();
+			let profile = $("input[name=profileImage]")[0].files[0];
+			
+			let data = {
+				email : $("input[name=email]").val(),
+				name : $("input[name=name]").val(),
+				postcode : $("input[name=postcode]").val(),
+				jibunAddress : $("input[name=jibunAddress]").val(),
+				roadAddress : $("input[name=roadAddress]").val(),
+				detailAddress : $("input[name=detailAddress]").val(),
+				extraAddress : $("input[name=extraAddress]").val(),
+				price : $("input[name=price]").val(),
+				gender : $("input[name=gender]:checked").val(),
+				groupStatus : $("input[name=groupStatus]:checked").val(),
+				groupName : $("input[name=groupName]").val(),
+			};
+			
+			formData.append("profile", profile);
+			formData.append("request", new Blob([JSON.stringify(data)], {type: "application/json"}));
+			
+			return formData;
+		}
+		
+		function updateAjax() {
+			errorMessageReset();
+			
+			let formData = update();
+			
+			$.ajax({
+				url : "/trainer/info/update",
+				type : "post",
+				processData : false,
+				contentType : false,
+				cache : false,
+				data :formData,
+				dataType: "json",
+				success : function(res) {
+					if (res.code === 200) {
+						defalutSuccessAlert(res.message, "성공").then(function (){
+							window.location.reload();
+						});
+					}
+				},
+				error : function(res) {
+					if (res.responseJSON.code === 400) {
+						errorMessage(res.responseJSON.data);
+					}
+				}
+			});
+		}
+		
+		function sample4_execDaumPostcode() {
+			new daum.Postcode(
+					{
+						oncomplete : function(data) {
+							// 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+							// 도로명 주소의 노출 규칙에 따라 주소를 표시한다.
+							// 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+							var roadAddr = data.roadAddress; // 도로명 주소 변수
+							var extraRoadAddr = ''; // 참고 항목 변수
+
+							// 법정동명이 있을 경우 추가한다. (법정리는 제외)
+							// 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+							if (data.bname !== ''
+									&& /[동|로|가]$/g.test(data.bname)) {
+								extraRoadAddr += data.bname;
+							}
+							// 건물명이 있고, 공동주택일 경우 추가한다.
+							if (data.buildingName !== ''
+									&& data.apartment === 'Y') {
+								extraRoadAddr += (extraRoadAddr !== '' ? ', '
+										+ data.buildingName : data.buildingName);
+							}
+							// 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+							if (extraRoadAddr !== '') {
+								extraRoadAddr = ' (' + extraRoadAddr + ')';
+							}
+
+							// 우편번호와 주소 정보를 해당 필드에 넣는다.
+							document.getElementById('sample4_postcode').value = data.zonecode;
+							document.getElementById("sample4_roadAddress").value = roadAddr;
+							document.getElementById("sample4_jibunAddress").value = data.jibunAddress;
+
+							// 참고항목 문자열이 있을 경우 해당 필드에 넣는다.
+							if (roadAddr !== '') {
+								document.getElementById("sample4_extraAddress").value = extraRoadAddr;
+							} else {
+								document.getElementById("sample4_extraAddress").value = '';
+							}
+
+							var guideTextBox = document.getElementById("guide");
+							// 사용자가 '선택 안함'을 클릭한 경우, 예상 주소라는 표시를 해준다.
+							if (data.autoRoadAddress) {
+								var expRoadAddr = data.autoRoadAddress
+										+ extraRoadAddr;
+								guideTextBox.innerHTML = '(예상 도로명 주소 : '
+										+ expRoadAddr + ')';
+								guideTextBox.style.display = 'block';
+
+							} else if (data.autoJibunAddress) {
+								var expJibunAddr = data.autoJibunAddress;
+								guideTextBox.innerHTML = '(예상 지번 주소 : '
+										+ expJibunAddr + ')';
+								guideTextBox.style.display = 'block';
+							} else {
+								guideTextBox.innerHTML = '';
+								guideTextBox.style.display = 'none';
+							}
+						}
+					}).open();
+		}
+	</script>
+</th:block>

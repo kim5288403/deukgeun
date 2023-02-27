@@ -49,8 +49,12 @@ function deleteCookie(key) {
 }
 
 function logoutCookie(message) {
-	deleteCookie("authToken");
-	deleteCookie("role");
+	let expiration = 'Sat, 01 Jan 1972 00:00:00 GMT';
+	document.cookie = "authToken=; expires=" + expiration;
+	document.cookie = "role=; expires=" + expiration;
+	document.cookie = "authToken=; expires=" + expiration + "; path=" + "/";
+	document.cookie = "role=; expires=" + expiration + "; path=" + "/";
+	
 	defalutErrorAlert(message).then(function() {
 		window.location.replace("http://localhost:8080/login");
 	});

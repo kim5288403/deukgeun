@@ -2,10 +2,12 @@ package com.example.deukgeun.commom.exception.advice;
 
 import java.io.UnsupportedEncodingException;
 import javax.mail.MessagingException;
+import javax.validation.ValidationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.example.deukgeun.commom.exception.RequestValidException;
+import io.jsonwebtoken.ExpiredJwtException;
 
 @RestControllerAdvice
 public class RestControllerAdvisor {
@@ -37,5 +39,21 @@ public class RestControllerAdvisor {
         .badRequest()
         .body(e.getMessage());
   }
+  
+  @ExceptionHandler(ValidationException.class)
+  public ResponseEntity<?> validationException(ValidationException e) {
+    return ResponseEntity
+        .badRequest()
+        .body(e.getMessage());
+  }
+  
+  @ExceptionHandler(ExpiredJwtException.class)
+  public ResponseEntity<?> expiredJwtException(ExpiredJwtException e) {
+    return ResponseEntity
+        .badRequest()
+        .body(e.getMessage());
+  }
+  
+  
   
 }

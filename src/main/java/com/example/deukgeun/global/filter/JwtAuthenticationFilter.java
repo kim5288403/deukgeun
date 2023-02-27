@@ -34,7 +34,8 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
    
     
     if (servletPath.equals("/jwt/check")) {
-      String authToken = jwtProvider.resolveAuthToken(request).replace("Bearer ", "");
+      String authToken = jwtProvider.resolveAuthToken(request);
+      String refreshToken = jwtProvider.getRefreshToken(authToken);
       
       // 유효한 auth token인지 확인합니다.
       if (jwtProvider.validateToken(authToken)) {
@@ -47,7 +48,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
       }
       // 유효하지 않은 auth token일 경우
       else {
-         String refreshToken = jwtProvider.getRefreshToken(authToken);
+         refreshToken = jwtProvider.getRefreshToken(authToken);
          
          //유효한 refresh token인지 확인합니다.
          if (jwtProvider.validateToken(refreshToken)) {

@@ -19,7 +19,7 @@ public class ProfileServiceImpl implements ProfileService {
   private ProfileRepository profileRepository;
   
   //트레이너 profile 저장 경로
-  private static final String FILE_PATH = "src/main/resources/trainer/profile";
+  private static final String FILE_PATH = "src/main/resources/images/trainer/profile";
 
   //file custom validate 
   public BindingResult validator(MultipartFile file, BindingResult bindingResult) {

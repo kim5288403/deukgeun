@@ -19,7 +19,7 @@ import lombok.Data;
 @ValidPasswordConfirm
 @ValidAuthEmail
 @ValidGroupName
-public class UserJoinRequest {
+public class JoinRequest {
 
   @NotBlank(message = "이름 필수 입력 값입니다.")
   @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-z-_]{2,10}$", message = "이름은 한글 2~10자리여야 합니다.")
@@ -64,12 +64,13 @@ public class UserJoinRequest {
   
   private String code;
 
-  public static User create(UserJoinRequest request, PasswordEncoder passwordEncoder, Long profileId) {
+  public static User create(JoinRequest request, PasswordEncoder passwordEncoder, Long profileId) {
     return User
         .builder()
         .name(request.getName())
         .email(request.getEmail())
         .password(passwordEncoder.encode(request.getPassword()))
+        .gender(request.gender)
         .groupStatus(request.getGroupStatus())
         .groupName(request.getGroupName())
         .postcode(request.getPostcode())
@@ -78,6 +79,7 @@ public class UserJoinRequest {
         .detailAddress(request.getDetailAddress())
         .extraAddress(request.getExtraAddress())
         .profileId(profileId)
+        .price(request.price)
         .build();
   }
 
