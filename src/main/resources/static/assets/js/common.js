@@ -41,7 +41,13 @@ function setCookie(key, value) {
 
 function getCookie(key) {
 	let cookie = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
-	return cookie !== null ? cookie[0].replace(key + "=", "") : null;
+	
+	if (cookie !== null) {
+		cookie = cookie[0].replace(key + "=", "");
+		cookie = cookie.replace("Bearer ", "").replaceAll(";", "").replaceAll(" ", "");
+	}
+	
+	return cookie;
 }
 
 function deleteCookie(key) {

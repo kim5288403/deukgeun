@@ -33,8 +33,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         .orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다."));
   }
   
-  public void infoUpdate(UserInfoUpdateRequest request) {
-    userRepository.infoUpdate(
+  public void updateInfo(UserInfoUpdateRequest request) {
+    userRepository.updateInfo(
         request.getEmail(),
         request.getName(),
         request.getGender(),
@@ -48,12 +48,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         request.getGroupName()
         );
   }
-
+  
   @Override
   public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
     return (UserDetails) userRepository.findByEmail(email)
         .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
   }
-
-
 }

@@ -37,12 +37,6 @@ public class MainController {
 	  return "web/login";
     }
 	
-	@GetMapping("/my-page/trainer")
-    public String trainerMyPage(Model model) {
-      model.addAttribute("menu", "myPage");
-      return "trainer/myPage";
-    }
-	
 	@GetMapping("/my-page/user")
 	public String defaultMyPage(Model model) {
 	  model.addAttribute("menu", "myPage");

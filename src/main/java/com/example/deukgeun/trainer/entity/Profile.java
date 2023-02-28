@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 public class Profile extends BaseEntity {
 
   @Id
-  @Column(name = "profile_id", unique = true, nullable = false)
+  @Column(name = "profile_id")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 

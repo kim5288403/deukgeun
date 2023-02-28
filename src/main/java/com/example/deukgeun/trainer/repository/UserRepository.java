@@ -33,9 +33,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
       + " m.groupStatus = :groupStatus,"
       + " m.groupName = :groupName"
       + " where m.email = :email")
-  int infoUpdate(
-      @Param(value = "email") String email,
-      @Param(value = "name") String name,
+  int updateInfo(
+      @Param(value = "email")String email,
+      @Param(value = "name")String name,
       @Param(value = "gender")Gender gender,
       @Param(value = "postcode")String postcode,
       @Param(value = "jibunAddress")String jibunAddress,

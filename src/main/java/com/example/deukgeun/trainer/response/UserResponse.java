@@ -2,7 +2,6 @@ package com.example.deukgeun.trainer.response;
 
 import com.example.deukgeun.commom.enums.Gender;
 import com.example.deukgeun.trainer.entity.GroupStatus;
-import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,8 +21,6 @@ public class UserResponse {
 
   private String groupName;
   
-  private Profile profile;
-  
   private String postcode;
   
   private String jibunAddress;
@@ -41,7 +38,6 @@ public class UserResponse {
     this.name = user.getName();
     this.groupStatus = user.getGroupStatus();
     this.groupName = user.getGroupName();
-    this.profile = user.getProfile();
     this.postcode = user.getPostcode();
     this.jibunAddress = user.getJibunAddress();
     this.roadAddress = user.getRoadAddress();

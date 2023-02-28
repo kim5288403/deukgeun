@@ -1,5 +1,6 @@
 package com.example.deukgeun.trainer.service.implement;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,6 +41,10 @@ public class ProfileServiceImpl implements ProfileService {
     return bindingResult;
   }
   
+  public Profile getProfile(Long profileId) {
+    return profileRepository.getById(profileId);
+  }
+  
   //file type 비교 
   private boolean isSupportedContentType(String fileType) {
     return fileType.equals("image/png") || fileType.equals("image/jpg")
@@ -47,7 +52,7 @@ public class ProfileServiceImpl implements ProfileService {
   }
   
   //server에 file 저장
-  public String serverSave(MultipartFile profile, String filename) {
+  public String saveServer(MultipartFile profile, String filename) {
     try {
       Path path = Paths.get(FILE_PATH).toAbsolutePath().normalize();
       Path targetPath = path.resolve(filename).normalize();
@@ -58,10 +63,19 @@ public class ProfileServiceImpl implements ProfileService {
       throw new IllegalArgumentException("파일 업로드에 실패했습니다.");
     }
   }
+  
+  public void deleteServer(String path) {
+    File file = new File("/image/trainer/profile/9b422d29-24f5-4de3-9c25-fba1518b444b_muscle.png");
+    System.out.println(file.exists()+"");
+  }
 
   public Long save(Profile profile) {
     Profile res = profileRepository.save(profile);
     return res.getId();
+  }
+  
+  public void updateProfile(Long profileId, String path) {
+    profileRepository.updateProfile(profileId, path);
   }
 
 }

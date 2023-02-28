@@ -68,7 +68,7 @@
 		errorMessageReset();
 
 		let loginType = $("input[name=loginType]:checked").val();
-		let url = "/" + loginType + "/login";
+		let url = "/api/" + loginType + "/login";
 		let email = $("input[name=email]").val();
 		let password = $("input[name=password]").val();
 	

@@ -15,8 +15,21 @@ public class MainController {
     return "tainer/join";
   }
   
-  @GetMapping("/test")
-  public String test() {
-    return "tainer/join";
+  @GetMapping("/my-page")
+  public String trainerMyPage(Model model) {
+    model.addAttribute("menu", "myPage");
+    return "trainer/myPage";
   }
+  
+  @GetMapping("/my-page/info")
+  public String myPageInfo(Model model) {
+    model.addAttribute("menu", "myPage");
+    return "trainer/myPage/info";
+  }
+  
+  @GetMapping("/my-page/profile")
+  public String myPageProfile(Model model) {
+    model.addAttribute("menu", "myPage");
+    return "trainer/myPage/profile";
+  }     
 }

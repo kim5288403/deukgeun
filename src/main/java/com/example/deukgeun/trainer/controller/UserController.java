@@ -3,7 +3,6 @@ package com.example.deukgeun.trainer.controller;
 
 import java.util.List;
 import java.util.UUID;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -25,17 +24,15 @@ import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.request.LoginRequest;
 import com.example.deukgeun.trainer.request.ProfileRequest;
-import com.example.deukgeun.trainer.request.UserInfoUpdateRequest;
 import com.example.deukgeun.trainer.request.JoinRequest;
 import com.example.deukgeun.trainer.response.UserListResponse;
-import com.example.deukgeun.trainer.response.UserResponse;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
 import com.example.deukgeun.trainer.service.implement.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 
 
 @RestController("trainer.controller.UserController")
-@RequestMapping("/trainer")
+@RequestMapping("/api/trainer")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -89,7 +86,7 @@ public class UserController {
     
     Profile profileCreate = ProfileRequest.create(profileRequest);
     Long profileSaveId = profileService.save(profileCreate);
-    profileService.serverSave(profile, profileRequest.getPath());
+    profileService.saveServer(profile, profileRequest.getPath());
 
     User user = JoinRequest.create(request, passwordEncoder, profileSaveId);
     userService.save(user);
@@ -141,52 +138,5 @@ public class UserController {
         .ok()
         .body(messageResponse);
   }
-  
-  @RequestMapping(method = RequestMethod.GET, path = "/my-page")
-  public ResponseEntity<?> myPage(HttpServletRequest request) throws Exception{
-    String authToken = request.getHeader("Authorization").replace("Bearer ", "");
-    String email = jwtProvider.getUserPk(authToken);
-    
-    User user = userService.getUser(email);
-    UserResponse userResponse = new UserResponse(user);
-    
-    MessageResponse messageResponse = MessageResponse
-        .builder()
-        .code(StatusEnum.OK.getCode())
-        .status(StatusEnum.OK.getStatus())
-        .data(userResponse)
-        .message("마이 페이지 조회 성공했습니다.")
-        .build();
-    
-    return ResponseEntity
-        .ok()
-        .body(messageResponse);
-  }
-  
-  @RequestMapping(method = RequestMethod.POST, path = "/info/update")
-  public ResponseEntity<?> infoUpdate(
-      @RequestPart @Valid UserInfoUpdateRequest request,
-      BindingResult bindingResult,
-      @RequestPart(name = "profile", required = false) MultipartFile profile) {
-    
-    if (bindingResult.hasErrors()) {
-      validateService.errorMessageHandling(bindingResult);
-    }
-    
-    userService.infoUpdate(request);
-    
-    MessageResponse messageResponse = MessageResponse
-        .builder()
-        .code(StatusEnum.OK.getCode())
-        .status(StatusEnum.OK.getStatus())
-        .data(request)
-        .message("내 정보 수정 성공했습니다.")
-        .build();
-    
-    return ResponseEntity
-        .ok()
-        .body(messageResponse);
-  }
-
 }
 

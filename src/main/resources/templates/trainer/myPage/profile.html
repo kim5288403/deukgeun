@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{web/layout/layout}">
+<th:block layout:fragment="css">
+	<style>
+		.errorMessage {
+			color: red;
+			margin-left: 10px;
+		}
+	</style>
+</th:block>
+<th:block layout:fragment="content">
+	<!-- Posts -->
+	<section class="post">
+		<header class="major">
+			<h1>
+				프로필 이미지
+			</h1>
+			<p>
+				Aenean ornare velit lacus varius enim ullamcorper proin aliquam<br>
+				facilisis ante sed etiam magna interdum congue. Lorem ipsum dolor<br>
+				amet nullam sed etiam veroeros.
+			</p>
+		</header>
+		<form id="profile" method="post"
+			enctype="multipart/form-data">
+			<div class="row gtr-uniform">
+			
+				<div class="col-12" >
+					<label style="text-align: center;">프로필 이미지</label>
+					<p style="text-align: center;">
+						<img id="profile" src="" alt="" style="border: solid #eeeeee; cursor: pointer; width: 50%; height: 50%;">
+						<input type="file" name="profile" accept="image/*" hidden="">
+					</p>
+				</div>
+				
+				<!-- Break -->
+				<div class="col-12">
+					<ul class="actions" style="justify-content: center;">
+						<li>
+							<input type="button" value="update" class="primary"
+							onclick="updateProfileAjax()" >
+						</li>
+						<li><input type="reset" value="Reset"></li>
+					</ul>
+				</div>
+
+			</div>
+		</form>
+		
+	</section>
+</th:block>
+<th:block layout:fragment="script">
+	<script type="text/javascript">
+	let authToken = getCookie("authToken");
+	$(document).ready(function () {
+		if (authToken !== null) {
+			$.ajax({
+				url : "/api/trainer/my-page/profile",
+				type : "get",
+				beforeSend: function (xhr) {
+			    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);
+			    },
+				success : function(res, status, request) {
+					if (res.code === 200) {
+						$("img[id=profile]").attr("src", "/images/trainer/profile/" + res.data.path);
+					}
+				}
+			});
+		}
+		
+		$("img[id=profile]").on("click", function () {
+			$("input[name=profile]").click();
+		});
+		
+		$("input[name=profile]").change(function () {
+			let file = $(this)[0].files[0];
+			let reader = new FileReader();
+			reader.onload = function(e) {
+				$("img[id=profile]").attr("src", e.target.result);
+			};
+			reader.readAsDataURL(file);
+		});
+	});
+	
+	function updateProfileAjax() {
+		let formData = new FormData();
+		let profile = $("input[name=profile]")[0].files[0];
+		formData.append("profile", profile);
+		
+		$.ajax({
+			url : "/api/trainer/my-page/profile/update",
+			type : "post",
+			processData : false,
+			contentType : false,
+			cache : false,
+			data : formData,
+			beforeSend: function (xhr) {
+		    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);
+		    },
+			success : function(res) {
+				console.log(res);
+			},
+			error : function(res) {
+			}
+		});
+	}
+	</script>
+</th:block>

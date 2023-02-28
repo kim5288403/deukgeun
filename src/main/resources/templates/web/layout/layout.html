@@ -37,8 +37,6 @@
 			let authToken = getCookie("authToken");
 			
 			if (authToken !== null) {
-				authToken = authToken.replace("Bearer ", "").replaceAll(";", "").replaceAll(" ", ""); 
-				
 				$.ajax({
 					url : "/jwt/check",
 					type : "post",
@@ -87,8 +85,8 @@
 			});
 			
 			$("a[id=myPage]").on("click", function(e) {
-				let role = getCookie("role").replace(";", "").trim(" ");
-				$(this).attr("href", "/my-page/" + role);
+				let role = getCookie("role").replaceAll(";", "").trim(" ");
+				$(this).attr("href", "/" + role + "/my-page");
 			});
 
 		});
