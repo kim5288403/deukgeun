@@ -100,9 +100,12 @@
 		    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);
 		    },
 			success : function(res) {
-				console.log(res);
+				defalutSuccessAlert(res.message, "성공").then(function (){
+					window.location.reload();
+				});
 			},
 			error : function(res) {
+				defalutErrorAlert(res.responseJSON.message);
 			}
 		});
 	}

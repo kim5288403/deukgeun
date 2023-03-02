@@ -72,6 +72,10 @@ public class JwtProvider {
     jwtService.deleteToken(authToken);
   }
   
+  public void updateAuthToken(String authToken, String newAuthToken) {
+    jwtService.updateAuthToken(authToken, newAuthToken);
+  }
+  
   // auth 토큰 헤더 설정
   public void setHeaderAccessToken(HttpServletResponse response, String accessToken) {
       response.setHeader("Authorization", "Bearer " + accessToken);

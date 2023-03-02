@@ -20,7 +20,9 @@ public class ProfileServiceImpl implements ProfileService {
   private ProfileRepository profileRepository;
   
   //트레이너 profile 저장 경로
-  private static final String FILE_PATH = "src/main/resources/images/trainer/profile";
+  private static final String FILE_PATH = "src/main/resources/static/images/trainer/profile";
+  private static final String FILE_DELETE_PATH = "C:\\eclipse\\deukgeun_workspace\\deukgeun\\src\\main\\resources\\static\\images\\trainer\\profile\\";
+ 
 
   //file custom validate 
   public BindingResult validator(MultipartFile file, BindingResult bindingResult) {
@@ -65,8 +67,10 @@ public class ProfileServiceImpl implements ProfileService {
   }
   
   public void deleteServer(String path) {
-    File file = new File("/image/trainer/profile/9b422d29-24f5-4de3-9c25-fba1518b444b_muscle.png");
-    System.out.println(file.exists()+"");
+    File file = new File(FILE_DELETE_PATH + path);
+    if (file.exists()) {
+      file.delete();
+    }
   }
 
   public Long save(Profile profile) {

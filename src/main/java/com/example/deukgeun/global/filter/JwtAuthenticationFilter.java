@@ -55,8 +55,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
            String newAuthToken = getNewAuthToken(refreshToken);
            String role = jwtProvider.getUserRole(newAuthToken);
            
-           jwtProvider.deleteTokenEntity(authToken);
-           jwtProvider.createTokenEntity(newAuthToken, refreshToken);
+           jwtProvider.updateAuthToken(authToken, newAuthToken);
            jwtProvider.setHeaderRole(response, role);
            jwtProvider.setHeaderAccessToken(response, newAuthToken);
            

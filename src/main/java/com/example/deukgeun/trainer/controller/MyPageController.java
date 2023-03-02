@@ -102,22 +102,29 @@ public class MyPageController {
   }
 
   @RequestMapping(method = RequestMethod.POST, path = "/profile/update")
-  public ResponseEntity<?> UpdateProfile(HttpServletRequest request,MultipartFile profile) throws Exception {
+  public ResponseEntity<?> UpdateProfile(HttpServletRequest request, MultipartFile profile) throws Exception {
     String authToken = request.getHeader("Authorization").replace("Bearer ", "");
     Long profileId = getProfileId(authToken);
-    UUID uuid = UUID.randomUUID();
-    String path = uuid.toString() + "_" + profile.getOriginalFilename();
     
-    profileService.deleteServer("Gd");
-    
-    //profileService.updateProfile(profileId, path);
-    //profileService.saveServer(profile, path);
+    if (profile != null) {
+      UUID uuid = UUID.randomUUID();
+      String path = uuid.toString() + "_" + profile.getOriginalFilename();
+      
+      //DB 업데이트
+      profileService.updateProfile(profileId, path);
+      //server 저장
+      profileService.saveServer(profile, path);
+      
+      //server 저장된 파일 삭제
+      Profile userProfile = profileService.getProfile(profileId);
+      profileService.deleteServer(userProfile.getPath());
+    }
     
     MessageResponse messageResponse = MessageResponse
         .builder()
         .code(StatusEnum.OK.getCode())
         .status(StatusEnum.OK.getStatus())
-        .data(null)
+        .data(profile)
         .message("내 정보 수정 성공했습니다.")
         .build();
     
