@@ -64,7 +64,8 @@
 			    },
 				success : function(res, status, request) {
 					if (res.code === 200) {
-						$("img[id=profile]").attr("src", "/images/trainer/profile/" + res.data.path);
+						let src = "/images/trainer/profile/" + res.data.path;
+						$("img[id=profile]").attr("src", src);
 					}
 				}
 			});
@@ -101,7 +102,9 @@
 		    },
 			success : function(res) {
 				defalutSuccessAlert(res.message, "성공").then(function (){
-					window.location.reload();
+					setTimeout(function() {
+						window.location.reload(true);
+					}, 1000);
 				});
 			},
 			error : function(res) {

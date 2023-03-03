@@ -36,7 +36,7 @@ function setCookie(key, value) {
  	//d.setTime(d.getTime() + (1*60*1000));
   	//let expires = "expires="+ d.toUTCString();
 	//document.cookie = key + "=" + value + ";" + expires;
-	document.cookie = key + "=" + value;
+	document.cookie = key + "=" + value + "; path=/";
 }
 
 function getCookie(key) {
@@ -56,8 +56,7 @@ function deleteCookie(key) {
 
 function logoutCookie(message) {
 	let expiration = 'Sat, 01 Jan 1972 00:00:00 GMT';
-	document.cookie = "authToken=; expires=" + expiration;
-	document.cookie = "role=; expires=" + expiration;
+
 	document.cookie = "authToken=; expires=" + expiration + "; path=" + "/";
 	document.cookie = "role=; expires=" + expiration + "; path=" + "/";
 	

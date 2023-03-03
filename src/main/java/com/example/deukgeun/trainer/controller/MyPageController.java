@@ -15,6 +15,7 @@ import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
 import com.example.deukgeun.global.provider.JwtProvider;
 import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.entity.User;
+import com.example.deukgeun.trainer.request.PasswordUpdateRequest;
 import com.example.deukgeun.trainer.request.UserInfoUpdateRequest;
 import com.example.deukgeun.trainer.response.ProfileResponse;
 import com.example.deukgeun.trainer.response.UserResponse;
@@ -81,7 +82,8 @@ public class MyPageController {
   @RequestMapping(method = RequestMethod.GET, path = "/profile")
   public ResponseEntity<?> getProfile(HttpServletRequest request) throws Exception {
     String authToken = request.getHeader("Authorization").replace("Bearer ", "");
-    Long profileId = getProfileId(authToken);
+    String email = jwtProvider.getUserPk(authToken);
+    Long profileId = userService.getProfileId(email);
     
     Profile profile = profileService.getProfile(profileId);
     ProfileResponse profileResponse = ProfileResponse.builder()
@@ -102,9 +104,10 @@ public class MyPageController {
   }
 
   @RequestMapping(method = RequestMethod.POST, path = "/profile/update")
-  public ResponseEntity<?> UpdateProfile(HttpServletRequest request, MultipartFile profile) throws Exception {
+  public ResponseEntity<?> updateProfile(HttpServletRequest request, MultipartFile profile) throws Exception {
     String authToken = request.getHeader("Authorization").replace("Bearer ", "");
-    Long profileId = getProfileId(authToken);
+    String email = jwtProvider.getUserPk(authToken);
+    Long profileId = userService.getProfileId(email);
     
     if (profile != null) {
       UUID uuid = UUID.randomUUID();
@@ -124,7 +127,7 @@ public class MyPageController {
         .builder()
         .code(StatusEnum.OK.getCode())
         .status(StatusEnum.OK.getStatus())
-        .data(profile)
+        .data(null)
         .message("내 정보 수정 성공했습니다.")
         .build();
     
@@ -133,10 +136,19 @@ public class MyPageController {
         .body(messageResponse);
   }
   
-  public Long getProfileId(String authToken) throws Exception {
-    String email = jwtProvider.getUserPk(authToken);
-    User user = userService.getUser(email);
-    return user.getProfileId();
+  @RequestMapping(method = RequestMethod.POST, path = "/password/update")
+  public ResponseEntity<?> updatePassword(
+      HttpServletRequest request,
+      @Valid PasswordUpdateRequest passwordRequest,
+      BindingResult bindingResult){
+    
+    if (bindingResult.hasErrors()) {
+      validateService.errorMessageHandling(bindingResult);
+    }
+    
+    return ResponseEntity
+        .ok()
+        .body(null);
   }
   
 }

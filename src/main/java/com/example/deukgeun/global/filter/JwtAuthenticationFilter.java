@@ -31,8 +31,6 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     HttpServletResponse response = (HttpServletResponse) res;
     
     String servletPath = request.getServletPath();
-   
-    
     if (servletPath.equals("/jwt/check")) {
       String authToken = jwtProvider.resolveAuthToken(request);
       String refreshToken = jwtProvider.getRefreshToken(authToken);

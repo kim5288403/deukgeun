@@ -31,5 +31,11 @@ public class MainController {
   public String myPageProfile(Model model) {
     model.addAttribute("menu", "myPage");
     return "trainer/myPage/profile";
-  }     
+  }
+  
+  @GetMapping("/my-page/password")
+  public String myPagePassword(Model model) {
+    model.addAttribute("menu", "myPage");
+    return "trainer/myPage/password";
+  }
 }

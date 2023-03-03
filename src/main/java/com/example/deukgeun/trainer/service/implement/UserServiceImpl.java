@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class UserServiceImpl implements UserService, UserDetailsService {
 
   private final UserRepository userRepository;
-
+  
   public List<UserListResponse> getList(String keyword) {
     return userRepository.findByNameOrGroupName(keyword, keyword);
   }
@@ -31,6 +31,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
   public User getUser(String email) throws Exception {
     return userRepository.findByEmail(email)
         .orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다."));
+  }
+  
+  public Long getProfileId(String email) throws Exception {
+    User user = getUser(email);
+    return user.getProfileId();
   }
   
   public void updateInfo(UserInfoUpdateRequest request) {
