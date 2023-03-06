@@ -4,6 +4,7 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,6 +33,7 @@ public class MyPageController {
   private final UserServiceImpl userService;
   private final ValidateServiceImpl validateService;
   private final ProfileServiceImpl profileService;
+  private final PasswordEncoder passwordEncoder;
   
   @RequestMapping(method = RequestMethod.GET, path = "/info")
   public ResponseEntity<?> getInfo(HttpServletRequest request) throws Exception{
@@ -136,9 +138,26 @@ public class MyPageController {
         .body(messageResponse);
   }
   
+  @RequestMapping(method = RequestMethod.GET, path = "/password")
+  public ResponseEntity<?> getPassword(HttpServletRequest request) throws Exception {
+    String authToken = request.getHeader("Authorization").replace("Bearer ", "");
+    String email = jwtProvider.getUserPk(authToken);
+    
+    MessageResponse messageResponse = MessageResponse
+        .builder()
+        .code(StatusEnum.OK.getCode())
+        .status(StatusEnum.OK.getStatus())
+        .data(email)
+        .message("내 정보 비밀번호 조회 성공했습니다.")
+        .build();
+    
+    return ResponseEntity
+        .ok()
+        .body(messageResponse);
+  }
+  
   @RequestMapping(method = RequestMethod.POST, path = "/password/update")
   public ResponseEntity<?> updatePassword(
-      HttpServletRequest request,
       @Valid PasswordUpdateRequest passwordRequest,
       BindingResult bindingResult){
     
@@ -146,9 +165,21 @@ public class MyPageController {
       validateService.errorMessageHandling(bindingResult);
     }
     
+    String email = passwordRequest.getEmail();
+    String password = passwordEncoder.encode(passwordRequest.getNewPassword());
+    userService.updatePassword(email, password);
+    
+    MessageResponse messageResponse = MessageResponse
+        .builder()
+        .code(StatusEnum.OK.getCode())
+        .status(StatusEnum.OK.getStatus())
+        .data(null)
+        .message("비밀번호 변경 성공했습니다.")
+        .build();
+    
     return ResponseEntity
         .ok()
-        .body(null);
+        .body(messageResponse);
   }
   
 }

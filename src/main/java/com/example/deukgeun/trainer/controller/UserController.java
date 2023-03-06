@@ -2,7 +2,6 @@ package com.example.deukgeun.trainer.controller;
 
 
 import java.util.List;
-import java.util.UUID;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +19,8 @@ import com.example.deukgeun.commom.response.MessageResponse;
 import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
 import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
 import com.example.deukgeun.global.provider.JwtProvider;
-import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.request.LoginRequest;
-import com.example.deukgeun.trainer.request.ProfileRequest;
 import com.example.deukgeun.trainer.request.JoinRequest;
 import com.example.deukgeun.trainer.response.UserListResponse;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
@@ -47,11 +44,9 @@ public class UserController {
   // 트레이너 리스트 조건 검색
   @RequestMapping(method = RequestMethod.GET, path = "/")
   public ResponseEntity<?> list(String keyword) {
-    MessageResponse response = null;
-
     List<UserListResponse> list = userService.getList(keyword);
 
-    response = MessageResponse
+    MessageResponse response = MessageResponse
         .builder()
         .data(list)
         .message("조회 성공 했습니다.")
@@ -77,16 +72,7 @@ public class UserController {
       validateService.errorMessageHandling(bindingResult);
     }
     
-    UUID uuid = UUID.randomUUID();
-    String path = uuid.toString() + "_" + profile.getOriginalFilename();
-    ProfileRequest profileRequest = ProfileRequest
-        .builder()
-        .path(path)
-        .build();
-    
-    Profile profileCreate = ProfileRequest.create(profileRequest);
-    Long profileSaveId = profileService.save(profileCreate);
-    profileService.saveServer(profile, profileRequest.getPath());
+    Long profileSaveId = profileService.save(profile);
 
     User user = JoinRequest.create(request, passwordEncoder, profileSaveId);
     userService.save(user);

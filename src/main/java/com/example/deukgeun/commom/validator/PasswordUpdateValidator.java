@@ -9,20 +9,19 @@ import lombok.RequiredArgsConstructor;
 public class PasswordUpdateValidator implements ConstraintValidator<ValidPasswordUpdate, Object>{
   
   private final ValidateServiceImpl validateService;
+
   
   @Override
   public boolean isValid(Object object, ConstraintValidatorContext context) {
-    boolean flag = true;
-
-    String password = validateService.getFieldValue(object, "password");
+    boolean flag = false;
 
     String newPassword = validateService.getFieldValue(object, "newPassword");
-    String newPpasswordConfirm = validateService.getFieldValue(object, "newPpasswordConfirm");
-
-    if (!newPassword.equals(newPpasswordConfirm)) {
-      flag = false;
+    String newPasswordConfirm = validateService.getFieldValue(object, "newPasswordConfirm");
+     
+    if (newPassword.equals(newPasswordConfirm)) {
+      flag = true;
     }
-
+    
     return flag;
   }
 

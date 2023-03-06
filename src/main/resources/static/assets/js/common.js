@@ -74,4 +74,15 @@ function logoutSetMenu() {
 	$("li[class=2]").hide();
 	$("li[class=1]").show();
 }
+
+function back() {
+	let href = $(location).attr('href').split("/");
+	let origin = $(location).attr('origin');
+		
+	for(let i = 3; i < href.length - 1; i++){
+		origin += "/" + href[i];
+	}
+		
+	$(location).attr('href', origin);
+}
 	

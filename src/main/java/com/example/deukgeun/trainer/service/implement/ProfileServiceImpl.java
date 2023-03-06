@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
@@ -11,6 +12,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.multipart.MultipartFile;
 import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.repository.ProfileRepository;
+import com.example.deukgeun.trainer.request.ProfileRequest;
 import com.example.deukgeun.trainer.service.ProfileService;
 
 @Service
@@ -71,8 +73,19 @@ public class ProfileServiceImpl implements ProfileService {
     }
   }
 
-  public Long save(Profile profile) {
-    Profile res = profileRepository.save(profile);
+  public Long save(MultipartFile profile) {
+    UUID uuid = UUID.randomUUID();
+    String path = uuid.toString() + "_" + profile.getOriginalFilename();
+    
+    ProfileRequest profileRequest = ProfileRequest
+        .builder()
+        .path(path)
+        .build();
+    
+    Profile saveProfileData = ProfileRequest.create(profileRequest);
+    Profile res = profileRepository.save(saveProfileData);
+    saveServer(profile, path);
+    
     return res.getId();
   }
   

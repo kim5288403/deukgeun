@@ -9,7 +9,7 @@ import com.example.deukgeun.trainer.service.implement.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class LoginValidator implements ConstraintValidator<ValidLogin, Object>{
+public class EmailAndPwValidator implements ConstraintValidator<ValidEmailAndPw, Object>{
   
   private final ValidateServiceImpl validateService;
   private final UserServiceImpl userService;
@@ -18,20 +18,23 @@ public class LoginValidator implements ConstraintValidator<ValidLogin, Object>{
   @Override
   public boolean isValid(Object object, ConstraintValidatorContext context) {
     boolean flag = false;
+    
     String email = validateService.getFieldValue(object, "email");
     String password = validateService.getFieldValue(object, "password");
     
+    System.out.println(password);
+    System.out.println(email);
+    
+    
     try {
       User user = userService.getUser(email);
-      
       boolean check = passwordEncoder.matches(password, user.getPassword());
       
       if (check) {
         flag =  true;
       }
-      
     } catch (Exception e) {
-      
+      flag = false;
     }
     
     return flag;
