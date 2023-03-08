@@ -89,7 +89,7 @@ public class User extends BaseEntity implements UserDetails{
     this.roadAddress = roadAddress;
     this.detailAddress = detailAddress;
     this.extraAddress = extraAddress;
-    this.profileId = profileId;
+//    this.profileId = profileId;
     this.gender = gender;
     this.price = price;
   }

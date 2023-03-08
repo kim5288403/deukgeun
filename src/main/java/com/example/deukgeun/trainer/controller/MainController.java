@@ -38,4 +38,10 @@ public class MainController {
     model.addAttribute("menu", "myPage");
     return "trainer/myPage/password";
   }
+  
+  @GetMapping("/my-page/withdrawal")
+  public String myPageWithdrawal(Model model) {
+    model.addAttribute("menu", "myPage");
+    return "trainer/myPage/withdrawal";
+  }
 }

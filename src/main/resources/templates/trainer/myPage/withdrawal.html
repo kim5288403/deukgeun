@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{web/layout/layout}">
+<th:block layout:fragment="css">
+	<style>
+		.errorMessage {
+			color: red;
+			margin-left: 10px;
+		}
+	</style>
+</th:block>
+<th:block layout:fragment="content">
+<section class="post">
+		<header class="major">
+			<h1>
+				회원 탈퇴
+			</h1>
+			<p>
+				Aenean ornare velit lacus varius enim ullamcorper proin aliquam<br>
+				facilisis ante sed etiam magna interdum congue. Lorem ipsum dolor<br>
+				amet nullam sed etiam veroeros.
+			</p>
+		</header>
+		<form id="passwordForm" method="post" action="">
+			<div class="row gtr-uniform">
+				<input type="hidden" name="email">
+				<div class="col-6 col-12-xsmall">
+					<label>비밀번호</label> 
+					<input type="password" name="password" id="password" value="" placeholder="비밀번호">
+					<span class="errorMessage" id="valid_password"></span>
+				</div>
+				
+				<div class="col-6 col-12-xsmall"></div>
+			
+				
+					<!-- Break -->
+				<div class="col-12">
+					<ul class="actions" style="justify-content: center;">
+						<li><input type="button" value="Withdrawal" class="primary"
+							onclick="WithdrawalAjax()"></li>
+						<li><input type="button" onclick="back()" value="Back"></li>
+					</ul>
+				</div>
+				
+			</div>
+		</form>
+</section>
+			
+</th:block>
+<th:block layout:fragment="script">
+	<script type="text/javascript">
+	
+	</script>
+</th:block>
+</html>
