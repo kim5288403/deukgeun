@@ -182,7 +182,7 @@ public class MyPageController {
         .body(messageResponse);
   }
   
-  @RequestMapping(method = RequestMethod.GET, path = "/withdrawal")
+  @RequestMapping(method = RequestMethod.POST, path = "/withdrawal")
   public ResponseEntity<?> withdrawal() {
     System.out.println("gd");
     return ResponseEntity
