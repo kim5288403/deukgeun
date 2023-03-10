@@ -22,10 +22,6 @@ public class EmailAndPwValidator implements ConstraintValidator<ValidEmailAndPw,
     String email = validateService.getFieldValue(object, "email");
     String password = validateService.getFieldValue(object, "password");
     
-    System.out.println(password);
-    System.out.println(email);
-    
-    
     try {
       User user = userService.getUser(email);
       boolean check = passwordEncoder.matches(password, user.getPassword());

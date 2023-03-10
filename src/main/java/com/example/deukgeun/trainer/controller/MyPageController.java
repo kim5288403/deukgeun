@@ -18,6 +18,7 @@ import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.request.PasswordUpdateRequest;
 import com.example.deukgeun.trainer.request.UserInfoUpdateRequest;
+import com.example.deukgeun.trainer.request.WithdrawalRequest;
 import com.example.deukgeun.trainer.response.ProfileResponse;
 import com.example.deukgeun.trainer.response.UserResponse;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
@@ -158,15 +159,15 @@ public class MyPageController {
   
   @RequestMapping(method = RequestMethod.POST, path = "/password/update")
   public ResponseEntity<?> updatePassword(
-      @Valid PasswordUpdateRequest passwordRequest,
+      @Valid PasswordUpdateRequest request,
       BindingResult bindingResult){
     
     if (bindingResult.hasErrors()) {
       validateService.errorMessageHandling(bindingResult);
     }
     
-    String email = passwordRequest.getEmail();
-    String password = passwordEncoder.encode(passwordRequest.getNewPassword());
+    String email = request.getEmail();
+    String password = passwordEncoder.encode(request.getNewPassword());
     userService.updatePassword(email, password);
     
     MessageResponse messageResponse = MessageResponse
@@ -183,8 +184,12 @@ public class MyPageController {
   }
   
   @RequestMapping(method = RequestMethod.POST, path = "/withdrawal")
-  public ResponseEntity<?> withdrawal() {
-    System.out.println("gd");
+  public ResponseEntity<?> withdrawal(@Valid WithdrawalRequest request, BindingResult bindingResult) {
+    
+    if (bindingResult.hasErrors()) {
+      validateService.errorMessageHandling(bindingResult);
+    }
+    
     return ResponseEntity
         .ok()
         .body(null);

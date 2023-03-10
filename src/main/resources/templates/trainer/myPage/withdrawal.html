@@ -24,14 +24,19 @@
 		</header>
 		<form id="withdrawalForm" method="post" action="">
 			<div class="row gtr-uniform">
-				<input type="hidden" name="email">
+			
+				<div class="col-6 col-12-xsmall">
+					<label>이메일</label> 
+					<input type="text" name="email" id="email" value="" placeholder="이메일">
+					<span class="errorMessage" id="valid_email"></span>
+				</div>
+				
 				<div class="col-6 col-12-xsmall">
 					<label>비밀번호</label> 
 					<input type="password" name="password" id="password" value="" placeholder="비밀번호">
 					<span class="errorMessage" id="valid_password"></span>
 				</div>
 				
-				<div class="col-6 col-12-xsmall"></div>
 			
 				
 					<!-- Break -->
