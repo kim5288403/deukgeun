@@ -63,5 +63,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
   public void updatePassword(String email, String password) {
      userRepository.updatePassword(email, password);
   }
+  
+  public void withdrawal(User entity){
+    userRepository.delete(entity);
+  }
 
 }

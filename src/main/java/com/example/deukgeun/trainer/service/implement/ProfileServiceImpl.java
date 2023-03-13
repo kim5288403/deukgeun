@@ -92,5 +92,9 @@ public class ProfileServiceImpl implements ProfileService {
   public void updateProfile(Long profileId, String path) {
     profileRepository.updateProfile(profileId, path);
   }
+  
+  public void withdrawal(Long profileId) {
+    profileRepository.deleteById(profileId);
+  }
 
 }

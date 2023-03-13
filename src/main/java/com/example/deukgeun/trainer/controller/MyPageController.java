@@ -184,11 +184,23 @@ public class MyPageController {
   }
   
   @RequestMapping(method = RequestMethod.POST, path = "/withdrawal")
-  public ResponseEntity<?> withdrawal(@Valid WithdrawalRequest request, BindingResult bindingResult) {
+  public ResponseEntity<?> withdrawal(@Valid WithdrawalRequest request, BindingResult bindingResult) throws Exception {
     
     if (bindingResult.hasErrors()) {
       validateService.errorMessageHandling(bindingResult);
     }
+    
+    String email = request.getEmail();
+    User user = userService.getUser(email);
+    
+    //포로필 이미지 삭제
+    Long profileId = user.getProfileId();
+    Profile userProfile = profileService.getProfile(profileId);
+    profileService.deleteServer(userProfile.getPath());
+    profileService.withdrawal(profileId);
+    
+    //사용자 삭제
+    userService.withdrawal(user);
     
     return ResponseEntity
         .ok()
