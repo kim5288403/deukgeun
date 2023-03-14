@@ -184,27 +184,45 @@ public class MyPageController {
   }
   
   @RequestMapping(method = RequestMethod.POST, path = "/withdrawal")
-  public ResponseEntity<?> withdrawal(@Valid WithdrawalRequest request, BindingResult bindingResult) throws Exception {
+  public ResponseEntity<?> withdrawal(
+      HttpServletRequest request,
+      @Valid WithdrawalRequest withdrawalRequest,
+      BindingResult bindingResult
+      ) throws Exception {
     
     if (bindingResult.hasErrors()) {
       validateService.errorMessageHandling(bindingResult);
     }
     
-    String email = request.getEmail();
+    String authToken = request.getHeader("Authorization").replace("Bearer ", "");
+    String email = withdrawalRequest.getEmail();
     User user = userService.getUser(email);
     
-    //포로필 이미지 삭제
+    
     Long profileId = user.getProfileId();
     Profile userProfile = profileService.getProfile(profileId);
-    profileService.deleteServer(userProfile.getPath());
-    profileService.withdrawal(profileId);
     
     //사용자 삭제
     userService.withdrawal(user);
     
+    //포로필 이미지 삭제
+    profileService.deleteServer(userProfile.getPath());
+    profileService.withdrawal(profileId);
+    
+    //토큰 삭제
+    jwtProvider.deleteTokenEntity(authToken);
+    
+    MessageResponse messageResponse = MessageResponse
+        .builder()
+        .code(StatusEnum.OK.getCode())
+        .status(StatusEnum.OK.getStatus())
+        .data(null)
+        .message("회원 탈퇴 성공했습니다.")
+        .build();
+    
     return ResponseEntity
         .ok()
-        .body(null);
+        .body(messageResponse);
   }
   
 }

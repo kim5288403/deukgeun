@@ -58,14 +58,19 @@
 		function withdrawalAjax(){
 			errorMessageReset();
 			let formData = $("form[id=withdrawalForm]").serialize();
+			let authToken = getCookie("authToken");
 			
 			$.ajax({
 				url : "/api/trainer/my-page/withdrawal",
 				type : "post",
 				data :formData,
+				beforeSend : function (xhr) {
+					xhr.setRequestHeader("Authorization","Bearer " + authToken);
+				},
 				success : function(res) {
 					if (res.code === 200) {
 						defalutSuccessAlert(res.message, "성공").then(function (){
+							
 						});
 					}
 				},
@@ -76,6 +81,11 @@
 				}
 			});
 		}
+		
+		function logout() {
+			
+		}
+		
 	</script>
 </th:block>
 </html>
