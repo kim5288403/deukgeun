@@ -24,20 +24,13 @@
 		</header>
 		<form id="withdrawalForm" method="post" action="">
 			<div class="row gtr-uniform">
-			
-				<div class="col-6 col-12-xsmall">
-					<label>이메일</label> 
-					<input type="text" name="email" id="email" value="" placeholder="이메일">
-					<span class="errorMessage" id="valid_email"></span>
-				</div>
+				<input type="hidden" name="email" id="email">
 				
 				<div class="col-6 col-12-xsmall">
 					<label>비밀번호</label> 
 					<input type="password" name="password" id="password" value="" placeholder="비밀번호">
 					<span class="errorMessage" id="valid_password"></span>
 				</div>
-				
-			
 				
 					<!-- Break -->
 				<div class="col-12">
@@ -55,6 +48,23 @@
 </th:block>
 <th:block layout:fragment="script">
 	<script type="text/javascript">
+	$(document).ready(function () {
+		$.ajax({
+			url : "/api/trainer/my-page/email",
+			type : "get",
+			success : function(res) {
+				if (res.code === 200) {
+					$("input[name=email]").val(res.data);
+				}
+			},
+			error : function(res) {
+				if (res.responseJSON.code === 400) {
+					defalutErrorAlert(res.responseJSON.data.message, "실패");
+				}
+			}
+		});
+	});
+	
 		function withdrawalAjax(){
 			errorMessageReset();
 			let formData = $("form[id=withdrawalForm]").serialize();
@@ -70,7 +80,7 @@
 				success : function(res) {
 					if (res.code === 200) {
 						defalutSuccessAlert(res.message, "성공").then(function (){
-							
+							logoutCookie("회원 탈퇴로 인해 로그아웃 됩니다.");
 						});
 					}
 				},
@@ -81,11 +91,6 @@
 				}
 			});
 		}
-		
-		function logout() {
-			
-		}
-		
 	</script>
 </th:block>
 </html>

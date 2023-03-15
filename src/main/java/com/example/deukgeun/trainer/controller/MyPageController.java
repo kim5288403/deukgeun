@@ -139,8 +139,8 @@ public class MyPageController {
         .body(messageResponse);
   }
   
-  @RequestMapping(method = RequestMethod.GET, path = "/password")
-  public ResponseEntity<?> getPassword(HttpServletRequest request) throws Exception {
+  @RequestMapping(method = RequestMethod.GET, path = "/email")
+  public ResponseEntity<?> getEmail(HttpServletRequest request) throws Exception {
     String authToken = request.getHeader("Authorization").replace("Bearer ", "");
     String email = jwtProvider.getUserPk(authToken);
     

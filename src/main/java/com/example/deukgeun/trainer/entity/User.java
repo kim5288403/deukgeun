@@ -1,7 +1,6 @@
 package com.example.deukgeun.trainer.entity;
 
 import java.util.Collection;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -90,7 +89,7 @@ public class User extends BaseEntity implements UserDetails{
     this.roadAddress = roadAddress;
     this.detailAddress = detailAddress;
     this.extraAddress = extraAddress;
-//    this.profileId = profileId;
+    this.profileId = profileId;
     this.gender = gender;
     this.price = price;
   }
