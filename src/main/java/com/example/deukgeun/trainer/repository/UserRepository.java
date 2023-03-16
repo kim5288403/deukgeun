@@ -14,7 +14,15 @@ import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.response.UserListResponse;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-  List<UserListResponse> findByNameOrGroupName(String name, String groupName);
+  List<UserListResponse> findByNameLikeOrGroupNameLikeOrJibunAddressLikeOrRoadAddressLikeOrDetailAddressLikeOrExtraAddressLike
+     (String name,
+      String groupName,
+      String jibunAddress,
+      String roadAddress,
+      String detailAddress,
+      String extraAddress
+      );
+  
   
   Optional<User> findByEmail(String email);
   

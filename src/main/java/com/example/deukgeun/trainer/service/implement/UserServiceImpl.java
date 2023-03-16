@@ -20,7 +20,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
   private final UserRepository userRepository;
   
   public List<UserListResponse> getList(String keyword) {
-    return userRepository.findByNameOrGroupName(keyword, keyword);
+    keyword = "%" + keyword + "%";
+    return userRepository.findByNameLikeOrGroupNameLikeOrJibunAddressLikeOrRoadAddressLikeOrDetailAddressLikeOrExtraAddressLike(keyword, keyword, keyword, keyword, keyword, keyword);
   }
 
   public Long save(User user) {
