@@ -21,7 +21,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
   
   public List<UserListResponse> getList(String keyword) {
     keyword = "%" + keyword + "%";
-    return userRepository.findByNameLikeOrGroupNameLikeOrJibunAddressLikeOrRoadAddressLikeOrDetailAddressLikeOrExtraAddressLike(keyword, keyword, keyword, keyword, keyword, keyword);
+    return userRepository.findByNameLikeOrGroupNameLikeOrJibunAddressLikeOrRoadAddressLikeOrDetailAddressLikeOrExtraAddressLike(
+        keyword,
+        keyword,
+        keyword,
+        keyword,
+        keyword,
+        keyword);
   }
 
   public Long save(User user) {
