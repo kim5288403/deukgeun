@@ -31,7 +31,9 @@ public class UserResponse {
   
   private String extraAddress;
   
-  private Integer price; 
+  private String introduction;
+  
+  private Integer price;
   
   public UserResponse (User user) {
     this.email = user.getEmail();
@@ -45,5 +47,6 @@ public class UserResponse {
     this.extraAddress = user.getExtraAddress();
     this.gender = user.getGender();
     this.price = user.getPrice();
+    this.introduction = user.getIntroduction();
   }
 }

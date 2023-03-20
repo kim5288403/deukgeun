@@ -39,7 +39,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
       + " m.extraAddress = :extraAddress,"
       + " m.price = :price,"
       + " m.groupStatus = :groupStatus,"
-      + " m.groupName = :groupName"
+      + " m.groupName = :groupName,"
+      + " m.introduction = :introduction"
       + " where m.email = :email")
   int updateInfo(
       @Param(value = "email")String email,
@@ -52,7 +53,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
       @Param(value = "extraAddress")String extraAddress,
       @Param(value = "price")Integer price,
       @Param(value = "groupStatus")GroupStatus groupStatus,
-      @Param(value = "groupName")String groupName
+      @Param(value = "groupName")String groupName,
+      @Param(value = "introduction")String introduction
       );
   
   @Modifying

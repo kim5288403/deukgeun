@@ -57,7 +57,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         request.getExtraAddress(),
         request.getPrice(),
         request.getGroupStatus(),
-        request.getGroupName()
+        request.getGroupName(),
+        request.getIntroduction()
         );
   }
   

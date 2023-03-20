@@ -12,7 +12,7 @@ public class MainController {
   @GetMapping("/join")
   public String join(Model model) {
     model.addAttribute("menu", "join");
-    return "tainer/join";
+    return "/trainer/join";
   }
   
   @GetMapping("/my-page")

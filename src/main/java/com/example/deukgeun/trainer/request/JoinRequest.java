@@ -61,6 +61,10 @@ public class JoinRequest {
   private String groupName;
   
   private String code;
+  
+  @NotBlank(message = "자기소개는 필수 입력 값입니다.")
+  private String introduction;
+  
 
   public static User create(JoinRequest request, PasswordEncoder passwordEncoder, Long profileId) {
     return User
@@ -78,6 +82,7 @@ public class JoinRequest {
         .extraAddress(request.getExtraAddress())
         .profileId(profileId)
         .price(request.price)
+        .introduction(request.introduction)
         .build();
   }
 

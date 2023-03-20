@@ -10,17 +10,9 @@
 	<article class="post featured">
 		<form method="get" action="#">
 			<div class="fields search">
-				<div class="field" id="field-area">
-					<label for="area">지역</label> <select name="area">
-						<option value="1">1</option>
-						<option value="2">2</option>
-						<option value="3">3</option>
-					</select>
-				</div>
-
 				<div class="field keyword" id="field-keyword">
 					<label for="keyword">검색창</label> <input type="text" name="keyword"
-						id="name" placeholder="트레이너 명 혹은 헬스장 명을 입력해주세요" />
+						id="name" placeholder="트레이너, 헬스장, 지역명을 입력해주세요." />
 				</div>
 
 				<div class="field" id="field-button">
@@ -61,7 +53,7 @@
 		function setList(data) {
 			let section = $("section[class=posts]");
 			section.find("article").remove();
-			section.find("h3").remove();
+			section.find("p").remove();
 			
 			let appendHtml = '';
 			appendHtml += '<article>';

@@ -75,10 +75,14 @@ public class User extends BaseEntity implements UserDetails{
   @OneToOne
   @JoinColumn(name = "profile_id", insertable = false, updatable = false, nullable = false)
   private Profile profile;
+  
+  @Column(length = 50, nullable = false)
+  private String introduction;
 
   @Builder
   public User(String name, String email, String password, GroupStatus groupStatus, Gender gender
-      , Integer price,String groupName, String postcode, String jibunAddress, String roadAddress, String detailAddress, String extraAddress, Long profileId) {
+      , Integer price,String groupName, String postcode, String jibunAddress, String roadAddress,
+      String detailAddress, String extraAddress, Long profileId, String introduction) {
     this.name = name;
     this.email = email;
     this.password = password;
@@ -92,6 +96,7 @@ public class User extends BaseEntity implements UserDetails{
     this.profileId = profileId;
     this.gender = gender;
     this.price = price;
+    this.introduction = introduction;
   }
 
   @Override
