@@ -4,10 +4,13 @@
 	layout:decorate="~{web/layout/layout}">
 <th:block layout:fragment="css">
 	<style>
-		.errorMessage {
-			color: red;
-			margin-left: 10px;
+		.fa-chevron-down, .fa-chevron-up{
+			cursor: pointer;
 		}
+		 .fa-chevron-up, #license, #award{
+		 	display: none;
+		 }
+		 
 	</style>
 </th:block>
 <th:block layout:fragment="content">
@@ -15,7 +18,7 @@
 	<section class="post">
 		<header class="major">
 			<h1>
-				내 정보
+				게시글
 			</h1>
 			<p>
 				Aenean ornare velit lacus varius enim ullamcorper proin aliquam<br>
@@ -23,108 +26,54 @@
 				amet nullam sed etiam veroeros.
 			</p>
 		</header>
-		<form id="info" method="post" action=""
+		
+		<form id="post" method="post" action=""
 			enctype="multipart/form-data">
 			<div class="row gtr-uniform">
 				
 				<div class="col-6">
+					<label>대표 이미지</label>
+					<img id="profile" src="/images/trainer/profile/fb960ff5-b6e0-4550-b653-4fdd105b9b71_pexels-william-choquette-1954524.jpg" alt="" style="border: solid #eeeeee; cursor: pointer; width: 100%; height: 100%;">
+				</div>
+				
+				<div class="col-6">
 					<label>이름</label>
-					<input type="text" name="name" value="" placeholder="이름">
-					<span class="errorMessage" id="valid_name"></span>
+					<input type="text" name="name" value="" disabled="disabled">
+					<label>주소</label>
+					<input type="text" name="address" value="" disabled="disabled">
+					
 				</div>
-				
+				<div class="col-12"></div>
 				<div class="col-6">
-					<label>이메일</label>
-					<input type="text" name="email" value="" placeholder="이메일" disabled="disabled">
-					<input type="hidden" name="email" value="" >
-					<span class="errorMessage" id="valid_email"></span>
-				</div>
-
-				<!-- Break -->
-				<div class="col-12">
-					<label>활동 주소 / 직장 주소</label>
-					<ul class="actions">
-						<li>
-							<input type="text" id="sample4_postcode" name="postcode" placeholder="우편번호" disabled="disabled">
-							<input type="hidden" id="sample4_postcode" name="postcode">
-							<span class="errorMessage" id="valid_postcode"></span>
-						</li>
-						<li>
-							<input type="button" onclick="sample4_execDaumPostcode()" value="우편번호 찾기">
-						</li>
+					<label>
+						자격증
+						<i class="fa fa-chevron-down" id="show" aria-hidden="true"></i>
+						<i class="fa fa-chevron-up" id="hide" aria-hidden="true"></i>
+					</label>
+					
+					<ul id="license">
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
 					</ul>
 				</div>
-
-				<div class="col-6">
-					<input type="text" id="sample4_roadAddress" name="roadAddress" placeholder="도로명주소">
-					<input type="text" id="sample4_jibunAddress" name="jibunAddress" placeholder="지번주소">
-					<span id="guide" style="color: #999; display: none"></span>
-				</div>
-
-				<div class="col-6">
-					<input type="text" id="sample4_detailAddress" name="detailAddress" placeholder="상세주소">
-					<input type="text" id="sample4_extraAddress" name="extraAddress" placeholder="참고항목">
-				</div>
-
-				<!-- Break -->
-				<div class="col-6">
-					<label>PT 가격 (1회 기준)</label>
-					<input type="text" name="price" maxlength=6 oninput="checkNumber(this)" placeholder="가격">
-					<span class="errorMessage" id="valid_price"></span>
-				</div>
-				
-				<!-- Break -->
-				<div class="col-6">
-				</div>
-
-				<!-- Break -->
-				<div class="col-6">
-					<label>성별</label>
-					<div>
-						<input type="radio" id="M" name="gender" value="M">
-						<label for="M">남</label>
-					</div>
-					<div>
-						<input type="radio" id="F" value="F" name="gender">
-						<label for="F">여</label>
-					</div>
-					<span class="errorMessage" id="valid_gender"></span>
-				</div>
-
-				<!-- Break -->
-				<div class="col-6">
-					<label>소속</label>
-					<div>
-						<input type="radio" id="Y" name="groupStatus" value="Y">
-						<label for="Y">유</label>
-					</div>
-					<div>
-						<input type="radio" id="N" value="N" name="groupStatus">
-						<label for="N">무</label>
-					</div>
-					<span class="errorMessage" id="valid_groupStatus"></span>
-				</div>
-
-				<div class="col-6">
-					<label>소속명</label>
-					<input type="text" name="groupName" value="" placeholder="소속명">
-					<span class="errorMessage" id="valid_GroupName"></span>
-				</div>
 				
 				<div class="col-6">
-					<label>간단한 자기소개</label>
-					<input type="text" name="introduction" value="" placeholder="간단한 자기소개">
-					<span class="errorMessage" id="valid_introduction"></span>
-				</div>
-
-				<!-- Break -->
-				<div class="col-12">
-					<ul class="actions" style="justify-content: center;">
-						<li><input type="button" value="update" class="primary"
-							onclick="updateInfoAjax()" ></li>
-						<li><input type="reset" value="Reset"></li>
+					<label>
+						수상경력
+						<i class="fa fa-chevron-down" id="show" aria-hidden="true"></i>
+						<i class="fa fa-chevron-up" id="hide" aria-hidden="true"></i>
+					</label>
+					
+					<ul id="award">
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
 					</ul>
 				</div>
+				
 
 			</div>
 		</form>
@@ -133,6 +82,18 @@
 <th:block layout:fragment="script">
 	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 	<script type="text/javascript">
-	</script>
+		$("i[id=show]").on("click", function() {
+			$(this).hide();
+			$(this).siblings("i[id=hide]").show();
+			$(this).parent().siblings("ul").slideDown();
+		});
+		
+		$("i[id=hide]").on("click", function() {
+			$(this).hide();
+			$(this).siblings("i[id=show]").show();
+			$(this).parent().siblings("ul").slideUp();
+		});
+		
+	 </script>
 </th:block>
 </html>

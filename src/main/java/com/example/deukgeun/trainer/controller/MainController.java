@@ -44,4 +44,10 @@ public class MainController {
     model.addAttribute("menu", "myPage");
     return "trainer/myPage/withdrawal";
   }
+  
+  @GetMapping("/my-page/post")
+  public String myPagePost(Model model) {
+    model.addAttribute("menu", "myPage");
+    return "trainer/myPage/post";
+  }
 }
