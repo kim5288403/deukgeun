@@ -27,8 +27,6 @@
 			</p>
 		</header>
 		
-		<form id="post" method="post" action=""
-			enctype="multipart/form-data">
 			<div class="row gtr-uniform">
 				
 				<div class="col-6">
@@ -44,6 +42,7 @@
 					
 				</div>
 				<div class="col-12"></div>
+				
 				<div class="col-6">
 					<label>
 						자격증
@@ -74,13 +73,33 @@
 					</ul>
 				</div>
 				
-
+				<div class="col-12">
+					<form action="" method="post">
+				      <div id="smarteditor">
+				        <textarea name="editorTxt" id="editorTxt" 
+				                  rows="20" cols="10" 
+				                  placeholder="내용을 입력해주세요"
+				                  style="width: 100%;"></textarea>
+				      </div>
+				    </form>
+				</div>
+				
+				<div class="col-12">
+					<ul class="actions" style="justify-content: center;">
+						<li>
+							<input type="button" value="save" class="primary"
+							onclick="save()" >
+						</li>
+						<li><input type="button" onclick="back()" value="back"></li>
+					</ul>
+				</div>
+				
 			</div>
-		</form>
 	</section>
 </th:block>
 <th:block layout:fragment="script">
 	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	<script type="text/javascript" src="/smarteditor/js/HuskyEZCreator.js" charset="utf-8"></script>
 	<script type="text/javascript">
 		$("i[id=show]").on("click", function() {
 			$(this).hide();
@@ -93,6 +112,33 @@
 			$(this).siblings("i[id=show]").show();
 			$(this).parent().siblings("ul").slideUp();
 		});
+		
+		let oEditors = []
+
+		smartEditor = function() {
+			nhn.husky.EZCreator.createInIFrame({
+		    	oAppRef: oEditors,
+		        elPlaceHolder: "editorTxt",
+		        sSkinURI: "/smarteditor/SmartEditor2Skin.html",
+		        fCreator: "createSEditor2"
+		    });
+		}
+
+		$(document).ready(function() {
+			smartEditor();
+		});
+		
+		function save() {
+			oEditors.getById["editorTxt"].exec("UPDATE_CONTENTS_FIELD", []);
+			let content = document.getElementById("editorTxt").value;
+			if(content == '') {
+				defalutErrorAlert("내용을 입력해주세요.");
+				oEditors.getById["editorTxt"].exec("FOCUS")
+				return
+			} else {
+				console.log(content)
+			}
+		}
 		
 	 </script>
 </th:block>

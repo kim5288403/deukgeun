@@ -39,6 +39,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
             UsernamePasswordAuthenticationFilter.class);
 		
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		
+		http
+        .headers()
+            .frameOptions().sameOrigin();
 	}
 
 }
