@@ -5,8 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import com.example.deukgeun.commom.enums.StatusEnum;
-import com.example.deukgeun.commom.response.MessageResponse;
+import com.example.deukgeun.commom.response.RestResponseUtil;
 import com.example.deukgeun.global.provider.JwtProvider;
 import lombok.RequiredArgsConstructor;
 
@@ -27,16 +26,7 @@ public class JwtController {
     String authToken = request.getHeader("Authorization").replace("Bearer ", "");
     jwtProvider.deleteTokenEntity(authToken);
     
-    MessageResponse response = MessageResponse
-        .builder()
-        .data(null)
-        .message("로그아웃 성공 했습니다.")
-        .code(StatusEnum.OK.getCode())
-        .status(StatusEnum.OK.getStatus())
-        .build();
-
-    return ResponseEntity
-        .ok()
-        .body(response);
+    return new RestResponseUtil()
+        .okResponse("로그아웃 성공 했습니다.", null);
   }
 }

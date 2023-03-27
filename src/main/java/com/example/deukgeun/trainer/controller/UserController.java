@@ -12,10 +12,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import com.example.deukgeun.commom.enums.StatusEnum;
 import com.example.deukgeun.commom.request.TokenRequest;
 import com.example.deukgeun.commom.response.LoginResponse;
-import com.example.deukgeun.commom.response.MessageResponse;
+import com.example.deukgeun.commom.response.RestResponseUtil;
 import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
 import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
 import com.example.deukgeun.global.provider.JwtProvider;
@@ -46,17 +45,8 @@ public class UserController {
   public ResponseEntity<?> list(String keyword) {
     List<UserListResponse> list = userService.getList(keyword);
 
-    MessageResponse response = MessageResponse
-        .builder()
-        .data(list)
-        .message("조회 성공 했습니다.")
-        .code(StatusEnum.OK.getCode())
-        .status(StatusEnum.OK.getStatus())
-        .build();
-
-    return ResponseEntity
-        .ok()
-        .body(response);
+    return new RestResponseUtil()
+        .okResponse("조회 성공 했습니다.", list);
   }
 
   // 트레이너 회원 가입
@@ -77,17 +67,8 @@ public class UserController {
     User user = JoinRequest.create(request, passwordEncoder, profileSaveId);
     userService.save(user);
 
-    MessageResponse response = MessageResponse
-        .builder()
-        .data(user)
-        .message("회원 가입 성공 했습니다.")
-        .code(StatusEnum.OK.getCode())
-        .status(StatusEnum.OK.getStatus())
-        .build();
-
-    return ResponseEntity
-        .ok()
-        .body(response);
+    return new RestResponseUtil()
+        .okResponse("회원 가입 성공 했습니다.", user);
   }
 
   @RequestMapping(method = RequestMethod.POST, path = "/login")
@@ -112,17 +93,8 @@ public class UserController {
         .role(role)
         .build();
 
-    MessageResponse messageResponse = MessageResponse
-        .builder()
-        .data(loginResponse)
-        .message("로그인 성공 했습니다.")
-        .code(StatusEnum.OK.getCode())
-        .status(StatusEnum.OK.getStatus())
-        .build();
-
-    return ResponseEntity
-        .ok()
-        .body(messageResponse);
+    return new RestResponseUtil()
+        .okResponse("로그인 성공 했습니다.", loginResponse);
   }
 }
 

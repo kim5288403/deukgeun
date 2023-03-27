@@ -1,8 +1,6 @@
 package com.example.deukgeun.commom.exception;
 
 import java.util.Map;
-import com.example.deukgeun.commom.enums.StatusEnum;
-import com.example.deukgeun.commom.response.MessageResponse;
 
 public class RequestValidException extends RuntimeException{
 
@@ -21,16 +19,4 @@ public class RequestValidException extends RuntimeException{
   public Map<String, String> getResult() {
     return result;
   }
-  
-  public MessageResponse getResponse() {
-    return MessageResponse
-        .builder()
-        .code(StatusEnum.BAD_REQUEST.getCode())
-        .status(StatusEnum.BAD_REQUEST.getStatus())
-        .data(result)
-        .message(getMessage())
-        .build();
-  }
-
-  
 }

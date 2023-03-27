@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,10 +24,12 @@ import lombok.RequiredArgsConstructor;
 @Component
 public class JwtProvider {
 
-  private String secretKey = "deuckgeunproject";
-  
-  private long authTokenTime = 30 * 60 * 1000L;
-  private long refreshTokenTime = 60 * 60 * 3000L;
+  @Value("${jwt.secretKey}")
+  private String secretKey;
+  @Value("${jwt.authTokenTime}")
+  private long authTokenTime;
+  @Value("${jwt.refreshTokenTime}")
+  private long refreshTokenTime;
   
   private final UserServiceImpl userService;
   private final JwtServiceImpl jwtService;

@@ -13,7 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 import com.example.deukgeun.commom.enums.StatusEnum;
-import com.example.deukgeun.commom.response.MessageResponse;
+import com.example.deukgeun.commom.response.RestResponse;
 import com.example.deukgeun.global.provider.JwtProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -66,7 +66,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
            response.setContentType("application/json");
            response.setCharacterEncoding("utf-8");
            
-           MessageResponse messageResponse = MessageResponse
+           RestResponse messageResponse = RestResponse
                .builder()
                .code(StatusEnum.FORBIDDEN.getCode())
                .status(StatusEnum.FORBIDDEN.getStatus())
