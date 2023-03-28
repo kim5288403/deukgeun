@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -22,7 +23,8 @@ public class ProfileServiceImpl implements ProfileService {
   private ProfileRepository profileRepository;
   
   //트레이너 profile 저장 경로
-  private static final String FILE_PATH = "C:\\eclipse\\deukgeun_workspace\\deukgeun\\src\\main\\resources\\static\\images\\trainer\\profile";
+  @Value("${trainer.profile.filePath}")
+  private String FILE_PATH;
 
   //file custom validate 
   public BindingResult validator(MultipartFile file, BindingResult bindingResult) {

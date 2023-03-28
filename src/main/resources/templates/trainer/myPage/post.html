@@ -74,21 +74,15 @@
 				</div>
 				
 				<div class="col-12">
-					<form action="" method="post">
-				      <div id="smarteditor">
-				        <textarea name="editorTxt" id="editorTxt" 
-				                  rows="20" cols="10" 
-				                  placeholder="내용을 입력해주세요"
-				                  style="width: 100%;"></textarea>
-				      </div>
-				    </form>
+					<div id="example">
+					</div>
 				</div>
+				
 				
 				<div class="col-12">
 					<ul class="actions" style="justify-content: center;">
 						<li>
-							<input type="button" value="save" class="primary"
-							onclick="save()" >
+							<input type="button" id="saveBtn" value="save" class="primary">
 						</li>
 						<li><input type="button" onclick="back()" value="back"></li>
 					</ul>
@@ -98,9 +92,10 @@
 	</section>
 </th:block>
 <th:block layout:fragment="script">
-	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-	<script type="text/javascript" src="/smarteditor/js/HuskyEZCreator.js" charset="utf-8"></script>
+<link href="https://cdn.jsdelivr.net/npm/froala-editor@3.1.0/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/froala-editor@3.1.0/js/froala_editor.pkgd.min.js"></script>
 	<script type="text/javascript">
+	
 		$("i[id=show]").on("click", function() {
 			$(this).hide();
 			$(this).siblings("i[id=hide]").show();
@@ -113,33 +108,38 @@
 			$(this).parent().siblings("ul").slideUp();
 		});
 		
-		let oEditors = []
+		$(document).ready(function(){
+ 			let editor = new FroalaEditor('#example', {
+				// Set the save param.
+			    saveParam: 'content',
 
-		smartEditor = function() {
-			nhn.husky.EZCreator.createInIFrame({
-		    	oAppRef: oEditors,
-		        elPlaceHolder: "editorTxt",
-		        sSkinURI: "/smarteditor/SmartEditor2Skin.html",
-		        fCreator: "createSEditor2"
-		    });
-		}
+			    // HTTP request type.
+			    saveMethod: 'POST',
 
-		$(document).ready(function() {
-			smartEditor();
+			 	// Set the save URL.
+			    saveURL: '/api/trainer/my-page/post/upload',
+			    
+			    // Additional save params.
+			    saveParam: "content",
+			    
+			    events: {
+			        'save.before': function (html) {
+			        },
+
+			        'save.after': function (data) {
+			        },
+
+			        'save.error': function (error, response) {
+			        }
+			      }
+			});
+			
+			$("input[id=saveBtn]").on("click", function(){
+				editor.save.save();
+			});
 		});
 		
-		function save() {
-			oEditors.getById["editorTxt"].exec("UPDATE_CONTENTS_FIELD", []);
-			let content = document.getElementById("editorTxt").value;
-			if(content == '') {
-				defalutErrorAlert("내용을 입력해주세요.");
-				oEditors.getById["editorTxt"].exec("FOCUS")
-				return
-			} else {
-				console.log(content)
-			}
-		}
-		
+	
 	 </script>
 </th:block>
 </html>
