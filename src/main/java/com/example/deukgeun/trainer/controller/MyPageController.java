@@ -1,12 +1,18 @@
 package com.example.deukgeun.trainer.controller;
 
-import java.io.IOException;
+import java.io.File;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 import javax.validation.Valid;
-import org.apache.commons.text.StringEscapeUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
@@ -20,12 +26,15 @@ import com.example.deukgeun.global.provider.JwtProvider;
 import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.request.PasswordUpdateRequest;
+import com.example.deukgeun.trainer.request.PostRequest;
 import com.example.deukgeun.trainer.request.UserInfoUpdateRequest;
 import com.example.deukgeun.trainer.request.WithdrawalRequest;
 import com.example.deukgeun.trainer.response.ProfileResponse;
 import com.example.deukgeun.trainer.response.UserResponse;
+import com.example.deukgeun.trainer.service.implement.PostServiceImpl;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
 import com.example.deukgeun.trainer.service.implement.UserServiceImpl;
+import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 
 
@@ -39,6 +48,12 @@ public class MyPageController {
   private final ValidateServiceImpl validateService;
   private final ProfileServiceImpl profileService;
   private final PasswordEncoder passwordEncoder;
+  private final PostServiceImpl postService;
+  
+  @Value("${trainer.post.filePath}")
+  private String postFilePath;
+  @Value("${trainer.post.url}")
+  private String postUrl;
   
   @RequestMapping(method = RequestMethod.GET, path = "/info")
   public ResponseEntity<?> getInfo(HttpServletRequest request) throws Exception{
@@ -167,14 +182,93 @@ public class MyPageController {
   }
   
   @RequestMapping(method = RequestMethod.POST, path = "/post/upload")
-  public ResponseEntity<?> postUpload(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
-    String content = request.getParameter("content");
-    String html = StringEscapeUtils.escapeHtml3(content);
-    System.out.println(html);
-    html = StringEscapeUtils.unescapeHtml3(html);
-    System.out.println(html);
+  public ResponseEntity<?> postUpload(PostRequest request, HttpServletResponse response){
+    
+    postService.save(request);
+    
     return new RestResponseUtil()
-        .okResponse("회원 탈퇴 성공했습니다.", null);
+        .okResponse("게시글 저장 성공했습니다.", null);
+  }
+  
+  @RequestMapping(method = RequestMethod.POST, path = "/post/uploadImage")
+  public void postUploadImage(HttpServletRequest request, HttpServletResponse response) throws Exception{
+    
+    File uploads = new File(postFilePath);
+    String multipartContentType = "multipart/form-data";
+    String fieldname = "file";
+    Part filePart = request.getPart(fieldname);
+    Map< Object, Object > responseData = null;
+    
+    final PrintWriter writer = response.getWriter();
+    
+    String linkName = null;
+    String name = null;
+    
+    if (request.getContentType() == null ||
+        request.getContentType().toLowerCase().indexOf(multipartContentType) == -1) {
+
+        throw new Exception("Invalid contentType. It must be " + multipartContentType);
+    }
+    
+    String type = filePart.getContentType();
+    type = type.substring(type.lastIndexOf("/") + 1);
+    
+    String extension = type;
+    extension = (extension != null && extension != "") ? "." + extension : extension;
+    name = UUID.randomUUID().toString() + extension ;
+    
+    linkName = postUrl + name;
+    
+    String mimeType = filePart.getContentType();
+    String[] allowedMimeTypes = new String[] {
+        "image/gif",
+        "image/jpeg",
+        "image/pjpeg",
+        "image/x-png",
+        "image/png",
+        "image/svg+xml"
+    };
+    
+    if (!ArrayUtils.contains(allowedMimeTypes, mimeType.toLowerCase())) {
+
+        // Delete the uploaded image if it dose not meet the validation.
+        File file = new File(uploads + name);
+        if (file.exists()) {
+            file.delete();
+        }
+
+        throw new Exception("Image does not meet the validation.");
+    }
+    
+    File file = new File(uploads, name);
+    
+    try (InputStream input = filePart.getInputStream()) {
+        Files.copy(input, file.toPath());
+    } catch (Exception e) {
+      writer.println("<br/> ERROR: " + e);
+    }
+    
+    responseData = new HashMap< Object, Object > ();
+    responseData.put("link", linkName);
+    
+    // Send response data.
+    String jsonResponseData = new Gson().toJson(responseData);
+    response.setContentType("application/json");
+    response.setCharacterEncoding("UTF-8");
+    response.getWriter().write(jsonResponseData);
+  }
+  
+  
+  @RequestMapping(method = RequestMethod.GET, path = "/post/*")
+  public void postImage(HttpServletRequest request, HttpServletResponse response) throws Exception{
+    String[] url = request.getRequestURI().split("/");
+    String filename = url[url.length-1];
+    File file = new File(postFilePath, filename);
+
+    response.setHeader("Content-Type", request.getServletContext().getMimeType(filename));
+    response.setHeader("Content-Length", String.valueOf(file.length()));
+    response.setHeader("Content-Disposition", "inline; filename=\"" + file.getName() + "\"");
+    Files.copy(file.toPath(), response.getOutputStream());
   }
   
 }

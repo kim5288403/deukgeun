@@ -1,0 +1,28 @@
+package com.example.deukgeun.trainer.entity;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import lombok.Builder;
+import lombok.Getter;
+
+@Entity
+@Getter
+@Table(name = "trainer_post")
+public class Post extends BaseEntity{
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "post_id")
+  private Long id;
+  
+  @Column(nullable = false)
+  private String html;
+  
+  @Builder
+  public Post(String html) {
+    this.html = html;
+  }
+}

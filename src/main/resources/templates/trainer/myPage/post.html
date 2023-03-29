@@ -110,9 +110,6 @@
 		
 		$(document).ready(function(){
  			let editor = new FroalaEditor('#example', {
-				// Set the save param.
-			    saveParam: 'content',
-
 			    // HTTP request type.
 			    saveMethod: 'POST',
 
@@ -121,6 +118,8 @@
 			    
 			    // Additional save params.
 			    saveParam: "content",
+			    
+			    imageUploadURL: '/api/trainer/my-page/post/uploadImage',
 			    
 			    events: {
 			        'save.before': function (html) {
