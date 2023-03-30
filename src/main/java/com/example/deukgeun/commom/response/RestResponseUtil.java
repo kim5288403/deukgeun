@@ -5,7 +5,7 @@ import com.example.deukgeun.commom.enums.StatusEnum;
 
 public class RestResponseUtil {
   
-  public ResponseEntity<RestResponse> okResponse(String message, Object data){
+  public static ResponseEntity<RestResponse> okResponse(String message, Object data){
     RestResponse response = RestResponse
           .builder()
           .code(StatusEnum.OK.getCode())
@@ -18,7 +18,7 @@ public class RestResponseUtil {
           .body(response);
   }
   
-  public ResponseEntity<RestResponse> BadResponse(String message, Object data){
+  public static ResponseEntity<RestResponse> BadResponse(String message, Object data){
     RestResponse response = RestResponse
           .builder()
           .code(StatusEnum.BAD_REQUEST.getCode())

@@ -37,7 +37,7 @@ public class MailController {
 
     String authCode = mailservice.sendMail(request.getEmail());
 
-    return new RestResponseUtil()
+    return RestResponseUtil
     .okResponse("인증 메일 보내기 성공했습니다.", authCode);
   }
 
@@ -51,7 +51,7 @@ public class MailController {
 
     mailservice.updateMailStatus(request, MailStatus.Y);
 
-    return new RestResponseUtil()
+    return RestResponseUtil
         .okResponse("메일 인증 성공 했습니다.", null);
   }
 }

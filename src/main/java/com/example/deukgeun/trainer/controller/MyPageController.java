@@ -1,18 +1,12 @@
 package com.example.deukgeun.trainer.controller;
 
 import java.io.File;
-import java.io.InputStream;
-import java.io.PrintWriter;
 import java.nio.file.Files;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
 import javax.validation.Valid;
-import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
@@ -50,11 +44,6 @@ public class MyPageController {
   private final PasswordEncoder passwordEncoder;
   private final PostServiceImpl postService;
   
-  @Value("${trainer.post.filePath}")
-  private String postFilePath;
-  @Value("${trainer.post.url}")
-  private String postUrl;
-  
   @RequestMapping(method = RequestMethod.GET, path = "/info")
   public ResponseEntity<?> getInfo(HttpServletRequest request) throws Exception{
     String authToken = request.getHeader("Authorization").replace("Bearer ", "");
@@ -63,7 +52,7 @@ public class MyPageController {
     User user = userService.getUser(email);
     UserResponse userResponse = new UserResponse(user);
     
-    return new RestResponseUtil()
+    return RestResponseUtil
         .okResponse("마이 페이지 조회 성공했습니다.", userResponse);
   }
   
@@ -79,7 +68,7 @@ public class MyPageController {
     
     userService.updateInfo(request);
     
-    return new RestResponseUtil()
+    return RestResponseUtil
         .okResponse("내 정보 수정 성공했습니다.", null);
   }
   
@@ -94,7 +83,7 @@ public class MyPageController {
     .path(profile.getPath())
     .build();
     
-    return new RestResponseUtil()
+    return RestResponseUtil
         .okResponse("프로필 이미지 조회 성공했습니다.", profileResponse);
   }
 
@@ -118,7 +107,7 @@ public class MyPageController {
       profileService.deleteServer(userProfile.getPath());
     }
     
-    return new RestResponseUtil()
+    return RestResponseUtil
         .okResponse("내 정보 수정 성공했습니다.", null);
   }
   
@@ -127,7 +116,7 @@ public class MyPageController {
     String authToken = request.getHeader("Authorization").replace("Bearer ", "");
     String email = jwtProvider.getUserPk(authToken);
     
-    return new RestResponseUtil()
+    return RestResponseUtil
         .okResponse("내 정보 비밀번호 조회 성공했습니다.", email);
   }
   
@@ -144,7 +133,7 @@ public class MyPageController {
     String password = passwordEncoder.encode(request.getNewPassword());
     userService.updatePassword(email, password);
     
-    return new RestResponseUtil()
+    return RestResponseUtil
         .okResponse("비밀번호 변경 성공했습니다.", null);
   }
   
@@ -177,98 +166,51 @@ public class MyPageController {
     //토큰 삭제
     jwtProvider.deleteTokenEntity(authToken);
     
-    return new RestResponseUtil()
+    return RestResponseUtil
     .okResponse("회원 탈퇴 성공했습니다.", null);
   }
   
   @RequestMapping(method = RequestMethod.POST, path = "/post/upload")
-  public ResponseEntity<?> postUpload(PostRequest request, HttpServletResponse response){
-    
+  public ResponseEntity<?> uploadPost(PostRequest request, HttpServletResponse response){
     postService.save(request);
     
-    return new RestResponseUtil()
+    return RestResponseUtil
         .okResponse("게시글 저장 성공했습니다.", null);
   }
   
   @RequestMapping(method = RequestMethod.POST, path = "/post/uploadImage")
-  public void postUploadImage(HttpServletRequest request, HttpServletResponse response) throws Exception{
+  public void uploadPostImage(HttpServletRequest request, HttpServletResponse response) throws Exception{
     
-    File uploads = new File(postFilePath);
-    String multipartContentType = "multipart/form-data";
-    String fieldname = "file";
-    Part filePart = request.getPart(fieldname);
-    Map< Object, Object > responseData = null;
-    
-    final PrintWriter writer = response.getWriter();
-    
-    String linkName = null;
-    String name = null;
-    
-    if (request.getContentType() == null ||
-        request.getContentType().toLowerCase().indexOf(multipartContentType) == -1) {
-
-        throw new Exception("Invalid contentType. It must be " + multipartContentType);
-    }
-    
-    String type = filePart.getContentType();
-    type = type.substring(type.lastIndexOf("/") + 1);
-    
-    String extension = type;
-    extension = (extension != null && extension != "") ? "." + extension : extension;
-    name = UUID.randomUUID().toString() + extension ;
-    
-    linkName = postUrl + name;
-    
-    String mimeType = filePart.getContentType();
-    String[] allowedMimeTypes = new String[] {
-        "image/gif",
-        "image/jpeg",
-        "image/pjpeg",
-        "image/x-png",
-        "image/png",
-        "image/svg+xml"
-    };
-    
-    if (!ArrayUtils.contains(allowedMimeTypes, mimeType.toLowerCase())) {
-
-        // Delete the uploaded image if it dose not meet the validation.
-        File file = new File(uploads + name);
-        if (file.exists()) {
-            file.delete();
-        }
-
-        throw new Exception("Image does not meet the validation.");
-    }
-    
-    File file = new File(uploads, name);
-    
-    try (InputStream input = filePart.getInputStream()) {
-        Files.copy(input, file.toPath());
-    } catch (Exception e) {
-      writer.println("<br/> ERROR: " + e);
-    }
-    
-    responseData = new HashMap< Object, Object > ();
-    responseData.put("link", linkName);
-    
-    // Send response data.
+    Map< Object, Object > responseData = postService.saveImage(request, response);
     String jsonResponseData = new Gson().toJson(responseData);
     response.setContentType("application/json");
     response.setCharacterEncoding("UTF-8");
     response.getWriter().write(jsonResponseData);
   }
   
-  
   @RequestMapping(method = RequestMethod.GET, path = "/post/*")
   public void postImage(HttpServletRequest request, HttpServletResponse response) throws Exception{
-    String[] url = request.getRequestURI().split("/");
-    String filename = url[url.length-1];
-    File file = new File(postFilePath, filename);
-
-    response.setHeader("Content-Type", request.getServletContext().getMimeType(filename));
+    
+    File file = postService.getServerImage(request.getRequestURI());
+    response.setHeader("Content-Type", request.getServletContext().getMimeType(file.getName()));
     response.setHeader("Content-Length", String.valueOf(file.length()));
     response.setHeader("Content-Disposition", "inline; filename=\"" + file.getName() + "\"");
     Files.copy(file.toPath(), response.getOutputStream());
   }
+  
+  @RequestMapping(method = RequestMethod.POST, path = "/post/remove")
+  public void removePostImage(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    String src = request.getParameter("src");
+    postService.postImageDelete(src);
+  }
+  
+  @RequestMapping(method = RequestMethod.GET, path = "/post")
+  public ResponseEntity<?> postInfo(HttpServletRequest request, HttpServletResponse response) {
+    
+    return RestResponseUtil
+        .okResponse("게시글 저장 성공했습니다.", null);
+  }
+  
+  
   
 }

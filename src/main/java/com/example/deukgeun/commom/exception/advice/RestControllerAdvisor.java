@@ -23,31 +23,31 @@ public class RestControllerAdvisor {
   @ExceptionHandler(RequestValidException.class)
   public ResponseEntity<?> requestValidException(RequestValidException e) {
     
-    return new RestResponseUtil()
+    return RestResponseUtil
         .BadResponse(e.getMessage(), e.getResult());
   }
   
   @ExceptionHandler(UnsupportedEncodingException.class)
   public ResponseEntity<?> unsupportedEncodingException(UnsupportedEncodingException e) {
-    return new RestResponseUtil()
+    return RestResponseUtil
         .BadResponse(e.getMessage(), null);
   }
   
   @ExceptionHandler(MessagingException.class)
   public ResponseEntity<?> messagingException(MessagingException e) {
-    return new RestResponseUtil()
+    return RestResponseUtil
         .BadResponse(e.getMessage(), null);
   }
   
   @ExceptionHandler(ValidationException.class)
   public ResponseEntity<?> validationException(ValidationException e) {
-    return new RestResponseUtil()
+    return RestResponseUtil
         .BadResponse(e.getMessage(), null);
   }
   
   @ExceptionHandler(ExpiredJwtException.class)
   public ResponseEntity<?> expiredJwtException(ExpiredJwtException e) {
-    return new RestResponseUtil()
+    return RestResponseUtil
         .BadResponse(e.getMessage(), null);
   }
   

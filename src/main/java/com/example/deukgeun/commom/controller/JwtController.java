@@ -26,7 +26,7 @@ public class JwtController {
     String authToken = request.getHeader("Authorization").replace("Bearer ", "");
     jwtProvider.deleteTokenEntity(authToken);
     
-    return new RestResponseUtil()
+    return RestResponseUtil
         .okResponse("로그아웃 성공 했습니다.", null);
   }
 }

@@ -69,12 +69,19 @@ public class User extends BaseEntity implements UserDetails{
   @Column(name = "profile_id")
   private Long profileId;
   
+  @Column(name = "post_id")
+  private Long postId;
+  
   @Column(length = 50, nullable = false)
   private Integer price;
   
   @OneToOne
   @JoinColumn(name = "profile_id", insertable = false, updatable = false, nullable = false)
   private Profile profile;
+  
+  @OneToOne
+  @JoinColumn(name = "post_id", insertable = false, updatable = false, nullable = false)
+  private Post post;
   
   @Column(length = 50, nullable = false)
   private String introduction;

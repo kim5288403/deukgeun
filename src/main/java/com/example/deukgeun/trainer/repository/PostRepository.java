@@ -5,4 +5,5 @@ import com.example.deukgeun.trainer.entity.Post;
 
 public interface PostRepository extends JpaRepository<Post, Long>{
 
+
 }

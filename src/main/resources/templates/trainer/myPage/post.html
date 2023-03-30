@@ -109,7 +109,11 @@
 		});
 		
 		$(document).ready(function(){
+			let authToken = getCookie("authToken");
  			let editor = new FroalaEditor('#example', {
+ 				requestHeaders: {
+ 					Authorization: "Bearer " + authToken
+ 				},
 			    // HTTP request type.
 			    saveMethod: 'POST',
 
@@ -120,7 +124,8 @@
 			    saveParam: "content",
 			    
 			    imageUploadURL: '/api/trainer/my-page/post/uploadImage',
-			    
+			  
+			      
 			    events: {
 			        'save.before': function (html) {
 			        },
@@ -129,6 +134,10 @@
 			        },
 
 			        'save.error': function (error, response) {
+			        },
+			        'image.removed': function (img) {
+			        	let src = img.attr('src');
+			        	imageRemoveAjax(src);     	
 			        }
 			      }
 			});
@@ -136,8 +145,32 @@
 			$("input[id=saveBtn]").on("click", function(){
 				editor.save.save();
 			});
+			
 		});
 		
+		function imageRemoveAjax(src){
+			$.ajax({
+				url: "/api/trainer/my-page/post/remove",
+				method: "post",
+			    data: {
+			    	"src": src
+			    },
+			    success: function(res, status) {
+			    	
+			    }
+			});
+		}
+		
+		function getPostAjax(){
+			$.ajax({
+				url: "/api/trainer/my-page/post",
+				method: "get",
+			    success: function(res, status) {
+			    	console.log(res);
+			    }
+			});
+		}
+	
 	
 	 </script>
 </th:block>

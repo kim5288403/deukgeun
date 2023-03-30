@@ -45,7 +45,7 @@ public class UserController {
   public ResponseEntity<?> list(String keyword) {
     List<UserListResponse> list = userService.getList(keyword);
 
-    return new RestResponseUtil()
+    return RestResponseUtil
         .okResponse("조회 성공 했습니다.", list);
   }
 
@@ -67,7 +67,7 @@ public class UserController {
     User user = JoinRequest.create(request, passwordEncoder, profileSaveId);
     userService.save(user);
 
-    return new RestResponseUtil()
+    return RestResponseUtil
         .okResponse("회원 가입 성공 했습니다.", user);
   }
 
@@ -93,7 +93,7 @@ public class UserController {
         .role(role)
         .build();
 
-    return new RestResponseUtil()
+    return RestResponseUtil
         .okResponse("로그인 성공 했습니다.", loginResponse);
   }
 }
