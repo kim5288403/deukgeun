@@ -23,6 +23,7 @@ import com.example.deukgeun.trainer.request.PasswordUpdateRequest;
 import com.example.deukgeun.trainer.request.PostRequest;
 import com.example.deukgeun.trainer.request.UserInfoUpdateRequest;
 import com.example.deukgeun.trainer.request.WithdrawalRequest;
+import com.example.deukgeun.trainer.response.PostResponse;
 import com.example.deukgeun.trainer.response.ProfileResponse;
 import com.example.deukgeun.trainer.response.UserResponse;
 import com.example.deukgeun.trainer.service.implement.PostServiceImpl;
@@ -171,8 +172,16 @@ public class MyPageController {
   }
   
   @RequestMapping(method = RequestMethod.POST, path = "/post/upload")
-  public ResponseEntity<?> uploadPost(PostRequest request, HttpServletResponse response){
-    postService.save(request);
+  public ResponseEntity<?> uploadPost(HttpServletRequest request,
+      @Valid PostRequest postRequest,
+      BindingResult bindingResult
+      ) throws Exception{
+    
+    if (bindingResult.hasErrors()) {
+      validateService.errorMessageHandling(bindingResult);
+    }
+    String authToken = request.getHeader("Authorization").replace("Bearer ", "");
+    postService.uploadPost(postRequest, authToken);
     
     return RestResponseUtil
         .okResponse("게시글 저장 성공했습니다.", null);
@@ -201,16 +210,16 @@ public class MyPageController {
   @RequestMapping(method = RequestMethod.POST, path = "/post/remove")
   public void removePostImage(HttpServletRequest request, HttpServletResponse response) throws Exception {
     String src = request.getParameter("src");
-    postService.postImageDelete(src);
+    postService.deletePostImage(src);
   }
   
   @RequestMapping(method = RequestMethod.GET, path = "/post")
-  public ResponseEntity<?> postInfo(HttpServletRequest request, HttpServletResponse response) {
+  public ResponseEntity<?> postInfo(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    String authToken = request.getHeader("Authorization").replace("Bearer ", "");
+    PostResponse postResponse = postService.getPostInfo(authToken);
     
     return RestResponseUtil
-        .okResponse("게시글 저장 성공했습니다.", null);
+        .okResponse("게시글 저장 성공했습니다.", postResponse);
   }
-  
-  
   
 }

@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,12 +17,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import com.example.deukgeun.global.provider.JwtProvider;
 import com.example.deukgeun.trainer.entity.Post;
-import com.example.deukgeun.trainer.entity.PostImage;
 import com.example.deukgeun.trainer.entity.User;
-import com.example.deukgeun.trainer.repository.PostImageRepository;
 import com.example.deukgeun.trainer.repository.PostRepository;
-import com.example.deukgeun.trainer.request.PostImageRequest;
 import com.example.deukgeun.trainer.request.PostRequest;
+import com.example.deukgeun.trainer.response.PostResponse;
 import com.example.deukgeun.trainer.service.PostService;
 import lombok.RequiredArgsConstructor;
 
@@ -32,7 +31,6 @@ public class PostServiceImpl implements PostService{
   private final JwtProvider jwtProvider;
   private final UserServiceImpl userService;
   private final PostRepository postRepository;
-  private final PostImageRepository postImageRepository;
   
   @Value("${trainer.post.filePath}")
   private String postFilePath;
@@ -40,11 +38,31 @@ public class PostServiceImpl implements PostService{
   @Value("${trainer.post.url}")
   private String postUrl;
   
-  public void save(PostRequest request) {
+  public void uploadPost(PostRequest request, String authToken) throws Exception {
+    String email = jwtProvider.getUserPk(authToken);
+    User user = userService.getUser(email);
+    Long userId = user.getId();
+    Optional<Post> post = postRepository.findByUserId(userId);
+    
     String content = request.getContent();
     String html = StringEscapeUtils.escapeHtml3(content);
-    Post post = PostRequest.create(html);
+    
+    if (post.isPresent()) {
+      update(userId, html);
+    } else {
+      save(userId, html);
+    }
+  }
+  
+  public void save(Long user_id, String html) {
+    Post post = PostRequest.create(html, user_id);
+    
     postRepository.save(post);
+  }
+  
+  public void update(Long user_id, String html) {
+    
+    postRepository.update(user_id, html);
   }
   
   public Map< Object, Object > saveImage(HttpServletRequest request,  HttpServletResponse response) throws Exception {
@@ -66,8 +84,7 @@ public class PostServiceImpl implements PostService{
     validMimeType(type, uploads, name);
     
     File file = new File(uploads, name);
-    serverSaveImage(filePart, response.getWriter(), file);
-    DBSaveImage(request.getHeader("Authorization").replace("Bearer ", ""), linkName);
+    saveServerImage(filePart, response.getWriter(), file);
     
     Map< Object, Object > responseData = new HashMap< Object, Object > ();
     responseData.put("link", linkName);
@@ -75,16 +92,8 @@ public class PostServiceImpl implements PostService{
     return responseData;
   }
   
-  //DB 게시물 이미지 저장
-  public void DBSaveImage(String authToken, String path) throws Exception {
-    String email = jwtProvider.getUserPk(authToken);
-    User user = userService.getUser(email);
-    PostImage postImage = PostImageRequest.create(user.getId(), path);
-    postImageRepository.save(postImage);
-  }
-  
   //서버 저장
-  public void serverSaveImage(Part filePart, PrintWriter writer, File file) {
+  public void saveServerImage(Part filePart, PrintWriter writer, File file) {
     try (InputStream input = filePart.getInputStream()) {
       Files.copy(input, file.toPath());
     } catch (Exception e) {
@@ -113,22 +122,21 @@ public class PostServiceImpl implements PostService{
     if (!ArrayUtils.contains(allowedMimeTypes, mimeType.toLowerCase())) {
       deleteServerImage(uploads + "/" + name);
 
-        throw new Exception("Image does not meet the validation.");
+      throw new Exception("Image does not meet the validation.");
     }
   }
   
   public File getServerImage(String getRequestURI) {
     String[] url = getRequestURI.split("/");
-    String filename = url[url.length-1];
+    String filename = url[url.length - 1];
     
     return new File(postFilePath, filename);
   }
   
-  public void postImageDelete(String src) throws Exception {
+  public void deletePostImage(String src) throws Exception {
     String[] url = src.split("/");
-    String filename = url[url.length-1];
+    String filename = url[url.length - 1];
     deleteServerImage(postFilePath + filename);
-    deleteDBImage(src);
   }
   
   //서버 이미지 삭제
@@ -139,9 +147,12 @@ public class PostServiceImpl implements PostService{
     }
   }
   
-  //DB 이미지 삭제
-  public void deleteDBImage(String path) {
-    postImageRepository.deleteByPath(path);
+  public PostResponse getPostInfo(String authToken) throws Exception {
+    String email = jwtProvider.getUserPk(authToken);
+    User user = userService.getUser(email);
+    Post post = postRepository.findByUserId(user.getId()).orElseThrow(() -> new Exception("게시글을 찾을 수 없습니다."));
+    
+    return new PostResponse(post);
   }
   
   

@@ -110,7 +110,7 @@
 		
 		$(document).ready(function(){
 			let authToken = getCookie("authToken");
- 			let editor = new FroalaEditor('#example', {
+ 			var editor = new FroalaEditor('#example', {
  				requestHeaders: {
  					Authorization: "Bearer " + authToken
  				},
@@ -123,35 +123,33 @@
 			    // Additional save params.
 			    saveParam: "content",
 			    
-			    imageUploadURL: '/api/trainer/my-page/post/uploadImage',
-			  
+			    imageUploadURL: '/api/trainer/my-page/post/uploadImage',		  
 			      
 			    events: {
-			        'save.before': function (html) {
-			        },
-
-			        'save.after': function (data) {
-			        },
-
-			        'save.error': function (error, response) {
-			        },
 			        'image.removed': function (img) {
 			        	let src = img.attr('src');
-			        	imageRemoveAjax(src);     	
-			        }
-			      }
+			        	imageRemoveAjax(src, authToken);     	
+			        },
+			      },
+			      
+			}, function () {
+			 	getPostAjax(authToken, editor);
 			});
-			
+ 			
 			$("input[id=saveBtn]").on("click", function(){
 				editor.save.save();
 			});
 			
+			
 		});
 		
-		function imageRemoveAjax(src){
+		function imageRemoveAjax(src, authToken){
 			$.ajax({
 				url: "/api/trainer/my-page/post/remove",
-				method: "post",
+				type: "post",
+				beforeSend: function (xhr) {
+			    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);
+			    },
 			    data: {
 			    	"src": src
 			    },
@@ -161,12 +159,15 @@
 			});
 		}
 		
-		function getPostAjax(){
+		function getPostAjax(authToken, editor){
 			$.ajax({
 				url: "/api/trainer/my-page/post",
-				method: "get",
+				type: "get",
+				beforeSend: function (xhr) {
+			    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);
+			    },
 			    success: function(res, status) {
-			    	console.log(res);
+			    	editor.html.set(res.data.html);
 			    }
 			});
 		}

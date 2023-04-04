@@ -79,10 +79,6 @@ public class User extends BaseEntity implements UserDetails{
   @JoinColumn(name = "profile_id", insertable = false, updatable = false, nullable = false)
   private Profile profile;
   
-  @OneToOne
-  @JoinColumn(name = "post_id", insertable = false, updatable = false, nullable = false)
-  private Post post;
-  
   @Column(length = 50, nullable = false)
   private String introduction;
 

@@ -10,8 +10,9 @@ public class PostRequest {
   @NotBlank(message = "필수 입력 값입니다.")
   private String content;
   
-  public static Post create(String html) {
+  public static Post create(String html, Long userId) {
     return Post.builder()
+        .userId(userId)
         .html(html)
         .build();
   }
