@@ -20,4 +20,6 @@ public class UserListResponse {
   private String groupName;
   
   private Profile profile;
+  
+  private String introduction;
 }

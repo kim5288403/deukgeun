@@ -37,10 +37,20 @@
 				<div class="col-6">
 					<label>이름</label>
 					<input type="text" name="name" value="" disabled="disabled">
+					
 					<label>주소</label>
 					<input type="text" name="address" value="" disabled="disabled">
 					
+					<label id="price" ></label>
+					<select name="price" id="price">
+						<option value="">- 선택 -</option>
+						<option value="10">10회</option>
+						<option value="20">20회</option>
+						<option value="30">30회</option>
+						<option value="50">50회</option>
+					</select>
 				</div>
+				
 				<div class="col-12"></div>
 				
 				<div class="col-6">
@@ -130,6 +140,10 @@
 			        	let src = img.attr('src');
 			        	imageRemoveAjax(src, authToken);     	
 			        },
+			        'save.after': function (res) {
+			        	let jsonRes = JSON.parse(res);
+			        	defalutSuccessAlert("성공", jsonRes.message)
+			          },
 			      },
 			      
 			}, function () {
@@ -140,6 +154,20 @@
 				editor.save.save();
 			});
 			
+			if (authToken !== null) {
+				$.ajax({
+					url : "/api/trainer/my-page/info",
+					type : "get",
+					beforeSend: function (xhr) {
+				    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);
+				    },
+					success : function(res, status, request) {
+						$("input[name=name]").val(res.data.name);
+						$("input[name=address]").val(res.data.jibunAddress);
+						$("label[id=price]").text("PT횟수 1회 당 ( " + res.data.price + "원 )")
+					}
+				});
+			}
 			
 		});
 		
