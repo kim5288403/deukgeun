@@ -2,11 +2,13 @@ package com.example.deukgeun.trainer.controller;
 
 
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -18,10 +20,14 @@ import com.example.deukgeun.commom.response.RestResponseUtil;
 import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
 import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
 import com.example.deukgeun.global.provider.JwtProvider;
+import com.example.deukgeun.trainer.entity.Post;
 import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.request.LoginRequest;
 import com.example.deukgeun.trainer.request.JoinRequest;
 import com.example.deukgeun.trainer.response.UserListResponse;
+import com.example.deukgeun.trainer.response.UserResponse;
+import com.example.deukgeun.trainer.response.UserResponse.UserDetail;
+import com.example.deukgeun.trainer.service.implement.PostServiceImpl;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
 import com.example.deukgeun.trainer.service.implement.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +45,7 @@ public class UserController {
   private final JwtServiceImpl jwtService;
   private final JwtProvider jwtProvider;
   private final PasswordEncoder passwordEncoder;
+  private final PostServiceImpl postService;
 
   // 트레이너 리스트 조건 검색
   @RequestMapping(method = RequestMethod.GET, path = "/")
@@ -47,6 +54,17 @@ public class UserController {
 
     return RestResponseUtil
         .okResponse("조회 성공 했습니다.", list);
+  }
+  
+  @RequestMapping(method = RequestMethod.GET, path = "/{id}")
+  public ResponseEntity<?> detail(@PathVariable("id") Long id) throws Exception {
+    User user = userService.findByIdUser(id);
+    Post post = postService.findByUserId(id);
+    
+    UserDetail response = new UserResponse.UserDetail(user, post);
+    
+    return RestResponseUtil
+        .okResponse("조회 성공 했습니다.", response);
   }
 
   // 트레이너 회원 가입

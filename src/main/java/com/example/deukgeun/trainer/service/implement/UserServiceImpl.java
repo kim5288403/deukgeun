@@ -34,6 +34,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     User res = userRepository.save(user);
     return res.getId();
   }
+  
+  public User findByIdUser(Long id) throws Exception {
+    return userRepository.findById(id)
+        .orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다."));
+    
+  }
 
   public User getUser(String email) throws Exception {
     return userRepository.findByEmail(email)
