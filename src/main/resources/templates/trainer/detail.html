@@ -35,11 +35,13 @@
 				</div>
 				
 				<div class="col-6">
-					<label>이름</label>
+					<label>이름 <span id="gender" style="color: blue;"> </span></label>
 					<input type="text" name="name" value="" disabled="disabled">
+					<br>
 					
-					<label>주소</label>
+					<label id="groupName"></label>
 					<input type="text" name="address" value="" disabled="disabled">
+					<br>
 					
 					<label id="price" ></label>
 					<select name="price" id="price">
@@ -84,14 +86,18 @@
 				</div>
 				
 				<div class="col-12">
+					<div class="fr-wrapper">
+						<div id="html" class="fr-element fr-view" contenteditable="true" aria-disabled="false" spellcheck="true">
+						</div>
+					</div>
 				</div>
 			
-				
 			</div>
 	</section>
 </th:block>
 
 <th:block layout:fragment="script">
+<link href="https://cdn.jsdelivr.net/npm/froala-editor@3.1.0/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
 	<script th:inline="javascript">
 		/*<![CDATA[*/
 	   	let id = /*[[ ${id} ]]*/
@@ -115,7 +121,23 @@
 				url : "/api/trainer/" + id,
 				type : "get",
 				success : function(res, status, request) {
-					console.log(res);
+					if (res.code === 200) {
+						$.each(res.data, function(index, value) {
+							if(index === "html") {
+								$("#" + index).append(value);
+							} else if(index === "path") {
+								$("#profile").attr("src",  "/images/trainer/profile/" + value);
+							} else if (index === "price") {
+								$("label[id=price]").text("PT횟수 1회 당 ( " + res.data.price + "원 )");
+							} else if (index === "gender") {
+								$("#" + index).text("성별 : " + value);
+							} else if (index === "groupName") {
+								$("#" + index).text(value + " 주소");
+							} else {
+								$("input[name=" + index + "]").val(value);
+							}
+						});
+					}
 				}
 			});
 		});

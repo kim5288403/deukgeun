@@ -26,6 +26,7 @@ import com.example.deukgeun.trainer.request.WithdrawalRequest;
 import com.example.deukgeun.trainer.response.PostResponse;
 import com.example.deukgeun.trainer.response.ProfileResponse;
 import com.example.deukgeun.trainer.response.UserResponse;
+import com.example.deukgeun.trainer.response.UserResponse.UserAndProfile;
 import com.example.deukgeun.trainer.service.implement.PostServiceImpl;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
 import com.example.deukgeun.trainer.service.implement.UserServiceImpl;
@@ -51,7 +52,7 @@ public class MyPageController {
     String email = jwtProvider.getUserPk(authToken);
     
     User user = userService.getUser(email);
-    UserResponse userResponse = new UserResponse(user);
+    UserAndProfile userResponse = new UserResponse.UserAndProfile(user);
     
     return RestResponseUtil
         .okResponse("마이 페이지 조회 성공했습니다.", userResponse);

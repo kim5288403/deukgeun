@@ -1,5 +1,6 @@
 package com.example.deukgeun.trainer.response;
 
+import org.apache.commons.text.StringEscapeUtils;
 import com.example.deukgeun.commom.enums.Gender;
 import com.example.deukgeun.trainer.entity.GroupStatus;
 import com.example.deukgeun.trainer.entity.Post;
@@ -95,21 +96,15 @@ public class UserResponse {
   @Data
   @AllArgsConstructor
   public static class UserDetail {
-    private String email;
+    private Long id;
     
     private String name;
 
-    private Gender gender;
+    private String gender;
 
     private String groupName;
     
-    private String jibunAddress;
-    
-    private String roadAddress;
-    
-    private String detailAddress;
-    
-    private String extraAddress;
+    private String address;
     
     private Integer price;
     
@@ -118,17 +113,14 @@ public class UserResponse {
     private String html;
     
     public UserDetail (User user, Post post) {
-      this.email = user.getEmail();
+      this.id = user.getId();
       this.name = user.getName();
       this.groupName = user.getGroupName();
-      this.jibunAddress = user.getJibunAddress();
-      this.roadAddress = user.getRoadAddress();
-      this.detailAddress = user.getDetailAddress();
-      this.extraAddress = user.getExtraAddress();
-      this.gender = user.getGender();
+      this.address = user.getJibunAddress() + " " + user.getRoadAddress() + " " +  user.getDetailAddress() + " " + user.getExtraAddress();
+      this.gender = user.getGender() == Gender.M ? "남" : "여";
       this.price = user.getPrice();
       this.path = user.getProfile().getPath();
-      this.html = post.getHtml();
+      this.html = StringEscapeUtils.unescapeHtml3(post.getHtml());
     }
   }
   
