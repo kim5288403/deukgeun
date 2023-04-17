@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Random;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
@@ -23,8 +24,11 @@ public class MailServiceImpl implements MailService{
   private final JavaMailSender emailSender;
   private final SpringTemplateEngine templateEngine;
   
-  private String authCode; 
-  private String fromEmail = "kim5288403@gmail.com"; // 보내는 이메일
+  private String authCode;
+  
+  @Value("${trainer.mail.email}")
+  private String fromEmail; // 보내는 이메일
+  
   private String title = "득근득근 회원가입 인증 번호";
   
   //랜덤 인증 코드 생성

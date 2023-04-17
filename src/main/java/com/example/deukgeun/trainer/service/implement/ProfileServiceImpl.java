@@ -45,8 +45,8 @@ public class ProfileServiceImpl implements ProfileService {
     return bindingResult;
   }
   
-  public Profile getProfile(Long profileId) {
-    return profileRepository.getById(profileId);
+  public Profile getProfile(Long profileId) throws Exception {
+    return profileRepository.findById(profileId).orElseThrow(() -> new Exception("게시글을 찾을 수 없습니다."));
   }
   
   //file type 비교 

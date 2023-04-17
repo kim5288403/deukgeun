@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '2.5.0'
+	id 'org.springframework.boot' version '2.7.0'
 	id 'io.spring.dependency-management' version '1.0.13.RELEASE'
 }
 
@@ -33,6 +33,7 @@ dependencies {
 	compileOnly group: 'commons-io', name: 'commons-io', version: '2.6'
 	compileOnly group: 'org.apache.commons', name: 'commons-text', version: '1.10.0'
 	compileOnly 'org.projectlombok:lombok'
+	compileOnly 'org.springframework.boot:spring-boot-starter-webflux'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'mysql:mysql-connector-java'
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'

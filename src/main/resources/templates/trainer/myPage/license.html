@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{web/layout/layout}">
+<th:block layout:fragment="css">
+	<style>
+		.errorMessage {
+			color: red;
+			margin-left: 10px;
+		}
+	</style>
+</th:block>
+<th:block layout:fragment="content">
+	<!-- Posts -->
+	<section class="post">
+		<header class="major">
+			<h1>
+				자격증 등록
+			</h1>
+			<p>
+				Aenean ornare velit lacus varius enim ullamcorper proin aliquam<br>
+				facilisis ante sed etiam magna interdum congue. Lorem ipsum dolor<br>
+				amet nullam sed etiam veroeros.
+			</p>
+		</header>
+		<form id="license" method="post" action="">
+			<div class="row gtr-uniform">
+				<div class="col-6">
+					<label>자격증 이름</label>
+					<input type="text" name="name" value="" placeholder="이름">
+					<span class="errorMessage" id="valid_name"></span>
+				</div>
+				
+				<div class="col-6">
+					<label>자격증 번호</label>
+					<input type="text" name="no" value="" placeholder="자격증 번호">
+					<span class="errorMessage" id="valid_no"></span>
+				</div>
+				
+				<div class="col-12">
+					<ul class="actions" style="justify-content: center;">
+						<li>
+							<input type="button" onclick="saveLicenseAjax()" value="save" class="primary">
+						</li>
+						<li><input type="button" onclick="back()" value="back"></li>
+					</ul>
+				</div>
+			
+			</div>
+		</form>
+	</section>
+</th:block>
+<th:block layout:fragment="script">
+	<script type="text/javascript">
+		function saveLicenseAjax() {
+			let name = $("input[name=name]").val();
+			let no = $("input[name=no]").val();
+
+			$.ajax({
+				url : "/api/trainer/my-page/licence",
+				type : "post",
+				data : {
+					"name" : name,
+					"no" : no,
+				},
+				success : function(res) {
+					if (res.code === 200) {
+						defalutSuccessAlert(res.message, "성공").then(function (){
+						});
+					}
+				},
+				error : function(res) {
+					if (res.responseJSON.code === 400) {
+						errorMessage(res.responseJSON.data);
+					}
+				}
+			});
+		}
+	</script>
+</th:block>
+</html>

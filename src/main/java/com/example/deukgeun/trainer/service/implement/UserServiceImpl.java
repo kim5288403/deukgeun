@@ -78,8 +78,19 @@ public class UserServiceImpl implements UserService, UserDetailsService {
      userRepository.updatePassword(email, password);
   }
   
-  public void withdrawal(User entity){
+  public void withdrawal(User entity) {
     userRepository.delete(entity);
   }
-
+  
+  public void saveLicence() {
+//    webClient.get()
+//      .uri(uriBuilder -> uriBuilder
+//          .path(String.format("/data.kca.kr/api/v1/cq/certificate/check"))
+//          .queryParam("apiKey", "9f3a63e32b74938b30c507160e9d3b4a646f7536ccbecfbeb36ed73db90a3242")
+//          .queryParam("name", "홍길동")
+//          .queryParam("no", "1230001k018p")
+//          .build())
+//      .retrieve();
+    
+  }
 }

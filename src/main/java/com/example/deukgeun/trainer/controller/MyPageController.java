@@ -21,6 +21,7 @@ import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.request.PasswordUpdateRequest;
 import com.example.deukgeun.trainer.request.PostRequest;
+import com.example.deukgeun.trainer.request.SaveLicenseRequest;
 import com.example.deukgeun.trainer.request.UserInfoUpdateRequest;
 import com.example.deukgeun.trainer.request.WithdrawalRequest;
 import com.example.deukgeun.trainer.response.PostResponse;
@@ -48,6 +49,7 @@ public class MyPageController {
   
   @RequestMapping(method = RequestMethod.GET, path = "/info")
   public ResponseEntity<?> getInfo(HttpServletRequest request) throws Exception{
+   
     String authToken = request.getHeader("Authorization").replace("Bearer ", "");
     String email = jwtProvider.getUserPk(authToken);
     
@@ -76,6 +78,7 @@ public class MyPageController {
   
   @RequestMapping(method = RequestMethod.GET, path = "/profile")
   public ResponseEntity<?> getProfile(HttpServletRequest request) throws Exception {
+   
     String authToken = request.getHeader("Authorization").replace("Bearer ", "");
     String email = jwtProvider.getUserPk(authToken);
     Long profileId = userService.getProfileId(email);
@@ -91,6 +94,7 @@ public class MyPageController {
 
   @RequestMapping(method = RequestMethod.POST, path = "/profile/update")
   public ResponseEntity<?> updateProfile(HttpServletRequest request, MultipartFile profile) throws Exception {
+   
     String authToken = request.getHeader("Authorization").replace("Bearer ", "");
     String email = jwtProvider.getUserPk(authToken);
     Long profileId = userService.getProfileId(email);
@@ -115,6 +119,7 @@ public class MyPageController {
   
   @RequestMapping(method = RequestMethod.GET, path = "/email")
   public ResponseEntity<?> getEmail(HttpServletRequest request) throws Exception {
+    
     String authToken = request.getHeader("Authorization").replace("Bearer ", "");
     String email = jwtProvider.getUserPk(authToken);
     
@@ -181,6 +186,7 @@ public class MyPageController {
     if (bindingResult.hasErrors()) {
       validateService.errorMessageHandling(bindingResult);
     }
+    
     String authToken = request.getHeader("Authorization").replace("Bearer ", "");
     postService.uploadPost(postRequest, authToken);
     
@@ -210,17 +216,31 @@ public class MyPageController {
   
   @RequestMapping(method = RequestMethod.POST, path = "/post/remove")
   public void removePostImage(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    
     String src = request.getParameter("src");
     postService.deletePostImage(src);
   }
   
   @RequestMapping(method = RequestMethod.GET, path = "/post")
   public ResponseEntity<?> postInfo(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    
     String authToken = request.getHeader("Authorization").replace("Bearer ", "");
     PostResponse postResponse = postService.getPostInfo(authToken);
     
     return RestResponseUtil
         .okResponse("게시글 저장 성공했습니다.", postResponse);
+  }
+  
+  
+  @RequestMapping(method = RequestMethod.POST, path = "/licence")
+  public ResponseEntity<?> saveLicence(@Valid SaveLicenseRequest request, BindingResult bindingResult) throws Exception {
+    
+    if (bindingResult.hasErrors()) {
+      validateService.errorMessageHandling(bindingResult);
+    }
+    
+    return RestResponseUtil
+        .okResponse("자격증 등록 성공했습니다.", null);
   }
   
 }

@@ -17,37 +17,37 @@ public class MainController {
   }
   
   @GetMapping("/my-page")
-  public String trainerMyPage(Model model) {
+  public String myPage(Model model) {
     model.addAttribute("menu", "myPage");
     return "trainer/myPage";
   }
   
   @GetMapping("/my-page/info")
-  public String myPageInfo(Model model) {
+  public String info(Model model) {
     model.addAttribute("menu", "myPage");
     return "trainer/myPage/info";
   }
   
   @GetMapping("/my-page/profile")
-  public String myPageProfile(Model model) {
+  public String profile(Model model) {
     model.addAttribute("menu", "myPage");
     return "trainer/myPage/profile";
   }
   
   @GetMapping("/my-page/password")
-  public String myPagePassword(Model model) {
+  public String password(Model model) {
     model.addAttribute("menu", "myPage");
     return "trainer/myPage/password";
   }
   
   @GetMapping("/my-page/withdrawal")
-  public String myPageWithdrawal(Model model) {
+  public String withdrawal(Model model) {
     model.addAttribute("menu", "myPage");
     return "trainer/myPage/withdrawal";
   }
   
   @GetMapping("/my-page/post")
-  public String myPagePost(Model model) {
+  public String post(Model model) {
     model.addAttribute("menu", "myPage");
     return "trainer/myPage/post";
   }
@@ -57,5 +57,11 @@ public class MainController {
     model.addAttribute("menu", "main");
     model.addAttribute("user_id", id);
     return "trainer/detail";
+  }
+  
+  @GetMapping("/my-page/license")
+  public String license(Model model) {
+    model.addAttribute("menu", "myPage");
+    return "trainer/myPage/license";
   }
 }
