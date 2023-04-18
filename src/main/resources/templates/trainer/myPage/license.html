@@ -53,12 +53,17 @@
 <th:block layout:fragment="script">
 	<script type="text/javascript">
 		function saveLicenseAjax() {
+			let authToken = getCookie("authToken");
+			
 			let name = $("input[name=name]").val();
 			let no = $("input[name=no]").val();
 
 			$.ajax({
 				url : "/api/trainer/my-page/licence",
 				type : "post",
+				beforeSend: function (xhr) {
+			    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);
+			    },
 				data : {
 					"name" : name,
 					"no" : no,
@@ -71,7 +76,7 @@
 				},
 				error : function(res) {
 					if (res.responseJSON.code === 400) {
-						errorMessage(res.responseJSON.data);
+						defalutErrorAlert(res.responseJSON.message);
 					}
 				}
 			});

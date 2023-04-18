@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 import com.example.deukgeun.commom.enums.StatusEnum;
 import com.example.deukgeun.commom.response.RestResponse;
+import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
 import com.example.deukgeun.global.provider.JwtProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 public class JwtAuthenticationFilter extends GenericFilterBean {
 
   private final JwtProvider jwtProvider;
+  private final JwtServiceImpl jwtService;
 
   @Override
   public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
@@ -33,7 +35,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     String servletPath = request.getServletPath();
     if (servletPath.equals("/jwt/check")) {
       String authToken = jwtProvider.resolveAuthToken(request);
-      String refreshToken = jwtProvider.getRefreshToken(authToken);
+      String refreshToken = jwtService.getRefreshToken(authToken);
       
       // 유효한 auth token인지 확인합니다.
       if (jwtProvider.validateToken(authToken)) {
@@ -46,14 +48,14 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
       }
       // 유효하지 않은 auth token일 경우
       else {
-         refreshToken = jwtProvider.getRefreshToken(authToken);
+         refreshToken = jwtService.getRefreshToken(authToken);
          
          //유효한 refresh token인지 확인합니다.
          if (jwtProvider.validateToken(refreshToken)) {
            String newAuthToken = getNewAuthToken(refreshToken);
            String role = jwtProvider.getUserRole(newAuthToken);
            
-           jwtProvider.updateAuthToken(authToken, newAuthToken);
+           jwtService.updateAuthToken(authToken, newAuthToken);
            jwtProvider.setHeaderRole(response, role);
            jwtProvider.setHeaderAccessToken(response, newAuthToken);
            
@@ -61,7 +63,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
          }
          // auth token and refresh token이 유효 하지 않은 경우
          else {
-           jwtProvider.deleteTokenEntity(authToken);
+           jwtService.deleteToken(authToken);
            
            response.setContentType("application/json");
            response.setCharacterEncoding("utf-8");

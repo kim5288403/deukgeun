@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.example.deukgeun.commom.exception.RequestValidException;
-import com.example.deukgeun.commom.response.RestResponseUtil;
+import com.example.deukgeun.commom.util.RestResponseUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 
 @RestControllerAdvice
@@ -15,9 +15,8 @@ public class RestControllerAdvisor {
   
   @ExceptionHandler(Exception.class)
   public ResponseEntity<?> exceptionHandler(Exception e) {
-    return ResponseEntity
-        .badRequest()
-        .body(e.getMessage());
+    return RestResponseUtil
+        .BadResponse(e.getMessage(), null);
   }
   
   @ExceptionHandler(RequestValidException.class)

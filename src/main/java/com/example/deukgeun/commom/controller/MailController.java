@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.deukgeun.commom.enums.MailStatus;
 import com.example.deukgeun.commom.request.AuthMailRequest;
 import com.example.deukgeun.commom.request.EmailRequest;
-import com.example.deukgeun.commom.response.RestResponseUtil;
 import com.example.deukgeun.commom.service.implement.MailServiceImpl;
 import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
+import com.example.deukgeun.commom.util.RestResponseUtil;
 import lombok.RequiredArgsConstructor;
 
 @RestController()

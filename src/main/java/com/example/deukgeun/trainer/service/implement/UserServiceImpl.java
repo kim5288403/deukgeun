@@ -2,22 +2,34 @@ package com.example.deukgeun.trainer.service.implement;
 
 
 import java.util.List;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import com.example.deukgeun.commom.repository.LicenseRepository;
+import com.example.deukgeun.commom.util.WebClientUtil;
+import com.example.deukgeun.global.provider.JwtProvider;
+import com.example.deukgeun.trainer.entity.License;
 import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.repository.UserRepository;
+import com.example.deukgeun.trainer.request.SaveLicenseRequest;
 import com.example.deukgeun.trainer.request.UserInfoUpdateRequest;
+import com.example.deukgeun.trainer.response.LicenseResultResponse;
 import com.example.deukgeun.trainer.response.UserListResponse;
 import com.example.deukgeun.trainer.service.UserService;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
+  private final LicenseRepository licenseRepository;
+  private final JwtProvider jwtProvider;
+  
+  @Value("${trainer.license.api.key}")
+  private String licenseApiKey;
+  @Value("${trainer.license.api.uri}")
+  private String licenseApiUri;
   
   public List<UserListResponse> getList(String keyword) {
     keyword = "%" + keyword + "%";
@@ -68,12 +80,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         );
   }
   
-  @Override
-  public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-    return userRepository.findByEmail(email)
-        .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
-  }
-  
   public void updatePassword(String email, String password) {
      userRepository.updatePassword(email, password);
   }
@@ -82,15 +88,34 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     userRepository.delete(entity);
   }
   
-  public void saveLicence() {
-//    webClient.get()
-//      .uri(uriBuilder -> uriBuilder
-//          .path(String.format("/data.kca.kr/api/v1/cq/certificate/check"))
-//          .queryParam("apiKey", "9f3a63e32b74938b30c507160e9d3b4a646f7536ccbecfbeb36ed73db90a3242")
-//          .queryParam("name", "홍길동")
-//          .queryParam("no", "1230001k018p")
-//          .build())
-//      .retrieve();
+  public void saveLicence(SaveLicenseRequest request, String authToken) throws Exception {
+    LicenseResultResponse licenseResult = checkLicence(request);
+    
+    if (licenseResult.getResult()) {
+      String email = jwtProvider.getUserPk(authToken);
+      User user = getUser(email);
+      
+      License license = SaveLicenseRequest.create(licenseResult.getCertificatename(), user.getId());
+      licenseRepository.save(license);
+      
+    } else {
+      throw new Exception("존재하지않는 자격증 정보 입니다.");
+    }
+  }
+  
+  public LicenseResultResponse checkLicence(SaveLicenseRequest request) {
+    WebClient webClient = WebClientUtil.getBaseUrl(licenseApiUri);
+    
+    return webClient.get().
+        uri(uriBuilder -> uriBuilder
+        .path("")
+        .queryParam("apiKey", licenseApiKey)
+        .queryParam("name", request.getName())
+        .queryParam("no", request.getNo())
+        .build())
+  .retrieve() 
+    .bodyToMono(LicenseResultResponse.class)
+    .block();
     
   }
 }

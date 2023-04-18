@@ -13,12 +13,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import com.example.deukgeun.commom.request.TokenRequest;
 import com.example.deukgeun.commom.response.LoginResponse;
-import com.example.deukgeun.commom.response.RestResponseUtil;
 import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
 import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
-import com.example.deukgeun.global.provider.JwtProvider;
+import com.example.deukgeun.commom.util.RestResponseUtil;
 import com.example.deukgeun.trainer.entity.Post;
 import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.request.LoginRequest;
@@ -36,16 +34,16 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/trainer")
 @RequiredArgsConstructor
 public class UserController {
-
-  private final String role = "trainer";
+ 
   private final UserServiceImpl userService;
   private final ProfileServiceImpl profileService;
   private final ValidateServiceImpl validateService;
   private final JwtServiceImpl jwtService;
-  private final JwtProvider jwtProvider;
   private final PasswordEncoder passwordEncoder;
   private final PostServiceImpl postService;
-
+  
+  private String role = "trainer";
+  
   // 트레이너 리스트 조건 검색
   @RequestMapping(method = RequestMethod.GET, path = "/")
   public ResponseEntity<?> list(String keyword) {
@@ -98,12 +96,8 @@ public class UserController {
       validateService.errorMessageHandling(bindingResult);
     }
 
-    String email = request.getEmail();
-    String authToken = jwtProvider.createAuthToken(email, role);
-    String refreshToken = jwtProvider.createRefreshToken(email, role);
-    
-    jwtProvider.setHeaderAccessToken(response, authToken);
-    jwtService.createToken(TokenRequest.create(authToken, refreshToken));
+   
+    String authToken = jwtService.setCreateToken(request.getEmail(), response);
 
     LoginResponse loginResponse = LoginResponse.builder()
         .authToken(authToken)

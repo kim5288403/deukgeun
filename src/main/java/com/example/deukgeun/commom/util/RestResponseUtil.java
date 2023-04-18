@@ -1,7 +1,8 @@
-package com.example.deukgeun.commom.response;
+package com.example.deukgeun.commom.util;
 
 import org.springframework.http.ResponseEntity;
 import com.example.deukgeun.commom.enums.StatusEnum;
+import com.example.deukgeun.commom.response.RestResponse;
 
 public class RestResponseUtil {
   

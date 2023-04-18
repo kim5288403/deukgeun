@@ -14,8 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import com.example.deukgeun.commom.response.RestResponseUtil;
+import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
 import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
+import com.example.deukgeun.commom.util.RestResponseUtil;
 import com.example.deukgeun.global.provider.JwtProvider;
 import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.entity.User;
@@ -46,6 +47,7 @@ public class MyPageController {
   private final ProfileServiceImpl profileService;
   private final PasswordEncoder passwordEncoder;
   private final PostServiceImpl postService;
+  private final JwtServiceImpl jwtService;
   
   @RequestMapping(method = RequestMethod.GET, path = "/info")
   public ResponseEntity<?> getInfo(HttpServletRequest request) throws Exception{
@@ -171,7 +173,7 @@ public class MyPageController {
     profileService.withdrawal(profileId);
     
     //토큰 삭제
-    jwtProvider.deleteTokenEntity(authToken);
+    jwtService.deleteToken(authToken);
     
     return RestResponseUtil
     .okResponse("회원 탈퇴 성공했습니다.", null);
@@ -231,14 +233,15 @@ public class MyPageController {
         .okResponse("게시글 저장 성공했습니다.", postResponse);
   }
   
-  
   @RequestMapping(method = RequestMethod.POST, path = "/licence")
-  public ResponseEntity<?> saveLicence(@Valid SaveLicenseRequest request, BindingResult bindingResult) throws Exception {
-    
+  public ResponseEntity<?> saveLicence(HttpServletRequest request, @Valid SaveLicenseRequest saveLicenseRequest, BindingResult bindingResult) throws Exception {
+    String authToken = request.getHeader("Authorization").replace("Bearer ", "");
     if (bindingResult.hasErrors()) {
       validateService.errorMessageHandling(bindingResult);
     }
-    
+
+    userService.saveLicence(saveLicenseRequest, authToken);
+ 
     return RestResponseUtil
         .okResponse("자격증 등록 성공했습니다.", null);
   }
