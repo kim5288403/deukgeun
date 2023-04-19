@@ -13,11 +13,12 @@ public class SaveLicenseRequest {
   @NotBlank(message = "자격증 번호는 필수 입력 값입니다.")
   private String no;
   
-  public static License create(String certificateName, Long trainerUserId) {
+  public static License create(String certificateName, String licenseNumber, Long trainerUserId) {
     return License
         .builder()
         .certificateName(certificateName)
         .trainerUserId(trainerUserId)
+        .licenseNumber(licenseNumber)
         .build();
   }
   

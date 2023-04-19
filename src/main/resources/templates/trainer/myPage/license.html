@@ -15,7 +15,7 @@
 	<section class="post">
 		<header class="major">
 			<h1>
-				자격증 등록
+				자격증
 			</h1>
 			<p>
 				Aenean ornare velit lacus varius enim ullamcorper proin aliquam<br>
@@ -25,6 +25,30 @@
 		</header>
 		<form id="license" method="post" action="">
 			<div class="row gtr-uniform">
+				<div class="col-12">
+					<h4>자격증 목록</h4>
+					<div class="table-wrapper">
+						<table>
+							<thead>
+								<tr>
+									<th>No</th>
+									<th>CertificateName</th>
+									<th>LicenseNumber</th>
+									<th>CreatedDate</th>
+								</tr>
+							</thead>
+							<tbody id="license">
+							
+							</tbody>
+						</table>
+					</div>
+				</div>
+				
+				<div class="col-12">
+					<hr>
+					<h4>자격증 등록</h4>
+				</div>
+				
 				<div class="col-6">
 					<label>자격증 이름</label>
 					<input type="text" name="name" value="" placeholder="이름">
@@ -52,9 +76,33 @@
 </th:block>
 <th:block layout:fragment="script">
 	<script type="text/javascript">
+		const authToken = getCookie("authToken");
+		
+		$(document).ready(function () {
+			getLicenseAjax();
+		});
+		
+		function getLicenseAjax() {
+			$.ajax({
+				url : "/api/trainer/my-page/licence",
+				type : "get",
+				beforeSend: function (xhr) {
+			    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);
+			    },
+				success : function(res) {
+					if (res.code === 200) {
+						setLicenseList(res.data);
+					}
+				},
+				error : function(res) {
+					if (res.responseJSON.code === 400) {
+						defalutErrorAlert(res.responseJSON.message);
+					}
+				}
+			});
+		}
+		
 		function saveLicenseAjax() {
-			let authToken = getCookie("authToken");
-			
 			let name = $("input[name=name]").val();
 			let no = $("input[name=no]").val();
 
@@ -81,6 +129,27 @@
 				}
 			});
 		}
+		
+		function setLicenseList(data) {
+			let appendHtml = "<tr><td colspan=4 style='text-align: center;'>조회된 자격증 목록이 없습니다.</td></tr>";
+			
+			if (data.length) {
+				appendHtml = "";
+				$.each(data, function(key, value) {
+					key++;
+					appendHtml += "<tr>";
+						appendHtml += "<td>" + key + "</td>";
+						appendHtml += "<td>" + value.certificateName + "</td>";
+						appendHtml += "<td>" + value.licenseNumber + "</td>";
+						appendHtml += "<td>" + value.createdDate + "</td>";
+					appendHtml += "</tr>";
+				});
+			}
+			
+			$("tbody[id=license]").append(appendHtml);
+		}
+		
+		
 	</script>
 </th:block>
 </html>

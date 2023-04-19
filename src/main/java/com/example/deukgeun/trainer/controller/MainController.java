@@ -55,7 +55,7 @@ public class MainController {
   @GetMapping("/detail/{id}")
   public String detail(Model model,  @PathVariable Long id) {
     model.addAttribute("menu", "main");
-    model.addAttribute("user_id", id);
+    model.addAttribute("id", id);
     return "trainer/detail";
   }
   

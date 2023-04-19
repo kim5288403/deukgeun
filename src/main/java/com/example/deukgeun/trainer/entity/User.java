@@ -1,6 +1,8 @@
 package com.example.deukgeun.trainer.entity;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -9,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import org.springframework.security.core.GrantedAuthority;
@@ -66,18 +69,15 @@ public class User extends BaseEntity implements UserDetails{
   @Column(length = 50, nullable = false)
   private String extraAddress;
   
-  @Column(name = "profile_id")
-  private Long profileId;
-  
-  @Column(name = "post_id")
-  private Long postId;
-  
   @Column(length = 50, nullable = false)
   private Integer price;
   
   @OneToOne
   @JoinColumn(name = "profile_id", insertable = false, updatable = false, nullable = false)
   private Profile profile;
+  
+  @OneToMany(mappedBy = "user")
+  private List<License> license = new ArrayList<License>();
   
   @Column(length = 50, nullable = false)
   private String introduction;
@@ -96,11 +96,11 @@ public class User extends BaseEntity implements UserDetails{
     this.roadAddress = roadAddress;
     this.detailAddress = detailAddress;
     this.extraAddress = extraAddress;
-    this.profileId = profileId;
     this.gender = gender;
     this.price = price;
     this.introduction = introduction;
   }
+  
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {

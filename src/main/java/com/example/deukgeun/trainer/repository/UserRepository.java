@@ -26,6 +26,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
   
   Optional<User> findByEmail(String email);
   
+  @Query("select DISTINCT u from User u join fetch u.license")
+  User findLicenseFetchJoin();
+   
   boolean existsByEmail(String email);
   
   @Modifying

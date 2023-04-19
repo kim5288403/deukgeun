@@ -61,10 +61,7 @@
 					</label>
 					
 					<ul id="license">
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
+				
 					</ul>
 				</div>
 				
@@ -104,6 +101,7 @@
 <th:block layout:fragment="script">
 <link href="https://cdn.jsdelivr.net/npm/froala-editor@3.1.0/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/froala-editor@3.1.0/js/froala_editor.pkgd.min.js"></script>
+<script src="/assets/js/trainer/user.js"></script>
 	<script type="text/javascript">
 	
 		$("i[id=show]").on("click", function() {
@@ -154,22 +152,17 @@
 				editor.save.save();
 			});
 			
-			if (authToken !== null) {
-				$.ajax({
-					url : "/api/trainer/my-page/info",
-					type : "get",
-					beforeSend: function (xhr) {
-				    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);
-				    },
-					success : function(res, status, request) {
-						$("input[name=name]").val(res.data.name);
-						$("input[name=address]").val(res.data.jibunAddress);
-						$("label[id=price]").text("PT횟수 1회 당 ( " + res.data.price + "원 )")
-						$("img[id=profile]").attr("src", "/images/trainer/profile/" + res.data.path);
-					}
-				});
-			}
-			
+			$.ajax({
+				url : "/api/trainer/my-page/info",
+				type : "get",
+				beforeSend: function (xhr) {
+				xhr.setRequestHeader("Authorization", "Bearer " + authToken);
+			    },
+				success : function(res, status, request) {
+					setUserInfo(res.data);
+					setUserLicense(res.data.license);
+				}
+			});
 		});
 		
 		function imageRemoveAjax(src, authToken){
@@ -200,7 +193,6 @@
 			    }
 			});
 		}
-	
 	
 	 </script>
 </th:block>

@@ -42,6 +42,7 @@ public class PostServiceImpl implements PostService{
     String email = jwtProvider.getUserPk(authToken);
     User user = userService.getUser(email);
     Long userId = user.getId();
+    
     Optional<Post> post = postRepository.findByUserId(userId);
     
     String content = request.getContent();
@@ -151,7 +152,7 @@ public class PostServiceImpl implements PostService{
     return postRepository.findByUserId(id).orElseThrow(() -> new Exception("게시글을 찾을 수 없습니다."));
   }
   
-  public PostResponse getPostInfo(String authToken) throws Exception {
+  public PostResponse getPost(String authToken) throws Exception {
     String email = jwtProvider.getUserPk(authToken);
     User user = userService.getUser(email);
     Post post = findByUserId(user.getId());

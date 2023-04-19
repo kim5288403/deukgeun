@@ -63,10 +63,7 @@
 					</label>
 					
 					<ul id="license">
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
+					
 					</ul>
 				</div>
 				
@@ -98,11 +95,11 @@
 
 <th:block layout:fragment="script">
 <link href="https://cdn.jsdelivr.net/npm/froala-editor@3.1.0/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
+<script src="/assets/js/trainer/user.js"></script>
 	<script th:inline="javascript">
 		/*<![CDATA[*/
 	   	let id = /*[[ ${id} ]]*/
 	    /*]]*/
-	
 		
 	    $("i[id=show]").on("click", function() {
 			$(this).hide();
@@ -122,26 +119,13 @@
 				type : "get",
 				success : function(res, status, request) {
 					if (res.code === 200) {
-						$.each(res.data, function(index, value) {
-							if(index === "html") {
-								$("#" + index).append(value);
-							} else if(index === "path") {
-								$("#profile").attr("src",  "/images/trainer/profile/" + value);
-							} else if (index === "price") {
-								$("label[id=price]").text("PT횟수 1회 당 ( " + res.data.price + "원 )");
-							} else if (index === "gender") {
-								$("#" + index).text("성별 : " + value);
-							} else if (index === "groupName") {
-								$("#" + index).text(value + " 주소");
-							} else {
-								$("input[name=" + index + "]").val(value);
-							}
-						});
+						setUserInfo(res.data);
+						setUserLicense(res.data.license);
 					}
 				}
 			});
 		});
-	    
+		
 	</script>
 </th:block>
 </html>
