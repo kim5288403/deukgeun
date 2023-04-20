@@ -66,7 +66,7 @@ public class JoinRequest {
   private String introduction;
   
 
-  public static User create(JoinRequest request, PasswordEncoder passwordEncoder, Long profileId) {
+  public static User create(JoinRequest request, PasswordEncoder passwordEncoder) {
     return User
         .builder()
         .name(request.getName())
@@ -80,7 +80,6 @@ public class JoinRequest {
         .roadAddress(request.getRoadAddress())
         .detailAddress(request.getDetailAddress())
         .extraAddress(request.getExtraAddress())
-        .profileId(profileId)
         .price(request.price)
         .introduction(request.introduction)
         .build();

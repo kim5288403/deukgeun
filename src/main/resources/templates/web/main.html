@@ -11,8 +11,8 @@
 		<form method="get" action="#">
 			<div class="fields search">
 				<div class="field keyword" id="field-keyword">
-					<label for="keyword">검색창</label> <input type="text" name="keyword"
-						id="name" placeholder="트레이너, 헬스장, 지역명을 입력해주세요." />
+					<label for="keyword">검색창</label> 
+					<input type="text" name="keyword" id="name" placeholder="트레이너, 헬스장, 지역명을 입력해주세요." />
 				</div>
 
 				<div class="field" id="field-button">
@@ -33,14 +33,16 @@
 			let url = new URL(window.location.href);
 			let urlParams = url.searchParams;
 			let keyword = urlParams.get("keyword");
-			let area = urlParams.get("area");
-			
+						
+			getList(keyword);
+		})
+		
+		function getList(keyword) {
 			$.ajax({
 				url : "/api/trainer/",
 				method : "get",
 				data : {
 					"keyword" : keyword,
-					"area" : area
 				},
 				success : function(res) {
 					$.each(res.data, function(key, value) {
@@ -48,7 +50,7 @@
 					});
 				}
 			});
-		})
+		}
 		
 		function setList(data) {
 			let section = $("section[class=posts]");
@@ -63,7 +65,7 @@
 					appendHtml += '<a href="#">' + data.name + ' <br /> 트레이너님 </a>';
 				appendHtml += '</h2>';
 				appendHtml += '</header>';
-				appendHtml += '<a href="#" class="image fit"><img src="/images/trainer/profile/' + data.profile.path + '" alt="" /></a>';
+				appendHtml += '<a href="#" class="image fit"><img src="/images/trainer/profile/' + data.path + '" alt="" /></a>';
 				appendHtml += '<p>' + data.introduction + '</p>';
 				appendHtml += '<ul class="actions special">';
 					appendHtml += '<li><a href="/trainer/detail/' + data.id + '" class="button">상세보기</a></li>';

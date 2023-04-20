@@ -29,7 +29,7 @@ public class LicenseServiceImpl implements LicenseService{
     
     Long userId = userServise.getUserId(authToken);
     
-    return licenseRepository.findByTrainerUserId(userId);
+    return licenseRepository.findByUserId(userId);
   }
   
   public void saveLicence(SaveLicenseRequest request, String authToken) throws Exception {

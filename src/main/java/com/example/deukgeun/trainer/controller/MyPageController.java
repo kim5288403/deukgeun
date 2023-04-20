@@ -30,8 +30,8 @@ import com.example.deukgeun.trainer.request.WithdrawalRequest;
 import com.example.deukgeun.trainer.response.LicenseListResponse;
 import com.example.deukgeun.trainer.response.PostResponse;
 import com.example.deukgeun.trainer.response.ProfileResponse;
+import com.example.deukgeun.trainer.response.ProfileResponse.ProfileAndUserResponse;
 import com.example.deukgeun.trainer.response.UserResponse;
-import com.example.deukgeun.trainer.response.UserResponse.UserPost;
 import com.example.deukgeun.trainer.service.implement.LicenseServiceImpl;
 import com.example.deukgeun.trainer.service.implement.PostServiceImpl;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
@@ -54,15 +54,12 @@ public class MyPageController {
   private final JwtServiceImpl jwtService;
   private final LicenseServiceImpl licenseService;
   
-  @RequestMapping(method = RequestMethod.GET, path = "/info")
-  public ResponseEntity<?> getInfo(HttpServletRequest request) throws Exception{
+  @RequestMapping(method = RequestMethod.GET, path = "/user")
+  public ResponseEntity<?> getUser(HttpServletRequest request) throws Exception{
     
     String authToken = request.getHeader("Authorization").replace("Bearer ", "");
-    Long id = userService.getUserId(authToken);
-    User user = userService.findByIdUser(id);
-    Post post = postService.findByUserId(id);
-    
-    UserPost response = new UserResponse.UserPost(user, post);
+    User user = userService.getUser(authToken);
+    UserResponse response = new UserResponse(user);
     
     return RestResponseUtil
         .okResponse("마이 페이지 조회 성공했습니다.", response);
@@ -88,12 +85,9 @@ public class MyPageController {
   public ResponseEntity<?> getProfile(HttpServletRequest request) throws Exception {
    
     String authToken = request.getHeader("Authorization").replace("Bearer ", "");
-    Long profileId = userService.getProfileId(authToken);
-    
+    Long profileId = profileService.getProfileId(authToken);
     Profile profile = profileService.getProfile(profileId);
-    ProfileResponse profileResponse = ProfileResponse.builder()
-    .path(profile.getPath())
-    .build();
+    ProfileResponse profileResponse = new ProfileResponse(profile);
     
     return RestResponseUtil
         .okResponse("프로필 이미지 조회 성공했습니다.", profileResponse);
@@ -103,7 +97,7 @@ public class MyPageController {
   public ResponseEntity<?> updateProfile(HttpServletRequest request, MultipartFile profile) throws Exception {
    
     String authToken = request.getHeader("Authorization").replace("Bearer ", "");
-    Long profileId = userService.getProfileId(authToken);
+    Long profileId = profileService.getProfileId(authToken);
     
     if (profile != null) {
       UUID uuid = UUID.randomUUID();
@@ -125,7 +119,6 @@ public class MyPageController {
   
   @RequestMapping(method = RequestMethod.GET, path = "/email")
   public ResponseEntity<?> getEmail(HttpServletRequest request) throws Exception {
-    
     String authToken = request.getHeader("Authorization").replace("Bearer ", "");
     String email = jwtProvider.getUserPk(authToken);
     
@@ -163,7 +156,7 @@ public class MyPageController {
     
     String authToken = request.getHeader("Authorization").replace("Bearer ", "");
 
-    Long profileId = userService.getProfileId(authToken);
+    Long profileId = profileService.getProfileId(authToken);
     
     Profile userProfile = profileService.getProfile(profileId);
     
@@ -179,6 +172,30 @@ public class MyPageController {
     
     return RestResponseUtil
     .okResponse("회원 탈퇴 성공했습니다.", null);
+  }
+  
+  @RequestMapping(method = RequestMethod.GET, path = "/post")
+  public ResponseEntity<?> getPost(HttpServletRequest request) throws Exception {
+    
+    String authToken = request.getHeader("Authorization").replace("Bearer ", "");
+    Long userId = userService.getUserId(authToken);
+    Post post = postService.findByUserId(userId);
+    PostResponse response = new PostResponse(post);    
+    
+    return RestResponseUtil
+        .okResponse("마이 페이지 조회 성공했습니다.", response);
+  }
+  
+  @RequestMapping(method = RequestMethod.GET, path = "/post/profile")
+  public ResponseEntity<?> getProfileAndUser(HttpServletRequest request) throws Exception {
+    
+    String authToken = request.getHeader("Authorization").replace("Bearer ", "");
+    Long profileId = profileService.getProfileId(authToken);
+    Profile profile = profileService.getProfile(profileId);
+    ProfileAndUserResponse response = new ProfileResponse.ProfileAndUserResponse(profile);   
+    
+    return RestResponseUtil
+        .okResponse("마이 페이지 조회 성공했습니다.", response);
   }
   
   @RequestMapping(method = RequestMethod.POST, path = "/post/upload")
@@ -225,21 +242,10 @@ public class MyPageController {
     postService.deletePostImage(src);
   }
   
-  @RequestMapping(method = RequestMethod.GET, path = "/post")
-  public ResponseEntity<?> getPost(HttpServletRequest request) throws Exception {
-    
-    String authToken = request.getHeader("Authorization").replace("Bearer ", "");
-    PostResponse postResponse = postService.getPost(authToken);
-    
-    return RestResponseUtil
-        .okResponse("게시글 조회 성공했습니다.", postResponse);
-  }
-  
   @RequestMapping(method = RequestMethod.GET, path = "/licence")
   public ResponseEntity<?> getLicence(HttpServletRequest request) throws Exception {
     
     String authToken = request.getHeader("Authorization").replace("Bearer ", "");
-    
     List<LicenseListResponse> response = licenseService.getLicense(authToken);
     
     return RestResponseUtil

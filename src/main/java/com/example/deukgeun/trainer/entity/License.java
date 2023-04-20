@@ -33,18 +33,18 @@ public class License extends BaseEntity{
   @Column(length = 50, nullable = false)
   private String licenseNumber;
   
-  @Column(name = "trainer_user_id")
-  private Long trainerUserId;
+  @Column(name = "user_id")
+  private Long userId;
   
   @JsonIgnore
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "trainer_user_id", insertable = false, updatable = false, nullable = false)
+  @JoinColumn(name = "user_id", insertable = false, updatable = false, nullable = false)
   private User user;
   
   @Builder
-  public License(String certificateName, String licenseNumber, Long trainerUserId) {
+  public License(String certificateName, String licenseNumber, Long userId) {
     this.certificateName = certificateName;
-    this.trainerUserId = trainerUserId;
+    this.userId = userId;
     this.licenseNumber = licenseNumber;
   }
 }

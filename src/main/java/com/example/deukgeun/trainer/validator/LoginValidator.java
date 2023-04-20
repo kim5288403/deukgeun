@@ -22,7 +22,7 @@ public class LoginValidator implements ConstraintValidator<ValidLogin, Object>{
     String password = validateService.getFieldValue(object, "password");
     
     try {
-      User user = userService.getUser(email);
+      User user = userService.login(email);
       
       boolean check = passwordEncoder.matches(password, user.getPassword());
       

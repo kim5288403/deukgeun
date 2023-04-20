@@ -39,8 +39,7 @@ public class PostServiceImpl implements PostService{
   private String postUrl;
   
   public void uploadPost(PostRequest request, String authToken) throws Exception {
-    String email = jwtProvider.getUserPk(authToken);
-    User user = userService.getUser(email);
+    User user = userService.getUser(authToken);
     Long userId = user.getId();
     
     Optional<Post> post = postRepository.findByUserId(userId);

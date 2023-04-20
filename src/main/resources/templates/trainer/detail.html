@@ -83,10 +83,17 @@
 				</div>
 				
 				<div class="col-12">
-					<div class="fr-wrapper">
-						<div id="html" class="fr-element fr-view" contenteditable="true" aria-disabled="false" spellcheck="true">
+					<div class="fr-wrapper" style="border: solid 2px #eeeeee;">
+						<div id="html" class="fr-element fr-view" style="pointer-events: none;" contenteditable="true" aria-disabled="false" spellcheck="true">
+						
 						</div>
 					</div>
+				</div>
+				
+				<div class="col-12">
+					<ul class="actions" style="justify-content: center;">
+						<li><input type="button" onclick="location.href='/'" value="back"></li>
+					</ul>
 				</div>
 			
 			</div>
@@ -100,7 +107,7 @@
 		/*<![CDATA[*/
 	   	let id = /*[[ ${id} ]]*/
 	    /*]]*/
-		
+	    
 	    $("i[id=show]").on("click", function() {
 			$(this).hide();
 			$(this).siblings("i[id=hide]").show();
@@ -114,6 +121,12 @@
 		});
 		
 		$(document).ready(function(){
+			let authToken = getCookie("authToken");
+			getPostAjax();
+			getUserInfo(authToken);
+		});
+		
+		function getPostAjax(){
 			$.ajax({
 				url : "/api/trainer/" + id,
 				type : "get",
@@ -124,7 +137,21 @@
 					}
 				}
 			});
-		});
+		}
+		
+		function getUserInfo(authToken){
+			$.ajax({
+				url : "/api/trainer/my-page/post/profile",
+				type : "get",
+				beforeSend: function (xhr) {
+					xhr.setRequestHeader("Authorization", "Bearer " + authToken);
+			    },
+				success : function(res, status, request) {
+					setUserInfo(res.data);
+					setUserLicense(res.data.license);
+				}
+			});
+		}
 		
 	</script>
 </th:block>

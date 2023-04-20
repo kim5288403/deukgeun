@@ -6,5 +6,5 @@ import com.example.deukgeun.trainer.entity.License;
 import com.example.deukgeun.trainer.response.LicenseListResponse;
 
 public interface LicenseRepository extends JpaRepository<License, Long> {
-  List<LicenseListResponse> findByTrainerUserId(Long userId);
+  List<LicenseListResponse> findByUserId(Long userId);
 }

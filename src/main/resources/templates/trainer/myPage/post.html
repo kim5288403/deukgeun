@@ -35,7 +35,7 @@
 				</div>
 				
 				<div class="col-6">
-					<label>이름</label>
+					<label>이름 <span id="gender" style="color: blue;"> </span></label>
 					<input type="text" name="name" value="" disabled="disabled">
 					
 					<label>주소</label>
@@ -152,18 +152,23 @@
 				editor.save.save();
 			});
 			
+			getUserInfo(authToken)
+			
+		});
+		
+		function getUserInfo(authToken){
 			$.ajax({
-				url : "/api/trainer/my-page/info",
+				url : "/api/trainer/my-page/post/profile",
 				type : "get",
 				beforeSend: function (xhr) {
-				xhr.setRequestHeader("Authorization", "Bearer " + authToken);
+					xhr.setRequestHeader("Authorization", "Bearer " + authToken);
 			    },
 				success : function(res, status, request) {
 					setUserInfo(res.data);
 					setUserLicense(res.data.license);
 				}
 			});
-		});
+		}
 		
 		function imageRemoveAjax(src, authToken){
 			$.ajax({

@@ -137,31 +137,33 @@
 			let authToken = getCookie("authToken");
 			$("input:disabled").css("background-color", "#eeeeee");
 			
-			if (authToken !== null) {
-				$.ajax({
-					url : "/api/trainer/my-page/info",
-					type : "get",
-					beforeSend: function (xhr) {
-				    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);
-				    },
-					success : function(res, status, request) {
-						$.each(res.data, function (key, value) {
-							if (key === "gender") {
-								$("input:radio[id='" + value + "']").prop("checked", true);
-							} else if (key === "groupStatus") {
-								$("input:radio[id='" + value + "']").prop("checked", true);
-							} else {
-								$("input[name='" + key + "']").val(value);
-							}
-						})
-					}
-				});
-			}
+			getUserAjax(authToken);
 			
 			$("input:radio[id=N]").on("click", function() {
 				$("input[name=groupName]").val("");
 			})
 		});
+		
+		function getUserAjax(authToken) {
+			$.ajax({
+				url : "/api/trainer/my-page/user",
+				type : "get",
+				beforeSend: function (xhr) {
+			    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);
+			    },
+				success : function(res, status, request) {
+					$.each(res.data, function (key, value) {
+						if (key === "gender") {
+							$("input:radio[id='" + value + "']").prop("checked", true);
+						} else if (key === "groupStatus") {
+							$("input:radio[id='" + value + "']").prop("checked", true);
+						} else {
+							$("input[name='" + key + "']").val(value);
+						}
+					})
+				}
+			});
+		}
 		
 		function updateInfoAjax() {
 			errorMessageReset();

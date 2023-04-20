@@ -1,7 +1,6 @@
 package com.example.deukgeun.trainer.repository;
 
 
-import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -11,19 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.deukgeun.commom.enums.Gender;
 import com.example.deukgeun.trainer.entity.GroupStatus;
 import com.example.deukgeun.trainer.entity.User;
-import com.example.deukgeun.trainer.response.UserListResponse;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-  List<UserListResponse> findByNameLikeOrGroupNameLikeOrJibunAddressLikeOrRoadAddressLikeOrDetailAddressLikeOrExtraAddressLike
-     (String name,
-      String groupName,
-      String jibunAddress,
-      String roadAddress,
-      String detailAddress,
-      String extraAddress
-      );
-  
-  
   Optional<User> findByEmail(String email);
   
   @Query("select DISTINCT u from User u join fetch u.license")

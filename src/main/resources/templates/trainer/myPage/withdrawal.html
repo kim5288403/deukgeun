@@ -24,7 +24,7 @@
 		</header>
 		<form id="withdrawalForm" method="post" action="">
 			<div class="row gtr-uniform">
-				<input type="hidden" name="email" id="email">
+				<input type="hidden" name="email">
 				
 				<div class="col-6 col-12-xsmall">
 					<label>비밀번호</label> 
@@ -48,10 +48,15 @@
 </th:block>
 <th:block layout:fragment="script">
 	<script type="text/javascript">
+	var authToken = getCookie("authToken");
+	
 	$(document).ready(function () {
 		$.ajax({
 			url : "/api/trainer/my-page/email",
 			type : "get",
+			beforeSend: function (xhr) {
+		    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);
+		    },
 			success : function(res) {
 				if (res.code === 200) {
 					$("input[name=email]").val(res.data);
@@ -68,7 +73,7 @@
 		function withdrawalAjax(){
 			errorMessageReset();
 			let formData = $("form[id=withdrawalForm]").serialize();
-			let authToken = getCookie("authToken");
+			
 			
 			$.ajax({
 				url : "/api/trainer/my-page/withdrawal",

@@ -1,19 +1,13 @@
 package com.example.deukgeun.trainer.response;
 
-import java.util.List;
-import org.apache.commons.text.StringEscapeUtils;
 import com.example.deukgeun.commom.enums.Gender;
 import com.example.deukgeun.trainer.entity.GroupStatus;
-import com.example.deukgeun.trainer.entity.License;
-import com.example.deukgeun.trainer.entity.Post;
 import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.entity.User;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 
 @Data
-@Builder
 @AllArgsConstructor
 public class UserResponse {
   private String email;
@@ -40,8 +34,6 @@ public class UserResponse {
   
   private Integer price;
   
-  private Profile profile;
-  
   public UserResponse (User user) {
     this.email = user.getEmail();
     this.name = user.getName();
@@ -55,112 +47,32 @@ public class UserResponse {
     this.gender = user.getGender();
     this.price = user.getPrice();
     this.introduction = user.getIntroduction();
-    this.profile = user.getProfile();
   }
   
   @Data
   @AllArgsConstructor
-  public static class UserAndProfile {
-    private String email;
-    
-    private String name;
+  public static class UserListResponse {
 
-    private Gender gender;
-
-    private String groupName;
-    
-    private String jibunAddress;
-    
-    private String roadAddress;
-    
-    private String detailAddress;
-    
-    private String extraAddress;
-    
-    private Integer price;
-    
-    private String path;
-    
-    public UserAndProfile (User user) {
-      this.email = user.getEmail();
-      this.name = user.getName();
-      this.groupName = user.getGroupName();
-      this.jibunAddress = user.getJibunAddress();
-      this.roadAddress = user.getRoadAddress();
-      this.detailAddress = user.getDetailAddress();
-      this.extraAddress = user.getExtraAddress();
-      this.gender = user.getGender();
-      this.price = user.getPrice();
-      this.path = user.getProfile().getPath();
-    }
-  }
-  
-  @Data
-  @AllArgsConstructor
-  public static class UserDetail {
     private Long id;
-    
+
     private String name;
 
-    private String gender;
+    private String path;
+
+    private GroupStatus groupStatus;
 
     private String groupName;
     
-    private String address;
+    private String introduction;
     
-    private Integer price;
-    
-    private String path;
-
-    private String html;
-    
-    private List<License> license;
-    
-    public UserDetail (User user, Post post) {
-      this.id = user.getId();
-      this.name = user.getName();
-      this.groupName = user.getGroupName();
-      this.address = user.getJibunAddress() + " " + user.getRoadAddress() + " " +  user.getDetailAddress() + " " + user.getExtraAddress();
-      this.gender = user.getGender() == Gender.M ? "남" : "여";
-      this.price = user.getPrice();
-      this.path = user.getProfile().getPath();
-      this.html = StringEscapeUtils.unescapeHtml3(post.getHtml());
-      this.license = user.getLicense();
+    public UserListResponse(Profile profile) {
+      this.id = profile.getUserId();
+      this.path = profile.getPath();
+      this.name = profile.getUser().getName();
+      this.groupStatus = profile.getUser().getGroupStatus();
+      this.groupName = profile.getUser().getGroupName();
+      this.introduction = profile.getUser().getIntroduction();
     }
   }
-  
-  @Data
-  @AllArgsConstructor
-  public static class UserPost {
-    private Long id;
-    
-    private String name;
-
-    private String gender;
-
-    private String groupName;
-    
-    private String address;
-    
-    private Integer price;
-    
-    private String path;
-
-    private String html;
-    
-    private List<License> license;
-    
-    public UserPost (User user, Post post) {
-      this.id = user.getId();
-      this.name = user.getName();
-      this.groupName = user.getGroupName();
-      this.address = user.getJibunAddress() + " " + user.getRoadAddress() + " " +  user.getDetailAddress() + " " + user.getExtraAddress();
-      this.gender = user.getGender() == Gender.M ? "남" : "여";
-      this.price = user.getPrice();
-      this.path = user.getProfile().getPath();
-      this.license = user.getLicense();
-    }
-  }
-  
   
 }

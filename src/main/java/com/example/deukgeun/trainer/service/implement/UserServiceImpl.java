@@ -5,9 +5,10 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import com.example.deukgeun.global.provider.JwtProvider;
 import com.example.deukgeun.trainer.entity.User;
+import com.example.deukgeun.trainer.repository.ProfileRepository;
 import com.example.deukgeun.trainer.repository.UserRepository;
 import com.example.deukgeun.trainer.request.UserInfoUpdateRequest;
-import com.example.deukgeun.trainer.response.UserListResponse;
+import com.example.deukgeun.trainer.response.UserResponse.UserListResponse;
 import com.example.deukgeun.trainer.service.UserService;
 import lombok.RequiredArgsConstructor;
 
@@ -16,18 +17,13 @@ import lombok.RequiredArgsConstructor;
 public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
+  private final ProfileRepository profileRepository;
   private final JwtProvider jwtProvider;
   
   public List<UserListResponse> getList(String keyword) {
     
     keyword = "%" + keyword + "%";
-    return userRepository.findByNameLikeOrGroupNameLikeOrJibunAddressLikeOrRoadAddressLikeOrDetailAddressLikeOrExtraAddressLike(
-        keyword,
-        keyword,
-        keyword,
-        keyword,
-        keyword,
-        keyword);
+    return profileRepository.findByUserLikeKeyword(keyword);
   }
 
   public Long save(User user) {
@@ -37,23 +33,21 @@ public class UserServiceImpl implements UserService {
   }
   
   public User findByIdUser(Long id) throws Exception {
-    return userRepository.findLicenseFetchJoin();
-//    return userRepository.findById(id)
-//        .orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다."));
     
+    return userRepository.findLicenseFetchJoin();
   }
 
-  public User getUser(String email) throws Exception {
+  public User getUser(String authToken) throws Exception {
+    String email = jwtProvider.getUserPk(authToken);
     
     return userRepository.findByEmail(email)
         .orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다."));
   }
   
-  public Long getProfileId(String authToken) throws Exception {
-    String email = jwtProvider.getUserPk(authToken);
-    User user = getUser(email);
+  public User login(String email) throws Exception {
     
-    return user.getProfile().getId();
+    return userRepository.findByEmail(email)
+        .orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다."));
   }
   
   public void updateInfo(UserInfoUpdateRequest request) {
@@ -87,8 +81,7 @@ public class UserServiceImpl implements UserService {
   }
   
   public Long getUserId(String authToken) throws Exception {
-    String email = jwtProvider.getUserPk(authToken);
-    User user = getUser(email);
+    User user = getUser(authToken);
     
     return user.getId();
   }

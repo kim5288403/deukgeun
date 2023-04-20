@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,6 +27,14 @@ public class Post extends BaseEntity{
   
   @Column(nullable = false)
   private String html;
+  
+
+  @Column(length = 100, nullable = false)
+  private String path;
+  
+  @OneToOne()
+  @JoinColumn(name = "user_id", insertable = false, updatable = false, nullable = false)
+  private User user;
   
   @Builder
   public Post(String html, Long userId) {

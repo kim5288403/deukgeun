@@ -10,9 +10,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -72,10 +70,6 @@ public class User extends BaseEntity implements UserDetails{
   @Column(length = 50, nullable = false)
   private Integer price;
   
-  @OneToOne
-  @JoinColumn(name = "profile_id", insertable = false, updatable = false, nullable = false)
-  private Profile profile;
-  
   @OneToMany(mappedBy = "user")
   private List<License> license = new ArrayList<License>();
   
@@ -85,7 +79,7 @@ public class User extends BaseEntity implements UserDetails{
   @Builder
   public User(String name, String email, String password, GroupStatus groupStatus, Gender gender
       , Integer price,String groupName, String postcode, String jibunAddress, String roadAddress,
-      String detailAddress, String extraAddress, Long profileId, String introduction) {
+      String detailAddress, String extraAddress, String introduction) {
     this.name = name;
     this.email = email;
     this.password = password;
@@ -101,7 +95,6 @@ public class User extends BaseEntity implements UserDetails{
     this.introduction = introduction;
   }
   
-
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return null;

@@ -13,10 +13,10 @@ public class PostResponse {
   private Long post_id;
   
   private String html;
-    
+  
   public PostResponse(Post post) {
       this.post_id = post.getId();
+      this.user_id = post.getUserId();
       this.html = StringEscapeUtils.unescapeHtml3(post.getHtml());
   }
-  
 }

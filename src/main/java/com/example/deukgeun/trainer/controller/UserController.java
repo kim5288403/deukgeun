@@ -20,10 +20,9 @@ import com.example.deukgeun.commom.util.RestResponseUtil;
 import com.example.deukgeun.trainer.entity.Post;
 import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.request.LoginRequest;
+import com.example.deukgeun.trainer.response.PostResponse;
+import com.example.deukgeun.trainer.response.UserResponse.UserListResponse;
 import com.example.deukgeun.trainer.request.JoinRequest;
-import com.example.deukgeun.trainer.response.UserListResponse;
-import com.example.deukgeun.trainer.response.UserResponse;
-import com.example.deukgeun.trainer.response.UserResponse.UserDetail;
 import com.example.deukgeun.trainer.service.implement.PostServiceImpl;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
 import com.example.deukgeun.trainer.service.implement.UserServiceImpl;
@@ -47,18 +46,18 @@ public class UserController {
   // 트레이너 리스트 조건 검색
   @RequestMapping(method = RequestMethod.GET, path = "/")
   public ResponseEntity<?> list(String keyword) {
+    
     List<UserListResponse> list = userService.getList(keyword);
-
+    
     return RestResponseUtil
         .okResponse("조회 성공 했습니다.", list);
   }
   
   @RequestMapping(method = RequestMethod.GET, path = "/{id}")
   public ResponseEntity<?> detail(@PathVariable("id") Long id) throws Exception {
-    User user = userService.findByIdUser(id);
-    Post post = postService.findByUserId(id);
     
-    UserDetail response = new UserResponse.UserDetail(user, post);
+    Post post = postService.findByUserId(id);
+    PostResponse response = new PostResponse(post);
     
     return RestResponseUtil
         .okResponse("조회 성공 했습니다.", response);
@@ -77,9 +76,9 @@ public class UserController {
       validateService.errorMessageHandling(bindingResult);
     }
     
-    Long profileSaveId = profileService.save(profile);
+    profileService.save(profile);
 
-    User user = JoinRequest.create(request, passwordEncoder, profileSaveId);
+    User user = JoinRequest.create(request, passwordEncoder);
     userService.save(user);
 
     return RestResponseUtil

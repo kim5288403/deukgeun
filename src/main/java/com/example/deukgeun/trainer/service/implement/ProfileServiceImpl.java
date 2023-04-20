@@ -5,22 +5,24 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.multipart.MultipartFile;
 import com.example.deukgeun.trainer.entity.Profile;
+import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.repository.ProfileRepository;
 import com.example.deukgeun.trainer.request.ProfileRequest;
 import com.example.deukgeun.trainer.service.ProfileService;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class ProfileServiceImpl implements ProfileService {
 
-  @Autowired
-  private ProfileRepository profileRepository;
+  private final ProfileRepository profileRepository;
+  private final UserServiceImpl userService;
   
   //트레이너 profile 저장 경로
   @Value("${trainer.profile.filePath}")
@@ -47,6 +49,13 @@ public class ProfileServiceImpl implements ProfileService {
   
   public Profile getProfile(Long profileId) throws Exception {
     return profileRepository.findById(profileId).orElseThrow(() -> new Exception("게시글을 찾을 수 없습니다."));
+  }
+  
+  public Long getProfileId(String authToken) throws Exception {
+    User user = userService.getUser(authToken);
+    Profile profile = profileRepository.findByUserId(user.getId()).orElseThrow(() -> new Exception("프로필을 찾을 수 없습니다."));
+    
+    return profile.getId();
   }
   
   //file type 비교 
