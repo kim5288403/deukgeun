@@ -124,6 +124,7 @@
 			let authToken = getCookie("authToken");
 			getPostAjax();
 			getUserInfo(authToken);
+			getLicense(authToken);
 		});
 		
 		function getPostAjax(){
@@ -148,7 +149,19 @@
 			    },
 				success : function(res, status, request) {
 					setUserInfo(res.data);
-					setUserLicense(res.data.license);
+				}
+			});
+		}
+		
+		function getLicense(authToken){
+			$.ajax({
+				url : "/api/trainer/my-page/license",
+				type : "get",
+				beforeSend: function (xhr) {
+					xhr.setRequestHeader("Authorization", "Bearer " + authToken);
+			    },
+				success : function(res, status, request) {
+					setUserLicense(res.data);
 				}
 			});
 		}

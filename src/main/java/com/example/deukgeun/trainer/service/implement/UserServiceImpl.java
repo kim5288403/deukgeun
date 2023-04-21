@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
   
   public User findByIdUser(Long id) throws Exception {
     
-    return userRepository.findLicenseFetchJoin();
+    return findByIdUser(id);
   }
 
   public User getUser(String authToken) throws Exception {

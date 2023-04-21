@@ -4,9 +4,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import com.example.deukgeun.commom.repository.LicenseRepository;
 import com.example.deukgeun.commom.util.WebClientUtil;
 import com.example.deukgeun.trainer.entity.License;
+import com.example.deukgeun.trainer.repository.LicenseRepository;
 import com.example.deukgeun.trainer.request.SaveLicenseRequest;
 import com.example.deukgeun.trainer.response.LicenseListResponse;
 import com.example.deukgeun.trainer.response.LicenseResultResponse;
@@ -32,9 +32,9 @@ public class LicenseServiceImpl implements LicenseService{
     return licenseRepository.findByUserId(userId);
   }
   
-  public void saveLicence(SaveLicenseRequest request, String authToken) throws Exception {
+  public void saveLicense(SaveLicenseRequest request, String authToken) throws Exception {
     
-    LicenseResultResponse licenseResult = checkLicence(request);
+    LicenseResultResponse licenseResult = checkLicense(request);
     
     if (licenseResult.getResult()) {
       Long userId = userServise.getUserId(authToken);
@@ -47,7 +47,7 @@ public class LicenseServiceImpl implements LicenseService{
     }
   }
   
-  public LicenseResultResponse checkLicence(SaveLicenseRequest request) {
+  public LicenseResultResponse checkLicense(SaveLicenseRequest request) {
     
     WebClient webClient = WebClientUtil.getBaseUrl(licenseApiUri);
     

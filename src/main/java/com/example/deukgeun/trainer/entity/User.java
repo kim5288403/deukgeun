@@ -1,8 +1,6 @@
 package com.example.deukgeun.trainer.entity;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,7 +8,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -69,9 +66,6 @@ public class User extends BaseEntity implements UserDetails{
   
   @Column(length = 50, nullable = false)
   private Integer price;
-  
-  @OneToMany(mappedBy = "user")
-  private List<License> license = new ArrayList<License>();
   
   @Column(length = 50, nullable = false)
   private String introduction;

@@ -84,7 +84,7 @@
 		
 		function getLicenseAjax() {
 			$.ajax({
-				url : "/api/trainer/my-page/licence",
+				url : "/api/trainer/my-page/license",
 				type : "get",
 				beforeSend: function (xhr) {
 			    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);
@@ -107,7 +107,7 @@
 			let no = $("input[name=no]").val();
 
 			$.ajax({
-				url : "/api/trainer/my-page/licence",
+				url : "/api/trainer/my-page/license",
 				type : "post",
 				beforeSend: function (xhr) {
 			    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);

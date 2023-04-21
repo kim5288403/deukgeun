@@ -152,7 +152,8 @@
 				editor.save.save();
 			});
 			
-			getUserInfo(authToken)
+			getUserInfo(authToken);
+			getLicense(authToken);
 			
 		});
 		
@@ -165,7 +166,6 @@
 			    },
 				success : function(res, status, request) {
 					setUserInfo(res.data);
-					setUserLicense(res.data.license);
 				}
 			});
 		}
@@ -196,6 +196,19 @@
 			    success: function(res, status) {
 			    	editor.html.set(res.data.html);
 			    }
+			});
+		}
+		
+		function getLicense(authToken){
+			$.ajax({
+				url : "/api/trainer/my-page/license",
+				type : "get",
+				beforeSend: function (xhr) {
+					xhr.setRequestHeader("Authorization", "Bearer " + authToken);
+			    },
+				success : function(res, status, request) {
+					setUserLicense(res.data);
+				}
 			});
 		}
 	

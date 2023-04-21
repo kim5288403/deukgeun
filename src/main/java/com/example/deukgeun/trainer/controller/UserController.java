@@ -4,6 +4,8 @@ package com.example.deukgeun.trainer.controller;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
@@ -40,8 +42,9 @@ public class UserController {
   private final JwtServiceImpl jwtService;
   private final PasswordEncoder passwordEncoder;
   private final PostServiceImpl postService;
-  
-  private String role = "trainer";
+
+  @Value("${deukgeun.role.trainer}")
+  private String role;
   
   // 트레이너 리스트 조건 검색
   @RequestMapping(method = RequestMethod.GET, path = "/")
@@ -94,7 +97,6 @@ public class UserController {
     if (bindingResult.hasErrors()) {
       validateService.errorMessageHandling(bindingResult);
     }
-
    
     String authToken = jwtService.setCreateToken(request.getEmail(), response);
 

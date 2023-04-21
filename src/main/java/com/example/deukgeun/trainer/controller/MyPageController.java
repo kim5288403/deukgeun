@@ -242,8 +242,8 @@ public class MyPageController {
     postService.deletePostImage(src);
   }
   
-  @RequestMapping(method = RequestMethod.GET, path = "/licence")
-  public ResponseEntity<?> getLicence(HttpServletRequest request) throws Exception {
+  @RequestMapping(method = RequestMethod.GET, path = "/license")
+  public ResponseEntity<?> getLicense(HttpServletRequest request) throws Exception {
     
     String authToken = request.getHeader("Authorization").replace("Bearer ", "");
     List<LicenseListResponse> response = licenseService.getLicense(authToken);
@@ -252,15 +252,15 @@ public class MyPageController {
         .okResponse("자격증 조회 성공했습니다.", response);
   }
   
-  @RequestMapping(method = RequestMethod.POST, path = "/licence")
-  public ResponseEntity<?> saveLicence(HttpServletRequest request, @Valid SaveLicenseRequest saveLicenseRequest, BindingResult bindingResult) throws Exception {
+  @RequestMapping(method = RequestMethod.POST, path = "/license")
+  public ResponseEntity<?> saveLicense(HttpServletRequest request, @Valid SaveLicenseRequest saveLicenseRequest, BindingResult bindingResult) throws Exception {
     
     String authToken = request.getHeader("Authorization").replace("Bearer ", "");
     if (bindingResult.hasErrors()) {
       validateService.errorMessageHandling(bindingResult);
     }
 
-    licenseService.saveLicence(saveLicenseRequest, authToken);
+    licenseService.saveLicense(saveLicenseRequest, authToken);
  
     return RestResponseUtil
         .okResponse("자격증 등록 성공했습니다.", null);

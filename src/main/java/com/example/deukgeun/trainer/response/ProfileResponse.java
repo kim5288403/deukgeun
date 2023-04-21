@@ -34,7 +34,6 @@ public class ProfileResponse {
       this.path = profile.getPath();
       this.name = profile.getUser().getName();
       this.price = profile.getUser().getPrice();
-      this.license = profile.getUser().getLicense();
       this.address = profile.getUser().getJibunAddress() + profile.getUser().getDetailAddress() + profile.getUser().getRoadAddress();
       this.gender = profile.getUser().getGender() == Gender.M ? "남" : "여";
     }
