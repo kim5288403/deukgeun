@@ -146,7 +146,7 @@
 		
 		function getUserAjax(authToken) {
 			$.ajax({
-				url : "/api/trainer/my-page/user",
+				url : "/api/trainer/info",
 				type : "get",
 				beforeSend: function (xhr) {
 			    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);
@@ -171,8 +171,8 @@
 			let formData = $("form[id=info]").serialize();
 			
 			$.ajax({
-				url : "/api/trainer/my-page/info/update",
-				type : "post",
+				url : "/api/trainer/info",
+				type : "put",
 				data :formData,
 				success : function(res) {
 					if (res.code === 200) {
