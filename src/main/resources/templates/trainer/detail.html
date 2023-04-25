@@ -129,7 +129,7 @@
 		
 		function getPostAjax(){
 			$.ajax({
-				url : "/api/trainer/" + id,
+				url : "/api/trainer/post/" + id,
 				type : "get",
 				success : function(res, status, request) {
 					if (res.code === 200) {

@@ -19,20 +19,16 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
 import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
 import com.example.deukgeun.commom.util.RestResponseUtil;
-import com.example.deukgeun.global.provider.JwtProvider;
 import com.example.deukgeun.trainer.entity.Post;
 import com.example.deukgeun.trainer.entity.Profile;
-import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.request.PasswordUpdateRequest;
 import com.example.deukgeun.trainer.request.PostRequest;
 import com.example.deukgeun.trainer.request.SaveLicenseRequest;
-import com.example.deukgeun.trainer.request.UserInfoUpdateRequest;
 import com.example.deukgeun.trainer.request.WithdrawalRequest;
 import com.example.deukgeun.trainer.response.LicenseListResponse;
 import com.example.deukgeun.trainer.response.PostResponse;
 import com.example.deukgeun.trainer.response.ProfileResponse;
 import com.example.deukgeun.trainer.response.ProfileResponse.ProfileAndUserResponse;
-import com.example.deukgeun.trainer.response.UserResponse;
 import com.example.deukgeun.trainer.service.implement.LicenseServiceImpl;
 import com.example.deukgeun.trainer.service.implement.PostServiceImpl;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
@@ -46,7 +42,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MyPageController {
 
-    private final JwtProvider jwtProvider;
     private final UserServiceImpl userService;
     private final ValidateServiceImpl validateService;
     private final ProfileServiceImpl profileService;
@@ -54,8 +49,6 @@ public class MyPageController {
     private final PostServiceImpl postService;
     private final JwtServiceImpl jwtService;
     private final LicenseServiceImpl licenseService;
-
-
 
     @RequestMapping(method = RequestMethod.GET, path = "/profile")
     public ResponseEntity<?> getProfile(HttpServletRequest request) throws Exception {
@@ -93,14 +86,7 @@ public class MyPageController {
                 .okResponse("내 정보 수정 성공했습니다.", null);
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = "/email")
-    public ResponseEntity<?> getEmail(HttpServletRequest request) throws Exception {
-        String authToken = request.getHeader("Authorization").replace("Bearer ", "");
-        String email = jwtProvider.getUserPk(authToken);
 
-        return RestResponseUtil
-                .okResponse("내 정보 비밀번호 조회 성공했습니다.", email);
-    }
 
     @RequestMapping(method = RequestMethod.POST, path = "/password/update")
     public ResponseEntity<?> updatePassword(

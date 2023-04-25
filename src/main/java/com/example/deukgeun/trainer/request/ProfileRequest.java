@@ -6,17 +6,22 @@ import lombok.Data;
 
 @Data
 public class ProfileRequest {
-  private Long id;
+    private Long id;
 
-  private String path;
+    private Long userId;
 
-  @Builder
-  public ProfileRequest(String path) {
-    this.path = path;
-  }
+    private String path;
 
-  public static Profile create(ProfileRequest request) {
-    return Profile.builder().path(request.getPath())
-        .build();
-  }
+    @Builder
+    public ProfileRequest(String path) {
+        this.path = path;
+    }
+
+    public static Profile create(String path, Long userId) {
+        return Profile
+                .builder()
+                .path(path)
+                .userId(userId)
+                .build();
+    }
 }

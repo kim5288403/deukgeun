@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
+import com.example.deukgeun.trainer.request.SaveProfileRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
@@ -29,25 +30,6 @@ public class ProfileServiceImpl implements ProfileService {
     @Value("${trainer.profile.filePath}")
     private String FILE_PATH;
 
-    //file custom validate
-    public BindingResult validator(MultipartFile file, BindingResult bindingResult) {
-        if (file == null) {
-            bindingResult.addError(new FieldError("profile", "profile", "프로필 이미지는 필수입니다."));
-        } else {
-
-            if (file.isEmpty()) {
-                bindingResult.addError(new FieldError("profile", "profile", "프로필 이미지는 필수입니다."));
-            }
-
-            if (!isSupportedContentType(file.getContentType())) {
-                bindingResult.addError(new FieldError("profile", "profile", "이미지 파일만 업로드 가능합니다."));
-            }
-
-        }
-
-        return bindingResult;
-    }
-
     public Profile getProfile(Long profileId) throws Exception {
         return profileRepository.findById(profileId).orElseThrow(() -> new Exception("게시글을 찾을 수 없습니다."));
     }
@@ -59,14 +41,12 @@ public class ProfileServiceImpl implements ProfileService {
         return profile.getId();
     }
 
-    //file type 비교
-    private boolean isSupportedContentType(String fileType) {
-        return fileType.equals("image/png") || fileType.equals("image/jpg")
-                || fileType.equals("image/jpeg");
+    public boolean isSupportedContentType(String fileType) {
+        return fileType.equals("image/png") || fileType.equals("image/jpg") || fileType.equals("image/jpeg");
     }
 
     /**
-     * server에 file 저장된
+     * server 에 file 저장됨
      *
      * @param profile
      * @param filename
@@ -91,20 +71,13 @@ public class ProfileServiceImpl implements ProfileService {
         }
     }
 
-    public Long save(MultipartFile profile) {
+    public void save(SaveProfileRequest request) {
         UUID uuid = UUID.randomUUID();
-        String path = uuid.toString() + "_" + profile.getOriginalFilename();
+        String path = uuid.toString() + "_" + request.getProfile().getOriginalFilename();
 
-        ProfileRequest profileRequest = ProfileRequest
-                .builder()
-                .path(path)
-                .build();
-
-        Profile saveProfileData = ProfileRequest.create(profileRequest);
-        Profile res = profileRepository.save(saveProfileData);
-        saveServer(profile, path);
-
-        return res.getId();
+        Profile saveProfileData = ProfileRequest.create(path, request.getUserId());
+        profileRepository.save(saveProfileData);
+        saveServer(request.getProfile(), path);
     }
 
     public void updateProfile(Long profileId, String path) {

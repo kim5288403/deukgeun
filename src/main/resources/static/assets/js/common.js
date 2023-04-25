@@ -1,3 +1,10 @@
+function isEmpty(str){
+		if(typeof str == "undefined" || str == null || str == "")
+			return true;
+		else
+			return false ;
+}
+
 function defalutSuccessAlert(text, title) {
 	return Swal.fire({
 		title : title ? title : "success",

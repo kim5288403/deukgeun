@@ -52,7 +52,7 @@
 	
 	$(document).ready(function () {
 		$.ajax({
-			url : "/api/trainer/my-page/email",
+			url : "/api/trainer/email",
 			type : "get",
 			beforeSend: function (xhr) {
 		    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);

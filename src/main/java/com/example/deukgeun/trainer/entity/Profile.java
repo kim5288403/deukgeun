@@ -34,7 +34,8 @@ public class Profile extends BaseEntity {
   private String path;
 
   @Builder
-  public Profile(String path) {
+  public Profile(String path, Long userId) {
+    this.userId = userId;
     this.path = path;
   }
 }

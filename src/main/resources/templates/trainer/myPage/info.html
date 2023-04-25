@@ -121,7 +121,7 @@
 				<div class="col-12">
 					<ul class="actions" style="justify-content: center;">
 						<li><input type="button" value="update" class="primary"
-							onclick="updateInfoAjax()" ></li>
+							onclick="updateAjax()" ></li>
 						<li><input type="reset" value="Reset"></li>
 					</ul>
 				</div>
@@ -146,7 +146,7 @@
 		
 		function getUserAjax(authToken) {
 			$.ajax({
-				url : "/api/trainer/info",
+				url : "/api/trainer/detail",
 				type : "get",
 				beforeSend: function (xhr) {
 			    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);
@@ -165,13 +165,13 @@
 			});
 		}
 		
-		function updateInfoAjax() {
+		function updateAjax() {
 			errorMessageReset();
 			
 			let formData = $("form[id=info]").serialize();
 			
 			$.ajax({
-				url : "/api/trainer/info",
+				url : "/api/trainer",
 				type : "put",
 				data :formData,
 				success : function(res) {

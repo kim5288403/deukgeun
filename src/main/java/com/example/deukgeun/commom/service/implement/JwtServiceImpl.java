@@ -17,7 +17,16 @@ public class JwtServiceImpl implements JwtService{
   
   private final JwtProvider jwtProvider;
   private final TokenRepository tokenRepository;
-  
+
+  /**
+   * Jwt 토큰에서 pk 추출
+   * @param authToken
+   * @return
+   */
+  public String getUserPk(String authToken) {
+    return jwtProvider.getUserPk(authToken);
+  }
+
   public String setCreateToken(String email, HttpServletResponse response) {
     String authToken = jwtProvider.createAuthToken(email, role);
     String refreshToken = jwtProvider.createRefreshToken(email, role);

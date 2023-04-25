@@ -13,25 +13,39 @@ import com.example.deukgeun.commom.service.ValidateService;
 
 @Service
 public class ValidateServiceImpl implements ValidateService{
-  
+
+  /**
+   * 1. error 내용이 있을경우 애러내용을 map 타입으로 매핑
+   * 2. RequestValidException 발생함
+   *
+   * @param bindingResult request validator 에서 error 내용을 담고있음
+   */
   public void errorMessageHandling(BindingResult bindingResult) {
-    Map<String, String> validatorResult = new HashMap<>();
 
-    /* 유효성 검사에 실패한 필드 목록을 받음 */
-    for (FieldError error : bindingResult.getFieldErrors()) {
-      String validKeyName = String.format("valid_%s", error.getField());
-      validatorResult.put(validKeyName, error.getDefaultMessage());
+    if (bindingResult.hasErrors()) {
+      Map<String, String> validatorResult = new HashMap<>();
+
+      /* 유효성 검사에 실패한 필드 목록을 받음 */
+      for (FieldError error : bindingResult.getFieldErrors()) {
+        String validKeyName = String.format("valid_%s", error.getField());
+        if (error.getField().equals("profile") && error.getCode().equals("typeMismatch")) {
+          validatorResult.put(validKeyName, "프로필 이미지 파일은 필수 값입니다.");
+        } else {
+          validatorResult.put(validKeyName, error.getDefaultMessage());
+        }
+      }
+
+      /* 비밀 번호 확인 애러 목록을 받음 */
+      ObjectError objcetError = bindingResult.getGlobalError();
+      if (objcetError != null) {
+        String errorFildName = objcetError.getCode().replace("Valid", "");
+        String validKeyName = String.format("valid_%s", errorFildName);
+        validatorResult.put(validKeyName, objcetError.getDefaultMessage());
+      }
+
+      throw new RequestValidException(validatorResult, "request error!");
     }
 
-    /* 비밀 번호 확인 애러 목록을 받음 */
-    ObjectError objcetError = bindingResult.getGlobalError();
-    if (objcetError != null) {
-      String errorFildName = objcetError.getCode().replace("Valid", "");
-      String validKeyName = String.format("valid_%s", errorFildName);
-      validatorResult.put(validKeyName, objcetError.getDefaultMessage());
-    }
-    
-    throw new RequestValidException(validatorResult, "request error!");
   }
   
   @SuppressWarnings("deprecation")

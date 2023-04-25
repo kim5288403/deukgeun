@@ -77,7 +77,7 @@
 					<label>활동 주소 / 직장 주소</label>
 					<ul class="actions">
 						<li>
-							<input type="text" id="sample4_postcode" name="postcode" placeholder="우편번호" readonly="readonly" disabled="disabled">
+							<input type="text" id="sample4_postcode" name="postcode" placeholder="우편번호" readonly="readonly">
 							<span class="errorMessage" id="valid_postcode"></span>
 						</li>
 						<li>
@@ -176,52 +176,22 @@
 <th:block layout:fragment="script">
 	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 	<script type="text/javascript">
-	
-		function join() {
-			let formData = new FormData();
-			let profile = $("input[name=profileImage]")[0].files[0];
-			let data = {
-				name : $("input[name=name]").val(),
-				email : $("input[name=email]").val(),
-				password : $("input[name=password]").val(),
-				passwordConfirm : $("input[name=passwordConfirm]").val(),
-				postcode : $("input[name=postcode]").val(),
-				jibunAddress : $("input[name=jibunAddress]").val(),
-				roadAddress : $("input[name=roadAddress]").val(),
-				detailAddress : $("input[name=detailAddress]").val(),
-				extraAddress : $("input[name=extraAddress]").val(),
-				price : $("input[name=price]").val(),
-				gender : $("input[name=gender]:checked").val(),
-				groupStatus : $("input[name=groupStatus]:checked").val(),
-				groupName : $("input[name=groupName]").val(),
-				code : $("input[name=code]").val(),
-				introduction : $("input[name=introduction]").val(),
-			};
-			
-			formData.append("profile", profile);
-			formData.append("request", new Blob([JSON.stringify(data)], {type: "application/json"}));
-			
-			return formData;
-		}
-		
 		function joinAjax() {
 			errorMessageReset();
-			
-			let formData = join();
-			
+<!--			saveUserAjax();-->
+			saveProfileAjax(8);
+		}
+
+		function saveUserAjax() {
+			let formData = $("form[id=join]").serialize();
+
 			$.ajax({
-				url : "/api/trainer/join",
+				url : "/api/trainer/",
 				type : "post",
-				processData : false,
-				contentType : false,
-				cache : false,
 				data :formData,
-				dataType: "json",
 				success : function(res) {
 					if (res.code === 200) {
-						defalutSuccessAlert(res.message, "성공").then(function (){
-							window.location.replace("http://localhost:8080/");
-						});
+						saveProfileAjax(res.data.id);
 					}
 				},
 				error : function(res) {
@@ -231,7 +201,52 @@
 				}
 			});
 		}
-		
+
+		function saveProfileAjax(userId) {
+			let formData = new FormData();
+			let profile = $("input[name=profileImage]")[0].files[0];
+			formData.append("profile", profile);
+			formData.append("userId", userId);
+
+			$.ajax({
+				url : "/api/trainer/profile/",
+				type : "post",
+				processData : false,
+				contentType : false,
+				cache : false,
+				data :formData,
+				dataType: "json",
+				success : function(res) {
+					if (res.code === 200) {
+						defalutSuccessAlert(res.message, "성공").then(function (){
+							window.location.replace("http://localhost:8080/login");
+						});
+					}
+				},
+				error : function(res) {
+					deleteUserAjax(userId);
+					if (res.responseJSON.code === 400) {
+						errorMessage(res.responseJSON.data);
+					}
+				}
+			});
+		}
+
+		function deleteUserAjax(userId) {
+			$.ajax({
+				url : "/api/trainer/" + id,
+				type : "delete",
+				success : function(res) {
+					if (res.code === 200) {
+					}
+				},
+				error : function(res) {
+					if (res.responseJSON.code === 400) {
+					}
+				}
+			});
+		}
+
 		function codeSendAjax() {
 			let email = $("input[name=email]").val();
 			
