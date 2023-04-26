@@ -23,7 +23,7 @@ public class EmailAndPwValidator implements ConstraintValidator<ValidEmailAndPw,
     String password = validateService.getFieldValue(object, "password");
     
     try {
-      User user = userService.getUser(email);
+      User user = userService.getUserByEmail(email);
       boolean check = passwordEncoder.matches(password, user.getPassword());
       
       if (check) {

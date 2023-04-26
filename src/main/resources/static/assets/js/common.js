@@ -5,7 +5,7 @@ function isEmpty(str){
 			return false ;
 }
 
-function defalutSuccessAlert(text, title) {
+function defaultSuccessAlert(text, title) {
 	return Swal.fire({
 		title : title ? title : "success",
 		text : text,
@@ -14,7 +14,7 @@ function defalutSuccessAlert(text, title) {
 		});
 }
 
-function defalutErrorAlert(text, title) {
+function defaultErrorAlert(text, title) {
 	return Swal.fire({
 		title : title ? title : "Error",
 		text : text,
@@ -67,7 +67,7 @@ function logoutCookie(message) {
 	document.cookie = "authToken=; expires=" + expiration + "; path=" + "/";
 	document.cookie = "role=; expires=" + expiration + "; path=" + "/";
 	
-	defalutErrorAlert(message).then(function() {
+	defaultErrorAlert(message).then(function() {
 		window.location.replace("http://localhost:8080/login");
 	});
 }
@@ -91,5 +91,25 @@ function back() {
 	}
 		
 	$(location).attr('href', origin);
+}
+
+function getUserEmailAjax(authToken){
+	$.ajax({
+		url : "/api/trainer/email",
+		type : "get",
+		beforeSend: function (xhr) {
+		xhr.setRequestHeader("Authorization", "Bearer " + authToken);
+		},
+		success : function(res) {
+			if (res.code === 200) {
+				$("input[name=email]").val(res.data);
+			}
+		},
+		error : function(res) {
+			if (res.responseJSON.code === 400) {
+				defaultErrorAlert(res.responseJSON.data.message, "실패");
+			}
+		}
+	});
 }
 	

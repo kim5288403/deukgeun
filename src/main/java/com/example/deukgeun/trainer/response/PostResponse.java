@@ -1,9 +1,9 @@
 package com.example.deukgeun.trainer.response;
 
-import org.apache.commons.text.StringEscapeUtils;
 import com.example.deukgeun.trainer.entity.Post;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.util.HtmlUtils;
 
 @Data
 @NoArgsConstructor
@@ -17,6 +17,6 @@ public class PostResponse {
   public PostResponse(Post post) {
       this.post_id = post.getId();
       this.user_id = post.getUserId();
-      this.html = StringEscapeUtils.unescapeHtml3(post.getHtml());
+      this.html = HtmlUtils.htmlUnescape(post.getHtml());
   }
 }

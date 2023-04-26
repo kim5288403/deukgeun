@@ -167,16 +167,15 @@
 		
 		function updateAjax() {
 			errorMessageReset();
-			
 			let formData = $("form[id=info]").serialize();
 			
 			$.ajax({
-				url : "/api/trainer",
+				url : "/api/trainer/",
 				type : "put",
 				data :formData,
 				success : function(res) {
 					if (res.code === 200) {
-						defalutSuccessAlert(res.message, "성공").then(function (){
+						defaultSuccessAlert(res.message, "성공").then(function (){
 							window.location.reload();
 						});
 					}

@@ -44,7 +44,7 @@
 					<br>
 					
 					<label id="price" ></label>
-					<select name="price" id="price">
+					<select name="price">
 						<option value="">- 선택 -</option>
 						<option value="10">10회</option>
 						<option value="20">20회</option>
@@ -58,8 +58,8 @@
 				<div class="col-6">
 					<label>
 						자격증
-						<i class="fa fa-chevron-down" id="show" aria-hidden="true"></i>
-						<i class="fa fa-chevron-up" id="hide" aria-hidden="true"></i>
+						<i class="fa fa-chevron-down" name="down" aria-hidden="true"></i>
+						<i class="fa fa-chevron-up" name="up"  aria-hidden="true"></i>
 					</label>
 					
 					<ul id="license">
@@ -70,8 +70,8 @@
 				<div class="col-6">
 					<label>
 						수상경력
-						<i class="fa fa-chevron-down" id="show" aria-hidden="true"></i>
-						<i class="fa fa-chevron-up" id="hide" aria-hidden="true"></i>
+						<i class="fa fa-chevron-down down" name="down" aria-hidden="true"></i>
+						<i class="fa fa-chevron-up up" name="up" aria-hidden="true"></i>
 					</label>
 					
 					<ul id="award">
@@ -105,25 +105,25 @@
 <script src="/assets/js/trainer/user.js"></script>
 	<script th:inline="javascript">
 		/*<![CDATA[*/
-	   	let id = /*[[ ${id} ]]*/
+	   		let id = /*[[ ${id} ]]*/
 	    /*]]*/
 	    
-	    $("i[id=show]").on("click", function() {
+	    $("i[name=up]").on("click", function() {
 			$(this).hide();
-			$(this).siblings("i[id=hide]").show();
-			$(this).parent().siblings("ul").slideDown();
+			$(this).siblings("i[name=down]").show();
+			$(this).parent().siblings("ul").slideUp();
 		});
 		
-		$("i[id=hide]").on("click", function() {
+		$("i[name=down]").on("click", function() {
 			$(this).hide();
-			$(this).siblings("i[id=show]").show();
-			$(this).parent().siblings("ul").slideUp();
+			$(this).siblings("i[name=up]").show();
+			$(this).parent().siblings("ul").slideDown();
 		});
 		
 		$(document).ready(function(){
 			let authToken = getCookie("authToken");
 			getPostAjax();
-			getUserInfo(authToken);
+			getProfileInfo(authToken);
 			getLicense(authToken);
 		});
 		
@@ -134,15 +134,18 @@
 				success : function(res, status, request) {
 					if (res.code === 200) {
 						setUserInfo(res.data);
-						setUserLicense(res.data.license);
 					}
+				},
+				error : function() {
+					let appendHtml = '<p style="text-align: center;">등록한 게시물이 없습니다.</p>';
+					$("div[id=html]").append(appendHtml);
 				}
 			});
 		}
-		
-		function getUserInfo(authToken){
+
+		function getProfileInfo(authToken){
 			$.ajax({
-				url : "/api/trainer/my-page/post/profile",
+				url : "/api/trainer/profile/" + id,
 				type : "get",
 				beforeSend: function (xhr) {
 					xhr.setRequestHeader("Authorization", "Bearer " + authToken);
@@ -155,11 +158,8 @@
 		
 		function getLicense(authToken){
 			$.ajax({
-				url : "/api/trainer/my-page/license",
+				url : "/api/trainer/license/" + id,
 				type : "get",
-				beforeSend: function (xhr) {
-					xhr.setRequestHeader("Authorization", "Bearer " + authToken);
-			    },
 				success : function(res, status, request) {
 					setUserLicense(res.data);
 				}

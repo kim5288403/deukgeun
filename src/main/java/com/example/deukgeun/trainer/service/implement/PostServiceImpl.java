@@ -4,15 +4,10 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import com.example.deukgeun.global.provider.JwtProvider;
@@ -23,6 +18,7 @@ import com.example.deukgeun.trainer.request.PostRequest;
 import com.example.deukgeun.trainer.response.PostResponse;
 import com.example.deukgeun.trainer.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.util.HtmlUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -39,13 +35,13 @@ public class PostServiceImpl implements PostService{
   private String postUrl;
   
   public void uploadPost(PostRequest request, String authToken) throws Exception {
-    User user = userService.getUser(authToken);
+    User user = userService.getUserByAuthToken(authToken);
     Long userId = user.getId();
     
     Optional<Post> post = postRepository.findByUserId(userId);
     
     String content = request.getContent();
-    String html = StringEscapeUtils.escapeHtml3(content);
+    String html = HtmlUtils.htmlEscape(content);
     
     if (post.isPresent()) {
       update(userId, html);
@@ -75,7 +71,7 @@ public class PostServiceImpl implements PostService{
     
     String type = filePart.getContentType();
     String converter_type = type.substring(type.lastIndexOf("/") + 1);
-    
+
     String extension = converter_type;
     extension = (extension != null && extension != "") ? "." + extension : extension;
     name = UUID.randomUUID().toString() + extension ;
@@ -119,7 +115,9 @@ public class PostServiceImpl implements PostService{
         "image/svg+xml"
     };
 
-    if (!ArrayUtils.contains(allowedMimeTypes, mimeType.toLowerCase())) {
+    boolean contains = Arrays.asList(allowedMimeTypes).contains(mimeType.toLowerCase());
+
+    if (!contains) {
       deleteServerImage(uploads + "/" + name);
 
       throw new Exception("Image does not meet the validation.");
@@ -153,7 +151,7 @@ public class PostServiceImpl implements PostService{
   
   public PostResponse getPost(String authToken) throws Exception {
     String email = jwtProvider.getUserPk(authToken);
-    User user = userService.getUser(email);
+    User user = userService.getUserByAuthToken(email);
     Post post = findByUserId(user.getId());
     
     return new PostResponse(post);

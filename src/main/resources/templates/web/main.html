@@ -45,6 +45,8 @@
 					"keyword" : keyword,
 				},
 				success : function(res) {
+					$("section[class=posts]").find("article").remove();
+					$("section[class=posts]").find("p").remove();
 					$.each(res.data, function(key, value) {
 						setList(value);
 					});
@@ -54,9 +56,7 @@
 		
 		function setList(data) {
 			let section = $("section[class=posts]");
-			section.find("article").remove();
-			section.find("p").remove();
-			
+			console.log(data);
 			let appendHtml = '';
 			appendHtml += '<article>';
 				appendHtml += '<header>';
@@ -65,7 +65,7 @@
 					appendHtml += '<a href="#">' + data.name + ' <br /> 트레이너님 </a>';
 				appendHtml += '</h2>';
 				appendHtml += '</header>';
-				appendHtml += '<a href="#" class="image fit"><img src="/images/trainer/profile/' + data.path + '" alt="" /></a>';
+				appendHtml += '<a href="#" class="image fit" style="height: 450px; border: solid 1px #eeeeee;"><img src="/images/trainer/profile/' + data.path + '" alt="" /></a>';
 				appendHtml += '<p>' + data.introduction + '</p>';
 				appendHtml += '<ul class="actions special">';
 					appendHtml += '<li><a href="/trainer/detail/' + data.id + '" class="button">상세보기</a></li>';

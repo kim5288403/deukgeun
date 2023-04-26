@@ -81,7 +81,7 @@
 			},
 			success : function(res) {
 				if (res.code === 200) {
-					defalutSuccessAlert(res.message, "성공").then(function (){
+					defaultSuccessAlert(res.message, "성공").then(function (){
 						setCookie("authToken", "Bearer "+ res.data.authToken);
 						window.location.replace("http://localhost:8080/");
 					});

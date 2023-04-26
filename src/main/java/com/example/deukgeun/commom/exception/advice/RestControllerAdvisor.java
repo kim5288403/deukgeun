@@ -3,6 +3,8 @@ package com.example.deukgeun.commom.exception.advice;
 import java.io.UnsupportedEncodingException;
 import javax.mail.MessagingException;
 import javax.validation.ValidationException;
+
+import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -24,6 +26,13 @@ public class RestControllerAdvisor {
     
     return RestResponseUtil
         .BadResponse(e.getMessage(), e.getResult());
+  }
+
+  @ExceptionHandler(MalformedJwtException.class)
+  public ResponseEntity<?> malformedJwtException(MalformedJwtException e) {
+
+    return RestResponseUtil
+            .BadResponse("JWT(Jason Web Token) 문자열이 올바른 형식이 아니어서 발생하는 예외입니다.", null);
   }
   
   @ExceptionHandler(UnsupportedEncodingException.class)

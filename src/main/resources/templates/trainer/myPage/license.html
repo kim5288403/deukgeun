@@ -76,15 +76,15 @@
 </th:block>
 <th:block layout:fragment="script">
 	<script type="text/javascript">
-		const authToken = getCookie("authToken");
+		let authToken = getCookie("authToken");
 		
 		$(document).ready(function () {
 			getLicenseAjax();
 		});
-		
+
 		function getLicenseAjax() {
 			$.ajax({
-				url : "/api/trainer/my-page/license",
+				url : "/api/trainer/license/",
 				type : "get",
 				beforeSend: function (xhr) {
 			    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);
@@ -96,7 +96,7 @@
 				},
 				error : function(res) {
 					if (res.responseJSON.code === 400) {
-						defalutErrorAlert(res.responseJSON.message);
+						defaultErrorAlert(res.responseJSON.message);
 					}
 				}
 			});
@@ -107,7 +107,7 @@
 			let no = $("input[name=no]").val();
 
 			$.ajax({
-				url : "/api/trainer/my-page/license",
+				url : "/api/trainer/license/",
 				type : "post",
 				beforeSend: function (xhr) {
 			    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);
@@ -118,13 +118,13 @@
 				},
 				success : function(res) {
 					if (res.code === 200) {
-						defalutSuccessAlert(res.message, "성공").then(function (){
+						defaultSuccessAlert(res.message, "성공").then(function (){
 						});
 					}
 				},
 				error : function(res) {
 					if (res.responseJSON.code === 400) {
-						defalutErrorAlert(res.responseJSON.message);
+						errorMessage(res.responseJSON.data);
 					}
 				}
 			});
@@ -148,8 +148,6 @@
 			
 			$("tbody[id=license]").append(appendHtml);
 		}
-		
-		
 	</script>
 </th:block>
 </html>

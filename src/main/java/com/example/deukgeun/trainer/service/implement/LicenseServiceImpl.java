@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class LicenseServiceImpl implements LicenseService{
    
-  private final UserServiceImpl userServise;
+  private final UserServiceImpl userService;
   private final LicenseRepository licenseRepository;
   
   @Value("${trainer.license.api.key}")
@@ -25,10 +25,14 @@ public class LicenseServiceImpl implements LicenseService{
   @Value("${trainer.license.api.uri}")
   private String licenseApiUri;
   
-  public List<LicenseListResponse> getLicense(String authToken) throws Exception {
-    
-    Long userId = userServise.getUserId(authToken);
-    
+  public List<LicenseListResponse> findByEmail(String authToken) throws Exception {
+    Long userId = userService.getUserId(authToken);
+
+    return licenseRepository.findByUserId(userId);
+  }
+
+  public List<LicenseListResponse> findByUserId(Long userId) {
+
     return licenseRepository.findByUserId(userId);
   }
   
@@ -37,7 +41,7 @@ public class LicenseServiceImpl implements LicenseService{
     LicenseResultResponse licenseResult = checkLicense(request);
     
     if (licenseResult.getResult()) {
-      Long userId = userServise.getUserId(authToken);
+      Long userId = userService.getUserId(authToken);
       
       License license = SaveLicenseRequest.create(licenseResult.getCertificatename(), request.getNo(), userId);
       licenseRepository.save(license);

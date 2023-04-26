@@ -86,56 +86,6 @@ public class MyPageController {
                 .okResponse("내 정보 수정 성공했습니다.", null);
     }
 
-
-
-    @RequestMapping(method = RequestMethod.POST, path = "/password/update")
-    public ResponseEntity<?> updatePassword(
-            @Valid PasswordUpdateRequest request,
-            BindingResult bindingResult) {
-
-        if (bindingResult.hasErrors()) {
-            validateService.errorMessageHandling(bindingResult);
-        }
-
-        String email = request.getEmail();
-        String password = passwordEncoder.encode(request.getNewPassword());
-        userService.updatePassword(email, password);
-
-        return RestResponseUtil
-                .okResponse("비밀번호 변경 성공했습니다.", null);
-    }
-
-    @RequestMapping(method = RequestMethod.POST, path = "/withdrawal")
-    public ResponseEntity<?> withdrawal(
-            HttpServletRequest request,
-            @Valid WithdrawalRequest withdrawalRequest,
-            BindingResult bindingResult
-    ) throws Exception {
-
-        if (bindingResult.hasErrors()) {
-            validateService.errorMessageHandling(bindingResult);
-        }
-
-        String authToken = request.getHeader("Authorization").replace("Bearer ", "");
-
-        Long profileId = profileService.getProfileId(authToken);
-
-        Profile userProfile = profileService.getProfile(profileId);
-
-        //사용자 삭제
-        userService.withdrawal(authToken);
-
-        //포로필 이미지 삭제
-        profileService.deleteServer(userProfile.getPath());
-        profileService.withdrawal(profileId);
-
-        //토큰 삭제
-        jwtService.deleteToken(authToken);
-
-        return RestResponseUtil
-                .okResponse("회원 탈퇴 성공했습니다.", null);
-    }
-
     @RequestMapping(method = RequestMethod.GET, path = "/post")
     public ResponseEntity<?> getPost(HttpServletRequest request) throws Exception {
 
@@ -204,28 +154,6 @@ public class MyPageController {
         postService.deletePostImage(src);
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = "/license")
-    public ResponseEntity<?> getLicense(HttpServletRequest request) throws Exception {
 
-        String authToken = request.getHeader("Authorization").replace("Bearer ", "");
-        List<LicenseListResponse> response = licenseService.getLicense(authToken);
-
-        return RestResponseUtil
-                .okResponse("자격증 조회 성공했습니다.", response);
-    }
-
-    @RequestMapping(method = RequestMethod.POST, path = "/license")
-    public ResponseEntity<?> saveLicense(HttpServletRequest request, @Valid SaveLicenseRequest saveLicenseRequest, BindingResult bindingResult) throws Exception {
-
-        String authToken = request.getHeader("Authorization").replace("Bearer ", "");
-        if (bindingResult.hasErrors()) {
-            validateService.errorMessageHandling(bindingResult);
-        }
-
-        licenseService.saveLicense(saveLicenseRequest, authToken);
-
-        return RestResponseUtil
-                .okResponse("자격증 등록 성공했습니다.", null);
-    }
 
 }

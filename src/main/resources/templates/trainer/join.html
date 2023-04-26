@@ -162,7 +162,7 @@
 				<div class="col-12">
 					<ul class="actions" style="justify-content: center;">
 						<li><input type="button" value="Join" class="primary"
-							onclick="joinAjax()"></li>
+							onclick="saveUserAjax()"></li>
 						<li><input type="reset" value="Reset"></li>
 					</ul>
 				</div>
@@ -176,72 +176,42 @@
 <th:block layout:fragment="script">
 	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 	<script type="text/javascript">
-		function joinAjax() {
-			errorMessageReset();
-<!--			saveUserAjax();-->
-			saveProfileAjax(8);
+		function joinFormData() {
+			let formData = new FormData();
+			let profile = $("input[name=profileImage]")[0].files[0];
+			let joinForm = $("form[id=join]").find("input");
+			formData.append("profile", profile);
+
+			$.each(joinForm, function(key, value) {
+				if (value.name !== "" && value.name !== "F") {
+					formData.append(value.name, value.value);
+				}
+			});
+
+			return formData;
 		}
 
 		function saveUserAjax() {
-			let formData = $("form[id=join]").serialize();
+			errorMessageReset();
+			let formData = joinFormData();
 
 			$.ajax({
 				url : "/api/trainer/",
-				type : "post",
-				data :formData,
-				success : function(res) {
-					if (res.code === 200) {
-						saveProfileAjax(res.data.id);
-					}
-				},
-				error : function(res) {
-					if (res.responseJSON.code === 400) {
-						errorMessage(res.responseJSON.data);
-					}
-				}
-			});
-		}
-
-		function saveProfileAjax(userId) {
-			let formData = new FormData();
-			let profile = $("input[name=profileImage]")[0].files[0];
-			formData.append("profile", profile);
-			formData.append("userId", userId);
-
-			$.ajax({
-				url : "/api/trainer/profile/",
 				type : "post",
 				processData : false,
 				contentType : false,
 				cache : false,
 				data :formData,
-				dataType: "json",
 				success : function(res) {
 					if (res.code === 200) {
-						defalutSuccessAlert(res.message, "성공").then(function (){
+						defaultSuccessAlert(res.message, "성공").then(function (){
 							window.location.replace("http://localhost:8080/login");
 						});
 					}
 				},
 				error : function(res) {
-					deleteUserAjax(userId);
 					if (res.responseJSON.code === 400) {
 						errorMessage(res.responseJSON.data);
-					}
-				}
-			});
-		}
-
-		function deleteUserAjax(userId) {
-			$.ajax({
-				url : "/api/trainer/" + id,
-				type : "delete",
-				success : function(res) {
-					if (res.code === 200) {
-					}
-				},
-				error : function(res) {
-					if (res.responseJSON.code === 400) {
 					}
 				}
 			});
@@ -261,14 +231,14 @@
 				success : function(res) {
 					 $('html').css("cursor", "auto");
 					if (res.code === 200) {
-						defalutSuccessAlert(res.message, "성공");
+						defaultSuccessAlert(res.message, "성공");
 					}
 				},
 				error : function(res) {
 					if (res.responseJSON.code === 400) {
 						errorMessage(res.responseJSON.data);
 					} else {
-						defalutErrorAlert(res.responseJSON.message);
+						defaultErrorAlert(res.responseJSON.message);
 					}
 				}
 			});
@@ -287,14 +257,14 @@
 					},
 				success : function(res) {
 					if (res.code === 200) {
-						defalutSuccessAlert(res.message, "성공");
+						defaultSuccessAlert(res.message, "성공");
 					}
 				},
 				error : function(res) {
 					if (res.responseJSON.code === 400) {
 						errorMessage(res.responseJSON.data);
 					} else {
-						defalutErrorAlert(res.responseJSON.message);
+						defaultErrorAlert(res.responseJSON.message);
 					}
 				}
 			});
@@ -303,7 +273,6 @@
 		$("input").on("change", function () {
 			$(this).siblings("span[class=errorMessage]").text("");
 		})
-		
 
 		$("a[id=fileUpload]").on("click", function(e) {
 			e.preventDefault()

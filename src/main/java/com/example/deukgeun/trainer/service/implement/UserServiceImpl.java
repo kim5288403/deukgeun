@@ -2,12 +2,17 @@ package com.example.deukgeun.trainer.service.implement;
 
 
 import java.util.List;
+
+import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
+import com.example.deukgeun.trainer.request.JoinRequest;
+import com.example.deukgeun.trainer.request.PasswordUpdateRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.example.deukgeun.global.provider.JwtProvider;
 import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.repository.ProfileRepository;
 import com.example.deukgeun.trainer.repository.UserRepository;
-import com.example.deukgeun.trainer.request.UserInfoUpdateRequest;
+import com.example.deukgeun.trainer.request.UserUpdateRequest;
 import com.example.deukgeun.trainer.response.UserResponse.UserListResponse;
 import com.example.deukgeun.trainer.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -18,27 +23,29 @@ public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
   private final ProfileRepository profileRepository;
-  private final JwtProvider jwtProvider;
-  
+  private final JwtServiceImpl jwtService;
+  private final PasswordEncoder passwordEncoder;
+
   public List<UserListResponse> getList(String keyword) {
     
     keyword = "%" + keyword + "%";
     return profileRepository.findByUserLikeKeyword(keyword);
   }
 
-  public Long save(User user) {
-    
+  public Long save(JoinRequest request) {
+    User user = JoinRequest.create(request, passwordEncoder);
     User res = userRepository.save(user);
+
     return res.getId();
   }
-  
-  public User findByIdUser(Long id) throws Exception {
-    
-    return findByIdUser(id);
+
+  public User getUserByEmail(String email) throws Exception {
+    return userRepository.findByEmail(email)
+            .orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다."));
   }
 
-  public User getUser(String authToken) throws Exception {
-    String email = jwtProvider.getUserPk(authToken);
+  public User getUserByAuthToken(String authToken) throws Exception {
+    String email = jwtService.getUserPk(authToken);
     
     return userRepository.findByEmail(email)
         .orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다."));
@@ -50,7 +57,7 @@ public class UserServiceImpl implements UserService {
         .orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다."));
   }
   
-  public void updateInfo(UserInfoUpdateRequest request) {
+  public void updateInfo(UserUpdateRequest request) {
     
     userRepository.updateInfo(
         request.getEmail(),
@@ -68,20 +75,21 @@ public class UserServiceImpl implements UserService {
         );
   }
   
-  public void updatePassword(String email, String password) {
-    
-     userRepository.updatePassword(email, password);
+  public void updatePassword(PasswordUpdateRequest request) {
+    String email = request.getEmail();
+    String password = passwordEncoder.encode(request.getNewPassword());
+
+    userRepository.updatePassword(email, password);
   }
   
   public void withdrawal(String authToken) throws Exception {
-    String email = jwtProvider.getUserPk(authToken);
-    User user = getUser(email);
+    User user = getUserByAuthToken(authToken);
     
     userRepository.delete(user);
   }
   
   public Long getUserId(String authToken) throws Exception {
-    User user = getUser(authToken);
+    User user = getUserByAuthToken(authToken);
     
     return user.getId();
   }

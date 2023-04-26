@@ -28,14 +28,15 @@ public class ProfileResponse {
     
     private String gender;
 
-    private List<License> license;
-    
+    private String groupName;
+
     public ProfileAndUserResponse (Profile profile) {
       this.path = profile.getPath();
       this.name = profile.getUser().getName();
       this.price = profile.getUser().getPrice();
       this.address = profile.getUser().getJibunAddress() + profile.getUser().getDetailAddress() + profile.getUser().getRoadAddress();
       this.gender = profile.getUser().getGender() == Gender.M ? "남" : "여";
+      this.groupName = profile.getUser().getGroupName();
     }
   }
 }

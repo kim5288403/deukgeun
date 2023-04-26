@@ -6,11 +6,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
-import com.example.deukgeun.trainer.request.SaveProfileRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.multipart.MultipartFile;
 import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.entity.User;
@@ -35,10 +32,14 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     public Long getProfileId(String authToken) throws Exception {
-        User user = userService.getUser(authToken);
+        User user = userService.getUserByAuthToken(authToken);
         Profile profile = profileRepository.findByUserId(user.getId()).orElseThrow(() -> new Exception("프로필을 찾을 수 없습니다."));
 
         return profile.getId();
+    }
+
+    public Profile getProfileByUserId(Long userId) throws Exception {
+        return profileRepository.findByUserId(userId).orElseThrow(() -> new Exception("프로필을 찾을 수 없습니다."));
     }
 
     public boolean isSupportedContentType(String fileType) {
@@ -71,13 +72,13 @@ public class ProfileServiceImpl implements ProfileService {
         }
     }
 
-    public void save(SaveProfileRequest request) {
+    public void save(MultipartFile profile, Long userId) {
         UUID uuid = UUID.randomUUID();
-        String path = uuid.toString() + "_" + request.getProfile().getOriginalFilename();
+        String path = uuid.toString() + "_" + profile.getOriginalFilename();
 
-        Profile saveProfileData = ProfileRequest.create(path, request.getUserId());
+        Profile saveProfileData = ProfileRequest.create(path, userId);
         profileRepository.save(saveProfileData);
-        saveServer(request.getProfile(), path);
+        saveServer(profile, path);
     }
 
     public void updateProfile(Long profileId, String path) {

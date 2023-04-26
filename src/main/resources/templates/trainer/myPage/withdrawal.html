@@ -48,54 +48,37 @@
 </th:block>
 <th:block layout:fragment="script">
 	<script type="text/javascript">
-	var authToken = getCookie("authToken");
-	
+
+	let authToken = getCookie("authToken");
+
 	$(document).ready(function () {
+		getUserEmailAjax(authToken);
+	});
+
+	function withdrawalAjax(){
+		errorMessageReset();
+		let formData = $("form[id=withdrawalForm]").serialize();
 		$.ajax({
-			url : "/api/trainer/email",
-			type : "get",
-			beforeSend: function (xhr) {
-		    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);
-		    },
+			url : "/api/trainer/",
+			type : "delete",
+			data :formData,
+			beforeSend : function (xhr) {
+				xhr.setRequestHeader("Authorization","Bearer " + authToken);
+			},
 			success : function(res) {
 				if (res.code === 200) {
-					$("input[name=email]").val(res.data);
+					defaultSuccessAlert(res.message, "성공").then(function (){
+						logoutCookie("회원 탈퇴로 인해 로그아웃 됩니다.");
+					});
 				}
 			},
 			error : function(res) {
 				if (res.responseJSON.code === 400) {
-					defalutErrorAlert(res.responseJSON.data.message, "실패");
+					errorMessage(res.responseJSON.data);
 				}
 			}
 		});
-	});
-	
-		function withdrawalAjax(){
-			errorMessageReset();
-			let formData = $("form[id=withdrawalForm]").serialize();
-			
-			
-			$.ajax({
-				url : "/api/trainer/my-page/withdrawal",
-				type : "post",
-				data :formData,
-				beforeSend : function (xhr) {
-					xhr.setRequestHeader("Authorization","Bearer " + authToken);
-				},
-				success : function(res) {
-					if (res.code === 200) {
-						defalutSuccessAlert(res.message, "성공").then(function (){
-							logoutCookie("회원 탈퇴로 인해 로그아웃 됩니다.");
-						});
-					}
-				},
-				error : function(res) {
-					if (res.responseJSON.code === 400) {
-						errorMessage(res.responseJSON.data);
-					}
-				}
-			});
-		}
+	}
 	</script>
 </th:block>
 </html>

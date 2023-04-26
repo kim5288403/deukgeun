@@ -4,6 +4,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+
+import com.example.deukgeun.trainer.validator.ValidFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.example.deukgeun.commom.enums.Gender;
 import com.example.deukgeun.commom.validator.ValidAuthEmail;
@@ -14,6 +16,7 @@ import com.example.deukgeun.trainer.entity.GroupStatus;
 import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.validator.ValidGroupName;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @ValidPasswordConfirm
@@ -59,13 +62,15 @@ public class JoinRequest {
   private GroupStatus groupStatus;
 
   private String groupName;
-  
+
   private String code;
-  
+
   @NotBlank(message = "자기소개는 필수 입력 값입니다.")
   private String introduction;
-  
 
+  @ValidFile
+  private MultipartFile profile;
+  
   public static User create(JoinRequest request, PasswordEncoder passwordEncoder) {
     return User
         .builder()
