@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -55,13 +54,21 @@ public class LicenseController {
                 .okResponse("자격증 조회 성공했습니다.", response);
     }
 
-
+    /** 자격증 등록
+     *  자격증 진위 여부 오픈APi로 진위 여부 확인 후 자격증 등록
+     *
+     * @param request authToken 추출을 위한 파라미터
+     * @param saveLicenseRequest 자격증 등록 form data
+     * @param bindingResult form data validator 결과를 담는 역할
+     * @return RestResponseUtil
+     * @throws Exception
+     */
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> saveLicense(HttpServletRequest request, @Valid SaveLicenseRequest saveLicenseRequest, BindingResult bindingResult) throws Exception {
         String authToken = request.getHeader("Authorization").replace("Bearer ", "");
         validateService.errorMessageHandling(bindingResult);
-//        licenseService.saveLicense(saveLicenseRequest, authToken);
-        WebClient webClient = WebClient.builder().build();
+        licenseService.saveLicense(saveLicenseRequest, authToken);
+
         return RestResponseUtil
                 .okResponse("자격증 등록 성공했습니다.", null);
     }

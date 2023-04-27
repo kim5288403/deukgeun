@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{web/layout/layout}">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{web/layout/layout}">
 <th:block layout:fragment="css">
-	<style>
+    <style>
 		.fa-chevron-down, .fa-chevron-up{
 			cursor: pointer;
 		}
@@ -11,155 +11,138 @@
 		 	display: none;
 		 }
 		 
-	</style>
+
+
+    </style>
 </th:block>
 <th:block layout:fragment="content">
-	<!-- Posts -->
-	<section class="post">
-		<header class="major">
-			<h1>
-				게시글
-			</h1>
-			<p>
-				Aenean ornare velit lacus varius enim ullamcorper proin aliquam<br>
-				facilisis ante sed etiam magna interdum congue. Lorem ipsum dolor<br>
-				amet nullam sed etiam veroeros.
-			</p>
-		</header>
-		
-			<div class="row gtr-uniform">
-				
-				<div class="col-6">
-					<label>대표 이미지</label>
-					<img id="profile" src="" alt="" style="border: solid #eeeeee; cursor: pointer; width: 100%; height: 100%;">
-				</div>
-				
-				<div class="col-6">
-					<label>이름 <span id="gender" style="color: blue;"> </span></label>
-					<input type="text" name="name" value="" disabled="disabled">
-					
-					<label>주소</label>
-					<input type="text" name="address" value="" disabled="disabled">
-					
-					<label id="price" ></label>
-					<select name="price" id="price">
-						<option value="">- 선택 -</option>
-						<option value="10">10회</option>
-						<option value="20">20회</option>
-						<option value="30">30회</option>
-						<option value="50">50회</option>
-					</select>
-				</div>
-				
-				<div class="col-12"></div>
-				
-				<div class="col-6">
-					<label>
-						자격증
-						<i class="fa fa-chevron-down" id="show" aria-hidden="true"></i>
-						<i class="fa fa-chevron-up" id="hide" aria-hidden="true"></i>
-					</label>
-					
-					<ul id="license">
-				
-					</ul>
-				</div>
-				
-				<div class="col-6">
-					<label>
-						수상경력
-						<i class="fa fa-chevron-down" id="show" aria-hidden="true"></i>
-						<i class="fa fa-chevron-up" id="hide" aria-hidden="true"></i>
-					</label>
-					
-					<ul id="award">
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-					</ul>
-				</div>
-				
-				<div class="col-12">
-					<div id="example">
-					</div>
-				</div>
-				
-				
-				<div class="col-12">
-					<ul class="actions" style="justify-content: center;">
-						<li>
-							<input type="button" id="saveBtn" value="save" class="primary">
-						</li>
-						<li><input type="button" onclick="back()" value="back"></li>
-					</ul>
-				</div>
-				
-			</div>
-	</section>
+    <!-- Posts -->
+    <section class="post">
+        <header class="major">
+            <h1>
+                게시글
+            </h1>
+            <p>
+                Aenean ornare velit lacus varius enim ullamcorper proin aliquam<br>
+                facilisis ante sed etiam magna interdum congue. Lorem ipsum dolor<br>
+                amet nullam sed etiam veroeros.
+            </p>
+        </header>
+
+        <div class="row gtr-uniform">
+
+            <div class="col-6">
+                <label>대표 이미지</label>
+                <img id="profile" src="" alt=""
+                     style="border: solid #eeeeee; cursor: pointer; width: 100%; height: 100%;">
+            </div>
+
+            <div class="col-6">
+                <label>이름 <span id="gender" style="color: blue;"> </span></label>
+                <input type="text" name="name" value="" disabled="disabled">
+
+                <label>주소</label>
+                <input type="text" name="address" value="" disabled="disabled">
+
+                <label id="price"></label>
+                <select name="price">
+                    <option value="">- 선택 -</option>
+                    <option value="10">10회</option>
+                    <option value="20">20회</option>
+                    <option value="30">30회</option>
+                    <option value="50">50회</option>
+                </select>
+            </div>
+
+            <div class="col-12"></div>
+
+            <div class="col-6">
+                <label>
+                    자격증
+                    <i class="fa fa-chevron-down" onclick="licenseDown(this)" aria-hidden="true"></i>
+                    <i class="fa fa-chevron-up" onclick="licenseUp(this)" aria-hidden="true"></i>
+                </label>
+
+                <ul id="license">
+
+                </ul>
+            </div>
+
+            <div class="col-6">
+                <label>
+                    수상경력
+                    <i class="fa fa-chevron-down" onclick="licenseDown(this)" aria-hidden="true"></i>
+                    <i class="fa fa-chevron-up" onclick="licenseUp(this)" aria-hidden="true"></i>
+                </label>
+
+                <ul id="award">
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>
+            </div>
+
+            <div class="col-12">
+                <div id="example">
+                </div>
+            </div>
+
+
+            <div class="col-12">
+                <ul class="actions" style="justify-content: center;">
+                    <li>
+                        <input type="button" id="saveBtn" value="save" class="primary">
+                    </li>
+                    <li><input type="button" onclick="back()" value="back"></li>
+                </ul>
+            </div>
+
+        </div>
+    </section>
 </th:block>
 <th:block layout:fragment="script">
-<link href="https://cdn.jsdelivr.net/npm/froala-editor@3.1.0/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/froala-editor@3.1.0/js/froala_editor.pkgd.min.js"></script>
-<script src="/assets/js/trainer/user.js"></script>
-	<script type="text/javascript">
-	
-		$("i[id=show]").on("click", function() {
-			$(this).hide();
-			$(this).siblings("i[id=hide]").show();
-			$(this).parent().siblings("ul").slideDown();
-		});
-		
-		$("i[id=hide]").on("click", function() {
-			$(this).hide();
-			$(this).siblings("i[id=show]").show();
-			$(this).parent().siblings("ul").slideUp();
-		});
-		
-		$(document).ready(function(){
-			let authToken = getCookie("authToken");
- 			var editor = new FroalaEditor('#example', {
- 				requestHeaders: {
- 					Authorization: "Bearer " + authToken
- 				},
-			    // HTTP request type.
-			    saveMethod: 'POST',
-
-			 	// Set the save URL.
-			    saveURL: '/api/trainer/my-page/post/upload',
-			    
-			    // Additional save params.
-			    saveParam: "content",
-			    
-			    imageUploadURL: '/api/trainer/my-page/post/uploadImage',		  
-			      
-			    events: {
-			        'image.removed': function (img) {
+    <link href="https://cdn.jsdelivr.net/npm/froala-editor@3.1.0/css/froala_editor.pkgd.min.css" rel="stylesheet"
+          type="text/css"/>
+    <script type="text/javascript"
+            src="https://cdn.jsdelivr.net/npm/froala-editor@3.1.0/js/froala_editor.pkgd.min.js"></script>
+    <script src="/assets/js/trainer/user.js"></script>
+    <script type="text/javascript">
+	let authToken = getCookie("authToken");
+	$(document).ready(function(){
+ 		var editor = new FroalaEditor('#example', {
+ 			requestHeaders: {
+ 				Authorization: "Bearer " + authToken
+ 			},
+			saveMethod: 'POST',
+			saveURL: '/api/trainer/post/',
+			saveParam: "content",
+			imageUploadURL: '/api/trainer/post/image',
+			events: {
+			   'image.removed': function (img) {
 			        	let src = img.attr('src');
 			        	imageRemoveAjax(src, authToken);     	
-			        },
-			        'save.after': function (res) {
+			   },
+			   'save.after': function (res) {
 			        	let jsonRes = JSON.parse(res);
-			        	defalutSuccessAlert("성공", jsonRes.message)
-			          },
-			      },
-			      
-			}, function () {
-			 	getPostAjax(authToken, editor);
-			});
+			        	defaultSuccessAlert("성공", jsonRes.message)
+			   },
+			},
+		}, function () {
+			 getPostAjax(authToken, editor);
+		});
  			
 			$("input[id=saveBtn]").on("click", function(){
 				editor.save.save();
 			});
-			
-			getUserInfo(authToken);
+
+			getProfileInfo(authToken);
 			getLicense(authToken);
-			
 		});
 		
-		function getUserInfo(authToken){
+		function getProfileInfo(authToken){
 			$.ajax({
-				url : "/api/trainer/my-page/post/profile",
+				url : "/api/trainer/profile/",
 				type : "get",
 				beforeSend: function (xhr) {
 					xhr.setRequestHeader("Authorization", "Bearer " + authToken);
@@ -172,7 +155,7 @@
 		
 		function imageRemoveAjax(src, authToken){
 			$.ajax({
-				url: "/api/trainer/my-page/post/remove",
+				url: "/api/trainer/post/remove",
 				type: "post",
 				beforeSend: function (xhr) {
 			    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);
@@ -181,27 +164,30 @@
 			    	"src": src
 			    },
 			    success: function(res, status) {
-			    	
 			    }
 			});
 		}
 		
 		function getPostAjax(authToken, editor){
 			$.ajax({
-				url: "/api/trainer/my-page/post",
+				url: "/api/trainer/post/",
 				type: "get",
 				beforeSend: function (xhr) {
 			    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);
 			    },
 			    success: function(res, status) {
 			    	editor.html.set(res.data.html);
+			    },
+			    error: function(res) {
+			        let notFoundHtml = '<p style="text-align: center; font-size: 16px; font-weight: 600;" >해당 게시글을 찾을 수 없습니다. 게시글을 등록해주세요.</p>';
+			        editor.html.set(notFoundHtml);
 			    }
 			});
 		}
 		
 		function getLicense(authToken){
 			$.ajax({
-				url : "/api/trainer/my-page/license",
+				url : "/api/trainer/license/",
 				type : "get",
 				beforeSend: function (xhr) {
 					xhr.setRequestHeader("Authorization", "Bearer " + authToken);
@@ -211,7 +197,7 @@
 				}
 			});
 		}
-	
-	 </script>
+
+    </script>
 </th:block>
 </html>

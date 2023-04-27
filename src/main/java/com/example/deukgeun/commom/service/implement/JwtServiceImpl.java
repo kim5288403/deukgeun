@@ -1,6 +1,8 @@
 package com.example.deukgeun.commom.service.implement;
 
 import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import com.example.deukgeun.commom.entity.Token;
 import com.example.deukgeun.commom.repository.TokenRepository;
@@ -50,13 +52,14 @@ public class JwtServiceImpl implements JwtService{
   public void updateAuthToken(String authToken, String newAuthToken) {
     tokenRepository.updateAuthToken(authToken, newAuthToken);
   }
-  
+
+//  @Cacheable(value = "getAuthToken", key = "#authToken", cacheManager = "projectCacheManager")
   public Token findByAuthToken(String authToken) {
     return tokenRepository.findByAuthToken(authToken).orElse(null);
   }
   
-  //저장된 refreshToken 가져옵니다.  
-  public String getRefreshToken(String authToken) {
+  //저장된 refreshToken 가져옵니다.
+  public String getRefreshTokenByAuthToken(String authToken) {
     Token refreshToken = findByAuthToken(authToken);
     return refreshToken != null ? refreshToken.getRefreshToken() : null;
   }

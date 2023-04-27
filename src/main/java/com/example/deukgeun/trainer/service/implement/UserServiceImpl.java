@@ -6,9 +6,9 @@ import java.util.List;
 import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
 import com.example.deukgeun.trainer.request.JoinRequest;
 import com.example.deukgeun.trainer.request.PasswordUpdateRequest;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.example.deukgeun.global.provider.JwtProvider;
 import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.repository.ProfileRepository;
 import com.example.deukgeun.trainer.repository.UserRepository;
@@ -26,6 +26,7 @@ public class UserServiceImpl implements UserService {
   private final JwtServiceImpl jwtService;
   private final PasswordEncoder passwordEncoder;
 
+  @Cacheable(value = "getUserList", key = "#keyword", cacheManager = "projectCacheManager")
   public List<UserListResponse> getList(String keyword) {
     
     keyword = "%" + keyword + "%";

@@ -112,4 +112,16 @@ function getUserEmailAjax(authToken){
 		}
 	});
 }
+
+function licenseUp(data) {
+    $(data).hide();
+    $(data).siblings("i").show();
+    $(data).parent().siblings("ul").slideUp();
+}
+
+function licenseDown(data) {
+  	$(data).hide();
+   	$(data).siblings("i").show();
+   	$(data).parent().siblings("ul").slideDown();
+}
 	

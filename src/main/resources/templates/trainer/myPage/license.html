@@ -37,7 +37,7 @@
 									<th>CreatedDate</th>
 								</tr>
 							</thead>
-							<tbody id="license">
+							<tbody class="license">
 							
 							</tbody>
 						</table>
@@ -124,7 +124,11 @@
 				},
 				error : function(res) {
 					if (res.responseJSON.code === 400) {
-						errorMessage(res.responseJSON.data);
+						if (res.responseJSON.data) {
+							errorMessage(res.responseJSON.data)
+						} else {
+							defaultErrorAlert(res.responseJSON.message);
+						}
 					}
 				}
 			});
@@ -146,7 +150,7 @@
 				});
 			}
 			
-			$("tbody[id=license]").append(appendHtml);
+			$("tbody[class=license]").append(appendHtml);
 		}
 	</script>
 </th:block>

@@ -28,10 +28,6 @@ public class Post extends BaseEntity{
   @Column(nullable = false)
   private String html;
   
-
-  @Column(length = 100, nullable = false)
-  private String path;
-  
   @OneToOne()
   @JoinColumn(name = "user_id", insertable = false, updatable = false, nullable = false)
   private User user;

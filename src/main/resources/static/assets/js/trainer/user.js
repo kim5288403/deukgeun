@@ -19,12 +19,15 @@
 	
 	//트레이너 자격증 정보 셋팅		
 	function setUserLicense(data) {
-			let appendHtml = "";
-			$.each(data, function(index, value) {
-				appendHtml += "<li>" + value.certificateName + "</li>"; 
-			});
-			
-			$("ul[id=license]").append(appendHtml);
+		let appendHtml = "";
+        if (data?.length) {
+            $.each(data, function(index, value) {
+                appendHtml += "<li>" + value.certificateName + "</li>";
+            });
+        } else {
+            appendHtml = "<li>등록한 자격증이 존재하지 않습니다.</li>";
+        }
+        $("ul[id=license]").append(appendHtml);
 	}
 	
 		

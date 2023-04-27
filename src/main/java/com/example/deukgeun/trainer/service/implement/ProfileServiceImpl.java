@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.entity.User;
@@ -73,19 +74,34 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     public void save(MultipartFile profile, Long userId) {
-        UUID uuid = UUID.randomUUID();
-        String path = uuid.toString() + "_" + profile.getOriginalFilename();
+        String path = getUUIDPath(profile.getOriginalFilename());
 
         Profile saveProfileData = ProfileRequest.create(path, userId);
         profileRepository.save(saveProfileData);
         saveServer(profile, path);
     }
 
-    public void updateProfile(Long profileId, String path) {
-        profileRepository.updateProfile(profileId, path);
-    }
+    @Transactional
+    public void update(MultipartFile profile, String authToken) throws Exception {
+        Long profileId = getProfileId(authToken);
+        String path = getUUIDPath(profile.getOriginalFilename());
 
+        //DB 수정
+        profileRepository.updateProfile(profileId, path);
+
+        //서버 저장
+        saveServer(profile, path);
+
+        //server 저장된 파일 삭제
+        Profile userProfile = getProfile(profileId);
+        deleteServer(userProfile.getPath());
+    }
     public void withdrawal(Long profileId) {
         profileRepository.deleteById(profileId);
+    }
+
+    public String getUUIDPath(String fileName) {
+        UUID uuid = UUID.randomUUID();
+        return uuid.toString() + "_" + fileName;
     }
 }

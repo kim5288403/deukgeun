@@ -34,7 +34,7 @@ public class PostServiceImpl implements PostService{
   @Value("${trainer.post.url}")
   private String postUrl;
   
-  public void uploadPost(PostRequest request, String authToken) throws Exception {
+  public void upload(PostRequest request, String authToken) throws Exception {
     User user = userService.getUserByAuthToken(authToken);
     Long userId = user.getId();
     
@@ -42,7 +42,7 @@ public class PostServiceImpl implements PostService{
     
     String content = request.getContent();
     String html = HtmlUtils.htmlEscape(content);
-    
+
     if (post.isPresent()) {
       update(userId, html);
     } else {
@@ -131,7 +131,7 @@ public class PostServiceImpl implements PostService{
     return new File(postFilePath, filename);
   }
   
-  public void deletePostImage(String src) throws Exception {
+  public void deletePostImage(String src) {
     String[] url = src.split("/");
     String filename = url[url.length - 1];
     deleteServerImage(postFilePath + filename);

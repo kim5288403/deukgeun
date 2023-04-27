@@ -6,6 +6,7 @@ import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
@@ -51,6 +52,7 @@ public class UserResponse {
   
   @Data
   @AllArgsConstructor
+  @NoArgsConstructor
   public static class UserListResponse {
 
     private Long id;

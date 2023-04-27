@@ -11,8 +11,8 @@ import com.example.deukgeun.trainer.request.*;
 import com.example.deukgeun.trainer.response.UserResponse;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -91,7 +91,7 @@ public class UserController {
      * 사용자를 저장 한 후 사용자 save get id 로 프로필 이미지 저장
      *
      * @param request 유효성 검사를 통과한 회원가입 데이터
-     * @param bindingResult from data validator 결과를 담는 역할
+     * @param bindingResult form data validator 결과를 담는 역할
      * @return RestResponseUtil
      */
     @Transactional
@@ -111,7 +111,7 @@ public class UserController {
      * 트레이너 정보 수정
      *
      * @param request       from update data 추출을 위한 파라미터
-     * @param bindingResult from data validator 결과를 담는 역할
+     * @param bindingResult form data validator 결과를 담는 역할
      * @return RestResponseUtil
      */
     @RequestMapping(method = RequestMethod.PUT, path = "/")
@@ -127,7 +127,7 @@ public class UserController {
      * 기존 비밀번호, 변경 비밀번호 유효성 검사 후 비밀번호 변경
      *
      * @param request  from update data 추출을 위한 파라미터
-     * @param bindingResult from data validator 결과를 담는 역할
+     * @param bindingResult form data validator 결과를 담는 역할
      * @return RestResponseUtil
      */
     @RequestMapping(method = RequestMethod.PUT, path = "/password")
@@ -148,7 +148,7 @@ public class UserController {
      *
      * @param request authToken 추출을 위한 파라미터
      * @param withdrawalRequest from withdrawal data 추출을 위한 파라미터
-     * @param bindingResult from data validator 결과를 담는 역할
+     * @param bindingResult form data validator 결과를 담는 역할
      * @return RestResponseUtil
      * @throws Exception
      */
@@ -185,7 +185,7 @@ public class UserController {
      * 로그인 데이터로 authToken 생성, 저장, 반환
      *
      * @param request 유효성 검사를 통과한 로그인 데이터
-     * @param bindingResult  from data validator 결과를 담는 역할
+     * @param bindingResult  form data validator 결과를 담는 역할
      * @param response
      * @return LoginResponse => authToken, role
      */

@@ -58,8 +58,8 @@
 				<div class="col-6">
 					<label>
 						자격증
-						<i class="fa fa-chevron-down" name="down" aria-hidden="true"></i>
-						<i class="fa fa-chevron-up" name="up"  aria-hidden="true"></i>
+						<i class="fa fa-chevron-down"  onclick="licenseDown(this)" aria-hidden="true"></i>
+						<i class="fa fa-chevron-up"  onclick="licenseUp(this)"  aria-hidden="true"></i>
 					</label>
 					
 					<ul id="license">
@@ -70,8 +70,8 @@
 				<div class="col-6">
 					<label>
 						수상경력
-						<i class="fa fa-chevron-down down" name="down" aria-hidden="true"></i>
-						<i class="fa fa-chevron-up up" name="up" aria-hidden="true"></i>
+						<i class="fa fa-chevron-down down" onclick="licenseDown(this)" aria-hidden="true"></i>
+						<i class="fa fa-chevron-up up"  onclick="licenseUp(this)" aria-hidden="true"></i>
 					</label>
 					
 					<ul id="award">
@@ -107,21 +107,10 @@
 		/*<![CDATA[*/
 	   		let id = /*[[ ${id} ]]*/
 	    /*]]*/
-	    
-	    $("i[name=up]").on("click", function() {
-			$(this).hide();
-			$(this).siblings("i[name=down]").show();
-			$(this).parent().siblings("ul").slideUp();
-		});
-		
-		$("i[name=down]").on("click", function() {
-			$(this).hide();
-			$(this).siblings("i[name=up]").show();
-			$(this).parent().siblings("ul").slideDown();
-		});
-		
+
+		let authToken = getCookie("authToken");
+
 		$(document).ready(function(){
-			let authToken = getCookie("authToken");
 			getPostAjax();
 			getProfileInfo(authToken);
 			getLicense(authToken);

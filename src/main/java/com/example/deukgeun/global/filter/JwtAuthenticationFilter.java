@@ -35,8 +35,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     String servletPath = request.getServletPath();
     if (servletPath.equals("/jwt/check")) {
       String authToken = jwtProvider.resolveAuthToken(request);
-      String refreshToken = jwtService.getRefreshToken(authToken);
-      
+
       // 유효한 auth token인지 확인합니다.
       if (jwtProvider.validateToken(authToken)) {
         String role = jwtProvider.getUserRole(authToken);
@@ -48,8 +47,8 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
       }
       // 유효하지 않은 auth token일 경우
       else {
-         refreshToken = jwtService.getRefreshToken(authToken);
-         
+          String refreshToken = jwtService.getRefreshTokenByAuthToken(authToken);
+
          //유효한 refresh token인지 확인합니다.
          if (jwtProvider.validateToken(refreshToken)) {
            String newAuthToken = getNewAuthToken(refreshToken);
@@ -96,8 +95,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
   private String getNewAuthToken(String refreshToken) {
     String email = jwtProvider.getUserPk(refreshToken);
     String role = jwtProvider.getUserRole(refreshToken);
-    String newAuthToken = jwtProvider.createAuthToken(email, role);
-    
-    return newAuthToken;
+
+    return jwtProvider.createAuthToken(email, role);
   }
 }

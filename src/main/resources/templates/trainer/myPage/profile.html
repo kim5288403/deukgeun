@@ -30,7 +30,7 @@
 				<div class="col-12" >
 					<label style="text-align: center;">프로필 이미지</label>
 					<p style="text-align: center;">
-						<img id="profile" src="" alt="" style="border: solid #eeeeee; cursor: pointer; width: 50%; height: 50%;">
+						<img class="profile" src="" alt="" style="border: solid #eeeeee; cursor: pointer; width: 50%; height: 50%;">
 						<input type="file" name="profile" accept="image/*" hidden="">
 					</p>
 				</div>
@@ -55,44 +55,46 @@
 	<script type="text/javascript">
 	let authToken = getCookie("authToken");
 	$(document).ready(function () {
-		if (authToken !== null) {
-			$.ajax({
-				url : "/api/trainer/my-page/profile",
-				type : "get",
-				beforeSend: function (xhr) {
-			    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);
-			    },
-				success : function(res, status, request) {
-					if (res.code === 200) {
-						let src = "/images/trainer/profile/" + res.data.path;
-						$("img[id=profile]").attr("src", src);
-					}
-				}
-			});
-		}
-		
-		$("img[id=profile]").on("click", function () {
-			$("input[name=profile]").click();
-		});
-		
-		$("input[name=profile]").change(function () {
-			let file = $(this)[0].files[0];
-			let reader = new FileReader();
-			reader.onload = function(e) {
-				$("img[id=profile]").attr("src", e.target.result);
-			};
-			reader.readAsDataURL(file);
-		});
+		getProfile();
 	});
-	
+
+	function getProfile() {
+		$.ajax({
+			url : "/api/trainer/profile/",
+			type : "get",
+			beforeSend: function (xhr) {
+				xhr.setRequestHeader("Authorization", "Bearer " + authToken);
+			},
+			success : function(res, status, request) {
+				if (res.code === 200) {
+					let src = "/images/trainer/profile/" + res.data.path;
+					$("img[class=profile]").attr("src", src);
+				}
+			}
+		});
+	}
+		
+	$("img[class=profile]").on("click", function () {
+		$("input[name=profile]").click();
+	});
+		
+	$("input[name=profile]").change(function () {
+		let file = $(this)[0].files[0];
+		let reader = new FileReader();
+		reader.onload = function(e) {
+			$("img[class=profile]").attr("src", e.target.result);
+		};
+		reader.readAsDataURL(file);
+	});
+
 	function updateProfileAjax() {
 		let formData = new FormData();
 		let profile = $("input[name=profile]")[0].files[0];
 		formData.append("profile", profile);
 		
 		$.ajax({
-			url : "/api/trainer/my-page/profile/update",
-			type : "post",
+			url : "/api/trainer/profile/",
+			type : "put",
 			processData : false,
 			contentType : false,
 			cache : false,
@@ -101,16 +103,17 @@
 		    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);
 		    },
 			success : function(res) {
-				defalutSuccessAlert(res.message, "성공").then(function (){
+				defaultSuccessAlert(res.message, "성공").then(function (){
 					setTimeout(function() {
 						window.location.reload(true);
 					}, 1000);
 				});
 			},
 			error : function(res) {
-				defalutErrorAlert(res.responseJSON.message);
+				defaultErrorAlert(res.responseJSON.data.valid_profile);
 			}
 		});
 	}
+
 	</script>
 </th:block>
