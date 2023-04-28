@@ -1,5 +1,6 @@
 package com.example.deukgeun.trainer.controller;
 
+import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
 import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
 import com.example.deukgeun.commom.util.RestResponseUtil;
 import com.example.deukgeun.trainer.entity.Profile;
@@ -25,6 +26,7 @@ public class ProfileController {
     private final ProfileServiceImpl profileService;
     private final UserServiceImpl userService;
     private final ValidateServiceImpl validateService;
+    private final JwtServiceImpl jwtService;
 
     /**
      * profile + user data 가져오기
@@ -52,7 +54,7 @@ public class ProfileController {
      */
     @RequestMapping(method = RequestMethod.GET, path = "/")
     public ResponseEntity<?> getDetailByAuthToke(HttpServletRequest request) throws Exception {
-        String authToken = request.getHeader("Authorization").replace("Bearer ", "");
+        String authToken = jwtService.resolveAuthToken(request);
         Long userId = userService.getUserId(authToken);
         Profile profile = profileService.getProfileByUserId(userId);
         ProfileResponse.ProfileAndUserResponse response = new ProfileResponse.ProfileAndUserResponse(profile);
@@ -74,7 +76,7 @@ public class ProfileController {
     @RequestMapping(method = RequestMethod.PUT, path = "/")
     public ResponseEntity<?> update(HttpServletRequest request, @Valid ProfileUpdateRequest updateRequest, BindingResult bindingResult) throws Exception {
         validateService.errorMessageHandling(bindingResult);
-        String authToken = request.getHeader("Authorization").replace("Bearer ", "");
+        String authToken = jwtService.resolveAuthToken(request);
         profileService.update(updateRequest.getProfile(), authToken);
 
         return RestResponseUtil.okResponse("내 정보 수정 성공했습니다.", null);

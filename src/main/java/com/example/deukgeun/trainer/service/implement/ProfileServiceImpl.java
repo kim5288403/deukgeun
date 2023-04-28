@@ -24,7 +24,6 @@ public class ProfileServiceImpl implements ProfileService {
     private final ProfileRepository profileRepository;
     private final UserServiceImpl userService;
 
-    //트레이너 profile 저장 경로
     @Value("${trainer.profile.filePath}")
     private String FILE_PATH;
 

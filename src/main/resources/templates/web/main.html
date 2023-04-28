@@ -45,11 +45,13 @@
 					"keyword" : keyword,
 				},
 				success : function(res) {
-					$("section[class=posts]").find("article").remove();
-					$("section[class=posts]").find("p").remove();
-					$.each(res.data, function(key, value) {
-						setList(value);
-					});
+					if (res.data.length > 0) {
+						$("section[class=posts]").find("article").remove();
+						$("section[class=posts]").find("p").remove();
+						$.each(res.data, function(key, value) {
+							setList(value);
+						});
+					}
 				}
 			});
 		}

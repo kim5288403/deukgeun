@@ -70,10 +70,9 @@ public class PostServiceImpl implements PostService{
     validContentType(request.getContentType());
     
     String type = filePart.getContentType();
-    String converter_type = type.substring(type.lastIndexOf("/") + 1);
 
-    String extension = converter_type;
-    extension = (extension != null && extension != "") ? "." + extension : extension;
+    String extension = type.substring(type.lastIndexOf("/") + 1);
+    extension = !extension.equals("") ? "." + extension : extension;
     name = UUID.randomUUID().toString() + extension ;
     linkName = postUrl + name;
     
@@ -99,7 +98,7 @@ public class PostServiceImpl implements PostService{
   
   public void validContentType(String contentType) throws Exception {
     if (contentType == null ||
-        contentType.toLowerCase().indexOf("multipart/form-data") == -1) {
+            !contentType.toLowerCase().contains("multipart/form-data")) {
 
         throw new Exception("Invalid contentType. It must be multipart/form-data");
     }

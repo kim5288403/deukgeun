@@ -80,7 +80,7 @@ public class UserController {
      */
     @RequestMapping(method = RequestMethod.GET, path = "/email")
     public ResponseEntity<?> getEmail(HttpServletRequest request) {
-        String authToken = request.getHeader("Authorization").replace("Bearer ", "");
+        String authToken = jwtService.resolveAuthToken(request);
         String email = jwtService.getUserPk(authToken);
 
         return RestResponseUtil.okResponse("내 정보 비밀번호 조회 성공했습니다.", email);
@@ -134,7 +134,6 @@ public class UserController {
     public ResponseEntity<?> updatePassword(
             @Valid PasswordUpdateRequest request,
             BindingResult bindingResult) {
-
         validateService.errorMessageHandling(bindingResult);
         userService.updatePassword(request);
 
@@ -161,7 +160,7 @@ public class UserController {
 
         validateService.errorMessageHandling(bindingResult);
 
-        String authToken = request.getHeader("Authorization").replace("Bearer ", "");
+        String authToken =  jwtService.resolveAuthToken(request);
         Long profileId = profileService.getProfileId(authToken);
         Profile userProfile = profileService.getProfile(profileId);
 

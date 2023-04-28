@@ -1,5 +1,6 @@
 package com.example.deukgeun.trainer.controller;
 
+import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
 import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
 import com.example.deukgeun.commom.util.RestResponseUtil;
 import com.example.deukgeun.trainer.entity.Post;
@@ -28,6 +29,7 @@ public class PostController {
     private final PostServiceImpl postService;
     private final UserServiceImpl userService;
     private final ValidateServiceImpl validateService;
+    private final JwtServiceImpl jwtService;
 
     /**
      * 게시글 상세보기
@@ -56,7 +58,7 @@ public class PostController {
      */
     @RequestMapping(method = RequestMethod.GET, path = "/")
     public ResponseEntity<?> getDetailByAuthToken(HttpServletRequest request) throws Exception {
-        String authToken = request.getHeader("Authorization").replace("Bearer ", "");
+        String authToken = jwtService.resolveAuthToken(request);
         Long userId = userService.getUserId(authToken);
         Post post = postService.findByUserId(userId);
         PostResponse response = new PostResponse(post);
@@ -78,7 +80,7 @@ public class PostController {
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> upload(HttpServletRequest request, @Valid PostRequest postRequest, BindingResult bindingResult) throws Exception {
         validateService.errorMessageHandling(bindingResult);
-        String authToken = request.getHeader("Authorization").replace("Bearer ", "");
+        String authToken = jwtService.resolveAuthToken(request);
         postService.upload(postRequest, authToken);
 
         return RestResponseUtil.okResponse("게시글 저장 성공했습니다.", null);

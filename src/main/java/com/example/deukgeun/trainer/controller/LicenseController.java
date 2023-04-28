@@ -1,5 +1,6 @@
 package com.example.deukgeun.trainer.controller;
 
+import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
 import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
 import com.example.deukgeun.commom.util.RestResponseUtil;
 import com.example.deukgeun.trainer.request.SaveLicenseRequest;
@@ -23,6 +24,7 @@ import java.util.List;
 public class LicenseController {
     private final LicenseServiceImpl licenseService;
     private final ValidateServiceImpl validateService;
+    private final JwtServiceImpl jwtService;
 
     /**
      * userId 에 해당하는 자격증 데이터 가져오기
@@ -47,7 +49,7 @@ public class LicenseController {
      */
     @RequestMapping(method = RequestMethod.GET, path = "/")
     public ResponseEntity<?> getListByAuthToken(HttpServletRequest request) throws Exception {
-        String authToken = request.getHeader("Authorization").replace("Bearer ", "");
+        String authToken = jwtService.resolveAuthToken(request);
         List<LicenseListResponse> response = licenseService.findByEmail(authToken);
 
         return RestResponseUtil
@@ -65,7 +67,7 @@ public class LicenseController {
      */
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> saveLicense(HttpServletRequest request, @Valid SaveLicenseRequest saveLicenseRequest, BindingResult bindingResult) throws Exception {
-        String authToken = request.getHeader("Authorization").replace("Bearer ", "");
+        String authToken = jwtService.resolveAuthToken(request);
         validateService.errorMessageHandling(bindingResult);
         licenseService.saveLicense(saveLicenseRequest, authToken);
 
