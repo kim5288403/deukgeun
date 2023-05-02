@@ -170,7 +170,7 @@ public class UserController {
         profileService.withdrawal(profileId);
 
         //사용자 삭제
-        userService.withdrawal(authToken);
+        userService.withdrawal(userProfile.getUserId());
 
         //토큰 삭제
         jwtService.deleteToken(authToken);

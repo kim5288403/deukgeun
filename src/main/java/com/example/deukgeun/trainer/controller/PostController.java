@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.Map;
@@ -79,6 +80,7 @@ public class PostController {
      */
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> upload(HttpServletRequest request, @Valid PostRequest postRequest, BindingResult bindingResult) throws Exception {
+        System.out.println("gd");
         validateService.errorMessageHandling(bindingResult);
         String authToken = jwtService.resolveAuthToken(request);
         postService.upload(postRequest, authToken);
@@ -128,6 +130,19 @@ public class PostController {
         response.setHeader("Content-Length", String.valueOf(file.length()));
         response.setHeader("Content-Disposition", "inline; filename=\"" + file.getName() + "\"");
         Files.copy(file.toPath(), response.getOutputStream());
+    }
+
+    /**
+     * 게시글 삭제
+     *
+     * @param id 게시글 id
+     * @return RestResponseUtil
+     */
+    @RequestMapping(method = RequestMethod.DELETE, path = "/{id}")
+    public ResponseEntity<?> remove(@PathVariable("id") Long id){
+        postService.deletePost(id);
+
+        return RestResponseUtil.okResponse("게시글 삭제 성공했습니다.", null);
     }
 
 }

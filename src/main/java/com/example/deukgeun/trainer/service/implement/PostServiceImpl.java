@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import com.example.deukgeun.global.provider.JwtProvider;
 import com.example.deukgeun.trainer.entity.Post;
@@ -38,27 +41,25 @@ public class PostServiceImpl implements PostService{
     User user = userService.getUserByAuthToken(authToken);
     Long userId = user.getId();
     
-    Optional<Post> post = postRepository.findByUserId(userId);
+    Post post = postRepository.findByUserId(userId).orElse(null);
     
     String content = request.getContent();
     String html = HtmlUtils.htmlEscape(content);
 
-    if (post.isPresent()) {
+    if (post != null) {
       update(userId, html);
     } else {
       save(userId, html);
     }
   }
   
-  public void save(Long user_id, String html) {
-    Post post = PostRequest.create(html, user_id);
-    
+  public void save(Long userId, String html) {
+    Post post = PostRequest.create(html, userId);
     postRepository.save(post);
   }
-  
-  public void update(Long user_id, String html) {
-    
-    postRepository.update(user_id, html);
+  @CachePut(value = "post", key = "#userId", cacheManager = "projectCacheManager")
+  public void update(Long userId, String html) {
+    postRepository.update(userId, html);
   }
   
   public Map< Object, Object > saveImage(HttpServletRequest request,  HttpServletResponse response) throws Exception {
@@ -143,7 +144,8 @@ public class PostServiceImpl implements PostService{
       file.delete();
     }
   }
-  
+
+  @Cacheable(value = "post", key = "#id", cacheManager = "projectCacheManager")
   public Post findByUserId(Long id) throws Exception {
     return postRepository.findByUserId(id).orElseThrow(() -> new Exception("게시글을 찾을 수 없습니다."));
   }
@@ -154,6 +156,10 @@ public class PostServiceImpl implements PostService{
     Post post = findByUserId(user.getId());
     
     return new PostResponse(post);
+  }
+  @CacheEvict(value = "post", key = "#id", cacheManager = "projectCacheManager")
+  public void deletePost(Long id) {
+    postRepository.deleteById(id);
   }
   
   

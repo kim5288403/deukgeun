@@ -7,6 +7,9 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +30,7 @@ public class ProfileServiceImpl implements ProfileService {
     @Value("${trainer.profile.filePath}")
     private String FILE_PATH;
 
+    @Cacheable(value = "profile", key = "#profileId", cacheManager = "projectCacheManager")
     public Profile getProfile(Long profileId) throws Exception {
         return profileRepository.findById(profileId).orElseThrow(() -> new Exception("게시글을 찾을 수 없습니다."));
     }
@@ -46,20 +50,12 @@ public class ProfileServiceImpl implements ProfileService {
         return fileType.equals("image/png") || fileType.equals("image/jpg") || fileType.equals("image/jpeg");
     }
 
-    /**
-     * server 에 file 저장됨
-     *
-     * @param profile
-     * @param filename
-     * @return
-     */
-    public String saveServer(MultipartFile profile, String filename) {
+    public void saveServer(MultipartFile profile, String filename) {
         try {
             Path path = Paths.get(FILE_PATH).toAbsolutePath().normalize();
             Path targetPath = path.resolve(filename).normalize();
 
             profile.transferTo(targetPath);
-            return filename;
         } catch (IOException e) {
             throw new IllegalArgumentException("파일 업로드에 실패했습니다.");
         }
@@ -79,14 +75,13 @@ public class ProfileServiceImpl implements ProfileService {
         profileRepository.save(saveProfileData);
         saveServer(profile, path);
     }
-
     @Transactional
-    public void update(MultipartFile profile, String authToken) throws Exception {
+    public void updateProfile(MultipartFile profile, String authToken) throws Exception {
         Long profileId = getProfileId(authToken);
         String path = getUUIDPath(profile.getOriginalFilename());
 
         //DB 수정
-        profileRepository.updateProfile(profileId, path);
+        update(profileId, path);
 
         //서버 저장
         saveServer(profile, path);
@@ -95,6 +90,13 @@ public class ProfileServiceImpl implements ProfileService {
         Profile userProfile = getProfile(profileId);
         deleteServer(userProfile.getPath());
     }
+
+    @CachePut(value = "profile", key = "#profileId", cacheManager = "projectCacheManager")
+    public void update(Long profileId, String path) {
+        profileRepository.updateProfile(profileId, path);
+    }
+
+    @CacheEvict(value = "profile", key = "#profileId", cacheManager = "projectCacheManager")
     public void withdrawal(Long profileId) {
         profileRepository.deleteById(profileId);
     }

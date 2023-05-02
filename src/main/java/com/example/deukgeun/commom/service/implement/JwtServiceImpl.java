@@ -3,6 +3,7 @@ package com.example.deukgeun.commom.service.implement;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -17,8 +18,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Service
 public class JwtServiceImpl implements JwtService{
-  
-  private String role = "trainer";
+
+  @Value("${deukgeun.role.trainer}")
+  private String role;
   
   private final JwtProvider jwtProvider;
   private final TokenRepository tokenRepository;
@@ -57,7 +59,6 @@ public class JwtServiceImpl implements JwtService{
    *
    * @param token authToken + refreshToken
    */
-  @CachePut(value = "getAuthToken", key = "#token.id", cacheManager = "projectCacheManager")
   public void createToken(Token token) {
     tokenRepository.save(token);
   }
@@ -68,7 +69,7 @@ public class JwtServiceImpl implements JwtService{
    *
    * @param authToken 기존 JWT 데이터
    */
-  @CacheEvict(value = "getAuthToken", key = "#authToken", cacheManager = "projectCacheManager")
+  @CacheEvict(value = "token", key = "#authToken", cacheManager = "projectCacheManager")
   public void deleteToken(String authToken) {
     tokenRepository.deleteByAuthToken(authToken);
   }
@@ -80,6 +81,7 @@ public class JwtServiceImpl implements JwtService{
    * @param authToken 기존 JWT 데이터
    * @param newAuthToken 수정을 위한 새로운 JWT 토큰
    */
+  @CachePut(value = "token", key = "#authToken", cacheManager = "projectCacheManager")
   public void updateAuthToken(String authToken, String newAuthToken) {
     tokenRepository.updateAuthToken(authToken, newAuthToken);
   }
@@ -91,7 +93,7 @@ public class JwtServiceImpl implements JwtService{
    * @param authToken 기존 JWT 데이터
    * @return 데이터가 있을 경우 Token data, 없을 경우 null 값 반환
    */
-  @Cacheable(value = "getAuthToken", key = "#authToken", cacheManager = "projectCacheManager")
+  @Cacheable(value = "token", key = "#authToken", cacheManager = "projectCacheManager")
   public Token findByAuthToken(String authToken) {
     return tokenRepository.findByAuthToken(authToken).orElse(null);
   }

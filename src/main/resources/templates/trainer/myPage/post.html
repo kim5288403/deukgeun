@@ -83,6 +83,7 @@
                 </ul>
             </div>
 
+            <input type="hidden" name="post_id">
             <div class="col-12">
                 <div id="example">
                 </div>
@@ -94,6 +95,7 @@
                     <li>
                         <input type="button" id="saveBtn" value="save" class="primary">
                     </li>
+                    <li><input type="button" onclick="removeAjax()" value="remove"></li>
                     <li><input type="button" onclick="back()" value="back"></li>
                 </ul>
             </div>
@@ -125,15 +127,21 @@
 			   },
 			   'save.after': function (res) {
 			        	let jsonRes = JSON.parse(res);
-			        	defaultSuccessAlert("성공", jsonRes.message)
+			        	defaultSuccessAlert("성공", jsonRes.message).then(function() {
+		                    window.location.reload();
+	                    });
 			   },
+			   'save.error': function (error, response) {
+                    defaultErrorAlert("게시물 내용을 입력해주세요.", "실패");
+                }
 			},
 		}, function () {
 			 getPostAjax(authToken, editor);
 		});
  			
 			$("input[id=saveBtn]").on("click", function(){
-				editor.save.save();
+			    $(".nullPost").remove();
+			    editor.save.save();
 			});
 
 			getProfileInfo(authToken);
@@ -167,6 +175,22 @@
 			    }
 			});
 		}
+
+		function removeAjax(){
+		    let id = $("input[name=post_id]").val();
+            $.ajax({
+				url: "/api/trainer/post/" + id,
+				type: "delete",
+			    success: function(res) {
+			        defaultSuccessAlert("성공", res.message).then(function() {
+		                window.location.reload();
+	                });
+			    },
+			    error: function(res) {
+			        defaultErrorAlert("게시물 삭제 실패 했습니다.", "실패");
+			    }
+			});
+		}
 		
 		function getPostAjax(authToken, editor){
 			$.ajax({
@@ -176,10 +200,11 @@
 			    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);
 			    },
 			    success: function(res, status) {
+			        $("input[name=post_id]").val(res.data.post_id);
 			    	editor.html.set(res.data.html);
 			    },
 			    error: function(res) {
-			        let notFoundHtml = '<p style="text-align: center; font-size: 16px; font-weight: 600;" >해당 게시글을 찾을 수 없습니다. 게시글을 등록해주세요.</p>';
+			        let notFoundHtml = '<p class="nullPost" style="text-align: center; font-size: 16px; font-weight: 600;" >해당 게시글을 찾을 수 없습니다. 게시글을 등록해주세요.</p>';
 			        editor.html.set(notFoundHtml);
 			    }
 			});

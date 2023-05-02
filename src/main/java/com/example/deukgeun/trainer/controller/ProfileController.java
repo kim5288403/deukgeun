@@ -77,7 +77,7 @@ public class ProfileController {
     public ResponseEntity<?> update(HttpServletRequest request, @Valid ProfileUpdateRequest updateRequest, BindingResult bindingResult) throws Exception {
         validateService.errorMessageHandling(bindingResult);
         String authToken = jwtService.resolveAuthToken(request);
-        profileService.update(updateRequest.getProfile(), authToken);
+        profileService.updateProfile(updateRequest.getProfile(), authToken);
 
         return RestResponseUtil.okResponse("내 정보 수정 성공했습니다.", null);
     }

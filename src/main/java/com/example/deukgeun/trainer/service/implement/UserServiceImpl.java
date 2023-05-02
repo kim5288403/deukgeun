@@ -6,11 +6,7 @@ import java.util.List;
 import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
 import com.example.deukgeun.trainer.request.JoinRequest;
 import com.example.deukgeun.trainer.request.PasswordUpdateRequest;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.example.deukgeun.trainer.entity.User;
@@ -30,7 +26,11 @@ public class UserServiceImpl implements UserService {
   private final JwtServiceImpl jwtService;
   private final PasswordEncoder passwordEncoder;
 
-//  @Cacheable(value = "getUserList", key = "#keyword", cacheManager = "projectCacheManager")
+  public User login(String email) throws Exception {
+    return userRepository.findByEmail(email)
+            .orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다."));
+  }
+
   public List<UserListResponse> getList(String keyword) {
     String likeKeyword = "%" + keyword + "%";
     PageRequest pageable = PageRequest.of(0, 10);
@@ -38,7 +38,6 @@ public class UserServiceImpl implements UserService {
     return profileRepository.findByUserLikeKeyword(likeKeyword, pageable);
   }
 
-  @CachePut(value = "getUserList", key = "#res.id", cacheManager = "projectCacheManager")
   public Long save(JoinRequest request) {
     User user = JoinRequest.create(request, passwordEncoder);
     User res = userRepository.save(user);
@@ -46,7 +45,6 @@ public class UserServiceImpl implements UserService {
     return res.getId();
   }
 
-  @Cacheable(value = "getUserByEmail", key = "#email", cacheManager = "projectCacheManager")
   public User getUserByEmail(String email) throws Exception {
     return userRepository.findByEmail(email)
             .orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다."));
@@ -54,12 +52,6 @@ public class UserServiceImpl implements UserService {
 
   public User getUserByAuthToken(String authToken) throws Exception {
     String email = jwtService.getUserPk(authToken);
-    
-    return userRepository.findByEmail(email)
-        .orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다."));
-  }
-  
-  public User login(String email) throws Exception {
     
     return userRepository.findByEmail(email)
         .orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다."));
@@ -89,15 +81,10 @@ public class UserServiceImpl implements UserService {
     userRepository.updatePassword(email, password);
   }
 
-
-  @CacheEvict(value = "getUserList", key = "#authToken", cacheManager = "projectCacheManager")
-  public void withdrawal(String authToken) throws Exception {
-    User user = getUserByAuthToken(authToken);
-    
-    userRepository.delete(user);
+  public void withdrawal(Long id) {
+    userRepository.deleteById(id);
   }
 
-  @Cacheable(value = "getUserId", key = "#authToken", cacheManager = "projectCacheManager")
   public Long getUserId(String authToken) throws Exception {
     User user = getUserByAuthToken(authToken);
     
