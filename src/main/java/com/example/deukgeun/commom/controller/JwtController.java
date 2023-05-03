@@ -27,6 +27,6 @@ public class JwtController {
     jwtService.deleteToken(authToken);
     
     return RestResponseUtil
-        .okResponse("로그아웃 성공 했습니다.", null);
+        .ok("로그아웃 성공 했습니다.", null);
   }
 }

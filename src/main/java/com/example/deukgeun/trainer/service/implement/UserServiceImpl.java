@@ -5,14 +5,15 @@ import java.util.List;
 
 import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
 import com.example.deukgeun.trainer.request.JoinRequest;
-import com.example.deukgeun.trainer.request.PasswordUpdateRequest;
+import com.example.deukgeun.trainer.request.UpdatePasswordRequest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.repository.ProfileRepository;
 import com.example.deukgeun.trainer.repository.UserRepository;
-import com.example.deukgeun.trainer.request.UserUpdateRequest;
+import com.example.deukgeun.trainer.request.UpdateUserRequest;
 import com.example.deukgeun.trainer.response.UserResponse.UserListResponse;
 import com.example.deukgeun.trainer.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -31,11 +32,11 @@ public class UserServiceImpl implements UserService {
             .orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다."));
   }
 
-  public List<UserListResponse> getList(String keyword) {
+  public Page<UserListResponse> getList(String keyword, Integer currentPage) {
     String likeKeyword = "%" + keyword + "%";
-    PageRequest pageable = PageRequest.of(0, 10);
-
+    PageRequest pageable = PageRequest.of(currentPage, 10);
     return profileRepository.findByUserLikeKeyword(likeKeyword, pageable);
+
   }
 
   public Long save(JoinRequest request) {
@@ -57,7 +58,7 @@ public class UserServiceImpl implements UserService {
         .orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다."));
   }
   
-  public void updateInfo(UserUpdateRequest request) {
+  public void updateInfo(UpdateUserRequest request) {
     userRepository.updateInfo(
         request.getEmail(),
         request.getName(),
@@ -74,7 +75,7 @@ public class UserServiceImpl implements UserService {
         );
   }
   
-  public void updatePassword(PasswordUpdateRequest request) {
+  public void updatePassword(UpdatePasswordRequest request) {
     String email = request.getEmail();
     String password = passwordEncoder.encode(request.getNewPassword());
 

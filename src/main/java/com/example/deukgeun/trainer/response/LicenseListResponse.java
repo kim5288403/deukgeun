@@ -10,7 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LicenseListResponse {
-  
+  private Long licenseId;
+
   private String certificateName;
   
   private String licenseNumber;
@@ -18,6 +19,7 @@ public class LicenseListResponse {
   private LocalDateTime createdDate;
   
   public LicenseListResponse(License license) {
+    this.licenseId =license.getId();
     this.certificateName = license.getCertificateName();
     this.licenseNumber = license.getLicenseNumber();
     this.createdDate = license.getCreatedDate();

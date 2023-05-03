@@ -5,10 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import com.example.deukgeun.trainer.entity.License;
 import com.example.deukgeun.trainer.response.LicenseListResponse;
+import org.springframework.data.repository.query.Param;
 
 public interface LicenseRepository extends JpaRepository<License, Long>{
   List<LicenseListResponse> findByUserId(Long userId);
-  
+
   @Query("select DISTINCT l from License l join fetch l.user")
   List<License> findLicenseFetchJoin();
 }

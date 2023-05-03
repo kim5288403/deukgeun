@@ -37,12 +37,12 @@ public class ProfileServiceImpl implements ProfileService {
 
     public Long getProfileId(String authToken) throws Exception {
         User user = userService.getUserByAuthToken(authToken);
-        Profile profile = profileRepository.findByUserId(user.getId()).orElseThrow(() -> new Exception("프로필을 찾을 수 없습니다."));
+        Profile profile = getByUserId(user.getId());
 
         return profile.getId();
     }
 
-    public Profile getProfileByUserId(Long userId) throws Exception {
+    public Profile getByUserId(Long userId) throws Exception {
         return profileRepository.findByUserId(userId).orElseThrow(() -> new Exception("프로필을 찾을 수 없습니다."));
     }
 

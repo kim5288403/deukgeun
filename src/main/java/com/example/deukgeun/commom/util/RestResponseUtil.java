@@ -7,7 +7,7 @@ import com.example.deukgeun.commom.response.RestResponse;
 
 public class RestResponseUtil {
 
-  public static ResponseEntity<RestResponse> okResponse(String message, Object data){
+  public static ResponseEntity<RestResponse> ok(String message, Object data){
     RestResponse response = RestResponse
           .builder()
           .code(StatusEnum.OK.getCode())
@@ -20,7 +20,7 @@ public class RestResponseUtil {
           .body(response);
   }
   
-  public static ResponseEntity<RestResponse> BadResponse(String message, Object data){
+  public static ResponseEntity<RestResponse> bad(String message, Object data){
     RestResponse response = RestResponse
           .builder()
           .code(StatusEnum.BAD_REQUEST.getCode())

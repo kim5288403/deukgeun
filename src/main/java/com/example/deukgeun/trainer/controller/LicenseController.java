@@ -3,9 +3,11 @@ package com.example.deukgeun.trainer.controller;
 import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
 import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
 import com.example.deukgeun.commom.util.RestResponseUtil;
+import com.example.deukgeun.trainer.request.RemoveLicenseRequest;
 import com.example.deukgeun.trainer.request.SaveLicenseRequest;
 import com.example.deukgeun.trainer.response.LicenseListResponse;
 import com.example.deukgeun.trainer.service.implement.LicenseServiceImpl;
+import com.example.deukgeun.trainer.service.implement.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -23,6 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LicenseController {
     private final LicenseServiceImpl licenseService;
+    private final UserServiceImpl userService;
     private final ValidateServiceImpl validateService;
     private final JwtServiceImpl jwtService;
 
@@ -37,7 +40,7 @@ public class LicenseController {
         List<LicenseListResponse> response = licenseService.findByUserId(id);
 
         return RestResponseUtil
-                .okResponse("자격증 조회 성공했습니다.", response);
+                .ok("자격증 조회 성공했습니다.", response);
     }
 
     /**
@@ -50,10 +53,11 @@ public class LicenseController {
     @RequestMapping(method = RequestMethod.GET, path = "/")
     public ResponseEntity<?> getListByAuthToken(HttpServletRequest request) throws Exception {
         String authToken = jwtService.resolveAuthToken(request);
-        List<LicenseListResponse> response = licenseService.findByEmail(authToken);
+        Long userId = userService.getUserId(authToken);
+        List<LicenseListResponse> response = licenseService.findByUserId(userId);
 
         return RestResponseUtil
-                .okResponse("자격증 조회 성공했습니다.", response);
+                .ok("자격증 조회 성공했습니다.", response);
     }
 
     /** 자격증 등록
@@ -61,7 +65,7 @@ public class LicenseController {
      *
      * @param request authToken 추출을 위한 파라미터
      * @param saveLicenseRequest 자격증 등록 form data
-     * @param bindingResult form data validator 결과를 담는 역할
+     * @param bindingResult request data validator 결과를 담는 역할
      * @return RestResponseUtil
      * @throws Exception
      */
@@ -69,11 +73,26 @@ public class LicenseController {
     public ResponseEntity<?> saveLicense(HttpServletRequest request, @Valid SaveLicenseRequest saveLicenseRequest, BindingResult bindingResult) throws Exception {
         String authToken = jwtService.resolveAuthToken(request);
         validateService.errorMessageHandling(bindingResult);
-        licenseService.saveLicense(saveLicenseRequest, authToken);
+        licenseService.save(saveLicenseRequest, authToken);
 
         return RestResponseUtil
-                .okResponse("자격증 등록 성공했습니다.", null);
+                .ok("자격증 등록 성공했습니다.", null);
     }
 
+    /**
+     * 자격증 삭제
+     * 
+     * @param request List<Long> 타입에 자격증 아이디
+     * @param bindingResult request data validator 결과를 담는 역할
+     * @return RestResponseUtil
+     */
+    @RequestMapping(method = RequestMethod.DELETE, path = "/")
+    public ResponseEntity<?> removeLicense(@Valid RemoveLicenseRequest request, BindingResult bindingResult) {
+        validateService.errorMessageHandling(bindingResult);
+        request.getIds().forEach(licenseService::remove);
+
+        return RestResponseUtil
+                .ok("자격증 삭제 성공했습니다.", null);
+    }
 
 }

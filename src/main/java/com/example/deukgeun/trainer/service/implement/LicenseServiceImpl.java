@@ -2,6 +2,8 @@ package com.example.deukgeun.trainer.service.implement;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import com.example.deukgeun.commom.util.WebClientUtil;
@@ -24,20 +26,13 @@ public class LicenseServiceImpl implements LicenseService{
   private String licenseApiKey;
   @Value("${trainer.license.api.uri}")
   private String licenseApiUri;
-  
-  public List<LicenseListResponse> findByEmail(String authToken) throws Exception {
-    Long userId = userService.getUserId(authToken);
 
-    return licenseRepository.findByUserId(userId);
-  }
-
+  @Cacheable(value = "license", key = "#userId", cacheManager = "projectCacheManager")
   public List<LicenseListResponse> findByUserId(Long userId) {
-
     return licenseRepository.findByUserId(userId);
   }
-  
-  public void saveLicense(SaveLicenseRequest request, String authToken) throws Exception {
-    
+
+  public void save(SaveLicenseRequest request, String authToken) throws Exception {
     LicenseResultResponse licenseResult = checkLicense(request);
     
     if (licenseResult.getResult()) {
@@ -50,9 +45,13 @@ public class LicenseServiceImpl implements LicenseService{
       throw new Exception("존재하지않는 자격증 정보 입니다.");
     }
   }
+
+  @CacheEvict(value = "license", key = "#id", cacheManager = "projectCacheManager")
+  public void remove(Long id) {
+    licenseRepository.deleteById(id);
+  }
   
   public LicenseResultResponse checkLicense(SaveLicenseRequest request) {
-    
     WebClient webClient = WebClientUtil.getBaseUrl(licenseApiUri);
     
     return webClient.get().
@@ -65,6 +64,7 @@ public class LicenseServiceImpl implements LicenseService{
   .retrieve() 
     .bodyToMono(LicenseResultResponse.class)
     .block();
-    
   }
+
+
 }

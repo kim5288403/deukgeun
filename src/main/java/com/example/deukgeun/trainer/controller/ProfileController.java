@@ -4,7 +4,7 @@ import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
 import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
 import com.example.deukgeun.commom.util.RestResponseUtil;
 import com.example.deukgeun.trainer.entity.Profile;
-import com.example.deukgeun.trainer.request.ProfileUpdateRequest;
+import com.example.deukgeun.trainer.request.UpdateProfileRequest;
 import com.example.deukgeun.trainer.response.ProfileResponse;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
 import com.example.deukgeun.trainer.service.implement.UserServiceImpl;
@@ -38,10 +38,10 @@ public class ProfileController {
      */
     @RequestMapping(method = RequestMethod.GET, path = "/{id}")
     public ResponseEntity<?> getDetailByUserId(@PathVariable Long id) throws Exception {
-        Profile profile = profileService.getProfileByUserId(id);
+        Profile profile = profileService.getByUserId(id);
         ProfileResponse.ProfileAndUserResponse response = new ProfileResponse.ProfileAndUserResponse(profile);
 
-        return RestResponseUtil.okResponse("트레이너 상세보기 성공했습니다.", response);
+        return RestResponseUtil.ok("트레이너 상세보기 성공했습니다.", response);
     }
 
     /**
@@ -56,11 +56,11 @@ public class ProfileController {
     public ResponseEntity<?> getDetailByAuthToke(HttpServletRequest request) throws Exception {
         String authToken = jwtService.resolveAuthToken(request);
         Long userId = userService.getUserId(authToken);
-        Profile profile = profileService.getProfileByUserId(userId);
+        Profile profile = profileService.getByUserId(userId);
         ProfileResponse.ProfileAndUserResponse response = new ProfileResponse.ProfileAndUserResponse(profile);
 
         return RestResponseUtil
-                .okResponse("트레이너 상세보기 성공했습니다.", response);
+                .ok("트레이너 상세보기 성공했습니다.", response);
     }
 
     /**
@@ -69,16 +69,16 @@ public class ProfileController {
      *
      * @param request authToken 추출을 위한 파라미터
      * @param updateRequest prfile
-     * @param bindingResult form data validator 결과를 담는 역할
+     * @param bindingResult request data validator 결과를 담는 역할
      * @return RestResponseUtil
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.PUT, path = "/")
-    public ResponseEntity<?> update(HttpServletRequest request, @Valid ProfileUpdateRequest updateRequest, BindingResult bindingResult) throws Exception {
+    public ResponseEntity<?> update(HttpServletRequest request, @Valid UpdateProfileRequest updateRequest, BindingResult bindingResult) throws Exception {
         validateService.errorMessageHandling(bindingResult);
         String authToken = jwtService.resolveAuthToken(request);
         profileService.updateProfile(updateRequest.getProfile(), authToken);
 
-        return RestResponseUtil.okResponse("내 정보 수정 성공했습니다.", null);
+        return RestResponseUtil.ok("내 정보 수정 성공했습니다.", null);
     }
 }

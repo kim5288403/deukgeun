@@ -7,6 +7,9 @@ import com.example.deukgeun.trainer.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -74,6 +77,24 @@ public class UserResponse {
       this.groupStatus = profile.getUser().getGroupStatus();
       this.groupName = profile.getUser().getGroupName();
       this.introduction = profile.getUser().getIntroduction();
+    }
+  }
+
+  @Data
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class UserListPaginationResponse {
+
+    private List<UserListResponse> list;
+
+    private Integer totalPages;
+
+    private Integer currentPage;
+
+    public UserListPaginationResponse(Page<UserListResponse> page, Integer currentPage) {
+      this.list = page.getContent();
+      this.totalPages = page.getTotalPages();
+      this.currentPage = currentPage;
     }
   }
   

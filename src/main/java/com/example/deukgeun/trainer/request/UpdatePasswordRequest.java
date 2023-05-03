@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 @ValidEmailAndPw
 @ValidPasswordUpdate
-public class PasswordUpdateRequest {
+public class UpdatePasswordRequest {
   
   @NotBlank(message = "이메일 필수 입력 값입니다.")
   @Email(message = "이메일 형식이 아닙니다.")

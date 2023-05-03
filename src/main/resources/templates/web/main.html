@@ -4,6 +4,14 @@
 	layout:decorate="~{web/layout/layout}">
 <th:block layout:fragment="css">
 	<style>
+		.page {
+			display:flex;
+			justify-content: center;
+		}
+		.p {
+			padding: 0.30rem;
+			cursor: pointer;
+		}
 	</style>
 </th:block>
 <th:block layout:fragment="content">
@@ -26,6 +34,11 @@
 	<section class="posts">
 		<p class="center-p" style="width: 100%; text-align:center;" >조회된 결과가 없습니다.</p>
 	</section>
+
+	<section class="page">
+
+	</section>
+
 </th:block>
 <th:block layout:fragment="script">
 	<script type="text/javascript">
@@ -37,44 +50,56 @@
 			getList(keyword);
 		})
 		
-		function getList(keyword) {
+		function getList(keyword, currentPage = 0) {
 			$.ajax({
 				url : "/api/trainer/",
 				method : "get",
 				data : {
 					"keyword" : keyword,
+					"currentPage" : currentPage,
 				},
 				success : function(res) {
-					if (res.data.length > 0) {
+					if (res.data.list.length > 0) {
 						$("section[class=posts]").find("article").remove();
 						$("section[class=posts]").find("p").remove();
-						$.each(res.data, function(key, value) {
-							setList(value);
-						});
+						setList(res.data.list);
+						setPage(res.data.currentPage, res.data.totalPages);
 					}
 				}
 			});
 		}
 		
-		function setList(data) {
-			let section = $("section[class=posts]");
-			console.log(data);
-			let appendHtml = '';
-			appendHtml += '<article>';
-				appendHtml += '<header>';
-				appendHtml += '<span class="date"></span>';
-				appendHtml += '<h2>';
-					appendHtml += '<a href="#">' + data.name + ' <br /> 트레이너님 </a>';
-				appendHtml += '</h2>';
-				appendHtml += '</header>';
-				appendHtml += '<a href="#" class="image fit" style="height: 450px; border: solid 1px #eeeeee;"><img src="/images/trainer/profile/' + data.path + '" alt="" /></a>';
-				appendHtml += '<p>' + data.introduction + '</p>';
-				appendHtml += '<ul class="actions special">';
-					appendHtml += '<li><a href="/trainer/detail/' + data.id + '" class="button">상세보기</a></li>';
-				appendHtml += '</ul>';
-			appendHtml += "</article>";
-			
-			section.append(appendHtml);
+		function setList(list) {
+			$.each(list, function(key, data) {
+				let section = $("section[class=posts]");
+				let appendHtml = '';
+				appendHtml += '<article>';
+					appendHtml += '<header>';
+					appendHtml += '<span class="date"></span>';
+					appendHtml += '<h2>';
+						appendHtml += '<a href="#">' + data.name + ' <br /> 트레이너님 </a>';
+					appendHtml += '</h2>';
+					appendHtml += '</header>';
+					appendHtml += '<a href="#" class="image fit" style="height: 450px; border: solid 1px #eeeeee;"><img src="/images/trainer/profile/' + data.path + '" alt="" /></a>';
+					appendHtml += '<p>' + data.introduction + '</p>';
+					appendHtml += '<ul class="actions special">';
+						appendHtml += '<li><a href="/trainer/detail/' + data.id + '" class="button">상세보기</a></li>';
+					appendHtml += '</ul>';
+				appendHtml += "</article>";
+
+				section.append(appendHtml);
+			});
+		}
+
+		function setPage(currentPage, totalPages) {
+			$(".page").find(".p").remove();
+
+			let appendHtml = "";
+			for(let i = 1; i <= totalPages; i++) {
+				appendHtml += "<p class='p' onclick='getList(" + i + ")'>" + i + "</p>";
+			}
+
+			$(".page").append(appendHtml);
 		}
 	</script>
 </th:block>

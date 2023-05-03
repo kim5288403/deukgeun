@@ -11,13 +11,11 @@ import com.example.deukgeun.trainer.request.*;
 import com.example.deukgeun.trainer.response.UserResponse;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.example.deukgeun.commom.response.LoginResponse;
 import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
 import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
@@ -48,10 +46,11 @@ public class UserController {
      * @return 검색된 트레이너 리스트 반환
      */
     @RequestMapping(method = RequestMethod.GET, path = "/")
-    public ResponseEntity<?> getList(String keyword) {
-        List<UserListResponse> list = userService.getList(keyword);
+    public ResponseEntity<?> getList(@RequestParam("keyword") String keyword, @RequestParam("currentPage") Integer currentPage) {
+        Page<UserListResponse> page = userService.getList(keyword, currentPage);
+        UserResponse.UserListPaginationResponse list = new UserResponse.UserListPaginationResponse(page, 0);
 
-        return RestResponseUtil.okResponse("조회 성공 했습니다.", list);
+        return RestResponseUtil.ok("조회 성공 했습니다.", list);
     }
 
     /**
@@ -68,7 +67,7 @@ public class UserController {
         User user = userService.getUserByAuthToken(authToken);
         UserResponse response = new UserResponse(user);
 
-        return RestResponseUtil.okResponse("마이 페이지 조회 성공했습니다.", response);
+        return RestResponseUtil.ok("마이 페이지 조회 성공했습니다.", response);
     }
 
     /**
@@ -83,7 +82,7 @@ public class UserController {
         String authToken = jwtService.resolveAuthToken(request);
         String email = jwtService.getUserPk(authToken);
 
-        return RestResponseUtil.okResponse("내 정보 비밀번호 조회 성공했습니다.", email);
+        return RestResponseUtil.ok("내 정보 비밀번호 조회 성공했습니다.", email);
     }
 
     /**
@@ -91,7 +90,7 @@ public class UserController {
      * 사용자를 저장 한 후 사용자 save get id 로 프로필 이미지 저장
      *
      * @param request 유효성 검사를 통과한 회원가입 데이터
-     * @param bindingResult form data validator 결과를 담는 역할
+     * @param bindingResult request data validator 결과를 담는 역할
      * @return RestResponseUtil
      */
     @Transactional
@@ -104,22 +103,22 @@ public class UserController {
         //profile save
         profileService.save(request.getProfile(), userId);
 
-        return RestResponseUtil.okResponse("회원 가입 성공 했습니다.", null);
+        return RestResponseUtil.ok("회원 가입 성공 했습니다.", null);
     }
 
     /**
      * 트레이너 정보 수정
      *
      * @param request       from update data 추출을 위한 파라미터
-     * @param bindingResult form data validator 결과를 담는 역할
+     * @param bindingResult request data validator 결과를 담는 역할
      * @return RestResponseUtil
      */
     @RequestMapping(method = RequestMethod.PUT, path = "/")
-    public ResponseEntity<?> update(@Valid UserUpdateRequest request, BindingResult bindingResult) {
+    public ResponseEntity<?> update(@Valid UpdateUserRequest request, BindingResult bindingResult) {
         validateService.errorMessageHandling(bindingResult);
         userService.updateInfo(request);
 
-        return RestResponseUtil.okResponse("내 정보 수정 성공했습니다.", null);
+        return RestResponseUtil.ok("내 정보 수정 성공했습니다.", null);
     }
 
     /**
@@ -127,18 +126,18 @@ public class UserController {
      * 기존 비밀번호, 변경 비밀번호 유효성 검사 후 비밀번호 변경
      *
      * @param request  from update data 추출을 위한 파라미터
-     * @param bindingResult form data validator 결과를 담는 역할
+     * @param bindingResult request data validator 결과를 담는 역할
      * @return RestResponseUtil
      */
     @RequestMapping(method = RequestMethod.PUT, path = "/password")
     public ResponseEntity<?> updatePassword(
-            @Valid PasswordUpdateRequest request,
+            @Valid UpdatePasswordRequest request,
             BindingResult bindingResult) {
         validateService.errorMessageHandling(bindingResult);
         userService.updatePassword(request);
 
         return RestResponseUtil
-                .okResponse("비밀번호 변경 성공했습니다.", null);
+                .ok("비밀번호 변경 성공했습니다.", null);
     }
 
     /**
@@ -147,14 +146,14 @@ public class UserController {
      *
      * @param request authToken 추출을 위한 파라미터
      * @param withdrawalRequest from withdrawal data 추출을 위한 파라미터
-     * @param bindingResult form data validator 결과를 담는 역할
+     * @param bindingResult request data validator 결과를 담는 역할
      * @return RestResponseUtil
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.DELETE, path = "/")
     public ResponseEntity<?> withdrawal(
             HttpServletRequest request,
-            @Valid WithdrawalRequest withdrawalRequest,
+            @Valid WithdrawalUserRequest withdrawalRequest,
             BindingResult bindingResult
     ) throws Exception {
 
@@ -176,7 +175,7 @@ public class UserController {
         jwtService.deleteToken(authToken);
 
         return RestResponseUtil
-                .okResponse("회원 탈퇴 성공했습니다.", null);
+                .ok("회원 탈퇴 성공했습니다.", null);
     }
 
     /**
@@ -184,7 +183,7 @@ public class UserController {
      * 로그인 데이터로 authToken 생성, 저장, 반환
      *
      * @param request 유효성 검사를 통과한 로그인 데이터
-     * @param bindingResult  form data validator 결과를 담는 역할
+     * @param bindingResult  request data validator 결과를 담는 역할
      * @param response
      * @return LoginResponse => authToken, role
      */
@@ -196,7 +195,7 @@ public class UserController {
 
         LoginResponse loginResponse = LoginResponse.builder().authToken(authToken).role(role).build();
 
-        return RestResponseUtil.okResponse("로그인 성공 했습니다.", loginResponse);
+        return RestResponseUtil.ok("로그인 성공 했습니다.", loginResponse);
     }
 }
 

@@ -88,7 +88,6 @@ public class PostServiceImpl implements PostService{
     return responseData;
   }
   
-  //서버 저장
   public void saveServerImage(Part filePart, PrintWriter writer, File file) {
     try (InputStream input = filePart.getInputStream()) {
       Files.copy(input, file.toPath());
@@ -137,7 +136,6 @@ public class PostServiceImpl implements PostService{
     deleteServerImage(postFilePath + filename);
   }
   
-  //서버 이미지 삭제
   public void deleteServerImage(String path) {
     File file = new File(path);
     if (file.exists()) {

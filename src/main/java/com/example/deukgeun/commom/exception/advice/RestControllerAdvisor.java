@@ -18,45 +18,45 @@ public class RestControllerAdvisor {
   @ExceptionHandler(Exception.class)
   public ResponseEntity<?> exceptionHandler(Exception e) {
     return RestResponseUtil
-        .BadResponse(e.getMessage(), null);
+        .bad(e.getMessage(), null);
   }
   
   @ExceptionHandler(RequestValidException.class)
   public ResponseEntity<?> requestValidException(RequestValidException e) {
     
     return RestResponseUtil
-        .BadResponse(e.getMessage(), e.getResult());
+        .bad(e.getMessage(), e.getResult());
   }
 
   @ExceptionHandler(MalformedJwtException.class)
   public ResponseEntity<?> malformedJwtException(MalformedJwtException e) {
 
     return RestResponseUtil
-            .BadResponse("JWT(Jason Web Token) 문자열이 올바른 형식이 아니어서 발생하는 예외입니다.", null);
+            .bad("JWT(Jason Web Token) 문자열이 올바른 형식이 아니어서 발생하는 예외입니다.", null);
   }
   
   @ExceptionHandler(UnsupportedEncodingException.class)
   public ResponseEntity<?> unsupportedEncodingException(UnsupportedEncodingException e) {
     return RestResponseUtil
-        .BadResponse(e.getMessage(), null);
+        .bad(e.getMessage(), null);
   }
   
   @ExceptionHandler(MessagingException.class)
   public ResponseEntity<?> messagingException(MessagingException e) {
     return RestResponseUtil
-        .BadResponse(e.getMessage(), null);
+        .bad(e.getMessage(), null);
   }
   
   @ExceptionHandler(ValidationException.class)
   public ResponseEntity<?> validationException(ValidationException e) {
     return RestResponseUtil
-        .BadResponse(e.getMessage(), null);
+        .bad(e.getMessage(), null);
   }
   
   @ExceptionHandler(ExpiredJwtException.class)
   public ResponseEntity<?> expiredJwtException(ExpiredJwtException e) {
     return RestResponseUtil
-        .BadResponse(e.getMessage(), null);
+        .bad(e.getMessage(), null);
   }
   
   

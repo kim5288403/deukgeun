@@ -5,7 +5,7 @@ import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
-public class ProfileUpdateRequest {
+public class UpdateProfileRequest {
 
     @ValidFile
     private MultipartFile profile;

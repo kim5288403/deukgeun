@@ -46,7 +46,7 @@ public class PostController {
         PostResponse response = new PostResponse(post);
 
         return RestResponseUtil
-                .okResponse("조회 성공 했습니다.", response);
+                .ok("조회 성공 했습니다.", response);
     }
 
     /**
@@ -65,7 +65,7 @@ public class PostController {
         PostResponse response = new PostResponse(post);
 
         return RestResponseUtil
-                .okResponse("조회 성공 했습니다.", response);
+                .ok("조회 성공 했습니다.", response);
     }
 
     /**
@@ -74,7 +74,7 @@ public class PostController {
      *
      * @param request authToken 추출을 위한 파라미터
      * @param postRequest 게시글 form data
-     * @param bindingResult  form data validator 결과를 담는 역할
+     * @param bindingResult  request data validator 결과를 담는 역할
      * @return RestResponseUtil
      * @throws Exception
      */
@@ -85,7 +85,7 @@ public class PostController {
         String authToken = jwtService.resolveAuthToken(request);
         postService.upload(postRequest, authToken);
 
-        return RestResponseUtil.okResponse("게시글 저장 성공했습니다.", null);
+        return RestResponseUtil.ok("게시글 저장 성공했습니다.", null);
     }
 
     /**
@@ -142,7 +142,7 @@ public class PostController {
     public ResponseEntity<?> remove(@PathVariable("id") Long id){
         postService.deletePost(id);
 
-        return RestResponseUtil.okResponse("게시글 삭제 성공했습니다.", null);
+        return RestResponseUtil.ok("게시글 삭제 성공했습니다.", null);
     }
 
 }
