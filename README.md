@@ -36,12 +36,12 @@
 git clone https://github.com/kim5288403/deukgeun.git
 ```
 
-1. Redis-x64-3.0.504.msi를 설치합니다.
+3. Redis-x64-3.0.504.msi를 설치합니다.
     1.  https://github.com/microsoftarchive/redis/releases
-2. 자격증 진위 여부 api를 위한 api key 발급
+4. 자격증 진위 여부 api를 위한 api key 발급
     1. [https://www.kca.kr/contentsView.do?pageId=www177](https://www.kca.kr/contentsView.do?pageId=www177)
 
- 5. **`application.properties`** 파일에서 MySQL 연결 정보와  수정과 여러 설정을 추가합니다.
+5. **`application.properties`** 파일에서 MySQL 연결 정보와  수정과 여러 설정을 추가합니다.
 
 ```java
 spring.datasource.url=jdbc:mysql://localhost:3306/your_database_name?useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
@@ -87,13 +87,13 @@ spring.cache.type = redis
 spring.cache.redis.cache-null-values=true
 ```
 
-1. 프로그램을 실행합니다.
+6. 프로그램을 실행합니다.
 
 ```java
 spring run DeukgeunApplication.java
 ```
 
-1. 브라우저에서 http://localhost:8080으로 접속합니다.
+7. 브라우저에서 http://localhost:8080으로 접속합니다.
 
 ## **참고**
 
