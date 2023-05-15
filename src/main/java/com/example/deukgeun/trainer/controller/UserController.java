@@ -1,7 +1,6 @@
 package com.example.deukgeun.trainer.controller;
 
 
-import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -48,7 +47,7 @@ public class UserController {
     @RequestMapping(method = RequestMethod.GET, path = "/")
     public ResponseEntity<?> getList(@RequestParam("keyword") String keyword, @RequestParam("currentPage") Integer currentPage) {
         Page<UserListResponse> page = userService.getList(keyword, currentPage);
-        UserResponse.UserListPaginationResponse list = new UserResponse.UserListPaginationResponse(page, 0);
+        UserResponse.UserListPaginationResponse list = new UserResponse.UserListPaginationResponse(page, currentPage);
 
         return RestResponseUtil.ok("조회 성공 했습니다.", list);
     }

@@ -20,7 +20,7 @@
 			<div class="fields search">
 				<div class="field keyword" id="field-keyword">
 					<label for="keyword">검색창</label> 
-					<input type="text" name="keyword" id="name" placeholder="트레이너, 헬스장, 지역명을 입력해주세요." />
+					<input type="text" name="keyword" id="keyword" placeholder="트레이너, 헬스장, 지역명을 입력해주세요." />
 				</div>
 
 				<div class="field" id="field-button">
@@ -43,14 +43,12 @@
 <th:block layout:fragment="script">
 	<script type="text/javascript">
 		$(document).ready(function () {
-			let url = new URL(window.location.href);
-			let urlParams = url.searchParams;
-			let keyword = urlParams.get("keyword");
-						
-			getList(keyword);
+			getList();
 		})
 		
-		function getList(keyword, currentPage = 0) {
+		function getList(currentPage = 0) {
+			let keyword = getUrlParam("keyword");
+
 			$.ajax({
 				url : "/api/trainer/",
 				method : "get",
@@ -93,14 +91,22 @@
 
 		function setPage(currentPage, totalPages) {
 			$(".page").find(".p").remove();
-
 			let appendHtml = "";
-			for(let i = 1; i <= totalPages; i++) {
-				appendHtml += "<p class='p' onclick='getList(" + i + ")'>" + i + "</p>";
+
+			for(let i = 0; i < totalPages; i++) {
+				appendHtml += "<p class='p' id='" + i + "' onclick='getList(" + i + ")'>" + (i + 1) + "</p>";
 			}
 
 			$(".page").append(appendHtml);
+			$("p[id=" + currentPage + "]").css("font-weight","600");
 		}
+
+		function getUrlParam(key) {
+			let url = new URL(window.location.href);
+			let urlParams = url.searchParams;
+			return urlParams.get(key);
+		}
+
 	</script>
 </th:block>
 </html>

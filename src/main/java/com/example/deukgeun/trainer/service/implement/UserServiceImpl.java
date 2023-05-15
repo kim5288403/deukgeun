@@ -1,8 +1,5 @@
 package com.example.deukgeun.trainer.service.implement;
 
-
-import java.util.List;
-
 import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
 import com.example.deukgeun.trainer.request.JoinRequest;
 import com.example.deukgeun.trainer.request.UpdatePasswordRequest;

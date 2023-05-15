@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
-import org.springframework.web.server.ServerErrorException;
 import com.example.deukgeun.commom.exception.RequestValidException;
 import com.example.deukgeun.commom.service.ValidateService;
 
@@ -47,8 +46,14 @@ public class ValidateServiceImpl implements ValidateService{
     }
 
   }
-  
-  @SuppressWarnings("deprecation")
+
+  /**
+   * Object 에서 field 값 추출
+   *
+   * @param object
+   * @param fieldName 추출하고자 하는 field
+   * @return target 추출한 field
+   */
   public String getFieldValue(Object object, String fieldName) {
     Class<?> clazz = object.getClass();
     Field dateField;
@@ -65,12 +70,13 @@ public class ValidateServiceImpl implements ValidateService{
         return "";
       }
       
-      return (String) target;
+      return target.toString();
     } catch (NoSuchFieldException e) {
       System.out.println("NoSuchFieldException : " + e.getMessage());
     } catch (IllegalAccessException e) {
       System.out.println("IllegalAccessException : " + e.getMessage());
     }
-    throw new ServerErrorException("Not Found Field");
+
+    return "";
   }
 }
