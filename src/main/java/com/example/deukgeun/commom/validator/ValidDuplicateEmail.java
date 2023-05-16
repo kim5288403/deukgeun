@@ -1,4 +1,4 @@
-package com.example.deukgeun.trainer.validator;
+package com.example.deukgeun.commom.validator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,11 +7,11 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-@Target({ElementType.TYPE})
+@Constraint(validatedBy = EmailDupliValidator.class)
+@Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = LoginValidator.class)
-public @interface ValidLogin {
-  String message() default "비밀번호 혹은 이메일을 확인해주세요.";
+public @interface ValidDuplicateEmail {
+  String message() default "중복된 이메일 입니다.";
 
   Class<?>[] groups() default {};
 

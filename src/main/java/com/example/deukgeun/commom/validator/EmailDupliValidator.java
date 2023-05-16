@@ -6,7 +6,7 @@ import com.example.deukgeun.trainer.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class EmailDupliValidator implements ConstraintValidator<ValidDupliEmail, String>{
+public class EmailDupliValidator implements ConstraintValidator<ValidDuplicateEmail, String>{
 
   private final UserRepository userRepository;
   

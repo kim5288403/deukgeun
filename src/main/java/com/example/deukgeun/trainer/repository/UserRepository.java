@@ -30,7 +30,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
       + " m.groupName = :groupName,"
       + " m.introduction = :introduction"
       + " where m.email = :email")
-  int updateInfo(
+  void updateInfo(
       @Param(value = "email")String email,
       @Param(value = "name")String name,
       @Param(value = "gender")Gender gender,
@@ -48,7 +48,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
   @Modifying
   @Transactional
   @Query("update User m set m.password = :password where m.email = :email")
-  int updatePassword(@Param(value = "email")String email, @Param(value = "password")String password);
-  
-  Long deleteByEmail(String email);
+  void updatePassword(@Param(value = "email")String email, @Param(value = "password")String password);
+
+  @Transactional
+  void deleteByEmail(String email);
 }

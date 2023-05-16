@@ -3,6 +3,8 @@ package com.example.deukgeun.commom.service.implement;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -27,7 +29,7 @@ public class ValidateServiceImpl implements ValidateService{
       /* 유효성 검사에 실패한 필드 목록을 받음 */
       for (FieldError error : bindingResult.getFieldErrors()) {
         String validKeyName = String.format("valid_%s", error.getField());
-        if (error.getField().equals("profile") && error.getCode().equals("typeMismatch")) {
+        if (error.getField().equals("profile") && Objects.equals(error.getCode(), "typeMismatch")) {
           validatorResult.put(validKeyName, "프로필 이미지 파일은 필수 값입니다.");
         } else {
           validatorResult.put(validKeyName, error.getDefaultMessage());
@@ -37,7 +39,7 @@ public class ValidateServiceImpl implements ValidateService{
       /* 비밀 번호 확인 애러 목록을 받음 */
       ObjectError objcetError = bindingResult.getGlobalError();
       if (objcetError != null) {
-        String errorFildName = objcetError.getCode().replace("Valid", "");
+        String errorFildName = Objects.requireNonNull(objcetError.getCode()).replace("Valid", "");
         String validKeyName = String.format("valid_%s", errorFildName);
         validatorResult.put(validKeyName, objcetError.getDefaultMessage());
       }

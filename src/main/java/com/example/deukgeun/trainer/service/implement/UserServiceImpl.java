@@ -2,6 +2,7 @@ package com.example.deukgeun.trainer.service.implement;
 
 import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
 import com.example.deukgeun.trainer.request.JoinRequest;
+import com.example.deukgeun.trainer.request.LoginRequest;
 import com.example.deukgeun.trainer.request.UpdatePasswordRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,23 +25,49 @@ public class UserServiceImpl implements UserService {
   private final JwtServiceImpl jwtService;
   private final PasswordEncoder passwordEncoder;
 
-  public User login(String email) throws Exception {
-    return userRepository.findByEmail(email)
-            .orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다."));
+  public void login(LoginRequest request) throws Exception {
+    String email = request.getEmail();
+    String password = request.getPassword();
+
+    User user = getUserByEmail(email);
+
+    boolean check = passwordEncoder.matches(password, user.getPassword());
+
+    if (!check) {
+      throw new Exception("사용자를 찾을 수 없습니다.");
+    }
   }
 
   public Page<UserListResponse> getList(String keyword, Integer currentPage) {
     String likeKeyword = "%" + keyword + "%";
     PageRequest pageable = PageRequest.of(currentPage, 10);
     return profileRepository.findByUserLikeKeyword(likeKeyword, pageable);
-
   }
 
   public Long save(JoinRequest request) {
-    User user = JoinRequest.create(request, passwordEncoder);
+    User user = JoinRequest.create(
+            request.getName(),
+            request.getEmail(),
+            passwordEncoder.encode(request.getPassword()),
+            request.getGroupStatus(),
+            request.getGroupName(),
+            request.getPostcode(),
+            request.getJibunAddress(),
+            request.getRoadAddress(),
+            request.getDetailAddress(),
+            request.getExtraAddress(),
+            request.getGender(),
+            request.getPrice(),
+            request.getIntroduction()
+    );
+
     User res = userRepository.save(user);
 
     return res.getId();
+  }
+
+  public User save2(User user) {
+    return userRepository.save(user);
   }
 
   public User getUserByEmail(String email) throws Exception {

@@ -187,11 +187,12 @@ public class UserController {
      * @return LoginResponse => authToken, role
      */
     @RequestMapping(method = RequestMethod.POST, path = "/login")
-    public ResponseEntity<?> login(@Valid LoginRequest request, BindingResult bindingResult, HttpServletResponse response) {
+    public ResponseEntity<?> login(@Valid LoginRequest request, BindingResult bindingResult, HttpServletResponse response) throws Exception {
         validateService.errorMessageHandling(bindingResult);
 
-        String authToken = jwtService.setCreateToken(request.getEmail(), response);
+        userService.login(request);
 
+        String authToken = jwtService.setCreateToken(request.getEmail(), response);
         LoginResponse loginResponse = LoginResponse.builder().authToken(authToken).role(role).build();
 
         return RestResponseUtil.ok("로그인 성공 했습니다.", loginResponse);

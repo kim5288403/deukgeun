@@ -71,9 +71,21 @@ public class User extends BaseEntity implements UserDetails{
   private String introduction;
 
   @Builder
-  public User(String name, String email, String password, GroupStatus groupStatus, Gender gender
-      , Integer price,String groupName, String postcode, String jibunAddress, String roadAddress,
-      String detailAddress, String extraAddress, String introduction) {
+  public User(
+          String name,
+          String email,
+          String password,
+          GroupStatus groupStatus,
+          String groupName,
+          String postcode,
+          String jibunAddress,
+          String roadAddress,
+          String detailAddress,
+          String extraAddress,
+          Gender gender,
+          Integer price,
+          String introduction
+  ) {
     this.name = name;
     this.email = email;
     this.password = password;
@@ -88,7 +100,8 @@ public class User extends BaseEntity implements UserDetails{
     this.price = price;
     this.introduction = introduction;
   }
-  
+
+
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return null;

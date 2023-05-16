@@ -2,11 +2,12 @@ package com.example.deukgeun.trainer.request;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import com.example.deukgeun.trainer.validator.ValidLogin;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@ValidLogin
+@AllArgsConstructor
 public class LoginRequest {
   
   @NotBlank(message = "이메일 필수 입력 값입니다.")
