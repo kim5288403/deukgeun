@@ -20,50 +20,19 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @SpringBootTest
-public class UserTest {
+public class UserSaveTest {
 
     @BeforeEach
     void setUp() {
+        System.out.println("-------------------- UserSaveTest Start --------------------");
     }
-
-//
-//    @Test
-//    void loginSuccess() throws Exception {
-//        User user = JoinRequest.create(
-//                "테스트",
-//                "loginTest@test.com",
-//                passwordEncoder.encode("test1!2@"),
-//                GroupStatus.Y,
-//                "testGroupName",
-//                "testPostCode",
-//                "testJibunAddress",
-//                "testRoadAddress",
-//                "testDetailAddress",
-//                "testExtraAddress",
-//                Gender.M,
-//                30000,
-//                "testIntroduction"
-//                );
-//
-//        userRepository.save(user);
-//
-//        String email = "loginTest@test.com";
-//        String password = "test1!2@";
-//        LoginRequest loginRequest = new LoginRequest(email, password);
-//        userService.login(loginRequest);
-//    }
-
     @Test
-    void saveSuccess() {
+    void givenValidCredentials_whenSave_thenSucceed() {
         // Given
         UserRepository userRepository = mock(UserRepository.class);
         ProfileRepository profileRepository = mock(ProfileRepository.class);
         JwtServiceImpl jwtService = mock(JwtServiceImpl.class);
         PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
-        JoinRequest joinRequest = mock(JoinRequest.class);
-        joinRequest.setName("테스트");
-        joinRequest.setEmail("saveTest@test.com");
-
         User user = JoinRequest.create(
                 "테스트",
                 "saveTest@test.com",
@@ -81,13 +50,36 @@ public class UserTest {
         );
         given(userRepository.save(user)).willReturn(user);
 
-        UserServiceImpl userService1 = new UserServiceImpl(userRepository, profileRepository, jwtService, passwordEncoder);
+        UserServiceImpl userService = new UserServiceImpl(userRepository, profileRepository, jwtService);
 
         // When
-        User savedUser = userService1.save2(user);
+        User savedUser = userService.save(user);
 
         // Then
-        assertThat(savedUser).isNotNull();
+        assertThat(user).isNotNull();
+        assertThat(savedUser.getEmail()).isEqualTo(user.getEmail());
+        assertThat(savedUser.getPassword()).isEqualTo(user.getPassword());
+        verify(userRepository).save(user);
+    }
+
+    @Test
+    void givenInvalidCredentials_whenSave_thenFailed() {
+        // Given
+        UserRepository userRepository = mock(UserRepository.class);
+        ProfileRepository profileRepository = mock(ProfileRepository.class);
+        JwtServiceImpl jwtService = mock(JwtServiceImpl.class);
+        PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
+        User user = new User();
+
+        given(userRepository.save(user)).willReturn(user);
+
+        UserServiceImpl userService = new UserServiceImpl(userRepository, profileRepository, jwtService);
+
+        // When
+        User savedUser = userService.save(user);
+
+        // Then
+        assertThat(user).isNotNull();
         assertThat(savedUser.getEmail()).isEqualTo(user.getEmail());
         assertThat(savedUser.getPassword()).isEqualTo(user.getPassword());
         verify(userRepository).save(user);

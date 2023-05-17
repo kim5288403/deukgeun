@@ -23,9 +23,8 @@ public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final ProfileRepository profileRepository;
   private final JwtServiceImpl jwtService;
-  private final PasswordEncoder passwordEncoder;
 
-  public void login(LoginRequest request) throws Exception {
+  public void login(LoginRequest request, PasswordEncoder passwordEncoder) throws Exception {
     String email = request.getEmail();
     String password = request.getPassword();
 
@@ -44,29 +43,7 @@ public class UserServiceImpl implements UserService {
     return profileRepository.findByUserLikeKeyword(likeKeyword, pageable);
   }
 
-  public Long save(JoinRequest request) {
-    User user = JoinRequest.create(
-            request.getName(),
-            request.getEmail(),
-            passwordEncoder.encode(request.getPassword()),
-            request.getGroupStatus(),
-            request.getGroupName(),
-            request.getPostcode(),
-            request.getJibunAddress(),
-            request.getRoadAddress(),
-            request.getDetailAddress(),
-            request.getExtraAddress(),
-            request.getGender(),
-            request.getPrice(),
-            request.getIntroduction()
-    );
-
-    User res = userRepository.save(user);
-
-    return res.getId();
-  }
-
-  public User save2(User user) {
+  public User save(User user) {
     return userRepository.save(user);
   }
 
@@ -99,7 +76,7 @@ public class UserServiceImpl implements UserService {
         );
   }
   
-  public void updatePassword(UpdatePasswordRequest request) {
+  public void updatePassword(UpdatePasswordRequest request, PasswordEncoder passwordEncoder) {
     String email = request.getEmail();
     String password = passwordEncoder.encode(request.getNewPassword());
 

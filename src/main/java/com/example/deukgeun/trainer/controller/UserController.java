@@ -12,6 +12,7 @@ import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +35,7 @@ public class UserController {
     private final ValidateServiceImpl validateService;
     private final JwtServiceImpl jwtService;
     private final ProfileServiceImpl profileService;
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${deukgeun.role.trainer}")
     private String role;
@@ -97,10 +99,27 @@ public class UserController {
     public ResponseEntity<?> save(@Valid JoinRequest request, BindingResult bindingResult) {
         validateService.errorMessageHandling(bindingResult);
 
+        User user = JoinRequest.create(
+                request.getName(),
+                request.getEmail(),
+                passwordEncoder.encode(request.getPassword()),
+                request.getGroupStatus(),
+                request.getGroupName(),
+                request.getPostcode(),
+                request.getJibunAddress(),
+                request.getRoadAddress(),
+                request.getDetailAddress(),
+                request.getExtraAddress(),
+                request.getGender(),
+                request.getPrice(),
+                request.getIntroduction()
+        );
+
         //user save
-        Long userId = userService.save(request);
+        User saveUser = userService.save(user);
+
         //profile save
-        profileService.save(request.getProfile(), userId);
+        profileService.save(request.getProfile(), saveUser.getId());
 
         return RestResponseUtil.ok("회원 가입 성공 했습니다.", null);
     }
@@ -133,7 +152,7 @@ public class UserController {
             @Valid UpdatePasswordRequest request,
             BindingResult bindingResult) {
         validateService.errorMessageHandling(bindingResult);
-        userService.updatePassword(request);
+        userService.updatePassword(request, passwordEncoder);
 
         return RestResponseUtil
                 .ok("비밀번호 변경 성공했습니다.", null);
@@ -190,7 +209,7 @@ public class UserController {
     public ResponseEntity<?> login(@Valid LoginRequest request, BindingResult bindingResult, HttpServletResponse response) throws Exception {
         validateService.errorMessageHandling(bindingResult);
 
-        userService.login(request);
+        userService.login(request, passwordEncoder);
 
         String authToken = jwtService.setCreateToken(request.getEmail(), response);
         LoginResponse loginResponse = LoginResponse.builder().authToken(authToken).role(role).build();
