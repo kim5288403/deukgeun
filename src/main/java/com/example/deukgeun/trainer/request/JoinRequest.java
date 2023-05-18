@@ -15,11 +15,11 @@ import com.example.deukgeun.trainer.entity.GroupStatus;
 import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.validator.ValidGroupName;
 import lombok.Data;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @ValidPasswordConfirm
-@ValidAuthEmail
 @ValidGroupName
 public class JoinRequest {
 
@@ -30,6 +30,7 @@ public class JoinRequest {
     @NotBlank(message = "이메일 필수 입력 값입니다.")
     @Email(message = "이메일 형식이 아닙니다.")
     @ValidDuplicateEmail(message = "이미 존재하는 이메일 입니다.")
+    @ValidAuthEmail
     private String email;
 
     @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
@@ -70,35 +71,22 @@ public class JoinRequest {
     @ValidFile
     private MultipartFile profile;
 
-    public static User create(String name,
-                              String email,
-                              String password,
-                              GroupStatus groupStatus,
-                              String groupName,
-                              String postcode,
-                              String jibunAddress,
-                              String roadAddress,
-                              String detailAddress,
-                              String extraAddress,
-                              Gender gender,
-                              Integer price,
-                              String introduction
-                              ) {
+    public static User create(JoinRequest request, PasswordEncoder passwordEncoder) {
         return User
                 .builder()
-                .name(name)
-                .email(email)
-                .password(password)
-                .groupStatus(groupStatus)
-                .groupName(groupName)
-                .postcode(postcode)
-                .jibunAddress(jibunAddress)
-                .roadAddress(roadAddress)
-                .detailAddress(detailAddress)
-                .extraAddress(extraAddress)
-                .gender(gender)
-                .price(price)
-                .introduction(introduction)
+                .name(request.getName())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .groupStatus(request.getGroupStatus())
+                .groupName(request.getGroupName())
+                .postcode(request.getPostcode())
+                .jibunAddress(request.getJibunAddress())
+                .roadAddress(request.getRoadAddress())
+                .detailAddress(request.getDetailAddress())
+                .extraAddress(request.getExtraAddress())
+                .gender(request.getGender())
+                .price(request.getPrice())
+                .introduction(request.getIntroduction())
                 .build();
     }
 

@@ -100,10 +100,14 @@ public class MailServiceImpl implements MailService{
   }
   
   //메일 인증 확인
-  public boolean confirmMail(AuthMailRequest request) {
-    return authMailRepository.existsByEmailAndCode(request.getEmail(), request.getCode());
+  public boolean confirmMail(String email, String code) {
+    return authMailRepository.existsByEmailAndCode(email, code);
   }
-  
+
+  public boolean isEmailAuthenticated(String email, MailStatus mailStatus) {
+      return authMailRepository.existsByEmailAndStatus(email, mailStatus);
+  }
+
   //메일인증 상태 업데이트
   public void updateMailStatus(AuthMailRequest request, MailStatus status) {
     authMailRepository.updateStatusByEmailAndCode(request.getEmail(), request.getCode(), status);

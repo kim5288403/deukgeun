@@ -35,7 +35,6 @@ public class UserController {
     private final ValidateServiceImpl validateService;
     private final JwtServiceImpl jwtService;
     private final ProfileServiceImpl profileService;
-    private final PasswordEncoder passwordEncoder;
 
     @Value("${deukgeun.role.trainer}")
     private String role;
@@ -99,24 +98,8 @@ public class UserController {
     public ResponseEntity<?> save(@Valid JoinRequest request, BindingResult bindingResult) {
         validateService.errorMessageHandling(bindingResult);
 
-        User user = JoinRequest.create(
-                request.getName(),
-                request.getEmail(),
-                passwordEncoder.encode(request.getPassword()),
-                request.getGroupStatus(),
-                request.getGroupName(),
-                request.getPostcode(),
-                request.getJibunAddress(),
-                request.getRoadAddress(),
-                request.getDetailAddress(),
-                request.getExtraAddress(),
-                request.getGender(),
-                request.getPrice(),
-                request.getIntroduction()
-        );
-
         //user save
-        User saveUser = userService.save(user);
+        User saveUser = userService.save(request);
 
         //profile save
         profileService.save(request.getProfile(), saveUser.getId());
@@ -152,7 +135,7 @@ public class UserController {
             @Valid UpdatePasswordRequest request,
             BindingResult bindingResult) {
         validateService.errorMessageHandling(bindingResult);
-        userService.updatePassword(request, passwordEncoder);
+        userService.updatePassword(request);
 
         return RestResponseUtil
                 .ok("비밀번호 변경 성공했습니다.", null);
@@ -209,7 +192,7 @@ public class UserController {
     public ResponseEntity<?> login(@Valid LoginRequest request, BindingResult bindingResult, HttpServletResponse response) throws Exception {
         validateService.errorMessageHandling(bindingResult);
 
-        userService.login(request, passwordEncoder);
+        userService.login(request);
 
         String authToken = jwtService.setCreateToken(request.getEmail(), response);
         LoginResponse loginResponse = LoginResponse.builder().authToken(authToken).role(role).build();

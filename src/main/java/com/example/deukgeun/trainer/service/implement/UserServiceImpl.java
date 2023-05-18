@@ -23,8 +23,9 @@ public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final ProfileRepository profileRepository;
   private final JwtServiceImpl jwtService;
+  private final PasswordEncoder passwordEncoder;
 
-  public void login(LoginRequest request, PasswordEncoder passwordEncoder) throws Exception {
+  public void login(LoginRequest request) throws Exception {
     String email = request.getEmail();
     String password = request.getPassword();
 
@@ -43,7 +44,9 @@ public class UserServiceImpl implements UserService {
     return profileRepository.findByUserLikeKeyword(likeKeyword, pageable);
   }
 
-  public User save(User user) {
+  public User save(JoinRequest request) {
+    User user = JoinRequest.create(request, passwordEncoder);
+
     return userRepository.save(user);
   }
 
@@ -76,7 +79,7 @@ public class UserServiceImpl implements UserService {
         );
   }
   
-  public void updatePassword(UpdatePasswordRequest request, PasswordEncoder passwordEncoder) {
+  public void updatePassword(UpdatePasswordRequest request) {
     String email = request.getEmail();
     String password = passwordEncoder.encode(request.getNewPassword());
 
@@ -91,5 +94,9 @@ public class UserServiceImpl implements UserService {
     User user = getUserByAuthToken(authToken);
     
     return user.getId();
+  }
+
+  public boolean isDuplicateEmail(String email) {
+    return userRepository.existsByEmail(email);
   }
 }

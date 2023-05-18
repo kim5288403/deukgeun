@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MailController {
 
-  private final MailServiceImpl mailservice;
+  private final MailServiceImpl mailService;
   private final ValidateServiceImpl validateService;
 
   // 인증 이메일 보내기
@@ -35,7 +35,7 @@ public class MailController {
       validateService.errorMessageHandling(bindingResult);
     }
 
-    String authCode = mailservice.sendMail(request.getEmail());
+    String authCode = mailService.sendMail(request.getEmail());
 
     return RestResponseUtil
     .ok("인증 메일 보내기 성공했습니다.", authCode);
@@ -49,7 +49,7 @@ public class MailController {
       validateService.errorMessageHandling(bindingResult);
     }
 
-    mailservice.updateMailStatus(request, MailStatus.Y);
+    mailService.updateMailStatus(request, MailStatus.Y);
 
     return RestResponseUtil
         .ok("메일 인증 성공 했습니다.", null);

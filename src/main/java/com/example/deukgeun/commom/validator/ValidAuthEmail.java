@@ -8,7 +8,7 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 
 @Constraint(validatedBy = EmailAuthValidator.class)
-@Target(ElementType.TYPE)
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidAuthEmail {
   String message() default "이메일 인증을 해주세요.";

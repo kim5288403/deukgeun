@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-@Constraint(validatedBy = EmailDupliValidator.class)
+@Constraint(validatedBy = DuplicateEmailValidator.class)
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidDuplicateEmail {
