@@ -1,5 +1,6 @@
 package com.example.deukgeun.commom.exception.advice;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import javax.mail.MessagingException;
 import javax.validation.ValidationException;
@@ -19,6 +20,12 @@ public class RestControllerAdvisor {
   public ResponseEntity<?> exceptionHandler(Exception e) {
     return RestResponseUtil
         .bad(e.getMessage(), null);
+  }
+
+  @ExceptionHandler(IOException.class)
+  public ResponseEntity<?> IoExceptionHandler(IOException e) {
+    return RestResponseUtil
+            .bad(e.getMessage(), null);
   }
   
   @ExceptionHandler(RequestValidException.class)

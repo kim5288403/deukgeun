@@ -9,9 +9,6 @@ import lombok.RequiredArgsConstructor;
 public class PasswordConfirmValidator implements ConstraintValidator<ValidPasswordConfirm, Object> {
 
   private final ValidateServiceImpl validateService;
-  
-  @Override
-  public void initialize(ValidPasswordConfirm constraintAnnotation) {}
 
   @Override
   public boolean isValid(Object object, ConstraintValidatorContext context) {

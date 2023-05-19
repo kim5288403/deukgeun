@@ -17,10 +17,10 @@ public class ProfileRequest {
         this.path = path;
     }
 
-    public static Profile create(String path, Long userId) {
+    public static Profile create(String fileName, Long userId) {
         return Profile
                 .builder()
-                .path(path)
+                .path(fileName)
                 .userId(userId)
                 .build();
     }

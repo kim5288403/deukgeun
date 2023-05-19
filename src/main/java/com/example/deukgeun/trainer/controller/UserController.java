@@ -12,7 +12,6 @@ import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +23,8 @@ import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.response.UserResponse.UserListResponse;
 import com.example.deukgeun.trainer.service.implement.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
+
+import java.io.IOException;
 
 
 @RestController("trainer.controller.UserController")
@@ -95,7 +96,7 @@ public class UserController {
      */
     @Transactional
     @RequestMapping(method = RequestMethod.POST, path = "/")
-    public ResponseEntity<?> save(@Valid JoinRequest request, BindingResult bindingResult) {
+    public ResponseEntity<?> save(@Valid JoinRequest request, BindingResult bindingResult) throws IOException {
         validateService.errorMessageHandling(bindingResult);
 
         //user save
