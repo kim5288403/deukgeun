@@ -1,22 +1,22 @@
 package com.example.deukgeun.trainer.request;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-
-import com.example.deukgeun.commom.validator.ValidDuplicateEmail;
-import com.example.deukgeun.trainer.validator.ValidFile;
 import com.example.deukgeun.commom.enums.Gender;
-import com.example.deukgeun.commom.validator.ValidAuthEmail;
+import com.example.deukgeun.commom.validator.ValidAccessEmail;
+import com.example.deukgeun.commom.validator.ValidDuplicateEmail;
 import com.example.deukgeun.commom.validator.ValidEnum;
 import com.example.deukgeun.commom.validator.ValidPasswordConfirm;
 import com.example.deukgeun.trainer.entity.GroupStatus;
 import com.example.deukgeun.trainer.entity.User;
+import com.example.deukgeun.trainer.validator.ValidFileType;
 import com.example.deukgeun.trainer.validator.ValidGroupName;
 import lombok.Data;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 @Data
 @ValidPasswordConfirm
@@ -30,7 +30,7 @@ public class JoinRequest {
     @NotBlank(message = "이메일 필수 입력 값입니다.")
     @Email(message = "이메일 형식이 아닙니다.")
     @ValidDuplicateEmail(message = "이미 존재하는 이메일 입니다.")
-    @ValidAuthEmail
+    @ValidAccessEmail
     private String email;
 
     @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
@@ -68,7 +68,7 @@ public class JoinRequest {
     @NotBlank(message = "자기소개는 필수 입력 값입니다.")
     private String introduction;
 
-    @ValidFile
+    @ValidFileType
     private MultipartFile profile;
 
     public static User create(JoinRequest request, PasswordEncoder passwordEncoder) {

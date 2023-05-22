@@ -8,12 +8,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.deukgeun.commom.entity.AuthMail;
 import com.example.deukgeun.commom.enums.MailStatus;
 
+import java.util.Optional;
+
 public interface AuthMailRepository extends JpaRepository<AuthMail, Long>{
   boolean existsByEmailAndCode(String email, String code);
 
-  boolean existsByEmailAndStatus(String email, MailStatus status);
-  
   boolean existsByEmail(String email);
+
+  Optional<AuthMail> findByEmail(String email);
   
   @Transactional
   void deleteByEmail(String email);

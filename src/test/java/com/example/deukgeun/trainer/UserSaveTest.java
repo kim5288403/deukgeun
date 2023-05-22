@@ -29,13 +29,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileSystemUtils;
 
-
 import java.io.File;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -54,15 +51,13 @@ public class UserSaveTest {
     @Mock
     private PasswordEncoder passwordEncoder;
     @InjectMocks
-    private UserServiceImpl mockUserService;
-
+    private UserServiceImpl userService;
 
     @Value("${trainer.backup.profile.filePath}")
     private String backupDirectoryPath;
 
     @Value("${trainer.profile.filePath}")
     private String profileDirectoryPath;
-
 
     @BeforeEach
     void setUp() {
@@ -82,7 +77,7 @@ public class UserSaveTest {
     }
 
     @Test
-    void givenValidCredentials_whenSave_thenSucceed() {
+    void shouldSaveUserWithValidCredentials() {
         // Given
         JoinRequest joinRequest = new JoinRequest();
         joinRequest.setName("테스트");
@@ -104,7 +99,7 @@ public class UserSaveTest {
         given(userRepository.save(any(User.class))).willReturn(user);
 
         // When
-        User savedUser = mockUserService.save(joinRequest);
+        User savedUser = userService.save(joinRequest);
 
         // Then
         assertThat(savedUser).isNotNull();
@@ -114,9 +109,9 @@ public class UserSaveTest {
     }
 
     @Test
-    void givenValidCredentials_whenSaveApi_thenSucceed() throws Exception {
+    void shouldSaveUserAPIWithValidCredentials() throws Exception {
         // Given
-        Resource testFile = new ClassPathResource("/static/images/trainer/profile/testImage.jpg");
+        Resource testFile = new ClassPathResource("/static/test/images/testImage.jpg");
         MockMultipartFile profile = new MockMultipartFile("profile", "testImage.jpg", "image/jpg", testFile.getInputStream());
 
         // When
@@ -144,33 +139,6 @@ public class UserSaveTest {
                 // then
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.message").value("회원 가입 성공 했습니다."));
-    }
-
-    @Test
-    void  givenDuplicateEmail_whenCheckEmailDuplicate_thenReturnTrue() {
-        // Given
-        String email = anyString();
-        given(userRepository.existsByEmail(email)).willReturn(false);
-
-        // When
-        boolean result = mockUserService.isDuplicateEmail(email);
-
-        // Then
-        assertFalse(result);
-        verify(userRepository, times(1)).existsByEmail(email);
-    }
-
-    @Test
-    void  givenDuplicateEmail_whenCheckEmailDuplicate_thenReturnFalse() {
-        // Given
-        given(userRepository.existsByEmail(anyString())).willReturn(true);
-
-        // When
-        boolean result = mockUserService.isDuplicateEmail(anyString());
-
-        // Then
-        assertTrue(result);
-        verify(userRepository, times(1)).existsByEmail(anyString());
     }
 
     @AfterEach

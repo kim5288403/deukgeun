@@ -99,4 +99,13 @@ public class UserServiceImpl implements UserService {
   public boolean isDuplicateEmail(String email) {
     return userRepository.existsByEmail(email);
   }
+
+  public boolean isPasswordConfirmation(String password, String confirm) {
+    return password.equals(confirm);
+  }
+
+  public boolean isEmptyGroupName(String groupName, String groupStatus) {
+    return !groupStatus.equals("Y") || !groupName.isEmpty();
+  }
+
 }

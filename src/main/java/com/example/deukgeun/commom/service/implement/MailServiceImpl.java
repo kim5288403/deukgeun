@@ -30,8 +30,10 @@ public class MailServiceImpl implements MailService{
   private String fromEmail; // 보내는 이메일
   
   private String title = "득근득근 회원가입 인증 번호";
-  
-  //랜덤 인증 코드 생성
+
+    /**
+     * 랜덤 인증 코드 생성
+     */
   public void createCode() {
       Random random = new Random();
       StringBuffer key = new StringBuffer();
@@ -53,9 +55,15 @@ public class MailServiceImpl implements MailService{
       }
       authCode = key.toString();
   }
-  
-  //메일 양식 작성
-  public MimeMessage createMailForm(String toEmail) throws MessagingException, UnsupportedEncodingException {
+
+    /**
+     * 이메일 폼 만들기
+     * @param toEmail 발신 이메일
+     * @return
+     * @throws MessagingException
+     * @throws UnsupportedEncodingException
+     */
+  public MimeMessage createMailForm(String toEmail) throws MessagingException {
       createCode();
 
       MimeMessage message = emailSender.createMimeMessage();
@@ -99,20 +107,19 @@ public class MailServiceImpl implements MailService{
     authMailRepository.deleteByEmail(email);
   }
   
-  //메일 인증 확인
   public boolean confirmMail(String email, String code) {
     return authMailRepository.existsByEmailAndCode(email, code);
   }
 
-  public boolean isEmailAuthenticated(String email, MailStatus mailStatus) {
-      return authMailRepository.existsByEmailAndStatus(email, mailStatus);
+  public boolean isEmailAuthenticated(String email) throws Exception {
+      AuthMail authMail = authMailRepository.findByEmail(email).orElseThrow(
+              () -> new Exception("사용자를 찾을 수 없습니다."));
+
+     return authMail.getStatus() == MailStatus.Y;
   }
 
   //메일인증 상태 업데이트
   public void updateMailStatus(AuthMailRequest request, MailStatus status) {
     authMailRepository.updateStatusByEmailAndCode(request.getEmail(), request.getCode(), status);
   }
-
-  
-  
 }

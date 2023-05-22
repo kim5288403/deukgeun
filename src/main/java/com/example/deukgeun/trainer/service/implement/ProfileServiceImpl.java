@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -33,11 +34,27 @@ public class ProfileServiceImpl implements ProfileService {
     //file name
     private String fileName;
 
+    /**
+     * profile data 가져오기
+     * profileId에 해당된 profile data 가져오기
+     *
+     * @param profileId profileId 비교를 위한 파라미터
+     * @return profileId에 해당된 profile data
+     * @throws Exception 일치하는 데이터가 없을 경우 Exception 발생
+     */
     @Cacheable(value = "profile", key = "#profileId", cacheManager = "projectCacheManager")
     public Profile getProfile(Long profileId) throws Exception {
         return profileRepository.findById(profileId).orElseThrow(() -> new Exception("게시글을 찾을 수 없습니다."));
     }
 
+    /**
+     * profile data 에서 profile id 가져오기
+     * authToken 으로 가져온 User 데이터와 일치하는 프로필 데이터에서 아이디 반환
+     *
+     * @param authToken JWT 인증토큰
+     * @return authToken 으로 가져온 User 데이터와 일치하는 프로필 데이터에서 아이디
+     * @throws Exception 일치하는 데이터가 없을 경우 Exception 발생
+     */
     public Long getProfileId(String authToken) throws Exception {
         User user = userService.getUserByAuthToken(authToken);
         Profile profile = getByUserId(user.getId());
@@ -45,50 +62,82 @@ public class ProfileServiceImpl implements ProfileService {
         return profile.getId();
     }
 
+    /**
+     * profile data 가져오기
+     * user id와 일치하는 profile data 가져오기
+     *
+     * @param userId user id를 비교하기 위한 파라미터
+     * @return profile data
+     * @throws Exception 일치하는 데이터가 없을 경우 Exception 발생
+     */
     public Profile getByUserId(Long userId) throws Exception {
         return profileRepository.findByUserId(userId).orElseThrow(() -> new Exception("프로필을 찾을 수 없습니다."));
     }
 
-    public boolean isSupportedContentType(String fileType) {
+    /**
+     * file 확장자 type 유효성 검사
+     *
+     * @param file 확장자 type 유효성 검사를 위한 파라미터
+     * @return 확장자 type 유효성 검사 결과
+     */
+    public boolean isSupportedContentType(MultipartFile file) {
+        String fileType = Objects.requireNonNull(file.getContentType());
         return fileType.equals("image/png") || fileType.equals("image/jpg") || fileType.equals("image/jpeg");
     }
 
-    public void saveServer(MultipartFile profile) throws IOException {
+    /**
+     * 디렉토리에 파일 저장
+     *
+     * @param profile 파일경로, 디렉토리경로 추출을 위한 파라미터
+     * @throws IOException 파일 디렉토리 저장시 애러
+     */
+    public void saveFileToDirectory(MultipartFile profile) throws IOException {
         Path path = Paths.get(FILE_PATH).toAbsolutePath().normalize();
         Path targetPath = path.resolve(fileName).normalize();
 
         profile.transferTo(targetPath);
     }
 
-    public void deleteServer(String path) {
+    /**
+     * 디렉토리에 파일 삭제
+     * 해당 파일 경로에 파일이 존재하면 삭제
+     *
+     * @param path 파일 경로
+     */
+    public void deleteFileToDirectory(String path) {
         File file = new File(FILE_PATH + "\\" + path);
         if (file.exists()) {
             file.delete();
         }
     }
 
+    /**
+     * file DB 저장
+     *
+     * @param profile 저장할 profile
+     * @param userId profile 저장할 user Id
+     * @throws IOException 파일 저장 애러시
+     */
     public void save(MultipartFile profile, Long userId) throws IOException {
         fileName = getUUIDPath(profile.getOriginalFilename());
 
         Profile saveProfileData = ProfileRequest.create(fileName, userId);
         profileRepository.save(saveProfileData);
-        saveServer(profile);
+        saveFileToDirectory(profile);
     }
+
 
     @Transactional
     public void updateProfile(MultipartFile profile, String authToken) throws Exception {
         Long profileId = getProfileId(authToken);
         fileName = getUUIDPath(profile.getOriginalFilename());
 
-        //DB 수정
         update(profileId);
 
-        //서버 저장
-        saveServer(profile);
+        saveFileToDirectory(profile);
 
-        //server 저장된 파일 삭제
         Profile userProfile = getProfile(profileId);
-        deleteServer(userProfile.getPath());
+        deleteFileToDirectory(userProfile.getPath());
     }
 
     @CachePut(value = "profile", key = "#profileId", cacheManager = "projectCacheManager")
