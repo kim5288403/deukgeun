@@ -1,4 +1,4 @@
-package com.example.deukgeun.trainer;
+package com.example.deukgeun.trainer.user;
 
 import com.example.deukgeun.commom.entity.AuthMail;
 import com.example.deukgeun.commom.enums.Gender;
@@ -41,17 +41,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
-public class UserSaveTest {
+public class SaveAPITest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private AuthMailRepository authMailRepository;
-    @Mock
-    private UserRepository userRepository;
-    @Mock
-    private PasswordEncoder passwordEncoder;
-    @InjectMocks
-    private UserServiceImpl userService;
 
     @Value("${trainer.backup.profile.filePath}")
     private String backupDirectoryPath;
@@ -60,56 +54,23 @@ public class UserSaveTest {
     private String profileDirectoryPath;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException {
         System.out.println("-------------------- UserSaveTest Start --------------------");
 
         AuthMail authMail = AuthMailRequest.create("testEmail@test.com", "1234", MailStatus.Y);
         authMailRepository.save(authMail);
-    }
 
-    @BeforeEach
-    void setBackupDirectory() throws IOException {
+        // 디렉토리 백업
         File profileDirectory = new File(profileDirectoryPath);
         File backupDirectory = new File(backupDirectoryPath);
 
-        // 디렉토리 백업
+
         FileUtils.copyDirectory(profileDirectory, backupDirectory);
     }
 
-    @Test
-    void shouldSaveUserWithValidCredentials() {
-        // Given
-        JoinRequest joinRequest = new JoinRequest();
-        joinRequest.setName("테스트");
-        joinRequest.setEmail(anyString());
-        joinRequest.setPassword("test1!2@");
-        joinRequest.setGroupStatus(GroupStatus.Y);
-        joinRequest.setGroupName("testGroupName");
-        joinRequest.setPostcode("testPostCode");
-        joinRequest.setJibunAddress("testJibunAddress");
-        joinRequest.setRoadAddress("testRoadAddress");
-        joinRequest.setDetailAddress("testDetailAddress");
-        joinRequest.setExtraAddress("testExtraAddress");
-        joinRequest.setGender(Gender.M);
-        joinRequest.setPrice(30000);
-        joinRequest.setIntroduction("testIntroduction");
-
-        User user = JoinRequest.create(joinRequest, passwordEncoder);
-
-        given(userRepository.save(any(User.class))).willReturn(user);
-
-        // When
-        User savedUser = userService.save(joinRequest);
-
-        // Then
-        assertThat(savedUser).isNotNull();
-        assertThat(savedUser.getEmail()).isEqualTo(user.getEmail());
-        assertThat(savedUser.getPassword()).isEqualTo(user.getPassword());
-        verify(userRepository, times(1)).save(any(User.class));
-    }
 
     @Test
-    void shouldSaveUserAPIWithValidCredentials() throws Exception {
+    void shouldSaveUserAPIForValidCredentials() throws Exception {
         // Given
         Resource testFile = new ClassPathResource("/static/test/images/testImage.jpg");
         MockMultipartFile profile = new MockMultipartFile("profile", "testImage.jpg", "image/jpg", testFile.getInputStream());
@@ -139,6 +100,39 @@ public class UserSaveTest {
                 // then
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.message").value("회원 가입 성공 했습니다."));
+    }
+
+    @Test
+    void shouldSaveUserAPIForInvalidCredentials() throws Exception {
+        // Given
+        Resource testFile = new ClassPathResource("/static/test/texts/text.txt");
+        MockMultipartFile profile = new MockMultipartFile("profile", "testImage.txt", "text/plain", testFile.getInputStream());
+
+        // When
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/trainer/")
+                        .file(profile)
+                        .contentType("")
+                        .param("processData", "false")
+                        .param("name", "")
+                        .param("email", "")
+                        .param("password", "testPassword1!2")
+                        .param("passwordConfirm", "testPassword1!2@")
+                        .param("postcode", "")
+                        .param("jibunAddress", "testJibunAddress")
+                        .param("roadAddress", "testRoadAddress")
+                        .param("detailAddress", "testDetailAddress")
+                        .param("extraAddress", "testExtraAddress")
+                        .param("price", "")
+                        .param("gender", "")
+                        .param("groupStatus", "")
+                        .param("groupName", "testGroupName")
+                        .param("code", "")
+                        .param("introduction", "")
+                )
+
+                // then
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("request error!"));
     }
 
     @AfterEach

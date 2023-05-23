@@ -21,7 +21,7 @@ public class FileTypeTest {
     private ProfileServiceImpl profileService;
 
     @Test
-    void shouldReturnTrueWhenFileTypeIsValid() throws IOException {
+    void shouldReturnTrueForSupportedContentType() throws IOException {
         // Given
         Resource testFile = new ClassPathResource("/static/test/images/testImage.jpg");
         MockMultipartFile file = new MockMultipartFile("file", "testImage.jpg", "image/jpg", testFile.getInputStream());
@@ -33,9 +33,9 @@ public class FileTypeTest {
         assertTrue(result);
     }
 
-    void shouldReturnFalseWhenFileTypeIsInvalid() throws IOException {
+    void shouldReturnFalseForUnsupportedContentType() throws IOException {
         // Given
-        Resource testFile = new ClassPathResource("/static/test/texts/testText.txt");
+        Resource testFile = new ClassPathResource("/static/test/texts/text.txt");
         MockMultipartFile file = new MockMultipartFile("file", "testText.txt", "text/plain", testFile.getInputStream());
 
         // When

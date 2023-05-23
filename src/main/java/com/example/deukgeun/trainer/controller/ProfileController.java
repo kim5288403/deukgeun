@@ -75,7 +75,7 @@ public class ProfileController {
      */
     @RequestMapping(method = RequestMethod.PUT, path = "/")
     public ResponseEntity<?> update(HttpServletRequest request, @Valid UpdateProfileRequest updateRequest, BindingResult bindingResult) throws Exception {
-        validateService.errorMessageHandling(bindingResult);
+        validateService.requestValidExceptionHandling(bindingResult);
         String authToken = jwtService.resolveAuthToken(request);
         profileService.updateProfile(updateRequest.getProfile(), authToken);
 

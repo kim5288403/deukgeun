@@ -13,7 +13,9 @@ public class DuplicateEmailValidator implements ConstraintValidator<ValidDuplica
   
   @Override
   public boolean isValid(String value, ConstraintValidatorContext context) {
-    
+    if (value.isEmpty()) {
+      return false;
+    }
     return ! userService.isDuplicateEmail(value);
   }
 }

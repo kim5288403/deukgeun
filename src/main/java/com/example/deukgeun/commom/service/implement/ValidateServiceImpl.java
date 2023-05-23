@@ -17,43 +17,69 @@ import com.example.deukgeun.commom.service.ValidateService;
 public class ValidateServiceImpl implements ValidateService{
 
   /**
-   * 1. error 내용이 있을경우 애러내용을 map 타입으로 매핑
-   * 2. RequestValidException 발생함
+   * 1. 유효성 필드 애러가 있을경우 애러를 map 타입으로 매핑
+   * 2. 유효성 글로벌 애러가 있을경우  애러를 map 타입으로 매핑
+   * 3. RequestValidException 발생시킴
    *
    * @param bindingResult request validator 에서 error 내용을 담고있음
    */
-  public void errorMessageHandling(BindingResult bindingResult) {
+  public void requestValidExceptionHandling(BindingResult bindingResult) {
 
     if (bindingResult.hasErrors()) {
-      Map<String, String> validatorResult = new HashMap<>();
+      /* 유효성 검사에 실패한 필드 애러 목록을 받음 */
+      Map<String, String> validatorResult = fieldErrorsMessageHandling(bindingResult);
 
-      /* 유효성 검사에 실패한 필드 목록을 받음 */
-      for (FieldError error : bindingResult.getFieldErrors()) {
-        String validKeyName = String.format("valid_%s", error.getField());
-        if (error.getField().equals("profile") && Objects.equals(error.getCode(), "typeMismatch")) {
-          validatorResult.put(validKeyName, "프로필 이미지 파일은 필수 값입니다.");
-        } else {
-          validatorResult.put(validKeyName, error.getDefaultMessage());
-        }
-      }
-
-      /* 비밀 번호 확인 애러 목록을 받음 */
-      ObjectError objcetError = bindingResult.getGlobalError();
-      if (objcetError != null) {
-        String errorFildName = Objects.requireNonNull(objcetError.getCode()).replace("Valid", "");
-        String validKeyName = String.format("valid_%s", errorFildName);
-        validatorResult.put(validKeyName, objcetError.getDefaultMessage());
-      }
+      /* 유효성 검사에 실패한 글로벌 애러 목록을 받음 */
+      validatorResult = globalErrorsMessageHandling(validatorResult, bindingResult);
 
       throw new RequestValidException(validatorResult, "request error!");
     }
+  }
 
+  /**
+   * 유효성 필드 애러가 있을경우 애러를 map 타입으로 매핑
+   *
+   * @param bindingResult request validator 에서 error 내용을 담고있음
+   * @return bindingResult 에 필드 애러내용 to Map<>
+   */
+  public Map<String, String> fieldErrorsMessageHandling (BindingResult bindingResult) {
+    Map<String, String> validatorResult =  new HashMap<>();
+
+    for (FieldError error : bindingResult.getFieldErrors()) {
+      String validKeyName = String.format("valid_%s", error.getField());
+      if (error.getField().equals("profile") && Objects.equals(error.getCode(), "typeMismatch")) {
+        validatorResult.put(validKeyName, "프로필 이미지 파일은 필수 값입니다.");
+      } else {
+        validatorResult.put(validKeyName, error.getDefaultMessage());
+      }
+    }
+
+    return validatorResult;
+  }
+
+  /**
+   * 유효성 글로벌 애러가 있을경우  애러를 map 타입으로 매핑
+   *
+   * @param validatorResult 필드에러 매핑을 걸친 map
+   * @param bindingResult request validator 에서 error 내용을 담고있음
+   * @return bindingResult 에 글로벌 애러내용 to Map<>
+   */
+  public Map<String, String> globalErrorsMessageHandling (
+          Map<String, String> validatorResult,
+          BindingResult bindingResult) {
+
+    for (ObjectError error : bindingResult.getAllErrors()) {
+      String validKeyName = String.format("valid_%s", error.getObjectName());
+      validatorResult.put(validKeyName, error.getDefaultMessage());
+    }
+
+    return validatorResult;
   }
 
   /**
    * Object 에서 field 값 추출
    *
-   * @param object
+   * @param object error 를 담고있는 object
    * @param fieldName 추출하고자 하는 field
    * @return target 추출한 field
    */
@@ -70,7 +96,7 @@ public class ValidateServiceImpl implements ValidateService{
       }
       
       if (!(target instanceof String)) {
-        return "";
+        return null;
       }
       
       return target.toString();
@@ -81,6 +107,6 @@ public class ValidateServiceImpl implements ValidateService{
       System.out.println("IllegalAccessException : " + e.getMessage());
     }
 
-    return "";
+    return null;
   }
 }

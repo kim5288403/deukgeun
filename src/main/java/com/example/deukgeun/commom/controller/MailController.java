@@ -32,7 +32,7 @@ public class MailController {
       throws MessagingException, UnsupportedEncodingException {
 
     if (bindingResult.hasErrors()) {
-      validateService.errorMessageHandling(bindingResult);
+      validateService.requestValidExceptionHandling(bindingResult);
     }
 
     String authCode = mailService.sendMail(request.getEmail());
@@ -46,7 +46,7 @@ public class MailController {
   public ResponseEntity<?> confirm(@Valid AuthMailRequest request, BindingResult bindingResult) {
 
     if (bindingResult.hasErrors()) {
-      validateService.errorMessageHandling(bindingResult);
+      validateService.requestValidExceptionHandling(bindingResult);
     }
 
     mailService.updateMailStatus(request, MailStatus.Y);

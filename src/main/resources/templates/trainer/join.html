@@ -180,6 +180,7 @@
 			let formData = new FormData();
 			let profile = $("input[name=profileImage]")[0].files[0];
 			let joinForm = $("form[id=join]").find("input");
+
 			formData.append("profile", profile);
 
 			$.each(joinForm, function(key, value) {

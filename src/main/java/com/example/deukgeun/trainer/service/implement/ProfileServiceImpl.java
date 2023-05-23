@@ -127,31 +127,57 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
 
+    /**
+     * profile update
+     * 디렉토리 저장, 기존 디렉토리 파일 삭제, DB 업데이트
+     *
+     * @param profile 업데이트할 profile data
+     * @param authToken profile id 추출을 위한 파라미터
+     * @throws Exception 일치하는 데이터가 없을 경우 Exception 발생
+     */
     @Transactional
     public void updateProfile(MultipartFile profile, String authToken) throws Exception {
         Long profileId = getProfileId(authToken);
         fileName = getUUIDPath(profile.getOriginalFilename());
 
-        update(profileId);
-
         saveFileToDirectory(profile);
 
         Profile userProfile = getProfile(profileId);
         deleteFileToDirectory(userProfile.getPath());
+
+        update(profileId);
     }
 
+    /**
+     * DB profile data update
+     * profile id 에 해당하는 data update
+     *
+     * @param profileId profile id 비교를 위한 파라미터
+     */
     @CachePut(value = "profile", key = "#profileId", cacheManager = "projectCacheManager")
     public void update(Long profileId) {
         profileRepository.updateProfile(profileId, fileName);
     }
 
+    /**
+     * DB profile data withdrawal
+     * profile id 에 해당하는 data withdrawal
+     *
+     * @param profileId profile id 비교를 위한 파라미터
+     */
     @CacheEvict(value = "profile", key = "#profileId", cacheManager = "projectCacheManager")
     public void withdrawal(Long profileId) {
         profileRepository.deleteById(profileId);
     }
 
+    /**
+     * randomUUID 로 fileName 생성
+     *
+     * @param fileName fileName
+     * @return random fileName
+     */
     public String getUUIDPath(String fileName) {
-        UUID uuid = UUID.randomUUID();
-        return uuid.toString() + "_" + fileName;
+        String uuid = UUID.randomUUID().toString();
+        return uuid + "_" + fileName;
     }
 }

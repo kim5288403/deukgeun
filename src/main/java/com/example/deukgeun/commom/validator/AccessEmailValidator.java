@@ -13,10 +13,13 @@ public class AccessEmailValidator implements ConstraintValidator<ValidAccessEmai
 
   @Override
   public boolean isValid(String value, ConstraintValidatorContext context) {
+    if (value.isEmpty()) {
+      return false;
+    }
     try {
       return mailService.isEmailAuthenticated(value);
     } catch (Exception e) {
-      throw new RuntimeException(e);
+      return false;
     }
   }
 }

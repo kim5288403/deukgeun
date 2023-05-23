@@ -97,7 +97,7 @@ public class UserController {
     @Transactional
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> save(@Valid JoinRequest request, BindingResult bindingResult) throws IOException {
-        validateService.errorMessageHandling(bindingResult);
+        validateService.requestValidExceptionHandling(bindingResult);
 
         //user save
         User saveUser = userService.save(request);
@@ -117,7 +117,7 @@ public class UserController {
      */
     @RequestMapping(method = RequestMethod.PUT, path = "/")
     public ResponseEntity<?> update(@Valid UpdateUserRequest request, BindingResult bindingResult) {
-        validateService.errorMessageHandling(bindingResult);
+        validateService.requestValidExceptionHandling(bindingResult);
         userService.updateInfo(request);
 
         return RestResponseUtil.ok("내 정보 수정 성공했습니다.", null);
@@ -135,7 +135,7 @@ public class UserController {
     public ResponseEntity<?> updatePassword(
             @Valid UpdatePasswordRequest request,
             BindingResult bindingResult) {
-        validateService.errorMessageHandling(bindingResult);
+        validateService.requestValidExceptionHandling(bindingResult);
         userService.updatePassword(request);
 
         return RestResponseUtil
@@ -159,14 +159,14 @@ public class UserController {
             BindingResult bindingResult
     ) throws Exception {
 
-        validateService.errorMessageHandling(bindingResult);
+        validateService.requestValidExceptionHandling(bindingResult);
 
         String authToken =  jwtService.resolveAuthToken(request);
         Long profileId = profileService.getProfileId(authToken);
         Profile userProfile = profileService.getProfile(profileId);
 
         //포로필 이미지 삭제
-        profileService.deleteServer(userProfile.getPath());
+        profileService.deleteFileToDirectory(userProfile.getPath());
 
         profileService.withdrawal(profileId);
 
@@ -191,7 +191,7 @@ public class UserController {
      */
     @RequestMapping(method = RequestMethod.POST, path = "/login")
     public ResponseEntity<?> login(@Valid LoginRequest request, BindingResult bindingResult, HttpServletResponse response) throws Exception {
-        validateService.errorMessageHandling(bindingResult);
+        validateService.requestValidExceptionHandling(bindingResult);
 
         userService.login(request);
 

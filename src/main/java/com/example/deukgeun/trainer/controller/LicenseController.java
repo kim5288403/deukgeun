@@ -72,7 +72,7 @@ public class LicenseController {
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> saveLicense(HttpServletRequest request, @Valid SaveLicenseRequest saveLicenseRequest, BindingResult bindingResult) throws Exception {
         String authToken = jwtService.resolveAuthToken(request);
-        validateService.errorMessageHandling(bindingResult);
+        validateService.requestValidExceptionHandling(bindingResult);
         licenseService.save(saveLicenseRequest, authToken);
 
         return RestResponseUtil
@@ -88,7 +88,7 @@ public class LicenseController {
      */
     @RequestMapping(method = RequestMethod.DELETE, path = "/")
     public ResponseEntity<?> removeLicense(@Valid RemoveLicenseRequest request, BindingResult bindingResult) {
-        validateService.errorMessageHandling(bindingResult);
+        validateService.requestValidExceptionHandling(bindingResult);
         request.getIds().forEach(licenseService::remove);
 
         return RestResponseUtil

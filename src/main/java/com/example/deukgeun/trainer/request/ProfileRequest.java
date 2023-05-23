@@ -1,7 +1,6 @@
 package com.example.deukgeun.trainer.request;
 
 import com.example.deukgeun.trainer.entity.Profile;
-import lombok.Builder;
 import lombok.Data;
 
 @Data
@@ -12,15 +11,10 @@ public class ProfileRequest {
 
     private String path;
 
-    @Builder
-    public ProfileRequest(String path) {
-        this.path = path;
-    }
-
-    public static Profile create(String fileName, Long userId) {
+    public static Profile create(String path, Long userId) {
         return Profile
                 .builder()
-                .path(fileName)
+                .path(path)
                 .userId(userId)
                 .build();
     }

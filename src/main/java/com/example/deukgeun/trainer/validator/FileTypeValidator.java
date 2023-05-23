@@ -16,6 +16,10 @@ public class FileTypeValidator implements ConstraintValidator<ValidFileType, Mul
 
     @Override
     public boolean isValid(MultipartFile value, ConstraintValidatorContext context) {
+        if (value == null) {
+            return false;
+        }
+
         return profileService.isSupportedContentType(value);
     }
 }

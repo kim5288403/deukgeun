@@ -15,7 +15,7 @@ public class EmptyGroupNameTest {
     private UserServiceImpl userService;
 
     @Test
-    void shouldReturnFalseWhenGroupStatusYAndEmptyGroupName() {
+    void shouldReturnFalseForGroupStatusYAndEmptyGroupName() {
         // Given
         String groupName =  "";
         String groupStatus = "Y";
@@ -26,9 +26,8 @@ public class EmptyGroupNameTest {
         // Then
         assertFalse(result);
     }
-
     @Test
-    void shouldReturnTrueWhenGroupStatusNAndEmptyGroupName() {
+    void shouldReturnTrueForGroupStatusNAndEmptyGroupName() {
         // Given
         String groupName =  "";
         String groupStatus = "N";
@@ -39,4 +38,5 @@ public class EmptyGroupNameTest {
         // Then
         assertTrue(result);
     }
+
 }
