@@ -10,12 +10,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -26,6 +27,8 @@ public class SaveTest {
     @Mock
     private PasswordEncoder passwordEncoder;
     @InjectMocks
+    private UserServiceImpl mockUserService;
+    @Autowired
     private UserServiceImpl userService;
 
     @BeforeEach
@@ -33,7 +36,7 @@ public class SaveTest {
         System.out.println("-------------------- UserSaveTest Start --------------------");
     }
     @Test
-    void shouldSaveUserForJoinRequest() {
+    void shouldSaveUserValidJoinRequest() {
         // Given
         JoinRequest joinRequest = new JoinRequest();
         joinRequest.setName("테스트");
@@ -55,7 +58,7 @@ public class SaveTest {
         given(userRepository.save(any(User.class))).willReturn(user);
 
         // When
-        User savedUser = userService.save(joinRequest);
+        User savedUser = mockUserService.save(joinRequest);
 
         // Then
         assertThat(savedUser).isNotNull();
@@ -65,7 +68,33 @@ public class SaveTest {
     }
 
     @Test
-    public void shouldCreateUserFromJoinRequest() {
+    void shouldThrowDataIntegrityViolationExceptionInValidJoinRequest() {
+        // Given
+        JoinRequest joinRequest = new JoinRequest();
+        joinRequest.setName("");
+        joinRequest.setEmail(anyString());
+        joinRequest.setPassword("test1!2@");
+        joinRequest.setGroupStatus(GroupStatus.Y);
+        joinRequest.setGroupName("testGroupName");
+        joinRequest.setPostcode("testPostCode");
+        joinRequest.setJibunAddress("testJibunAddress");
+        joinRequest.setRoadAddress("testRoadAddress");
+        joinRequest.setDetailAddress("testDetailAddress");
+        joinRequest.setExtraAddress("testExtraAddress");
+        joinRequest.setGender(Gender.M);
+        joinRequest.setPrice(30000);
+        joinRequest.setIntroduction("testIntroduction");
+
+        User user = JoinRequest.create(joinRequest, passwordEncoder);
+
+        // When, Then
+        assertThrows(DataIntegrityViolationException.class, () -> {
+            User savedUser = userService.save(joinRequest);
+        });
+    }
+
+    @Test
+    public void shouldCreateUserFromValidJoinRequest() {
         // Given
         JoinRequest joinRequest = new JoinRequest();
         joinRequest.setName("John Doe");

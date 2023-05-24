@@ -26,7 +26,7 @@ public class DuplicateEmailTest {
     private UserServiceImpl userService;
 
     @Test
-    void  shouldReturnTrueForDuplicateEmail() {
+    void  shouldReturnTrueForValidEmail() {
         // Given
         String email = anyString();
         given(userRepository.existsByEmail(email)).willReturn(true);
@@ -40,7 +40,7 @@ public class DuplicateEmailTest {
     }
 
     @Test
-    void  shouldReturnFalseForNonDuplicateEmail() {
+    void  shouldReturnFalseForInvalidEmail() {
         // Given
         String email = anyString();
         given(userRepository.existsByEmail(email)).willReturn(false);

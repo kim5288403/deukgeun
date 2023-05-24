@@ -21,10 +21,10 @@ public class FileTypeTest {
     private ProfileServiceImpl profileService;
 
     @Test
-    void shouldReturnTrueForSupportedContentType() throws IOException {
+    void shouldReturnTrueForValidContentType() throws IOException {
         // Given
-        Resource testFile = new ClassPathResource("/static/test/images/testImage.jpg");
-        MockMultipartFile file = new MockMultipartFile("file", "testImage.jpg", "image/jpg", testFile.getInputStream());
+        Resource classPath = new ClassPathResource("/static/test/images/testImage.jpg");
+        MockMultipartFile file = new MockMultipartFile("file", "testImage.jpg", "image/jpg", classPath.getInputStream());
 
         // When
         boolean result = profileService.isSupportedContentType(file);
@@ -33,10 +33,10 @@ public class FileTypeTest {
         assertTrue(result);
     }
 
-    void shouldReturnFalseForUnsupportedContentType() throws IOException {
+    void shouldReturnFalseForInvalidContentType() throws IOException {
         // Given
-        Resource testFile = new ClassPathResource("/static/test/texts/text.txt");
-        MockMultipartFile file = new MockMultipartFile("file", "testText.txt", "text/plain", testFile.getInputStream());
+        Resource classPath = new ClassPathResource("/static/test/texts/text.txt");
+        MockMultipartFile file = new MockMultipartFile("file", "testText.txt", "text/plain", classPath.getInputStream());
 
         // When
         boolean result = profileService.isSupportedContentType(file);

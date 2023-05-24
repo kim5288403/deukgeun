@@ -4,13 +4,12 @@ import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.repository.ProfileRepository;
 import com.example.deukgeun.trainer.request.ProfileRequest;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
@@ -20,7 +19,7 @@ public class SaveTest {
     private ProfileRepository profileRepository;
 
     @Test
-    void shouldCreateProfileFromJProfileRequest() {
+    void shouldCreateProfileFromForValidPathAndUserId() {
         // Given
         String path = "testFileName";
         Long userId = 1L;
@@ -35,7 +34,7 @@ public class SaveTest {
     }
 
     @Test
-    void shouldSaveProfileForFileNameAndUserId() {
+    void shouldSaveProfileForValidPathAndUserId() {
         // Given
         String path = "testFileName";
         Long userId = 1L;
@@ -48,6 +47,19 @@ public class SaveTest {
         assertEquals(saveProfile.getUserId(), profile.getUserId());
         assertEquals(saveProfile.getPath(), profile.getPath());
         assertNotNull(saveProfile);
+    }
+
+    @Test
+    void shouldThrowDataIntegrityViolationExceptionForInValidPathAndUserId() {
+        // Given
+        String path = "";
+        Long userId = 0L;
+        Profile profile = ProfileRequest.create(path, userId);
+
+        // When, Then
+        assertThrows(DataIntegrityViolationException.class, () -> {
+            Profile saveProfile = profileRepository.save(profile);
+        });
     }
 
 }

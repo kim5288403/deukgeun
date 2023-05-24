@@ -6,6 +6,7 @@ import javax.mail.MessagingException;
 import javax.validation.ValidationException;
 
 import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -20,6 +21,12 @@ public class RestControllerAdvisor {
   public ResponseEntity<?> exceptionHandler(Exception e) {
     return RestResponseUtil
         .bad(e.getMessage(), null);
+  }
+
+  @ExceptionHandler(SignatureException.class)
+  public ResponseEntity<?> signatureExceptionHandler(SignatureException e) {
+    return RestResponseUtil
+            .bad("잘못된 JWT signature 형식입니다.", null);
   }
 
   @ExceptionHandler(IOException.class)

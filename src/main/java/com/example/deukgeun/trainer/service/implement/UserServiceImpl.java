@@ -38,6 +38,13 @@ public class UserServiceImpl implements UserService {
     }
   }
 
+  /**
+   * 트레이너 리스트 조건 검색
+   *
+   * @param keyword 검색어
+   * @param currentPage 선택 페이지
+   * @return 검색 결과
+   */
   public Page<UserListResponse> getList(String keyword, Integer currentPage) {
     String likeKeyword = "%" + keyword + "%";
     PageRequest pageable = PageRequest.of(currentPage, 10);

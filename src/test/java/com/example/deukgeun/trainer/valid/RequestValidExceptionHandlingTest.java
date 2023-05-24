@@ -29,11 +29,12 @@ public class RequestValidExceptionHandlingTest {
     private ValidateServiceImpl validateService;
 
     @Test
-    void shouldThrowRequestValidExceptionForErrors() {
+    void shouldThrowRequestValidExceptionForValidErrors() {
         // Given
         Map<String, String> errorMap = new HashMap<>();
         given(bindingResult.hasErrors()).willReturn(true);
 
+        // When, Then
         assertThrows(RequestValidException.class, () -> {
             validateService.requestValidExceptionHandling(bindingResult);
         });
@@ -45,6 +46,7 @@ public class RequestValidExceptionHandlingTest {
         Map<String, String> errorMap = new HashMap<>();
         given(bindingResult.hasErrors()).willReturn(false);
 
+        // When, Then
         assertDoesNotThrow( () -> {
             if (bindingResult.hasErrors()) {
                 validateService.requestValidExceptionHandling(bindingResult);

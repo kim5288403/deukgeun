@@ -1,21 +1,13 @@
 package com.example.deukgeun.trainer.user;
 
 import com.example.deukgeun.commom.entity.AuthMail;
-import com.example.deukgeun.commom.enums.Gender;
 import com.example.deukgeun.commom.enums.MailStatus;
 import com.example.deukgeun.commom.repository.AuthMailRepository;
 import com.example.deukgeun.commom.request.AuthMailRequest;
-import com.example.deukgeun.trainer.entity.GroupStatus;
-import com.example.deukgeun.trainer.entity.User;
-import com.example.deukgeun.trainer.repository.UserRepository;
-import com.example.deukgeun.trainer.request.JoinRequest;
-import com.example.deukgeun.trainer.service.implement.UserServiceImpl;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -23,7 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,9 +23,6 @@ import org.springframework.util.FileSystemUtils;
 import java.io.File;
 import java.io.IOException;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -64,16 +52,15 @@ public class SaveAPITest {
         File profileDirectory = new File(profileDirectoryPath);
         File backupDirectory = new File(backupDirectoryPath);
 
-
         FileUtils.copyDirectory(profileDirectory, backupDirectory);
     }
 
 
     @Test
-    void shouldSaveUserAPIForValidCredentials() throws Exception {
+    void shouldSaveUserAPIForValidFormData() throws Exception {
         // Given
-        Resource testFile = new ClassPathResource("/static/test/images/testImage.jpg");
-        MockMultipartFile profile = new MockMultipartFile("profile", "testImage.jpg", "image/jpg", testFile.getInputStream());
+        Resource classPath = new ClassPathResource("/static/test/images/testImage.jpg");
+        MockMultipartFile profile = new MockMultipartFile("profile", "testImage.jpg", "image/jpg", classPath.getInputStream());
 
         // When
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/trainer/")
@@ -103,10 +90,10 @@ public class SaveAPITest {
     }
 
     @Test
-    void shouldSaveUserAPIForInvalidCredentials() throws Exception {
+    void shouldReturnBadRequestForInvalidFormData() throws Exception {
         // Given
-        Resource testFile = new ClassPathResource("/static/test/texts/text.txt");
-        MockMultipartFile profile = new MockMultipartFile("profile", "testImage.txt", "text/plain", testFile.getInputStream());
+        Resource classPath = new ClassPathResource("/static/test/texts/text.txt");
+        MockMultipartFile profile = new MockMultipartFile("profile", "testImage.txt", "text/plain", classPath.getInputStream());
 
         // When
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/trainer/")

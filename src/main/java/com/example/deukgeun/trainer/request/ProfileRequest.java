@@ -1,6 +1,7 @@
 package com.example.deukgeun.trainer.request;
 
 import com.example.deukgeun.trainer.entity.Profile;
+import com.example.deukgeun.trainer.entity.User;
 import lombok.Data;
 
 @Data

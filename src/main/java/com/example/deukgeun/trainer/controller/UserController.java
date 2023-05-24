@@ -4,6 +4,8 @@ package com.example.deukgeun.trainer.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.request.*;
@@ -47,7 +49,7 @@ public class UserController {
      * @return 검색된 트레이너 리스트 반환
      */
     @RequestMapping(method = RequestMethod.GET, path = "/")
-    public ResponseEntity<?> getList(@RequestParam("keyword") String keyword, @RequestParam("currentPage") Integer currentPage) {
+    public ResponseEntity<?> getList(@RequestParam(value = "keyword", defaultValue = "") String keyword, @RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage) {
         Page<UserListResponse> page = userService.getList(keyword, currentPage);
         UserResponse.UserListPaginationResponse list = new UserResponse.UserListPaginationResponse(page, currentPage);
 

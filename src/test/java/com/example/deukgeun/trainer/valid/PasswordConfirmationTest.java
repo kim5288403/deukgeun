@@ -15,7 +15,7 @@ public class PasswordConfirmationTest {
     private UserServiceImpl userService;
 
     @Test
-    void shouldReturnTrueForMatchingPasswords() {
+    void shouldReturnTrueForValidPasswords() {
         // Given
         String password = "test1";
         String confirm = "test1";
@@ -28,7 +28,7 @@ public class PasswordConfirmationTest {
     }
 
     @Test
-    void shouldReturnFalseForNonMatchingPasswords() {
+    void shouldReturnFalseForInvalidPasswords() {
         // Given
         String password = "test1";
         String confirm = "test2";

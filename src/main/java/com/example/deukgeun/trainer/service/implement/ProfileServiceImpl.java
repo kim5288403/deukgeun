@@ -91,7 +91,7 @@ public class ProfileServiceImpl implements ProfileService {
      * @param profile 파일경로, 디렉토리경로 추출을 위한 파라미터
      * @throws IOException 파일 디렉토리 저장시 애러
      */
-    public void saveFileToDirectory(MultipartFile profile) throws IOException {
+    public void saveFileToDirectory(MultipartFile profile, String fileName) throws IOException {
         Path path = Paths.get(FILE_PATH).toAbsolutePath().normalize();
         Path targetPath = path.resolve(fileName).normalize();
 
@@ -123,7 +123,7 @@ public class ProfileServiceImpl implements ProfileService {
 
         Profile saveProfileData = ProfileRequest.create(fileName, userId);
         profileRepository.save(saveProfileData);
-        saveFileToDirectory(profile);
+        saveFileToDirectory(profile, fileName);
     }
 
 
@@ -140,7 +140,7 @@ public class ProfileServiceImpl implements ProfileService {
         Long profileId = getProfileId(authToken);
         fileName = getUUIDPath(profile.getOriginalFilename());
 
-        saveFileToDirectory(profile);
+        saveFileToDirectory(profile, fileName);
 
         Profile userProfile = getProfile(profileId);
         deleteFileToDirectory(userProfile.getPath());
@@ -176,8 +176,13 @@ public class ProfileServiceImpl implements ProfileService {
      * @param fileName fileName
      * @return random fileName
      */
-    public String getUUIDPath(String fileName) {
+    public String getUUIDPath(String fileName) throws IOException {
+        if (fileName == null || fileName.isEmpty()) {
+            throw new IOException("Empty fileName");
+        }
+
         String uuid = UUID.randomUUID().toString();
+
         return uuid + "_" + fileName;
     }
 }

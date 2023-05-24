@@ -1,5 +1,6 @@
 package com.example.deukgeun.trainer.profile;
 
+import com.example.deukgeun.commom.exception.RequestValidException;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -7,14 +8,14 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.IOException;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 
 @SpringBootTest
-public class ProfileGetUUIDPathTest {
+public class GetUUIDPathTest {
 
     @Autowired
     private ProfileServiceImpl profileService;
@@ -23,7 +24,7 @@ public class ProfileGetUUIDPathTest {
     private ProfileServiceImpl mockProfileService;
 
     @Test
-    public void shouldReturnUUIDPathWithFileName() {
+    public void shouldReturnUUIDPathForValidFileName() throws IOException {
         // Given
         String fileName = "example.txt";
         String uuid = UUID.randomUUID().toString();
@@ -39,7 +40,7 @@ public class ProfileGetUUIDPathTest {
 
 
     @Test
-    void shouldReturnUniqueUUIDPathForFileName() {
+    void shouldReturnUniqueUUIDPathForValidFileName() throws IOException {
         // Given
         String fileName = "example.txt";
 
@@ -52,17 +53,29 @@ public class ProfileGetUUIDPathTest {
     }
 
     @Test
-    void shouldReturnUUIDPathForEmptyFileName() {
+    void shouldThrowIOExceptionForInvalidFileName() throws IOException {
         // Given
-        String fileName = "";
-        String uuid = UUID.randomUUID().toString();
-        given(mockProfileService.getUUIDPath(fileName)).willReturn(uuid + "_" + fileName);
+        String fileName1 = "";
+        String fileName2 = null;
 
-        // When
-        String result = mockProfileService.getUUIDPath(fileName);
+        // When, Then
+        assertThrows(IOException.class, () -> {
+            profileService.getUUIDPath(fileName1);
+        });
 
-        // Then
-        String expected = uuid + "_";
-        assertEquals(expected, result);
+        assertThrows(IOException.class, () -> {
+            profileService.getUUIDPath(fileName2);
+        });
+    }
+
+    @Test
+    void shouldNotThrowExceptionForValidFileName() {
+        // Given
+        String fileName = "fileName";
+
+        // When, Then
+        assertDoesNotThrow( () -> {
+            profileService.getUUIDPath(fileName);
+        });
     }
 }
