@@ -93,9 +93,9 @@ function back() {
 	$(location).attr('href', origin);
 }
 
-function getUserEmailAjax(authToken){
+function getUserPKAjax(authToken){
 	$.ajax({
-		url : "/api/trainer/email",
+		url : "/jwt/pk",
 		type : "get",
 		beforeSend: function (xhr) {
 		xhr.setRequestHeader("Authorization", "Bearer " + authToken);

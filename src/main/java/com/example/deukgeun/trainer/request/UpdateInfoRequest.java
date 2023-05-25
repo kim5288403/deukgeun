@@ -1,18 +1,19 @@
 package com.example.deukgeun.trainer.request;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import com.example.deukgeun.commom.enums.Gender;
 import com.example.deukgeun.commom.validator.ValidEnum;
 import com.example.deukgeun.trainer.entity.GroupStatus;
 import com.example.deukgeun.trainer.validator.ValidGroupName;
 import lombok.Data;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
 @Data
 @ValidGroupName
-public class UpdateUserRequest {
+public class UpdateInfoRequest {
   @NotBlank(message = "이메일 필수 입력 값입니다.")
   @Email(message = "이메일 형식이 아닙니다.")
   private String email;
@@ -45,5 +46,5 @@ public class UpdateUserRequest {
   
   @NotBlank(message = "자기소개는 필수 입력 값입니다.")
   private String introduction;
-  
+
 }

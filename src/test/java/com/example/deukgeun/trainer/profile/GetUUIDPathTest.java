@@ -1,9 +1,7 @@
 package com.example.deukgeun.trainer.profile;
 
-import com.example.deukgeun.commom.exception.RequestValidException;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -14,8 +14,12 @@ public class GroupNameValidator implements ConstraintValidator<ValidGroupName, O
 
   @Override
   public boolean isValid(Object object, ConstraintValidatorContext context) {
-    String groupName = validateService.getFieldValue(object, "groupName");
     String groupStatus = validateService.getFieldValue(object, "groupStatus");
+    if (groupStatus == null) {
+      return false;
+    }
+
+    String groupName = validateService.getFieldValue(object, "groupName");
 
     return userService.isEmptyGroupName(groupName, groupStatus);
   }

@@ -1,17 +1,17 @@
 package com.example.deukgeun.commom.service.implement;
 
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
-import lombok.NoArgsConstructor;
+import com.example.deukgeun.commom.exception.RequestValidException;
+import com.example.deukgeun.commom.service.ValidateService;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
-import com.example.deukgeun.commom.exception.RequestValidException;
-import com.example.deukgeun.commom.service.ValidateService;
+
+import javax.validation.ValidationException;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class ValidateServiceImpl implements ValidateService{
@@ -90,17 +90,20 @@ public class ValidateServiceImpl implements ValidateService{
       dateField = clazz.getDeclaredField(fieldName);
       dateField.setAccessible(true);
       Object target = dateField.get(object);
-      
+
+      if (target == null) {
+         return null;
+      }
+
       if ((target instanceof Enum)) {
         return target.toString();
       }
-      
+
       if (!(target instanceof String)) {
         return null;
       }
       
       return target.toString();
-
     } catch (NoSuchFieldException e) {
       System.out.println("NoSuchFieldException : " + e.getMessage());
     } catch (IllegalAccessException e) {

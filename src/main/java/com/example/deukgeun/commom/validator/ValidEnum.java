@@ -11,7 +11,7 @@ import javax.validation.Payload;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidEnum {
-  String message() default "중복된 이메일 입니다.";
+  String message() default "잘못된 값 입니다.";
 
   Class<?>[] groups() default {};
 

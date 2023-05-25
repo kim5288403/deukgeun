@@ -80,7 +80,7 @@ public class GetDetailTest {
         User result = userService.getUserByAuthToken(authToken);
 
         // Then
-        assertEquals(result.getEmail(), email);
+        assertEquals(email, result.getEmail());
         assertNotNull(result);
     }
 

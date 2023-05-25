@@ -71,10 +71,6 @@ public class JoinRequest {
     @ValidFileType
     private MultipartFile profile;
 
-    public void setGroupStatus(GroupStatus groupStatus) {
-        this.groupStatus = (groupStatus != null) ? groupStatus : GroupStatus.N;
-    }
-
     public static User create(JoinRequest request, PasswordEncoder passwordEncoder) {
         return User
                 .builder()

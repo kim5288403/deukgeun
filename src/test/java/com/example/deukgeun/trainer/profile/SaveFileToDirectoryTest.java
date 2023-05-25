@@ -54,7 +54,7 @@ public class SaveFileToDirectoryTest {
         // Then
         File fileTest = new File(profileDirectoryPath + "\\" + fileName);
         assertTrue(fileTest.exists());
-        assertEquals(fileTest.getName(), fileName);
+        assertEquals(fileName, fileTest.getName());
     }
 
     @Test

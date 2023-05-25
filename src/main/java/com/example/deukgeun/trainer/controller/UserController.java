@@ -66,26 +66,11 @@ public class UserController {
      */
     @RequestMapping(method = RequestMethod.GET, path = "/detail")
     public ResponseEntity<?> getDetail(HttpServletRequest request) throws Exception {
-        String authToken = request.getHeader("Authorization").replace("Bearer ", "");
+        String authToken = jwtService.resolveAuthToken(request);
         User user = userService.getUserByAuthToken(authToken);
         UserResponse response = new UserResponse(user);
 
         return RestResponseUtil.ok("마이 페이지 조회 성공했습니다.", response);
-    }
-
-    /**
-     * 트레이너 이메일 가져오기
-     * authToken 에서 email 추출하기
-     *
-     * @param request authToken 추출을 위한 파라미터
-     * @return authToken 에서 추출된 email 데이터
-     */
-    @RequestMapping(method = RequestMethod.GET, path = "/email")
-    public ResponseEntity<?> getEmail(HttpServletRequest request) {
-        String authToken = jwtService.resolveAuthToken(request);
-        String email = jwtService.getUserPk(authToken);
-
-        return RestResponseUtil.ok("내 정보 비밀번호 조회 성공했습니다.", email);
     }
 
     /**
@@ -118,7 +103,7 @@ public class UserController {
      * @return RestResponseUtil
      */
     @RequestMapping(method = RequestMethod.PUT, path = "/")
-    public ResponseEntity<?> update(@Valid UpdateUserRequest request, BindingResult bindingResult) {
+    public ResponseEntity<?> update(@Valid UpdateInfoRequest request, BindingResult bindingResult) {
         validateService.requestValidExceptionHandling(bindingResult);
         userService.updateInfo(request);
 

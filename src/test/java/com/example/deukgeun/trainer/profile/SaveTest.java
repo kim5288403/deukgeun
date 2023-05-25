@@ -28,8 +28,8 @@ public class SaveTest {
         Profile profile = ProfileRequest.create(path, userId);
 
         // Then
-        assertEquals(profile.getPath(), path);
-        assertEquals(profile.getUserId(), userId);
+        assertEquals(path, profile.getPath());
+        assertEquals(userId, profile.getUserId());
         assertNotNull(profile);
     }
 
@@ -44,8 +44,8 @@ public class SaveTest {
         Profile saveProfile = profileRepository.save(profile);
 
         // Then
-        assertEquals(saveProfile.getUserId(), profile.getUserId());
-        assertEquals(saveProfile.getPath(), profile.getPath());
+        assertEquals(profile.getUserId(), saveProfile.getUserId());
+        assertEquals(profile.getPath(), saveProfile.getPath());
         assertNotNull(saveProfile);
     }
 
