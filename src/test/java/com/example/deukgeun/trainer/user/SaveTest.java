@@ -89,7 +89,7 @@ public class SaveTest {
 
         // When, Then
         assertThrows(DataIntegrityViolationException.class, () -> {
-            User savedUser = userService.save(joinRequest);
+            userService.save(joinRequest);
         });
     }
 

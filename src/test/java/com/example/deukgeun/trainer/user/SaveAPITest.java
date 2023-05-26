@@ -57,7 +57,7 @@ public class SaveAPITest {
 
 
     @Test
-    void shouldSaveUserAPIForValidFormData() throws Exception {
+    void shouldSaveUserAPIForValidRequest() throws Exception {
         // Given
         Resource classPath = new ClassPathResource("/static/test/images/testImage.jpg");
         MockMultipartFile profile = new MockMultipartFile("profile", "testImage.jpg", "image/jpg", classPath.getInputStream());

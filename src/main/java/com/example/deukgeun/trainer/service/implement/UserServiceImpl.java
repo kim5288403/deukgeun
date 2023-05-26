@@ -16,6 +16,8 @@ import com.example.deukgeun.trainer.response.UserResponse.UserListResponse;
 import com.example.deukgeun.trainer.service.UserService;
 import lombok.RequiredArgsConstructor;
 
+import javax.persistence.EntityNotFoundException;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -25,7 +27,7 @@ public class UserServiceImpl implements UserService {
   private final JwtServiceImpl jwtService;
   private final PasswordEncoder passwordEncoder;
 
-  public void login(LoginRequest request) throws Exception {
+  public void login(LoginRequest request) throws EntityNotFoundException {
     String email = request.getEmail();
     String password = request.getPassword();
 
@@ -34,7 +36,7 @@ public class UserServiceImpl implements UserService {
     boolean check = passwordEncoder.matches(password, user.getPassword());
 
     if (!check) {
-      throw new Exception("사용자를 찾을 수 없습니다.");
+      throw new EntityNotFoundException("사용자를 찾을 수 없습니다.");
     }
   }
 
@@ -68,11 +70,11 @@ public class UserServiceImpl implements UserService {
    *
    * @param email 이메일
    * @return findByEmail User data
-   * @throws Exception When you can't find it
+   * @throws EntityNotFoundException When you can't find it
    */
-  public User getUserByEmail(String email) throws Exception {
+  public User getUserByEmail(String email) throws EntityNotFoundException {
     return userRepository.findByEmail(email)
-            .orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다."));
+            .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
   }
 
   /**
@@ -80,9 +82,9 @@ public class UserServiceImpl implements UserService {
    * 
    * @param authToken jwt
    * @return find User data
-   * @throws Exception When you can't find it
+   * @throws EntityNotFoundException When you can't find it
    */
-  public User getUserByAuthToken(String authToken) throws Exception {
+  public User getUserByAuthToken(String authToken) throws EntityNotFoundException {
     String email = jwtService.getUserPk(authToken);
     
     return getUserByEmail(email);
@@ -136,9 +138,9 @@ public class UserServiceImpl implements UserService {
    *
    * @param authToken jwt
    * @return user Id
-   * @throws Exception When you can't find it
+   * @throws EntityNotFoundException When you can't find it
    */
-  public Long getUserId(String authToken) throws Exception {
+  public Long getUserId(String authToken) throws EntityNotFoundException {
     User user = getUserByAuthToken(authToken);
     
     return user.getId();

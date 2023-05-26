@@ -1,19 +1,6 @@
 package com.example.deukgeun.trainer.service.implement;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.util.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
-import com.example.deukgeun.global.provider.JwtProvider;
+import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
 import com.example.deukgeun.trainer.entity.Post;
 import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.repository.PostRepository;
@@ -21,14 +8,32 @@ import com.example.deukgeun.trainer.request.PostRequest;
 import com.example.deukgeun.trainer.response.PostResponse;
 import com.example.deukgeun.trainer.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
+
+import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
+import java.io.File;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService{
   
-  private final JwtProvider jwtProvider;
   private final UserServiceImpl userService;
+  private final JwtServiceImpl jwtService;
   private final PostRepository postRepository;
   
   @Value("${trainer.post.filePath}")
@@ -144,12 +149,12 @@ public class PostServiceImpl implements PostService{
   }
 
   @Cacheable(value = "post", key = "#id", cacheManager = "projectCacheManager")
-  public Post findByUserId(Long id) throws Exception {
-    return postRepository.findByUserId(id).orElseThrow(() -> new Exception("게시글을 찾을 수 없습니다."));
+  public Post findByUserId(Long id) throws EntityNotFoundException {
+    return postRepository.findByUserId(id).orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
   }
   
   public PostResponse getPost(String authToken) throws Exception {
-    String email = jwtProvider.getUserPk(authToken);
+    String email = jwtService.getUserPk(authToken);
     User user = userService.getUserByAuthToken(email);
     Post post = findByUserId(user.getId());
     

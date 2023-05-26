@@ -3,6 +3,7 @@ package com.example.deukgeun.trainer.request;
 import com.example.deukgeun.commom.enums.Gender;
 import com.example.deukgeun.commom.validator.ValidEnum;
 import com.example.deukgeun.trainer.entity.GroupStatus;
+import com.example.deukgeun.trainer.validator.ValidEmailAndPw;
 import com.example.deukgeun.trainer.validator.ValidGroupName;
 import lombok.Data;
 
@@ -13,10 +14,14 @@ import javax.validation.constraints.Pattern;
 
 @Data
 @ValidGroupName
+@ValidEmailAndPw
 public class UpdateInfoRequest {
   @NotBlank(message = "이메일 필수 입력 값입니다.")
   @Email(message = "이메일 형식이 아닙니다.")
   private String email;
+
+  @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
+  private String password;
   
   @NotBlank(message = "이름 필수 입력 값입니다.")
   @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-z-_]{2,10}$", message = "이름은 한글 2~10자리여야 합니다.")

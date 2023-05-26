@@ -12,7 +12,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
 import com.example.deukgeun.global.filter.JwtAuthenticationFilter;
-import com.example.deukgeun.global.provider.JwtProvider;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -20,9 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig{
   
-    private final JwtProvider jwtTokenProvider;
-    private final JwtServiceImpl jwtService;
-  
+  	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 	@Bean
 	public PasswordEncoder getPasswordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -46,7 +43,7 @@ public class SecurityConfig{
 		.antMatchers("/trainer/test").authenticated()
 		.antMatchers("/trainer").permitAll()
 		.and()
-		.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, jwtService),
+		.addFilterBefore(jwtAuthenticationFilter,
             UsernamePasswordAuthenticationFilter.class)
 		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 		.and()

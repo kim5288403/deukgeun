@@ -4,6 +4,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.Random;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -111,9 +113,9 @@ public class MailServiceImpl implements MailService{
     return authMailRepository.existsByEmailAndCode(email, code);
   }
 
-  public boolean isEmailAuthenticated(String email) throws Exception {
+  public boolean isEmailAuthenticated(String email) throws EntityNotFoundException {
       AuthMail authMail = authMailRepository.findByEmail(email).orElseThrow(
-              () -> new Exception("사용자를 찾을 수 없습니다."));
+              () -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
 
      return authMail.getStatus() == MailStatus.Y;
   }

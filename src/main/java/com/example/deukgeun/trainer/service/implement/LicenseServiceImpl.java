@@ -15,6 +15,8 @@ import com.example.deukgeun.trainer.response.LicenseResultResponse;
 import com.example.deukgeun.trainer.service.LicenseService;
 import lombok.RequiredArgsConstructor;
 
+import javax.persistence.EntityNotFoundException;
+
 @RequiredArgsConstructor
 @Service
 public class LicenseServiceImpl implements LicenseService{
@@ -32,7 +34,7 @@ public class LicenseServiceImpl implements LicenseService{
     return licenseRepository.findByUserId(userId);
   }
 
-  public void save(SaveLicenseRequest request, String authToken) throws Exception {
+  public void save(SaveLicenseRequest request, String authToken) throws EntityNotFoundException {
     LicenseResultResponse licenseResult = checkLicense(request);
     
     if (licenseResult.getResult()) {
@@ -42,7 +44,7 @@ public class LicenseServiceImpl implements LicenseService{
       licenseRepository.save(license);
       
     } else {
-      throw new Exception("존재하지않는 자격증 정보 입니다.");
+      throw new EntityNotFoundException("존재하지않는 자격증 정보 입니다.");
     }
   }
 

@@ -145,14 +145,13 @@ public class UserController {
             @Valid WithdrawalUserRequest withdrawalRequest,
             BindingResult bindingResult
     ) throws Exception {
-
         validateService.requestValidExceptionHandling(bindingResult);
 
         String authToken =  jwtService.resolveAuthToken(request);
         Long profileId = profileService.getProfileId(authToken);
         Profile userProfile = profileService.getProfile(profileId);
 
-        //포로필 이미지 삭제
+        //프로필 이미지 삭제
         profileService.deleteFileToDirectory(userProfile.getPath());
 
         profileService.withdrawal(profileId);
@@ -161,6 +160,7 @@ public class UserController {
         userService.withdrawal(userProfile.getUserId());
 
         //토큰 삭제
+        jwtService.deleteToken(authToken);
         jwtService.deleteToken(authToken);
 
         return RestResponseUtil

@@ -21,6 +21,8 @@ import com.example.deukgeun.trainer.request.ProfileRequest;
 import com.example.deukgeun.trainer.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 
+import javax.persistence.EntityNotFoundException;
+
 @Service
 @RequiredArgsConstructor
 public class ProfileServiceImpl implements ProfileService {
@@ -43,8 +45,8 @@ public class ProfileServiceImpl implements ProfileService {
      * @throws Exception 일치하는 데이터가 없을 경우 Exception 발생
      */
     @Cacheable(value = "profile", key = "#profileId", cacheManager = "projectCacheManager")
-    public Profile getProfile(Long profileId) throws Exception {
-        return profileRepository.findById(profileId).orElseThrow(() -> new Exception("게시글을 찾을 수 없습니다."));
+    public Profile getProfile(Long profileId) throws EntityNotFoundException {
+        return profileRepository.findById(profileId).orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
     }
 
     /**
@@ -68,10 +70,10 @@ public class ProfileServiceImpl implements ProfileService {
      *
      * @param userId user id를 비교하기 위한 파라미터
      * @return profile data
-     * @throws Exception 일치하는 데이터가 없을 경우 Exception 발생
+     * @throws IllegalArgumentException 일치하는 데이터가 없을 경우 Exception 발생
      */
-    public Profile getByUserId(Long userId) throws Exception {
-        return profileRepository.findByUserId(userId).orElseThrow(() -> new Exception("프로필을 찾을 수 없습니다."));
+    public Profile getByUserId(Long userId) throws EntityNotFoundException {
+        return profileRepository.findByUserId(userId).orElseThrow(() -> new EntityNotFoundException("프로필을 찾을 수 없습니다."));
     }
 
     /**
@@ -102,10 +104,10 @@ public class ProfileServiceImpl implements ProfileService {
      * 디렉토리에 파일 삭제
      * 해당 파일 경로에 파일이 존재하면 삭제
      *
-     * @param path 파일 경로
+     * @param fileName 파일 경로
      */
-    public void deleteFileToDirectory(String path) {
-        File file = new File(FILE_PATH + "\\" + path);
+    public void deleteFileToDirectory(String fileName) {
+        File file = new File(FILE_PATH + "\\" + fileName);
         if (file.exists()) {
             file.delete();
         }

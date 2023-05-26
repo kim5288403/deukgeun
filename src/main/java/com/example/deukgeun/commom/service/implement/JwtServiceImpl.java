@@ -1,38 +1,171 @@
 package com.example.deukgeun.commom.service.implement;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.example.deukgeun.trainer.service.implement.UserDetailServiceImpl;
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import com.example.deukgeun.commom.entity.Token;
 import com.example.deukgeun.commom.repository.TokenRepository;
 import com.example.deukgeun.commom.request.TokenRequest;
 import com.example.deukgeun.commom.service.JwtService;
-import com.example.deukgeun.global.provider.JwtProvider;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Base64;
+import java.util.Date;
 
 @RequiredArgsConstructor
 @Service
 public class JwtServiceImpl implements JwtService{
+  private final TokenRepository tokenRepository;
+  private final UserDetailServiceImpl userDetailService;
 
   @Value("${deukgeun.role.trainer}")
   private String role;
-  
-  private final JwtProvider jwtProvider;
-  private final TokenRepository tokenRepository;
+  @Value("${jwt.secretKey}")
+  private String secretKey;
+  @Value("${jwt.authTokenTime}")
+  private long authTokenTime;
+  @Value("${jwt.refreshTokenTime}")
+  private long refreshTokenTime;
+
 
   /**
-   * authToken 토큰에서 pk 추출
+   * 빈이 생성될 때 자동으로 객체에 secretKey 를  Base64 encoding 된 값으로 초기화
    *
-   * @param authToken 인증 토큰 값
-   * @return  토큰에서 pk 추출된 값
    */
-  public String getUserPk(String authToken) {
-    return jwtProvider.getUserPk(authToken);
+  @PostConstruct
+  protected void init() {
+    secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+  }
+
+  /**
+   * auth 토큰 생성
+   * 파라미터로 Claims 에 담아 jwt 형식에 토큰 생성
+   *
+   * @param userPk = email
+   * @param roles = trainer or user
+   * @return jwt 형식에 인증 토큰
+   */
+  public String createAuthToken(String userPk, String roles) {
+    Claims claims = Jwts.claims().setSubject(userPk);
+    claims.put("roles", roles);
+    Date now = new Date();
+
+    return Jwts.builder()
+            .setClaims(claims)
+            .setIssuedAt(now)
+            .setExpiration(new Date(now.getTime() + authTokenTime))
+            .signWith(SignatureAlgorithm.HS256, secretKey)
+            .compact();
+  }
+
+  /**
+   * refresh 토큰 생성
+   * 파라미터로 Claims 에 담아 jwt 형식에 토큰 생성
+   *
+   * @param userPk = email
+   * @param roles  = trainer or user
+   * @return jwt 형식에 refreshToken
+   */
+  public String createRefreshToken(String userPk, String roles) {
+    Claims claims = Jwts.claims().setSubject(userPk);
+    claims.put("roles", roles);
+    Date now = new Date();
+
+    return Jwts.builder()
+            .setClaims(claims)
+            .setIssuedAt(now)
+            .setExpiration(new Date(now.getTime() + refreshTokenTime))
+            .signWith(SignatureAlgorithm.HS256, secretKey)
+            .compact();
+  }
+
+  /**
+   * auth 토큰 response 헤더에 설정
+   *
+   * @param response HttpServletResponse
+   * @param authToken 인증 토큰
+   */
+  public void setHeaderAccessToken(HttpServletResponse response, String authToken) {
+    response.setHeader("Authorization", "Bearer " + authToken);
+  }
+
+  /**
+   * refresh 토큰 response 헤더에 설정
+   *
+   * @param response HttpServletResponse
+   * @param refreshToken refreshToken 인증 토큰
+   */
+  public void setHeaderRefreshToken(HttpServletResponse response, String refreshToken) {
+    response.setHeader("RefreshToken", "Bearer " + refreshToken);
+  }
+
+  /**
+   * role response 헤더에 설정
+   *
+   * @param response HttpServletResponse
+   * @param role = trainer or user
+   */
+  public void setHeaderRole(HttpServletResponse response, String role) {
+    response.setHeader("role", role);
+  }
+
+  /**
+   * JWT 에서 유저 정보 조회
+   *
+   * @param token 인증 토큰
+   * @return Authentication 조회된 유저 정보
+   */
+  public Authentication getAuthentication(String token) {
+    UserDetails userDetails = userDetailService.loadUserByUsername(this.getUserPk(token));
+    return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+  }
+
+  /**
+   * JWT 에서 UserPk 추출
+   *
+   * @param token 인증 토큰
+   * @return 추출된 UserPk
+   */
+  public String getUserPk(String token) {
+    return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+  }
+
+
+  /**
+   * JWT 에서 UserRole 추출
+   *
+   * @param token 인증 토큰
+   * @return 추출된 UserRole
+   */
+  public String getUserRole(String token) {
+    return (String) Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("roles");
+  }
+
+  /**
+   * 토큰의 유효성 검사
+   *
+   * @param jwtToken
+   * @return 유효성 검사 결과
+   */
+  public boolean validateToken(String jwtToken) {
+    try {
+      Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
+
+      return !claims.getBody().getExpiration().before(new Date());
+    } catch (Exception e) {
+      return false;
+    }
   }
 
   /**
@@ -43,10 +176,10 @@ public class JwtServiceImpl implements JwtService{
    * @return 새로 등록된 인증 토큰 값
    */
   public String setCreateToken(String email, HttpServletResponse response) {
-    String authToken = jwtProvider.createAuthToken(email, role);
-    String refreshToken = jwtProvider.createRefreshToken(email, role);
+    String authToken = createAuthToken(email, role);
+    String refreshToken = createRefreshToken(email, role);
     
-    jwtProvider.setHeaderAccessToken(response, authToken);
+    setHeaderAccessToken(response, authToken);
     Token token = TokenRequest.create(authToken, refreshToken);
     
     createToken(token);
@@ -72,6 +205,22 @@ public class JwtServiceImpl implements JwtService{
   @CacheEvict(value = "token", key = "#authToken", cacheManager = "projectCacheManager")
   public void deleteToken(String authToken) {
     tokenRepository.deleteByAuthToken(authToken);
+  }
+
+  public boolean expireToken(String token) {
+    try {
+      Claims claims = Jwts.parser()
+              .setSigningKey(secretKey)
+              .parseClaimsJws(token)
+              .getBody();
+
+      Date expirationDate = claims.getExpiration();
+      return expirationDate.before(new Date());
+    } catch (ExpiredJwtException ex) {
+      return true; // 토큰이 이미 만료된 경우
+    } catch (Exception ex) {
+      return true; // 토큰 파싱이 실패한 경우
+    }
   }
 
   /**
