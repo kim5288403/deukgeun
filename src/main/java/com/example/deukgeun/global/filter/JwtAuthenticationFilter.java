@@ -41,7 +41,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         String role = jwtService.getUserRole(authToken);
 
         jwtService.setHeaderRole(response, role);
-        jwtService.setHeaderAccessToken(response, authToken);
+        jwtService.setHeaderAuthToken(response, authToken);
         
         this.setAuthentication(authToken);
       }
@@ -56,7 +56,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
            
            jwtService.updateAuthToken(authToken, newAuthToken);
            jwtService.setHeaderRole(response, role);
-           jwtService.setHeaderAccessToken(response, newAuthToken);
+           jwtService.setHeaderAuthToken(response, newAuthToken);
            
            this.setAuthentication(newAuthToken);
          }

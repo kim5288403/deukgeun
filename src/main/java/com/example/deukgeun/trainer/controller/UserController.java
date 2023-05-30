@@ -43,86 +43,94 @@ public class UserController {
     private String role;
 
     /**
-     * 트레이너 조건 검색
+     * 키워드와 현재 페이지를 기반으로 사용자 목록을 조회합니다.
      *
-     * @param keyword 검색어
-     * @return 검색된 트레이너 리스트 반환
+     * @param keyword      검색 키워드 (기본값: "")
+     * @param currentPage  현재 페이지 번호 (기본값: 1)
+     * @return ResponseEntity 객체
      */
     @RequestMapping(method = RequestMethod.GET, path = "/")
     public ResponseEntity<?> getList(@RequestParam(value = "keyword", defaultValue = "") String keyword, @RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage) {
+        // 키워드와 현재 페이지를 기반으로 사용자 목록 조회
         Page<UserListResponse> page = userService.getList(keyword, currentPage);
+
+        // 사용자 목록을 UserListPaginationResponse 형식으로 변환
         UserResponse.UserListPaginationResponse list = new UserResponse.UserListPaginationResponse(page, currentPage);
 
         return RestResponseUtil.ok("조회 성공 했습니다.", list);
     }
 
     /**
-     * 트레이너 상세보기
-     * authToken 에서 추출된 email 에 해당된 트레이너 데이터 가져오기
+     * 사용자 상세 정보를 조회합니다.
      *
-     * @param request authToken 추출을 위한 파라미터
-     * @return email 에 해당된 트레이너 데이터
-     * @throws Exception
+     * @param request HttpServletRequest 객체
+     * @return ResponseEntity 객체
      */
     @RequestMapping(method = RequestMethod.GET, path = "/detail")
-    public ResponseEntity<?> getDetail(HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> getDetail(HttpServletRequest request) {
+        // 인증 토큰에서 사용자의 인증 정보를 추출
         String authToken = jwtService.resolveAuthToken(request);
         User user = userService.getUserByAuthToken(authToken);
+
+        // 사용자 정보를 응답 객체로 변환
         UserResponse response = new UserResponse(user);
 
         return RestResponseUtil.ok("마이 페이지 조회 성공했습니다.", response);
     }
 
     /**
-     * 트레이너 회원 가입
-     * 사용자를 저장 한 후 사용자 save get id 로 프로필 이미지 저장
+     * 회원을 저장하고 프로필을 저장합니다.
      *
-     * @param request 유효성 검사를 통과한 회원가입 데이터
-     * @param bindingResult request data validator 결과를 담는 역할
-     * @return RestResponseUtil
+     * @param request        가입 요청 객체
+     * @param bindingResult  유효성 검사 결과 객체
+     * @return ResponseEntity 객체
+     * @throws IOException  파일 처리 예외 발생 시
      */
     @Transactional
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> save(@Valid JoinRequest request, BindingResult bindingResult) throws IOException {
         validateService.requestValidExceptionHandling(bindingResult);
 
-        //user save
+        // 사용자 저장
         User saveUser = userService.save(request);
 
-        //profile save
+        // 프로필 저장
         profileService.save(request.getProfile(), saveUser.getId());
 
         return RestResponseUtil.ok("회원 가입 성공 했습니다.", null);
     }
 
     /**
-     * 트레이너 정보 수정
+     * 사용자 정보를 업데이트합니다.
      *
-     * @param request       from update data 추출을 위한 파라미터
-     * @param bindingResult request data validator 결과를 담는 역할
-     * @return RestResponseUtil
+     * @param request        정보 업데이트 요청 객체
+     * @param bindingResult  유효성 검사 결과 객체
+     * @return ResponseEntity 객체
      */
     @RequestMapping(method = RequestMethod.PUT, path = "/")
     public ResponseEntity<?> update(@Valid UpdateInfoRequest request, BindingResult bindingResult) {
         validateService.requestValidExceptionHandling(bindingResult);
+
+        // 정보 업데이트
         userService.updateInfo(request);
 
         return RestResponseUtil.ok("내 정보 수정 성공했습니다.", null);
     }
 
     /**
-     * 트레이너 비밀번호 수정
-     * 기존 비밀번호, 변경 비밀번호 유효성 검사 후 비밀번호 변경
+     * 비밀번호를 업데이트합니다.
      *
-     * @param request  from update data 추출을 위한 파라미터
-     * @param bindingResult request data validator 결과를 담는 역할
-     * @return RestResponseUtil
+     * @param request        비밀번호 업데이트 요청 객체
+     * @param bindingResult  유효성 검사 결과 객체
+     * @return ResponseEntity 객체
      */
     @RequestMapping(method = RequestMethod.PUT, path = "/password")
     public ResponseEntity<?> updatePassword(
             @Valid UpdatePasswordRequest request,
             BindingResult bindingResult) {
         validateService.requestValidExceptionHandling(bindingResult);
+
+        // 비밀번호 업데이트
         userService.updatePassword(request);
 
         return RestResponseUtil
@@ -130,37 +138,39 @@ public class UserController {
     }
 
     /**
-     * 트레이너 회원 탈퇴
-     * 트레이너 탈퇴 유효성 검사후 사용자 관련된 데이터 삭제 및 회원 탈퇴
+     * 회원 탈퇴를 처리합니다.
      *
-     * @param request authToken 추출을 위한 파라미터
-     * @param withdrawalRequest from withdrawal data 추출을 위한 파라미터
-     * @param bindingResult request data validator 결과를 담는 역할
-     * @return RestResponseUtil
-     * @throws Exception
+     * @param request             HTTP 요청 객체
+     * @param withdrawalRequest   회원 탈퇴 요청 객체
+     * @param bindingResult       유효성 검사 결과 객체
+     * @return ResponseEntity 객체
+     * @throws Exception         예외 발생 시
      */
     @RequestMapping(method = RequestMethod.DELETE, path = "/")
     public ResponseEntity<?> withdrawal(
             HttpServletRequest request,
             @Valid WithdrawalUserRequest withdrawalRequest,
             BindingResult bindingResult
-    ) throws Exception {
+    ) {
         validateService.requestValidExceptionHandling(bindingResult);
 
-        String authToken =  jwtService.resolveAuthToken(request);
-        Long profileId = profileService.getProfileId(authToken);
-        Profile userProfile = profileService.getProfile(profileId);
+        // 이메일을 기반으로 사용자 조회
+        User user = userService.getUserByEmail(withdrawalRequest.getEmail());
 
-        //프로필 이미지 삭제
+        // 프로필 조회
+        Profile userProfile = profileService.getByUserId(user.getId());
+
+        // 디렉토리 프로필 삭제
         profileService.deleteFileToDirectory(userProfile.getPath());
 
-        profileService.withdrawal(profileId);
+        // DB 프로필 삭제
+        profileService.withdrawal(userProfile.getId());
 
         //사용자 삭제
-        userService.withdrawal(userProfile.getUserId());
+        userService.withdrawal(user.getId());
 
         //토큰 삭제
-        jwtService.deleteToken(authToken);
+        String authToken = jwtService.resolveAuthToken(request);
         jwtService.deleteToken(authToken);
 
         return RestResponseUtil
@@ -168,22 +178,29 @@ public class UserController {
     }
 
     /**
-     * 트레이너 로그인
-     * 로그인 데이터로 authToken 생성, 저장, 반환
+     * 로그인을 처리합니다.
      *
-     * @param request 유효성 검사를 통과한 로그인 데이터
-     * @param bindingResult  request data validator 결과를 담는 역할
-     * @param response
-     * @return LoginResponse => authToken, role
+     * @param request         로그인 요청 객체
+     * @param bindingResult   유효성 검사 결과 객체
+     * @param response        HTTP 응답 객체
+     * @return ResponseEntity 객체
      */
     @RequestMapping(method = RequestMethod.POST, path = "/login")
-    public ResponseEntity<?> login(@Valid LoginRequest request, BindingResult bindingResult, HttpServletResponse response) throws Exception {
+    public ResponseEntity<?> login(@Valid LoginRequest request, BindingResult bindingResult, HttpServletResponse response) {
         validateService.requestValidExceptionHandling(bindingResult);
 
+        // 사용자 로그인 처리
         userService.login(request);
 
-        String authToken = jwtService.setCreateToken(request.getEmail(), response);
-        LoginResponse loginResponse = LoginResponse.builder().authToken(authToken).role(role).build();
+        // JWT 토큰 생성 및 설정
+        String authToken = jwtService.setToken(request.getEmail(), response);
+
+        // 로그인 응답 객체 생성
+        LoginResponse loginResponse = LoginResponse
+                .builder()
+                .authToken(authToken)
+                .role(role)
+                .build();
 
         return RestResponseUtil.ok("로그인 성공 했습니다.", loginResponse);
     }

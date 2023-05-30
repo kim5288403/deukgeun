@@ -5,9 +5,11 @@ import javax.validation.constraints.NotBlank;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class LoginRequest {
   
   @NotBlank(message = "이메일 필수 입력 값입니다.")

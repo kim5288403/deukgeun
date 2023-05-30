@@ -33,7 +33,7 @@ public class JwtController {
   @RequestMapping(method = RequestMethod.GET, path = "/logout")
   public ResponseEntity<?> logout(HttpServletRequest request) {
     
-    String authToken = request.getHeader("Authorization").replace("Bearer ", "");
+    String authToken = jwtService.resolveAuthToken(request);
     jwtService.deleteToken(authToken);
     
     return RestResponseUtil

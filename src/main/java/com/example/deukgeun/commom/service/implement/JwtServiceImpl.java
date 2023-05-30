@@ -77,8 +77,8 @@ public class JwtServiceImpl implements JwtService{
    * @param roles  = trainer or user
    * @return jwt 형식에 refreshToken
    */
-  public String createRefreshToken(String userPk, String roles) {
-    Claims claims = Jwts.claims().setSubject(userPk);
+  public String createRefreshToken(String roles) {
+    Claims claims = Jwts.claims().setSubject("");
     claims.put("roles", roles);
     Date now = new Date();
 
@@ -96,7 +96,7 @@ public class JwtServiceImpl implements JwtService{
    * @param response HttpServletResponse
    * @param authToken 인증 토큰
    */
-  public void setHeaderAccessToken(HttpServletResponse response, String authToken) {
+  public void setHeaderAuthToken(HttpServletResponse response, String authToken) {
     response.setHeader("Authorization", "Bearer " + authToken);
   }
 
@@ -175,13 +175,12 @@ public class JwtServiceImpl implements JwtService{
    * @param response HttpServletResponse
    * @return 새로 등록된 인증 토큰 값
    */
-  public String setCreateToken(String email, HttpServletResponse response) {
+  public String setToken(String email, HttpServletResponse response) {
     String authToken = createAuthToken(email, role);
-    String refreshToken = createRefreshToken(email, role);
-    
-    setHeaderAccessToken(response, authToken);
+    setHeaderAuthToken(response, authToken);
+
+    String refreshToken = createRefreshToken(role);
     Token token = TokenRequest.create(authToken, refreshToken);
-    
     createToken(token);
     
     return authToken;
@@ -205,22 +204,6 @@ public class JwtServiceImpl implements JwtService{
   @CacheEvict(value = "token", key = "#authToken", cacheManager = "projectCacheManager")
   public void deleteToken(String authToken) {
     tokenRepository.deleteByAuthToken(authToken);
-  }
-
-  public boolean expireToken(String token) {
-    try {
-      Claims claims = Jwts.parser()
-              .setSigningKey(secretKey)
-              .parseClaimsJws(token)
-              .getBody();
-
-      Date expirationDate = claims.getExpiration();
-      return expirationDate.before(new Date());
-    } catch (ExpiredJwtException ex) {
-      return true; // 토큰이 이미 만료된 경우
-    } catch (Exception ex) {
-      return true; // 토큰 파싱이 실패한 경우
-    }
   }
 
   /**

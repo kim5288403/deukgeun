@@ -2,7 +2,6 @@ package com.example.deukgeun.trainer.jwt;
 
 import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.jupiter.api.Test;
@@ -10,29 +9,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Base64;
 import java.util.Date;
 
-@SpringBootTest
-public class ExpireToken {
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@SpringBootTest
+public class SetHeaderAuthTokenTest {
     @Autowired
     private JwtServiceImpl jwtService;
+    @Autowired
+    private HttpServletResponse httpServletResponse;
     @Value("${jwt.secretKey}")
     private String secretKey;
     @Value("${deukgeun.role.trainer}")
     private String role;
     @Value("${jwt.authTokenTime}")
     private long authTokenTime;
+
     @Test
-    void shouldExpireTokenForValidToken() {
+    void shouldSetHeaderAuthTokenForValidParameter() {
         // Given
-        String email = "testEmail@test.com";
+        String email = "testEmail@email.com";
         String encodeSecretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
         Claims claims = Jwts.claims().setSubject(email);
         claims.put("roles", role);
         Date now = new Date();
-
         String jwt = Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
@@ -41,8 +44,10 @@ public class ExpireToken {
                 .compact();
 
         // When
-        jwtService.expireToken(jwt);
-        Jws<Claims> result = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwt);
+        jwtService.setHeaderAuthToken(httpServletResponse, jwt);
+        String result = httpServletResponse.getHeader("Authorization").replace("Bearer ", "");
 
+        // Then
+        assertEquals(jwt, result);
     }
 }

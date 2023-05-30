@@ -42,7 +42,6 @@ public class GetDetailTest {
     @BeforeEach
     void setUp() {
         JoinRequest joinRequest = new JoinRequest();
-        joinRequest.setPassword("test1!2@");
         joinRequest.setName("테스트");
         joinRequest.setEmail("testEmail@test.com");
         joinRequest.setPassword("test1!2@");

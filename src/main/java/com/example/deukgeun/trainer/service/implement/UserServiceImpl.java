@@ -1,5 +1,6 @@
 package com.example.deukgeun.trainer.service.implement;
 
+import com.example.deukgeun.commom.exception.PasswordMismatchException;
 import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
 import com.example.deukgeun.trainer.request.JoinRequest;
 import com.example.deukgeun.trainer.request.LoginRequest;
@@ -36,7 +37,7 @@ public class UserServiceImpl implements UserService {
     boolean check = passwordEncoder.matches(password, user.getPassword());
 
     if (!check) {
-      throw new EntityNotFoundException("사용자를 찾을 수 없습니다.");
+      throw new PasswordMismatchException("사용자를 찾을 수 없습니다.");
     }
   }
 

@@ -10,5 +10,7 @@ public class LicenseResultResponse {
   private Boolean result;
   
   private String certificatename;
+
+  private String no;
   
 }

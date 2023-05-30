@@ -5,50 +5,44 @@ import com.example.deukgeun.trainer.entity.GroupStatus;
 import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.repository.UserRepository;
 import com.example.deukgeun.trainer.request.JoinRequest;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Base64;
-import java.util.Date;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-public class GetDetailAPITest {
+public class LoginAPITest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private UserRepository userRepository;
-    @Mock
+    @Autowired
     private PasswordEncoder passwordEncoder;
-    @Value("${jwt.secretKey}")
-    private String secretKey;
-    @Value("${deukgeun.role.trainer}")
-    private String role;
-    @Value("${jwt.authTokenTime}")
-    private long authTokenTime;
+
+    private String email;
+    private String password;
 
     @BeforeEach
-    void setUp() {
+    void setup() {
+        email = "loginTest@email.com";
+        password = "test1!2@";
+
         JoinRequest joinRequest = new JoinRequest();
         joinRequest.setName("테스트");
-        joinRequest.setEmail("testEmail@test.com");
-        joinRequest.setPassword("test1!2@");
+        joinRequest.setEmail(email);
+        joinRequest.setPassword(password);
         joinRequest.setGroupStatus(GroupStatus.Y);
         joinRequest.setGroupName("testGroupName");
         joinRequest.setPostcode("testPostCode");
@@ -63,49 +57,31 @@ public class GetDetailAPITest {
         User user = JoinRequest.create(joinRequest, passwordEncoder);
         userRepository.save(user);
     }
-
     @Test
-    void shouldGetDetailAPIForValidRequest() throws Exception {
-        // Given
-        String encodeSecretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
-        Claims claims = Jwts.claims().setSubject("testEmail@test.com");
-        claims.put("roles", role);
-        Date now = new Date();
-
-        String jwt = Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + authTokenTime))
-                .signWith(SignatureAlgorithm.HS256, encodeSecretKey)
-                .compact();
+    void shouldLoginApiForValidRequest() throws Exception {
 
         // When
-        mockMvc.perform(get("/api/trainer/detail")
-                .header("Authorization", jwt))
+        mockMvc.perform(post("/api/trainer/login")
+                                .param("email", email)
+                                .param("password", password)
+                        )
                 // Then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value("마이 페이지 조회 성공했습니다."));
+                .andExpect(jsonPath("$.message").value("로그인 성공 했습니다."))
+                .andExpect(jsonPath("$.data.role").value("trainer"));
     }
 
     @Test
-    void shouldBadRequestForInvalidRequest() throws Exception {
-        // Given
-        String encodeSecretKey = Base64.getEncoder().encodeToString("invalidSecretKey".getBytes());
-        Claims claims = Jwts.claims().setSubject("testEmail@test.com");
-        claims.put("roles", role);
-        Date now = new Date();
-        String jwt = Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + authTokenTime))
-                .signWith(SignatureAlgorithm.HS256, encodeSecretKey)
-                .compact();
+    void shouldLoginApiForInvalidRequest() throws Exception {
 
         // When
-        mockMvc.perform(get("/api/trainer/detail")
-                        .header("Authorization", jwt))
+        mockMvc.perform(post("/api/trainer/login")
+                        .param("email", "invalidEmail")
+                        .param("password", password)
+                )
                 // Then
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("잘못된 JWT signature 형식입니다."));
+                .andExpect(jsonPath("$.message").value("request error!"))
+                .andExpect(jsonPath("$.data.valid_loginRequest").value("이메일 형식이 아닙니다."));
     }
 }

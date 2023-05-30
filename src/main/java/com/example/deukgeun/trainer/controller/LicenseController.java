@@ -6,6 +6,7 @@ import com.example.deukgeun.commom.util.RestResponseUtil;
 import com.example.deukgeun.trainer.request.RemoveLicenseRequest;
 import com.example.deukgeun.trainer.request.SaveLicenseRequest;
 import com.example.deukgeun.trainer.response.LicenseListResponse;
+import com.example.deukgeun.trainer.response.LicenseResultResponse;
 import com.example.deukgeun.trainer.service.implement.LicenseServiceImpl;
 import com.example.deukgeun.trainer.service.implement.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -30,10 +31,10 @@ public class LicenseController {
     private final JwtServiceImpl jwtService;
 
     /**
-     * userId 에 해당하는 자격증 데이터 가져오기
+     * ID를 기반으로 자격증 목록을 조회합니다.
      *
-     * @param id userId
-     * @return RestResponseUtil
+     * @param id 조회할 자격증의 사용자 ID
+     * @return ResponseEntity 객체
      */
     @RequestMapping(method = RequestMethod.GET, path = "/{id}")
     public ResponseEntity<?> getListById(@PathVariable Long id) {
@@ -44,55 +45,65 @@ public class LicenseController {
     }
 
     /**
-     * authToken 에 해당하는 자격증 데이터 가져오기
+     * 인증 토큰을 사용하여 자격증 목록을 조회합니다.
      *
-     * @param request authToken 추출을 위한 파라미터
-     * @return RestResponseUtil 자격증 데이터
-     * @throws Exception
+     * @param request HttpServletRequest 객체
+     * @return ResponseEntity 객체
      */
     @RequestMapping(method = RequestMethod.GET, path = "/")
-    public ResponseEntity<?> getListByAuthToken(HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> getListByAuthToken(HttpServletRequest request) {
+        // 인증 토큰을 사용하여 사용자 ID 조회
         String authToken = jwtService.resolveAuthToken(request);
         Long userId = userService.getUserId(authToken);
+
+        // 사용자 ID를 기반으로 자격증 목록 조회
         List<LicenseListResponse> response = licenseService.findByUserId(userId);
 
         return RestResponseUtil
                 .ok("자격증 조회 성공했습니다.", response);
     }
 
-    /** 자격증 등록
-     *  자격증 진위 여부 오픈APi로 진위 여부 확인 후 자격증 등록
+    /**
+     * 자격증을 저장합니다.
      *
-     * @param request authToken 추출을 위한 파라미터
-     * @param saveLicenseRequest 자격증 등록 form data
-     * @param bindingResult request data validator 결과를 담는 역할
-     * @return RestResponseUtil
-     * @throws Exception
+     * @param request             HttpServletRequest 객체
+     * @param saveLicenseRequest  저장할 자격증 요청 객체
+     * @param bindingResult       유효성 검사 결과 객체
+     * @return ResponseEntity 객체
+     * @throws Exception 예외 발생 시
      */
     @RequestMapping(method = RequestMethod.POST, path = "/")
-    public ResponseEntity<?> saveLicense(HttpServletRequest request, @Valid SaveLicenseRequest saveLicenseRequest, BindingResult bindingResult) throws Exception {
-        String authToken = jwtService.resolveAuthToken(request);
+    public ResponseEntity<?> save(HttpServletRequest request, @Valid SaveLicenseRequest saveLicenseRequest, BindingResult bindingResult) throws Exception {
         validateService.requestValidExceptionHandling(bindingResult);
-        licenseService.save(saveLicenseRequest, authToken);
+        // 자격증 진위여부를 위한 외부 API 호출
+        LicenseResultResponse licenseResult = licenseService.checkLicense(saveLicenseRequest);
+
+        // 인증 토큰에서 사용자 ID 추출
+        String authToken = jwtService.resolveAuthToken(request);
+        Long userId = userService.getUserId(authToken);
+
+        // 자격증 저장
+        licenseService.save(licenseResult, userId);
 
         return RestResponseUtil
                 .ok("자격증 등록 성공했습니다.", null);
     }
 
     /**
-     * 자격증 삭제
-     * 
-     * @param request List<Long> 타입에 자격증 아이디
-     * @param bindingResult request data validator 결과를 담는 역할
-     * @return RestResponseUtil
+     * 자격증을 삭제합니다.
+     *
+     * @param request        삭제할 자격증 요청 객체
+     * @param bindingResult  유효성 검사 결과 객체
+     * @return ResponseEntity 객체
      */
     @RequestMapping(method = RequestMethod.DELETE, path = "/")
-    public ResponseEntity<?> removeLicense(@Valid RemoveLicenseRequest request, BindingResult bindingResult) {
+    public ResponseEntity<?> remove(@Valid RemoveLicenseRequest request, BindingResult bindingResult) {
         validateService.requestValidExceptionHandling(bindingResult);
+
+        // 각 자격증 ID를 기반으로 자격증 삭제
         request.getIds().forEach(licenseService::remove);
 
         return RestResponseUtil
                 .ok("자격증 삭제 성공했습니다.", null);
     }
-
 }
