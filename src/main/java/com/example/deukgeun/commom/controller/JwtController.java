@@ -24,11 +24,10 @@ public class JwtController {
   }
 
   /**
-   * 로그아웃
-   * authToken delete
+   * 로그아웃을 수행합니다.
    *
-   * @param request authToken 추출을 위한 파라미터
-   * @return code 200, message success
+   * @param request HTTP 요청 객체
+   * @return ResponseEntity<?> 응답 엔티티
    */
   @RequestMapping(method = RequestMethod.GET, path = "/logout")
   public ResponseEntity<?> logout(HttpServletRequest request) {
@@ -41,11 +40,10 @@ public class JwtController {
   }
 
   /**
-   * 트레이너 이메일 가져오기
-   * authToken 에서 email 추출하기
+   * 사용자의 이메일 주소를 조회합니다.
    *
-   * @param request authToken 추출을 위한 파라미터
-   * @return authToken 에서 추출된 email 데이터
+   * @param request HTTP 요청 객체
+   * @return ResponseEntity<?> 응답 엔티티
    */
   @RequestMapping(method = RequestMethod.GET, path = "/pk")
   public ResponseEntity<?> getUserPK(HttpServletRequest request) {

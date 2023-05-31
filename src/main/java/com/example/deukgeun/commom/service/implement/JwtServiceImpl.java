@@ -40,8 +40,8 @@ public class JwtServiceImpl implements JwtService{
 
 
   /**
-   * 빈이 생성될 때 자동으로 객체에 secretKey 를  Base64 encoding 된 값으로 초기화
-   *
+   * 초기화 메소드입니다.
+   * 보호된 멤버 변수인 secretKey 를 Base64로 인코딩하여 초기화합니다.
    */
   @PostConstruct
   protected void init() {
@@ -49,12 +49,14 @@ public class JwtServiceImpl implements JwtService{
   }
 
   /**
-   * auth 토큰 생성
-   * 파라미터로 Claims 에 담아 jwt 형식에 토큰 생성
+   * 인증 토큰을 생성하는 메소드입니다.
+   * 사용자 식별자와 역할 정보를 포함한 클레임(claims)을 생성하고,
+   * 현재 시간과 토큰 만료 시간을 설정하여 토큰을 생성합니다.
+   * 생성된 토큰은 시크릿 키를 사용하여 서명되어 반환됩니다.
    *
-   * @param userPk = email
-   * @param roles = trainer or user
-   * @return jwt 형식에 인증 토큰
+   * @param userPk 사용자 식별자
+   * @param roles  사용자 역할 정보
+   * @return 생성된 인증 토큰
    */
   public String createAuthToken(String userPk, String roles) {
     Claims claims = Jwts.claims().setSubject(userPk);
@@ -70,12 +72,13 @@ public class JwtServiceImpl implements JwtService{
   }
 
   /**
-   * refresh 토큰 생성
-   * 파라미터로 Claims 에 담아 jwt 형식에 토큰 생성
+   * 리프레시 토큰을 생성하는 메소드입니다.
+   * 사용자 식별자를 포함하지 않고 역할 정보만을 포함한 클레임(claims)을 생성하고,
+   * 현재 시간과 리프레시 토큰의 만료 시간을 설정하여 토큰을 생성합니다.
+   * 생성된 토큰은 시크릿 키를 사용하여 서명되어 반환됩니다.
    *
-   * @param userPk = email
-   * @param roles  = trainer or user
-   * @return jwt 형식에 refreshToken
+   * @param roles 사용자 역할 정보
+   * @return 생성된 리프레시 토큰
    */
   public String createRefreshToken(String roles) {
     Claims claims = Jwts.claims().setSubject("");
@@ -91,40 +94,35 @@ public class JwtServiceImpl implements JwtService{
   }
 
   /**
-   * auth 토큰 response 헤더에 설정
+   * HTTP 응답 헤더에 인증 토큰을 설정하는 메소드입니다.
+   * 인증 토큰을 Bearer 스키마와 함께 "Authorization" 헤더에 설정하여
+   * 클라이언트에게 전송됩니다.
    *
-   * @param response HttpServletResponse
-   * @param authToken 인증 토큰
+   * @param response   HTTP 응답 객체
+   * @param authToken  설정할 인증 토큰
    */
   public void setHeaderAuthToken(HttpServletResponse response, String authToken) {
     response.setHeader("Authorization", "Bearer " + authToken);
   }
 
   /**
-   * refresh 토큰 response 헤더에 설정
+   * HTTP 응답 헤더에 역할 정보를 설정하는 메소드입니다.
+   * 역할 정보를 "role" 헤더에 설정하여 클라이언트에게 전송됩니다.
    *
-   * @param response HttpServletResponse
-   * @param refreshToken refreshToken 인증 토큰
-   */
-  public void setHeaderRefreshToken(HttpServletResponse response, String refreshToken) {
-    response.setHeader("RefreshToken", "Bearer " + refreshToken);
-  }
-
-  /**
-   * role response 헤더에 설정
-   *
-   * @param response HttpServletResponse
-   * @param role = trainer or user
+   * @param response  HTTP 응답 객체
+   * @param role      설정할 역할 정보
    */
   public void setHeaderRole(HttpServletResponse response, String role) {
     response.setHeader("role", role);
   }
 
   /**
-   * JWT 에서 유저 정보 조회
+   * 토큰을 사용하여 인증(Authentication) 객체를 생성하는 메소드입니다.
+   * 토큰을 이용하여 사용자 정보를 조회한 후, UserDetails 객체를 생성하여 인증에 활용합니다.
+   * 생성된 인증 객체는 UsernamePasswordAuthenticationToken으로 반환됩니다.
    *
-   * @param token 인증 토큰
-   * @return Authentication 조회된 유저 정보
+   * @param token 토큰 값
+   * @return 인증(Authentication) 객체
    */
   public Authentication getAuthentication(String token) {
     UserDetails userDetails = userDetailService.loadUserByUsername(this.getUserPk(token));
@@ -132,10 +130,11 @@ public class JwtServiceImpl implements JwtService{
   }
 
   /**
-   * JWT 에서 UserPk 추출
+   * 토큰을 이용하여 사용자 식별자(User PK)를 추출하는 메소드입니다.
+   * 주어진 토큰을 파싱하여 페이로드(claims)에서 사용자 식별자를 추출합니다.
    *
-   * @param token 인증 토큰
-   * @return 추출된 UserPk
+   * @param token 토큰 값
+   * @return 사용자 식별자(User PK)
    */
   public String getUserPk(String token) {
     return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
@@ -143,24 +142,26 @@ public class JwtServiceImpl implements JwtService{
 
 
   /**
-   * JWT 에서 UserRole 추출
+   * 토큰을 이용하여 사용자 역할(Role)을 추출하는 메소드입니다.
+   * 주어진 토큰을 파싱하여 페이로드(claims)에서 사용자 역할을 추출합니다.
    *
-   * @param token 인증 토큰
-   * @return 추출된 UserRole
+   * @param token 토큰 값
+   * @return 사용자 역할(Role)
    */
   public String getUserRole(String token) {
     return (String) Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("roles");
   }
 
   /**
-   * 토큰의 유효성 검사
+   * 주어진 토큰의 유효성을 검사하는 메소드입니다.
+   * 주어진 토큰을 파싱하여 시그니처를 검증하고, 만료일자를 확인하여 유효한 토큰인지 판단합니다.
    *
-   * @param jwtToken
-   * @return 유효성 검사 결과
+   * @param token 검사할 토큰
+   * @return 유효한 토큰인 경우 true, 그렇지 않은 경우 false를 반환합니다.
    */
-  public boolean validateToken(String jwtToken) {
+  public boolean validateToken(String token) {
     try {
-      Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
+      Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
 
       return !claims.getBody().getExpiration().before(new Date());
     } catch (Exception e) {
@@ -169,37 +170,45 @@ public class JwtServiceImpl implements JwtService{
   }
 
   /**
-   * header 에 authToken 저장 및 DB에 refreshToken 저장
+   * 주어진 이메일을 기반으로 인증 토큰과 리프레시 토큰을 생성하고, 응답 헤더에 인증 토큰을 설정합니다.
+   * 또한, 생성된 토큰 정보를 데이터베이스에 저장합니다.
    *
-   * @param email user email
-   * @param response HttpServletResponse
-   * @return 새로 등록된 인증 토큰 값
+   * @param email    토큰을 생성할 이메일
+   * @param response HttpServletResponse 객체
+   * @return 생성된 인증 토큰
    */
   public String setToken(String email, HttpServletResponse response) {
+    // 인증 토큰 생성
     String authToken = createAuthToken(email, role);
+
+    // 응답 헤더에 인증 토큰 설정
     setHeaderAuthToken(response, authToken);
 
+    // 리프레시 토큰 생성
     String refreshToken = createRefreshToken(role);
-    Token token = TokenRequest.create(authToken, refreshToken);
-    createToken(token);
-    
+
+    // 토큰 정보 데이터베이스에 저장
+    createToken(authToken, refreshToken);
+
     return authToken;
   }
 
   /**
-   * DB 토큰 저장
+   * 주어진 인증 토큰과 리프레시 토큰을 기반으로 토큰 객체를 생성하고, 데이터베이스에 저장합니다.
    *
-   * @param token authToken + refreshToken
+   * @param authToken    생성할 인증 토큰
+   * @param refreshToken 생성할 리프레시 토큰
    */
-  public void createToken(Token token) {
+  public void createToken(String authToken, String refreshToken) {
+    Token token = TokenRequest.create(authToken, refreshToken);
+
     tokenRepository.save(token);
   }
 
   /**
-   * DB 토큰 삭제
-   * 파라미터에 해당되는 데이터 삭제
+   * 주어진 인증 토큰을 사용하여 토큰을 데이터베이스에서 삭제합니다.
    *
-   * @param authToken 기존 JWT 데이터
+   * @param authToken 삭제할 인증 토큰
    */
   @CacheEvict(value = "token", key = "#authToken", cacheManager = "projectCacheManager")
   public void deleteToken(String authToken) {
@@ -207,11 +216,10 @@ public class JwtServiceImpl implements JwtService{
   }
 
   /**
-   * DB 토큰 수정
-   * 파라미터에 해당되는 데이터 수정
+   * 주어진 인증 토큰을 새로운 인증 토큰으로 업데이트합니다.
    *
-   * @param authToken 기존 JWT 데이터
-   * @param newAuthToken 수정을 위한 새로운 JWT 토큰
+   * @param authToken     업데이트할 기존 인증 토큰
+   * @param newAuthToken  새로운 인증 토큰
    */
   @CachePut(value = "token", key = "#authToken", cacheManager = "projectCacheManager")
   public void updateAuthToken(String authToken, String newAuthToken) {
@@ -219,11 +227,10 @@ public class JwtServiceImpl implements JwtService{
   }
 
   /**
-   * DB 토큰 데이터 가져오기
-   * 파라미터에 해당되는 데이터 가져오기
+   * 주어진 인증 토큰을 사용하여 토큰을 조회합니다.
    *
-   * @param authToken 기존 JWT 데이터
-   * @return 데이터가 있을 경우 Token data, 없을 경우 null 값 반환
+   * @param authToken  조회할 인증 토큰
+   * @return 조회된 토큰 객체, 인증 토큰이 없는 경우 null 을 반환합니다.
    */
   @Cacheable(value = "token", key = "#authToken", cacheManager = "projectCacheManager")
   public Token findByAuthToken(String authToken) {
@@ -231,16 +238,18 @@ public class JwtServiceImpl implements JwtService{
   }
 
   /**
-   * DB 토큰 데이터에서 refreshToken 데이터 추출
-   * 파라미터에 해당되는 데이터를 가져와 refreshToken 추출
+   * 주어진 인증 토큰을 사용하여 해당 토큰의 리프레시 토큰을 조회합니다.
    *
-   * @param authToken 기존 JWT 데이터
-   * @return 데이터가 있을 경우 refreshToken, 없을 경우 null;
+   * @param authToken  조회할 인증 토큰
+   * @return 조회된 리프레시 토큰 값, 인증 토큰이 없는 경우 null 을 반환합니다.
    */
   public String getRefreshTokenByAuthToken(String authToken) {
+    // 주어진 인증 토큰을 사용하여 토큰을 조회합니다.
     Token token = findByAuthToken(authToken);
     String refreshToken;
 
+    // 조회된 토큰이 있는 경우 해당 토큰의 리프레시 토큰 값을 반환합니다.
+    // 인증 토큰이 없는 경우 null 을 반환합니다.
     if (token != null) {
       refreshToken = token.getRefreshToken();
     } else {
@@ -251,10 +260,10 @@ public class JwtServiceImpl implements JwtService{
   }
 
   /**
-   * request Header 에서 authToken 추출
+   * HttpServletRequest 에서 Authorization 헤더를 해석하여 인증 토큰을 반환합니다.
    *
-   * @param request authToken 추출을 위한 파라미터
-   * @return 추출된 authToken
+   * @param request HttpServletRequest 객체
+   * @return 추출된 인증 토큰
    */
   public String resolveAuthToken(HttpServletRequest request) {
     return request.getHeader("Authorization").replace("Bearer ", "");

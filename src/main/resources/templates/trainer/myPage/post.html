@@ -163,7 +163,7 @@
 		
 		function imageRemoveAjax(src, authToken){
 			$.ajax({
-				url: "/api/trainer/post/remove",
+				url: "/api/trainer/post/delete",
 				type: "post",
 				beforeSend: function (xhr) {
 			    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);

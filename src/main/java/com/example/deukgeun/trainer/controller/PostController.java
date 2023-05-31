@@ -33,12 +33,11 @@ public class PostController {
     private final JwtServiceImpl jwtService;
 
     /**
-     * 게시글 상세보기
-     * user_id 해당되는 data
+     * 사용자 ID에 해당하는 게시물 상세 정보를 가져옵니다.
      *
-     * @param id 트레이너 user_id
-     * @return RestResponseUtil post data
-     * @throws Exception - 게시글을 찾을 수 없습니다.
+     * @param id 사용자 ID
+     * @return ResponseEntity 객체
+     * @throws Exception 예외가 발생한 경우
      */
     @RequestMapping(method = RequestMethod.GET, path = "/{id}")
     public ResponseEntity<?> getDetailByUserId(@PathVariable("id") Long id) throws Exception {
@@ -50,12 +49,11 @@ public class PostController {
     }
 
     /**
-     * 게시글 상세보기
-     * authToken 에서 추출한 user data 로 userId를 구해 데이터 비교
+     * 인증 토큰을 사용하여 해당 사용자의 게시물 상세 정보를 가져옵니다.
      *
-     * @param request authToken 추출을 위한 파라미터
-     * @return  RestResponseUtil post data
-     * @throws Exception
+     * @param request HttpServletRequest 객체
+     * @return ResponseEntity 객체
+     * @throws Exception 예외가 발생한 경우
      */
     @RequestMapping(method = RequestMethod.GET, path = "/")
     public ResponseEntity<?> getDetailByAuthToken(HttpServletRequest request) throws Exception {
@@ -69,19 +67,18 @@ public class PostController {
     }
 
     /**
-     * 게시글 저장 및 업데이트
-     * 게시글이 존재하면 update, 존재하지 않으면 save
+     * 게시글을 업로드합니다.
      *
-     * @param request authToken 추출을 위한 파라미터
-     * @param postRequest 게시글 form data
-     * @param bindingResult  request data validator 결과를 담는 역할
-     * @return RestResponseUtil
-     * @throws Exception
+     * @param request         HttpServletRequest 객체
+     * @param postRequest     업로드할 게시글 정보를 담은 PostRequest 객체
+     * @param bindingResult   데이터 유효성 검사 결과를 담은 BindingResult 객체
+     * @return ResponseEntity 객체
+     * @throws Exception 예외가 발생한 경우
      */
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> upload(HttpServletRequest request, @Valid PostRequest postRequest, BindingResult bindingResult) throws Exception {
-        System.out.println("gd");
         validateService.requestValidExceptionHandling(bindingResult);
+
         String authToken = jwtService.resolveAuthToken(request);
         postService.upload(postRequest, authToken);
 
@@ -89,15 +86,14 @@ public class PostController {
     }
 
     /**
-     * 서버 image 저장
-     * 게시글에 사용된 image 를 서버에 저장
+     * 이미지를 서버 업로드합니다.
      *
-     * @param request image file data 추출을 위한 파라미터
-     * @param response 저장된 image json 형식으로 link 를 반환
-     * @throws Exception
+     * @param request  HttpServletRequest 객체
+     * @param response HttpServletResponse 객체
+     * @throws Exception 예외가 발생한 경우
      */
     @RequestMapping(method = RequestMethod.POST, path = "/image")
-    public void uploadImage(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void uploadServerImage(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Map<Object, Object> responseData = postService.saveImage(request, response);
         String jsonResponseData = new Gson().toJson(responseData);
         response.setContentType("application/json");
@@ -106,37 +102,35 @@ public class PostController {
     }
 
     /**
-     * 서버 image 삭제
+     * 이미지를 서버 제거합니다.
      *
-     * @param src image path
+     * @param src 이미지 소스(src)
      */
-    @RequestMapping(method = RequestMethod.POST, path = "/remove")
-    public void removeImage(@RequestParam("src") String src) {
+    @RequestMapping(method = RequestMethod.POST, path = "/delete")
+    public void deleteServerImage(@RequestParam("src") String src) {
         postService.deletePostImage(src);
     }
 
     /**
-     * 서버 image 가져오기
-     * request url 에서 이미지 path 를 추출해 서버에 존재 유무를 통한
+     * 이미지를 서버에서 가져옵니다.
      *
-     * @param request 통신 url 추출을 위한 파라미터
-     * @param response 추출한 file data 를 반환하기 위한 파라미터
-     * @throws Exception
+     * @param request  HttpServletRequest 객체
+     * @param response HttpServletResponse 객체
+     * @throws Exception 예외 발생 시
      */
     @RequestMapping(method = RequestMethod.GET, path = "/image/*")
-    public void getImage(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void getServerImage(HttpServletRequest request, HttpServletResponse response) throws Exception {
         File file = postService.getServerImage(request.getRequestURI());
         response.setHeader("Content-Type", request.getServletContext().getMimeType(file.getName()));
         response.setHeader("Content-Length", String.valueOf(file.length()));
         response.setHeader("Content-Disposition", "inline; filename=\"" + file.getName() + "\"");
         Files.copy(file.toPath(), response.getOutputStream());
     }
-
     /**
-     * 게시글 삭제
+     * 게시글을 삭제합니다.
      *
-     * @param id 게시글 id
-     * @return RestResponseUtil
+     * @param id 삭제할 게시글의 ID
+     * @return ResponseEntity 객체
      */
     @RequestMapping(method = RequestMethod.DELETE, path = "/{id}")
     public ResponseEntity<?> remove(@PathVariable("id") Long id){
@@ -144,5 +138,4 @@ public class PostController {
 
         return RestResponseUtil.ok("게시글 삭제 성공했습니다.", null);
     }
-
 }

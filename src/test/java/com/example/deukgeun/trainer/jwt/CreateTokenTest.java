@@ -58,16 +58,14 @@ public class CreateTokenTest {
                 .signWith(SignatureAlgorithm.HS256, encodeSecretKey)
                 .compact();
 
-        Token token = TokenRequest.create(authToken, refreshToken);
-
         // When
-        jwtService.createToken(token);
-        Token result = tokenRepository.findByAuthToken(token.getAuthToken()).orElse(null);
+        jwtService.createToken(authToken, refreshToken);
+        Token result = tokenRepository.findByAuthToken(authToken).orElse(null);
 
         // Then
         assertNotNull(result);
-        assertEquals(token.getAuthToken(), result.getAuthToken());
-        assertEquals(token.getRefreshToken(), result.getRefreshToken());
+        assertEquals(authToken, result.getAuthToken());
+        assertEquals(refreshToken, result.getRefreshToken());
     }
 
     @Test
@@ -75,11 +73,10 @@ public class CreateTokenTest {
         // Given
         String authToken = null;
         String refreshToken = "";
-        Token token = TokenRequest.create(authToken, refreshToken);
 
         // When, Then
         assertThrows(DataIntegrityViolationException.class, () -> {
-            jwtService.createToken(token);
+            jwtService.createToken(authToken, refreshToken);
         });
     }
 }

@@ -29,54 +29,60 @@ public class ProfileController {
     private final JwtServiceImpl jwtService;
 
     /**
-     * profile + user data 가져오기
-     * id에 해당되는 data
+     * 특정 사용자 ID에 해당하는 프로필 상세 정보를 조회합니다.
      *
-     * @param id userId
-     * @return RestResponseUtil find profile + user data
-     * @throws Exception
+     * @param id 조회할 사용자의 ID
+     * @return ResponseEntity 객체
      */
-    @RequestMapping(method = RequestMethod.GET, path = "/{id}")
-    public ResponseEntity<?> getDetailByUserId(@PathVariable Long id) throws Exception {
+    public ResponseEntity<?> getDetailByUserId(@PathVariable Long id) {
+        // profileService 를 통해 해당 사용자 ID에 해당하는 프로필 정보를 조회합니다.
         Profile profile = profileService.getByUserId(id);
+
+        // 조회된 프로필 정보를 이용하여 ProfileResponse 객체를 생성합니다.
         ProfileResponse.ProfileAndUserResponse response = new ProfileResponse.ProfileAndUserResponse(profile);
 
         return RestResponseUtil.ok("트레이너 상세보기 성공했습니다.", response);
     }
 
     /**
-     * profile + user data 가져오기
-     * authToken 에서 추출한 user data 로 userId를 구해 데이터 비교
+     * 현재 인증된 사용자의 프로필 상세 정보를 조회합니다.
      *
-     * @param request authToken 추출을 위한 파라미터
-     * @return  RestResponseUtil find profile + user data
-     * @throws Exception
+     * @param request HttpServletRequest 객체
+     * @return ResponseEntity 객체
      */
-    @RequestMapping(method = RequestMethod.GET, path = "/")
-    public ResponseEntity<?> getDetailByAuthToke(HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> getDetailByAuthToken(HttpServletRequest request) {
+        // 요청 헤더에서 인증 토큰을 추출합니다.
         String authToken = jwtService.resolveAuthToken(request);
+
+        // 인증 토큰을 이용하여 사용자 ID를 조회합니다.
         Long userId = userService.getUserId(authToken);
+
+        // 사용자 ID에 해당하는 프로필 정보를 조회합니다.
         Profile profile = profileService.getByUserId(userId);
+
+        // 조회된 프로필 정보를 이용하여 ProfileResponse 객체를 생성합니다.
         ProfileResponse.ProfileAndUserResponse response = new ProfileResponse.ProfileAndUserResponse(profile);
 
-        return RestResponseUtil
-                .ok("트레이너 상세보기 성공했습니다.", response);
+        return RestResponseUtil.ok("트레이너 상세보기 성공했습니다.", response);
     }
 
     /**
-     * 프로필 이미지 수정
-     * DB 데이터 수정, 서버에 파일 저장, 서버에 저장되있던 파일 삭제
+     * 사용자의 프로필 정보를 수정합니다.
      *
-     * @param request authToken 추출을 위한 파라미터
-     * @param updateRequest prfile
-     * @param bindingResult request data validator 결과를 담는 역할
-     * @return RestResponseUtil
-     * @throws Exception
+     * @param request        HttpServletRequest 객체
+     * @param updateRequest  UpdateProfileRequest 객체
+     * @param bindingResult  BindingResult 객체
+     * @return ResponseEntity 객체
+     * @throws Exception 예외 발생 시
      */
-    @RequestMapping(method = RequestMethod.PUT, path = "/")
     public ResponseEntity<?> update(HttpServletRequest request, @Valid UpdateProfileRequest updateRequest, BindingResult bindingResult) throws Exception {
+        // 요청 데이터의 유효성 검사를 수행합니다.
         validateService.requestValidExceptionHandling(bindingResult);
+
+        // 요청 헤더에서 인증 토큰을 추출합니다.
         String authToken = jwtService.resolveAuthToken(request);
+
+        // 프로필 서비스를 이용하여 사용자의 프로필 정보를 업데이트합니다.
         profileService.updateProfile(updateRequest.getProfile(), authToken);
 
         return RestResponseUtil.ok("내 정보 수정 성공했습니다.", null);

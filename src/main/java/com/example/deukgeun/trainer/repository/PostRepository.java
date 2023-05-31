@@ -14,5 +14,5 @@ public interface PostRepository extends JpaRepository<Post, Long>{
   @Modifying
   @Transactional
   @Query(value = "update trainer_post m set m.html = :html where m.user_id = :user_id", nativeQuery = true)
-  int update(@Param(value = "user_id")Long user_id, @Param(value = "html")String html);
+  void update(@Param(value = "user_id")Long user_id, @Param(value = "html")String html);
 }

@@ -37,12 +37,11 @@ public class ProfileServiceImpl implements ProfileService {
     private String fileName;
 
     /**
-     * profile data 가져오기
-     * profileId에 해당된 profile data 가져오기
+     * 주어진 프로필 ID에 해당하는 프로필을 조회합니다.
      *
-     * @param profileId profileId 비교를 위한 파라미터
-     * @return profileId에 해당된 profile data
-     * @throws Exception 일치하는 데이터가 없을 경우 Exception 발생
+     * @param profileId 조회할 프로필의 ID
+     * @return 조회된 프로필
+     * @throws EntityNotFoundException 프로필을 찾을 수 없을 경우 예외가 발생합니다.
      */
     @Cacheable(value = "profile", key = "#profileId", cacheManager = "projectCacheManager")
     public Profile getProfile(Long profileId) throws EntityNotFoundException {
@@ -50,14 +49,13 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     /**
-     * profile data 에서 profile id 가져오기
-     * authToken 으로 가져온 User 데이터와 일치하는 프로필 데이터에서 아이디 반환
+     * 주어진 인증 토큰을 사용하여 사용자의 프로필 ID를 조회합니다.
      *
-     * @param authToken JWT 인증토큰
-     * @return authToken 으로 가져온 User 데이터와 일치하는 프로필 데이터에서 아이디
-     * @throws Exception 일치하는 데이터가 없을 경우 Exception 발생
+     * @param authToken 조회할 사용자의 인증 토큰
+     * @return 사용자의 프로필 ID
+     * @throws Exception 프로필을 조회하는 도중 예외가 발생한 경우
      */
-    public Long getProfileId(String authToken) throws Exception {
+    public Long getProfileId(String authToken) {
         User user = userService.getUserByAuthToken(authToken);
         Profile profile = getByUserId(user.getId());
 
@@ -65,22 +63,21 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     /**
-     * profile data 가져오기
-     * user id와 일치하는 profile data 가져오기
+     * 주어진 사용자 ID에 해당하는 프로필을 조회합니다.
      *
-     * @param userId user id를 비교하기 위한 파라미터
-     * @return profile data
-     * @throws IllegalArgumentException 일치하는 데이터가 없을 경우 Exception 발생
+     * @param userId 조회할 프로필의 사용자 ID
+     * @return 조회된 프로필
+     * @throws EntityNotFoundException 프로필을 찾을 수 없는 경우 발생하는 예외
      */
     public Profile getByUserId(Long userId) throws EntityNotFoundException {
         return profileRepository.findByUserId(userId).orElseThrow(() -> new EntityNotFoundException("프로필을 찾을 수 없습니다."));
     }
 
     /**
-     * file 확장자 type 유효성 검사
+     * 주어진 MultipartFile 의 컨텐츠 타입이 지원되는 이미지 타입인지 확인합니다.
      *
-     * @param file 확장자 type 유효성 검사를 위한 파라미터
-     * @return 확장자 type 유효성 검사 결과
+     * @param file 확인할 MultipartFile 객체
+     * @return 지원되는 이미지 타입인 경우 true, 그렇지 않은 경우 false 를 반환합니다.
      */
     public boolean isSupportedContentType(MultipartFile file) {
         String fileType = Objects.requireNonNull(file.getContentType());
@@ -88,10 +85,11 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     /**
-     * 디렉토리에 파일 저장
+     * 주어진 MultipartFile 을 지정된 디렉토리에 저장합니다.
      *
-     * @param profile 파일경로, 디렉토리경로 추출을 위한 파라미터
-     * @throws IOException 파일 디렉토리 저장시 애러
+     * @param profile  저장할 MultipartFile 객체
+     * @param fileName 저장할 파일명
+     * @throws IOException 파일 저장 중에 발생한 IO 예외가 처리될 수 있습니다.
      */
     public void saveFileToDirectory(MultipartFile profile, String fileName) throws IOException {
         Path path = Paths.get(FILE_PATH).toAbsolutePath().normalize();
@@ -101,10 +99,9 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     /**
-     * 디렉토리에 파일 삭제
-     * 해당 파일 경로에 파일이 존재하면 삭제
+     * 지정된 파일명을 가진 파일을 디렉토리에서 삭제합니다.
      *
-     * @param fileName 파일 경로
+     * @param fileName 삭제할 파일명
      */
     public void deleteFileToDirectory(String fileName) {
         File file = new File(FILE_PATH + "\\" + fileName);
@@ -114,11 +111,11 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     /**
-     * file DB 저장
+     * 프로필 이미지를 저장하고 관련 데이터를 데이터베이스에 저장합니다.
      *
-     * @param profile 저장할 profile
-     * @param userId profile 저장할 user Id
-     * @throws IOException 파일 저장 애러시
+     * @param profile 업로드된 프로필 이미지 파일
+     * @param userId  사용자 ID
+     * @throws IOException 입출력 예외가 발생할 경우
      */
     public void save(MultipartFile profile, Long userId) throws IOException {
         fileName = getUUIDPath(profile.getOriginalFilename());
@@ -130,12 +127,11 @@ public class ProfileServiceImpl implements ProfileService {
 
 
     /**
-     * profile update
-     * 디렉토리 저장, 기존 디렉토리 파일 삭제, DB 업데이트
+     * 프로필 이미지를 업데이트하고 관련 데이터를 갱신합니다.
      *
-     * @param profile 업데이트할 profile data
-     * @param authToken profile id 추출을 위한 파라미터
-     * @throws Exception 일치하는 데이터가 없을 경우 Exception 발생
+     * @param profile   업로드된 프로필 이미지 파일
+     * @param authToken 인증 토큰
+     * @throws Exception 예외가 발생할 경우
      */
     @Transactional
     public void updateProfile(MultipartFile profile, String authToken) throws Exception {
@@ -151,10 +147,9 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     /**
-     * DB profile data update
-     * profile id 에 해당하는 data update
+     * 프로필 ID에 해당하는 프로필을 업데이트합니다.
      *
-     * @param profileId profile id 비교를 위한 파라미터
+     * @param profileId 프로필 ID
      */
     @CachePut(value = "profile", key = "#profileId", cacheManager = "projectCacheManager")
     public void update(Long profileId) {
@@ -162,10 +157,9 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     /**
-     * DB profile data withdrawal
-     * profile id 에 해당하는 data withdrawal
+     * 프로필 ID에 해당하는 프로필을 삭제합니다.
      *
-     * @param profileId profile id 비교를 위한 파라미터
+     * @param profileId 프로필 ID
      */
     @CacheEvict(value = "profile", key = "#profileId", cacheManager = "projectCacheManager")
     public void withdrawal(Long profileId) {
@@ -173,10 +167,11 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     /**
-     * randomUUID 로 fileName 생성
+     * 파일 이름에 UUID 를 추가한 경로를 반환합니다.
      *
-     * @param fileName fileName
-     * @return random fileName
+     * @param fileName 파일 이름
+     * @return UUID 가 추가된 파일 경로
+     * @throws IOException 파일 이름이 비어있는 경우 예외 발생
      */
     public String getUUIDPath(String fileName) throws IOException {
         if (fileName == null || fileName.isEmpty()) {

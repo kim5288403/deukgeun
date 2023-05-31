@@ -17,19 +17,16 @@ import java.util.Objects;
 public class ValidateServiceImpl implements ValidateService{
 
   /**
-   * 1. 유효성 필드 애러가 있을경우 애러를 map 타입으로 매핑
-   * 2. 유효성 글로벌 애러가 있을경우  애러를 map 타입으로 매핑
-   * 3. RequestValidException 발생시킴
+   * 요청 유효성 검사 결과에 대한 예외 처리를 수행합니다.
    *
-   * @param bindingResult request validator 에서 error 내용을 담고있음
+   * @param bindingResult 요청 유효성 검사 결과
+   * @throws RequestValidException 요청 유효성 검사 예외
    */
   public void requestValidExceptionHandling(BindingResult bindingResult) {
 
     if (bindingResult.hasErrors()) {
-      /* 유효성 검사에 실패한 필드 애러 목록을 받음 */
       Map<String, String> validatorResult = fieldErrorsMessageHandling(bindingResult);
 
-      /* 유효성 검사에 실패한 글로벌 애러 목록을 받음 */
       validatorResult = globalErrorsMessageHandling(validatorResult, bindingResult);
 
       throw new RequestValidException(validatorResult, "request error!");
@@ -37,10 +34,10 @@ public class ValidateServiceImpl implements ValidateService{
   }
 
   /**
-   * 유효성 필드 애러가 있을경우 애러를 map 타입으로 매핑
+   * 필드 오류 메시지 처리를 수행합니다.
    *
-   * @param bindingResult request validator 에서 error 내용을 담고있음
-   * @return bindingResult 에 필드 애러내용 to Map<>
+   * @param bindingResult 요청 유효성 검사 결과
+   * @return 필드 오류 메시지 맵
    */
   public Map<String, String> fieldErrorsMessageHandling (BindingResult bindingResult) {
     Map<String, String> validatorResult =  new HashMap<>();
@@ -58,11 +55,11 @@ public class ValidateServiceImpl implements ValidateService{
   }
 
   /**
-   * 유효성 글로벌 애러가 있을경우  애러를 map 타입으로 매핑
+   * 전역 오류 메시지 처리를 수행합니다.
    *
-   * @param validatorResult 필드에러 매핑을 걸친 map
-   * @param bindingResult request validator 에서 error 내용을 담고있음
-   * @return bindingResult 에 글로벌 애러내용 to Map<>
+   * @param validatorResult 이전에 처리된 필드 오류 메시지 맵
+   * @param bindingResult 요청 유효성 검사 결과
+   * @return 전역 오류 메시지가 포함된 메시지 맵
    */
   public Map<String, String> globalErrorsMessageHandling (
           Map<String, String> validatorResult,
@@ -77,11 +74,11 @@ public class ValidateServiceImpl implements ValidateService{
   }
 
   /**
-   * Object 에서 field 값 추출
+   * 객체의 필드 값을 가져옵니다.
    *
-   * @param object error 를 담고있는 object
-   * @param fieldName 추출하고자 하는 field
-   * @return target 추출한 field
+   * @param object    값을 가져올 객체
+   * @param fieldName 필드 이름
+   * @return 필드의 값 (문자열 형식)
    */
   public String getFieldValue(Object object, String fieldName) {
     Class<?> clazz = object.getClass();

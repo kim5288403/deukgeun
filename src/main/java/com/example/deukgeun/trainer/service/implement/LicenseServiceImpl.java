@@ -58,7 +58,7 @@ public class LicenseServiceImpl implements LicenseService {
      * @param id 삭제할 라이선스의 ID
      */
     @CacheEvict(value = "license", key = "#id", cacheManager = "projectCacheManager")
-    public void remove(Long id) {
+    public void delete(Long id) {
         licenseRepository.deleteById(id);
     }
 

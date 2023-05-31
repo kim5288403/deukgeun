@@ -190,7 +190,7 @@ public class UserController {
         validateService.requestValidExceptionHandling(bindingResult);
 
         // 사용자 로그인 처리
-        userService.login(request);
+        userService.isPasswordMatches(request);
 
         // JWT 토큰 생성 및 설정
         String authToken = jwtService.setToken(request.getEmail(), response);

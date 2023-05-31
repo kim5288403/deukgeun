@@ -24,24 +24,36 @@ public class MailController {
   private final MailServiceImpl mailService;
   private final ValidateServiceImpl validateService;
 
-  // 인증 이메일 보내기
+  /**
+   * 이메일을 보내는 메소드입니다.
+   *
+   * @param request        이메일 요청 객체
+   * @param bindingResult  데이터 유효성 검사 결과
+   * @return ResponseEntity<?> 응답 엔티티
+   * @throws MessagingException          메일 전송 중 발생하는 예외
+   * @throws UnsupportedEncodingException 인코딩 예외
+   */
   @RequestMapping(method = RequestMethod.POST, path = "/send")
   public ResponseEntity<?> send(
       @Valid EmailRequest request,
       BindingResult bindingResult)
       throws MessagingException, UnsupportedEncodingException {
 
-    if (bindingResult.hasErrors()) {
-      validateService.requestValidExceptionHandling(bindingResult);
-    }
+    validateService.requestValidExceptionHandling(bindingResult);
 
-    String authCode = mailService.sendMail(request.getEmail());
+    mailService.sendMail(request.getEmail());
 
     return RestResponseUtil
-    .ok("인증 메일 보내기 성공했습니다.", authCode);
+    .ok("인증 메일 보내기 성공했습니다.", null);
   }
 
-  // 인증 이메일 확인
+  /**
+   * 이메일 인증을 처리하는 메소드입니다.
+   *
+   * @param request        이메일 인증 요청 객체
+   * @param bindingResult  데이터 유효성 검사 결과
+   * @return ResponseEntity<?> 응답 엔티티
+   */
   @RequestMapping(method = RequestMethod.POST, path = "/confirm")
   public ResponseEntity<?> confirm(@Valid AuthMailRequest request, BindingResult bindingResult) {
 

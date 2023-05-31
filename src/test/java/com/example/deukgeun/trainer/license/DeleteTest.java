@@ -1,47 +1,44 @@
-package com.example.deukgeun.trainer.user;
+package com.example.deukgeun.trainer.license;
 
 import com.example.deukgeun.commom.enums.Gender;
-import com.example.deukgeun.commom.exception.PasswordMismatchException;
 import com.example.deukgeun.trainer.entity.GroupStatus;
+import com.example.deukgeun.trainer.entity.License;
 import com.example.deukgeun.trainer.entity.User;
+import com.example.deukgeun.trainer.repository.LicenseRepository;
 import com.example.deukgeun.trainer.repository.UserRepository;
 import com.example.deukgeun.trainer.request.JoinRequest;
-import com.example.deukgeun.trainer.request.LoginRequest;
-import com.example.deukgeun.trainer.service.implement.UserServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
+import com.example.deukgeun.trainer.request.SaveLicenseRequest;
+import com.example.deukgeun.trainer.service.implement.LicenseServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
 
 @SpringBootTest
 @Transactional
-public class LoginTest {
-    @Autowired
-    private UserServiceImpl userService;
+public class DeleteTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private LicenseRepository licenseRepository;
+    @Autowired
+    private LicenseServiceImpl licenseService;
 
-    private String email;
-    private String password;
-
-    @BeforeEach
-    void setup() {
-        email = "loginTest@email.com";
-        password = "test1!2@";
-
+    @Test
+    void shouldDeleteForValidParameter() {
+        // Given
+        String email = "testEmail@test.com";
+        String password = "testPassword1!2@";
         JoinRequest joinRequest = new JoinRequest();
-        joinRequest.setName("테스트");
         joinRequest.setEmail(email);
+        joinRequest.setName("테스트");
         joinRequest.setPassword(password);
         joinRequest.setGroupStatus(GroupStatus.Y);
         joinRequest.setGroupName("testGroupName");
@@ -53,41 +50,29 @@ public class LoginTest {
         joinRequest.setGender(Gender.M);
         joinRequest.setPrice(30000);
         joinRequest.setIntroduction("testIntroduction");
-
         User user = JoinRequest.create(joinRequest, passwordEncoder);
-        userRepository.save(user);
+        User saveUser = userRepository.save(user);
+
+        License license = SaveLicenseRequest.create("테스트 자격증1", "1t2e3s4t", saveUser.getId());
+        License saveLicense = licenseRepository.save(license);
+
+        // When
+        licenseService.delete(saveLicense.getId());
+        License result = licenseRepository.findById(saveLicense.getId()).orElse(null);
+
+        // Then
+        assertNull(result);
     }
 
     @Test
-    void shouldLoginForValidRequest() {
+    void shouldEmptyResultDataAccessExceptionForInvalidParameter() {
         // Given
-        LoginRequest request = new LoginRequest(email, password);
+        long id = 99999;
 
         // When, Then
-        assertDoesNotThrow( () -> {
-            userService.login(request);
+        assertThrows(EmptyResultDataAccessException.class, () -> {
+            licenseService.delete(id);
         });
     }
 
-    @Test
-    void shouldEntityNotFoundExceptionForInvalidRequest() {
-        // Given
-        LoginRequest request = new LoginRequest("invalidEmail@email.com", password);
-
-        // When, Then
-        assertThrows(EntityNotFoundException.class, () -> {
-            userService.login(request);
-        });
-    }
-
-    @Test
-    void shouldPasswordMismatchExceptionForInvalidRequest() {
-        // Given
-        LoginRequest request = new LoginRequest(email, "invalidPassword");
-
-        // When, Then
-        assertThrows(PasswordMismatchException.class, () -> {
-            userService.login(request);
-        });
-    }
 }

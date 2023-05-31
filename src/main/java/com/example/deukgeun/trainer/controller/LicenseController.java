@@ -97,11 +97,11 @@ public class LicenseController {
      * @return ResponseEntity 객체
      */
     @RequestMapping(method = RequestMethod.DELETE, path = "/")
-    public ResponseEntity<?> remove(@Valid RemoveLicenseRequest request, BindingResult bindingResult) {
+    public ResponseEntity<?> delete(@Valid RemoveLicenseRequest request, BindingResult bindingResult) {
         validateService.requestValidExceptionHandling(bindingResult);
 
         // 각 자격증 ID를 기반으로 자격증 삭제
-        request.getIds().forEach(licenseService::remove);
+        request.getIds().forEach(licenseService::delete);
 
         return RestResponseUtil
                 .ok("자격증 삭제 성공했습니다.", null);
