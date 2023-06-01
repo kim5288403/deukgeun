@@ -43,8 +43,6 @@ public class SaveAPITest {
 
     @BeforeEach
     void setUp() throws IOException {
-        System.out.println("-------------------- UserSaveTest Start --------------------");
-
         AuthMail authMail = AuthMailRequest.create("testEmail@test.com", "1234", MailStatus.Y);
         authMailRepository.save(authMail);
 
@@ -60,7 +58,7 @@ public class SaveAPITest {
     void shouldSaveUserAPIForValidRequest() throws Exception {
         // Given
         Resource classPath = new ClassPathResource("/static/test/images/testImage.jpg");
-        MockMultipartFile profile = new MockMultipartFile("profile", "testImage.jpg", "image/jpg", classPath.getInputStream());
+        MockMultipartFile profile = new MockMultipartFile("profile", "testImage.jpg", "image/jpeg", classPath.getInputStream());
 
         // When
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/trainer/")

@@ -33,8 +33,9 @@ public class Post extends BaseEntity{
   private User user;
   
   @Builder
-  public Post(String html, Long userId) {
+  public Post(String html, Long userId, User user) {
     this.html = html;
     this.userId = userId;
+    this.user = user;
   }
 }

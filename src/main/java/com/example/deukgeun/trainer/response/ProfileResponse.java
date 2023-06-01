@@ -4,6 +4,7 @@ import java.util.List;
 import com.example.deukgeun.commom.enums.Gender;
 import com.example.deukgeun.trainer.entity.License;
 import com.example.deukgeun.trainer.entity.Profile;
+import com.example.deukgeun.trainer.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

@@ -85,8 +85,6 @@ public class SaveTest {
         joinRequest.setPrice(30000);
         joinRequest.setIntroduction("testIntroduction");
 
-        User user = JoinRequest.create(joinRequest, passwordEncoder);
-
         // When, Then
         assertThrows(DataIntegrityViolationException.class, () -> {
             userService.save(joinRequest);

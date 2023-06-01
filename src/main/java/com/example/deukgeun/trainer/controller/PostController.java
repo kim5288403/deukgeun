@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.Map;
@@ -60,6 +59,7 @@ public class PostController {
         String authToken = jwtService.resolveAuthToken(request);
         Long userId = userService.getUserId(authToken);
         Post post = postService.findByUserId(userId);
+        postService.findByUserId(userId);
         PostResponse response = new PostResponse(post);
 
         return RestResponseUtil
@@ -106,9 +106,10 @@ public class PostController {
      *
      * @param src 이미지 소스(src)
      */
-    @RequestMapping(method = RequestMethod.POST, path = "/delete")
+    @RequestMapping(method = RequestMethod.DELETE, path = "/")
     public void deleteServerImage(@RequestParam("src") String src) {
-        postService.deletePostImage(src);
+        String path = postService.getFilePathFromUrl(src);
+        postService.deleteFileToDirectory(path);
     }
 
     /**
@@ -126,6 +127,7 @@ public class PostController {
         response.setHeader("Content-Disposition", "inline; filename=\"" + file.getName() + "\"");
         Files.copy(file.toPath(), response.getOutputStream());
     }
+
     /**
      * 게시글을 삭제합니다.
      *
@@ -133,7 +135,7 @@ public class PostController {
      * @return ResponseEntity 객체
      */
     @RequestMapping(method = RequestMethod.DELETE, path = "/{id}")
-    public ResponseEntity<?> remove(@PathVariable("id") Long id){
+    public ResponseEntity<?> delete(@PathVariable("id") Long id){
         postService.deletePost(id);
 
         return RestResponseUtil.ok("게시글 삭제 성공했습니다.", null);

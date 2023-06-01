@@ -9,17 +9,14 @@ import com.example.deukgeun.trainer.repository.UserRepository;
 import com.example.deukgeun.trainer.request.JoinRequest;
 import com.example.deukgeun.trainer.request.PostRequest;
 import com.example.deukgeun.trainer.service.implement.PostServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 @SpringBootTest
-@Transactional
 public class UpdateTest {
     @Autowired
     private PostServiceImpl postService;
@@ -30,10 +27,10 @@ public class UpdateTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    private long userId;
-
-    @BeforeEach
-    void setup() {
+    @Test
+    void shouldUpdateForValidParameter() {
+        // Given
+        String updateHtml = "test update html";
         String email = "testEmail@test.com";
         String password = "testPassword1!2@";
         JoinRequest joinRequest = new JoinRequest();
@@ -53,44 +50,24 @@ public class UpdateTest {
 
         User user = JoinRequest.create(joinRequest, passwordEncoder);
         User saveUser = userRepository.save(user);
-        userId = saveUser.getId();
+        long userId = saveUser.getId();
 
         String html = "test html";
         Post post = PostRequest.create(html, userId);
-        postRepository.save(post);
-    }
-    @Test
-    void shouldSaveForValidParameter() {
-        // Given
-        String updateHtml = "test update html";
+        Post savePost = postRepository.save(post);
+        long postId = savePost.getId();
 
         // When
-        Post before = postRepository.findByUserId(userId).orElse(null);
         postService.update(userId, updateHtml);
-        Post after = postRepository.findByUserId(userId).orElse(null);
-
-        System.out.println("------------------------------------------------");
-        System.out.println(before.getHtml());
-        System.out.println(after.getHtml());
-        System.out.println("------------------------------------------------");
-
+        Post result = postRepository.findByUserId(userId).orElse(null);
 
         // Then
-//        assertNotNull(result);
-//        assertEquals(userId, result.getUserId());
-//        assertEquals(updateHtml, result.getHtml());
-//        assertNotEquals(html, result.getHtml());
-    }
+        assertNotNull(result);
+        assertEquals(userId, result.getUserId());
+        assertEquals(updateHtml, result.getHtml());
+        assertNotEquals(html, result.getHtml());
 
-    @Test
-    void shouldDataIntegrityViolationExceptionForInvalidParameter() {
-        // Given
-        String html = "test html";
-        long userId = 99999;
-
-        // When, Then
-        assertThrows(DataIntegrityViolationException.class, () -> {
-            postService.save(userId, html);
-        });
+        postRepository.deleteById(postId);
+        userRepository.deleteById(userId);
     }
 }

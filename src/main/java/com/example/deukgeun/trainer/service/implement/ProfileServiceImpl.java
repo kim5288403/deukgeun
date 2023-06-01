@@ -143,7 +143,7 @@ public class ProfileServiceImpl implements ProfileService {
         Profile userProfile = getProfile(profileId);
         deleteFileToDirectory(userProfile.getPath());
 
-        update(profileId);
+        update(profileId, fileName);
     }
 
     /**
@@ -152,7 +152,7 @@ public class ProfileServiceImpl implements ProfileService {
      * @param profileId 프로필 ID
      */
     @CachePut(value = "profile", key = "#profileId", cacheManager = "projectCacheManager")
-    public void update(Long profileId) {
+    public void update(Long profileId, String fileName) {
         profileRepository.updateProfile(profileId, fileName);
     }
 

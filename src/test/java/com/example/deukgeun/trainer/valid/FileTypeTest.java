@@ -24,7 +24,7 @@ public class FileTypeTest {
     void shouldReturnTrueForValidContentType() throws IOException {
         // Given
         Resource classPath = new ClassPathResource("/static/test/images/testImage.jpg");
-        MockMultipartFile file = new MockMultipartFile("file", "testImage.jpg", "image/jpg", classPath.getInputStream());
+        MockMultipartFile file = new MockMultipartFile("file", "testImage.jpg", "image/jpeg", classPath.getInputStream());
 
         // When
         boolean result = profileService.isSupportedContentType(file);

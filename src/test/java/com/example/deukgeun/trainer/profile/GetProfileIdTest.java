@@ -76,7 +76,7 @@ public class GetProfileIdTest {
     }
 
     @Test
-    void shouldGetProfileIdForValidAuthToken() throws Exception {
+    void shouldGetProfileIdForValidAuthToken() {
         // Given
         String encodeSecretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
         Claims claims = Jwts.claims().setSubject(email);

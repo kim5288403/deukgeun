@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -34,7 +35,8 @@ public class ProfileController {
      * @param id 조회할 사용자의 ID
      * @return ResponseEntity 객체
      */
-    public ResponseEntity<?> getDetailByUserId(@PathVariable Long id) {
+    @RequestMapping(method = RequestMethod.GET, path = "/{id}")
+    public ResponseEntity<?> getByUserId(@PathVariable Long id) {
         // profileService 를 통해 해당 사용자 ID에 해당하는 프로필 정보를 조회합니다.
         Profile profile = profileService.getByUserId(id);
 
@@ -50,7 +52,8 @@ public class ProfileController {
      * @param request HttpServletRequest 객체
      * @return ResponseEntity 객체
      */
-    public ResponseEntity<?> getDetailByAuthToken(HttpServletRequest request) {
+    @RequestMapping(method = RequestMethod.GET, path = "/")
+    public ResponseEntity<?> getByAuthToken(HttpServletRequest request) {
         // 요청 헤더에서 인증 토큰을 추출합니다.
         String authToken = jwtService.resolveAuthToken(request);
 
@@ -75,6 +78,7 @@ public class ProfileController {
      * @return ResponseEntity 객체
      * @throws Exception 예외 발생 시
      */
+    @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> update(HttpServletRequest request, @Valid UpdateProfileRequest updateRequest, BindingResult bindingResult) throws Exception {
         // 요청 데이터의 유효성 검사를 수행합니다.
         validateService.requestValidExceptionHandling(bindingResult);
@@ -85,6 +89,8 @@ public class ProfileController {
         // 프로필 서비스를 이용하여 사용자의 프로필 정보를 업데이트합니다.
         profileService.updateProfile(updateRequest.getProfile(), authToken);
 
-        return RestResponseUtil.ok("내 정보 수정 성공했습니다.", null);
+
+
+        return RestResponseUtil.ok("프로필 정보 수정 성공했습니다.", null);
     }
 }

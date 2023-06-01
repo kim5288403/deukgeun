@@ -45,7 +45,7 @@ public class SaveFileToDirectoryTest {
     void shouldSaveFileToDirectoryValidFiles() throws IOException {
         // Given
         Resource classPath = new ClassPathResource("/static/test/images/testImage.jpg");
-        MockMultipartFile file = new MockMultipartFile("testImage", "testImage.jpg", "image/jpg", classPath.getInputStream());
+        MockMultipartFile file = new MockMultipartFile("testImage", "testImage.jpg", "image/jpeg", classPath.getInputStream());
         String fileName = profileService.getUUIDPath(file.getOriginalFilename());
 
         // When

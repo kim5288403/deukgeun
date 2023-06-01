@@ -12,7 +12,7 @@ bootJar {
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = "1.9"
+sourceCompatibility = "11"
 
 configurations {
 	compileOnly {
@@ -54,4 +54,4 @@ test {
 	useJUnitPlatform()
 }
 
-targetCompatibility = JavaVersion.VERSION_1_9
+targetCompatibility = JavaVersion.VERSION_11
