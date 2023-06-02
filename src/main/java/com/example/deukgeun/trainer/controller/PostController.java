@@ -77,8 +77,6 @@ public class PostController {
      */
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> upload(HttpServletRequest request, @Valid PostRequest postRequest, BindingResult bindingResult) throws Exception {
-        validateService.requestValidExceptionHandling(bindingResult);
-
         String authToken = jwtService.resolveAuthToken(request);
         postService.upload(postRequest, authToken);
 

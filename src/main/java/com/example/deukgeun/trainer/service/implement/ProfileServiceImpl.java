@@ -43,7 +43,7 @@ public class ProfileServiceImpl implements ProfileService {
      * @return 조회된 프로필
      * @throws EntityNotFoundException 프로필을 찾을 수 없을 경우 예외가 발생합니다.
      */
-    @Cacheable(value = "profile", key = "#profileId", cacheManager = "projectCacheManager")
+    @Cacheable(value = "profile", key = "#profileId", cacheManager = "projectCacheManager", unless = "#result == null")
     public Profile getProfile(Long profileId) throws EntityNotFoundException {
         return profileRepository.findById(profileId).orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
     }
@@ -151,9 +151,9 @@ public class ProfileServiceImpl implements ProfileService {
      *
      * @param profileId 프로필 ID
      */
-    @CachePut(value = "profile", key = "#profileId", cacheManager = "projectCacheManager")
-    public void update(Long profileId, String fileName) {
-        profileRepository.updateProfile(profileId, fileName);
+    @CachePut(value = "profile", key = "#profileId", cacheManager = "projectCacheManager", unless="#result == null")
+    public void update(Long profileId, String path) {
+        profileRepository.updateProfile(profileId, path);
     }
 
     /**

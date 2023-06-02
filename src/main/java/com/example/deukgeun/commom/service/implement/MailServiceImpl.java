@@ -1,6 +1,5 @@
 package com.example.deukgeun.commom.service.implement;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Random;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -26,8 +25,6 @@ public class MailServiceImpl implements MailService {
     private final JavaMailSender emailSender;
     private final SpringTemplateEngine templateEngine;
 
-    private String authCode;
-
     @Value("${trainer.mail.email}")
     private String fromEmail; // 보내는 이메일
 
@@ -36,8 +33,10 @@ public class MailServiceImpl implements MailService {
     /**
      * 랜덤한 인증 코드를 생성합니다.
      * 생성된 인증 코드는 클래스 변수 authCode 에 저장됩니다.
+     *
+     * @return 인증 코드
      */
-    public void createCode() {
+    public String createCode() {
         Random random = new Random();
         StringBuffer key = new StringBuffer();
 
@@ -59,7 +58,8 @@ public class MailServiceImpl implements MailService {
                     break;
             }
         }
-        authCode = key.toString();
+
+        return key.toString();
     }
 
     /**
@@ -70,9 +70,7 @@ public class MailServiceImpl implements MailService {
      * @return 생성된 MimeMessage 객체
      * @throws MessagingException 메일 생성 중 발생한 예외
      */
-    public MimeMessage createMailForm(String toEmail) throws MessagingException {
-        createCode();
-
+    public MimeMessage createMailForm(String toEmail, String authCode) throws MessagingException {
         MimeMessage message = emailSender.createMimeMessage();
         message.addRecipients(MimeMessage.RecipientType.TO, toEmail);
         message.setSubject(title);
@@ -84,20 +82,13 @@ public class MailServiceImpl implements MailService {
 
     /**
      * 주어진 이메일 주소로 메일을 전송합니다.
-     * 중복된 인증 정보가 있는 경우 제거한 후 메일을 전송합니다.
      *
      * @param toEmail 수신자 이메일 주소
      * @throws MessagingException           메일 전송 중 발생한 예외
-     * @throws UnsupportedEncodingException 인코딩 지원하지 않을 때 발생한 예외
      */
-    public void sendMail(String toEmail) throws MessagingException, UnsupportedEncodingException {
-        //중복 인증 정보 제거
-        deleteAuthMail(toEmail);
-
-        MimeMessage emailForm = createMailForm(toEmail);
+    public void send(String toEmail, String authCode) throws MessagingException {
+        MimeMessage emailForm = createMailForm(toEmail, authCode);
         emailSender.send(emailForm);
-        AuthMail authMail = AuthMailRequest.create(toEmail, authCode, MailStatus.N);
-        createAuthMail(authMail);
     }
 
     /**
@@ -113,11 +104,12 @@ public class MailServiceImpl implements MailService {
     }
 
     /**
-     * 인증 메일 정보를 생성합니다.
+     * 이메일 주소를 제공하여 AuthMail 객체를 저장합니다.
      *
-     * @param authMail 인증 메일 정보
+     * @param toEmail 저장할 이메일 주소
      */
-    public void createAuthMail(AuthMail authMail) {
+    public void save(String toEmail, String authCode) {
+        AuthMail authMail = AuthMailRequest.create(toEmail, authCode, MailStatus.N);
         authMailRepository.save(authMail);
     }
 
@@ -126,7 +118,7 @@ public class MailServiceImpl implements MailService {
      *
      * @param email 삭제할 인증 메일의 이메일
      */
-    public void deleteAuthMail(String email) {
+    public void deleteByEmail(String email) {
         if (authMailRepository.existsByEmail(email)) {
             authMailRepository.deleteByEmail(email);
         }
@@ -161,9 +153,8 @@ public class MailServiceImpl implements MailService {
      * 주어진 이메일과 코드를 사용하여 메일 인증 정보의 상태를 업데이트합니다.
      *
      * @param request 업데이트할 메일 인증 정보의 이메일과 코드
-     * @param status  업데이트할 메일 인증 정보의 상태
      */
-    public void updateMailStatus(AuthMailRequest request, MailStatus status) {
-        authMailRepository.updateStatusByEmailAndCode(request.getEmail(), request.getCode(), status);
+    public void confirm(AuthMailRequest request) {
+        authMailRepository.updateStatusByEmailAndCode(request.getEmail(), request.getCode(), MailStatus.Y);
     }
 }

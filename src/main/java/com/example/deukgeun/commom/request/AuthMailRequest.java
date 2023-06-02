@@ -19,9 +19,7 @@ public class AuthMailRequest {
   @NotBlank(message = "인증번호는 필수 입력 값입니다.")
   @Length(min = 8, max = 8, message = "인증번호는 8글자 입니다.")
   private String code;
-  
-  private MailStatus status;
-  
+
   public static AuthMail create(String email, String code, MailStatus status) {
     return AuthMail
         .builder()

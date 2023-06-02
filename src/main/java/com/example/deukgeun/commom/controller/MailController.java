@@ -17,7 +17,7 @@ import com.example.deukgeun.commom.util.RestResponseUtil;
 import lombok.RequiredArgsConstructor;
 
 @RestController()
-@RequestMapping("/mail")
+@RequestMapping("/api/mail")
 @RequiredArgsConstructor
 public class MailController {
 
@@ -39,9 +39,19 @@ public class MailController {
       BindingResult bindingResult)
       throws MessagingException, UnsupportedEncodingException {
 
-    validateService.requestValidExceptionHandling(bindingResult);
+    String toEmail = request.getEmail();
 
-    mailService.sendMail(request.getEmail());
+    // 중복 인증 정보 제거
+    mailService.deleteByEmail(toEmail);
+
+    // 인증 코드 생성
+    String authCode = mailService.createCode();
+
+    // 메일 전송
+    mailService.send(request.getEmail(), authCode);
+
+    // 인증 메일 정보 저장
+    mailService.save(toEmail, authCode);
 
     return RestResponseUtil
     .ok("인증 메일 보내기 성공했습니다.", null);
@@ -57,11 +67,7 @@ public class MailController {
   @RequestMapping(method = RequestMethod.POST, path = "/confirm")
   public ResponseEntity<?> confirm(@Valid AuthMailRequest request, BindingResult bindingResult) {
 
-    if (bindingResult.hasErrors()) {
-      validateService.requestValidExceptionHandling(bindingResult);
-    }
-
-    mailService.updateMailStatus(request, MailStatus.Y);
+    mailService.confirm(request);
 
     return RestResponseUtil
         .ok("메일 인증 성공 했습니다.", null);

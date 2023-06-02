@@ -125,7 +125,7 @@ public class JwtServiceImpl implements JwtService{
    * @return 인증(Authentication) 객체
    */
   public Authentication getAuthentication(String token) {
-    UserDetails userDetails = userDetailService.loadUserByUsername(this.getUserPk(token));
+    UserDetails userDetails = userDetailService.loadUserByUsername(getUserPk(token));
     return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
   }
 
@@ -139,7 +139,6 @@ public class JwtServiceImpl implements JwtService{
   public String getUserPk(String token) {
     return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
   }
-
 
   /**
    * 토큰을 이용하여 사용자 역할(Role)을 추출하는 메소드입니다.
@@ -221,7 +220,7 @@ public class JwtServiceImpl implements JwtService{
    * @param authToken     업데이트할 기존 인증 토큰
    * @param newAuthToken  새로운 인증 토큰
    */
-  @CachePut(value = "token", key = "#authToken", cacheManager = "projectCacheManager")
+  @CachePut(value = "token", key = "#authToken", cacheManager = "projectCacheManager", unless="#result == null")
   public void updateAuthToken(String authToken, String newAuthToken) {
     tokenRepository.updateAuthToken(authToken, newAuthToken);
   }
@@ -232,7 +231,7 @@ public class JwtServiceImpl implements JwtService{
    * @param authToken  조회할 인증 토큰
    * @return 조회된 토큰 객체, 인증 토큰이 없는 경우 null 을 반환합니다.
    */
-  @Cacheable(value = "token", key = "#authToken", cacheManager = "projectCacheManager")
+//  @Cacheable(value = "token", key = "#authToken", cacheManager = "projectCacheManager", unless = "#result == null")
   public Token findByAuthToken(String authToken) {
     return tokenRepository.findByAuthToken(authToken).orElse(null);
   }

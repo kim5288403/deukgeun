@@ -222,7 +222,7 @@
 			let email = $("input[name=email]").val();
 			
 			$.ajax({
-				url : "/mail/send",
+				url : "/api/mail/send",
 				type : "post",
 				data : {email : email},
 			    beforeSend: function() {
@@ -250,7 +250,7 @@
 			let code = $("input[name=code]").val();
 		
 			$.ajax({
-				url : "/mail/confirm",
+				url : "/api/mail/confirmfirm",
 				type : "post",
 				data : {
 					email : email,

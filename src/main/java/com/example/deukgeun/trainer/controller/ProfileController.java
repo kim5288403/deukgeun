@@ -80,16 +80,11 @@ public class ProfileController {
      */
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> update(HttpServletRequest request, @Valid UpdateProfileRequest updateRequest, BindingResult bindingResult) throws Exception {
-        // 요청 데이터의 유효성 검사를 수행합니다.
-        validateService.requestValidExceptionHandling(bindingResult);
-
         // 요청 헤더에서 인증 토큰을 추출합니다.
         String authToken = jwtService.resolveAuthToken(request);
 
         // 프로필 서비스를 이용하여 사용자의 프로필 정보를 업데이트합니다.
         profileService.updateProfile(updateRequest.getProfile(), authToken);
-
-
 
         return RestResponseUtil.ok("프로필 정보 수정 성공했습니다.", null);
     }

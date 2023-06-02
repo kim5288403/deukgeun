@@ -1,31 +1,31 @@
 package com.example.deukgeun.trainer.controller;
 
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
+import com.example.deukgeun.commom.response.LoginResponse;
+import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
+import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
+import com.example.deukgeun.commom.util.RestResponseUtil;
 import com.example.deukgeun.trainer.entity.Profile;
+import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.request.*;
 import com.example.deukgeun.trainer.response.UserResponse;
+import com.example.deukgeun.trainer.response.UserResponse.UserListResponse;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
+import com.example.deukgeun.trainer.service.implement.UserServiceImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-import com.example.deukgeun.commom.response.LoginResponse;
-import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
-import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
-import com.example.deukgeun.commom.util.RestResponseUtil;
-import com.example.deukgeun.trainer.entity.User;
-import com.example.deukgeun.trainer.response.UserResponse.UserListResponse;
-import com.example.deukgeun.trainer.service.implement.UserServiceImpl;
-import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.IOException;
 
 
@@ -89,8 +89,6 @@ public class UserController {
     @Transactional
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> save(@Valid JoinRequest request, BindingResult bindingResult) throws IOException {
-        validateService.requestValidExceptionHandling(bindingResult);
-
         // 사용자 저장
         User saveUser = userService.save(request);
 
@@ -109,8 +107,6 @@ public class UserController {
      */
     @RequestMapping(method = RequestMethod.PUT, path = "/")
     public ResponseEntity<?> update(@Valid UpdateInfoRequest request, BindingResult bindingResult) {
-        validateService.requestValidExceptionHandling(bindingResult);
-
         // 정보 업데이트
         userService.updateInfo(request);
 
@@ -128,8 +124,6 @@ public class UserController {
     public ResponseEntity<?> updatePassword(
             @Valid UpdatePasswordRequest request,
             BindingResult bindingResult) {
-        validateService.requestValidExceptionHandling(bindingResult);
-
         // 비밀번호 업데이트
         userService.updatePassword(request);
 
@@ -152,7 +146,7 @@ public class UserController {
             @Valid WithdrawalUserRequest withdrawalRequest,
             BindingResult bindingResult
     ) {
-        validateService.requestValidExceptionHandling(bindingResult);
+
 
         // 이메일을 기반으로 사용자 조회
         User user = userService.getUserByEmail(withdrawalRequest.getEmail());
@@ -187,8 +181,6 @@ public class UserController {
      */
     @RequestMapping(method = RequestMethod.POST, path = "/login")
     public ResponseEntity<?> login(@Valid LoginRequest request, BindingResult bindingResult, HttpServletResponse response) {
-        validateService.requestValidExceptionHandling(bindingResult);
-
         // 사용자 로그인 처리
         userService.isPasswordMatches(request);
 

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,6 +22,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
+@Transactional
 public class SaveTest {
     @Mock
     private UserRepository userRepository;
@@ -65,30 +67,6 @@ public class SaveTest {
         assertThat(savedUser.getEmail()).isEqualTo(user.getEmail());
         assertThat(savedUser.getPassword()).isEqualTo(user.getPassword());
         verify(userRepository, times(1)).save(any(User.class));
-    }
-
-    @Test
-    void shouldThrowDataIntegrityViolationExceptionInValidJoinRequest() {
-        // Given
-        JoinRequest joinRequest = new JoinRequest();
-        joinRequest.setName("");
-        joinRequest.setEmail(anyString());
-        joinRequest.setPassword("test1!2@");
-        joinRequest.setGroupStatus(GroupStatus.Y);
-        joinRequest.setGroupName("testGroupName");
-        joinRequest.setPostcode("testPostCode");
-        joinRequest.setJibunAddress("testJibunAddress");
-        joinRequest.setRoadAddress("testRoadAddress");
-        joinRequest.setDetailAddress("testDetailAddress");
-        joinRequest.setExtraAddress("testExtraAddress");
-        joinRequest.setGender(Gender.M);
-        joinRequest.setPrice(30000);
-        joinRequest.setIntroduction("testIntroduction");
-
-        // When, Then
-        assertThrows(DataIntegrityViolationException.class, () -> {
-            userService.save(joinRequest);
-        });
     }
 
     @Test

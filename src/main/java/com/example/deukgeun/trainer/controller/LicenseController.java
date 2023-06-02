@@ -74,7 +74,6 @@ public class LicenseController {
      */
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> save(HttpServletRequest request, @Valid SaveLicenseRequest saveLicenseRequest, BindingResult bindingResult) throws Exception {
-        validateService.requestValidExceptionHandling(bindingResult);
         // 자격증 진위여부를 위한 외부 API 호출
         LicenseResultResponse licenseResult = licenseService.checkLicense(saveLicenseRequest);
 
@@ -98,8 +97,6 @@ public class LicenseController {
      */
     @RequestMapping(method = RequestMethod.DELETE, path = "/")
     public ResponseEntity<?> delete(@Valid RemoveLicenseRequest request, BindingResult bindingResult) {
-        validateService.requestValidExceptionHandling(bindingResult);
-
         // 각 자격증 ID를 기반으로 자격증 삭제
         request.getIds().forEach(licenseService::delete);
 
