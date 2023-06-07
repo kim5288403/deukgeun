@@ -38,9 +38,13 @@ public class RequestValidationAspect {
         }
     }
 
+    /**
+     * BindingResult를 처리하는 메서드입니다.
+     *
+     * @param bindingResult bindingResult 유효성 검사 결과를 담고 있는 BindingResult 객체
+     */
     @After(value = "@annotation(org.springframework.web.bind.annotation.RequestMapping) && args(.., bindingResult)")
     public void handleBindingResult(BindingResult bindingResult) {
-        System.out.println("====================handleBindingResult======================");
         if (bindingResult.hasErrors()) {
             Map<String, String> validatorResult = validateService.fieldErrorsMessageHandling(bindingResult);
 
@@ -50,6 +54,4 @@ public class RequestValidationAspect {
         }
 
     }
-
-
 }

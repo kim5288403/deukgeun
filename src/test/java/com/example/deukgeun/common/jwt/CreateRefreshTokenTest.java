@@ -24,12 +24,15 @@ public class CreateRefreshTokenTest {
     void shouldCreateRefreshTokenForValidParameter() {
         // Given
         String encodeSecretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+        String email = "testEmail@email.com";
 
         // When
-        String result = jwtService.createRefreshToken(role);
+        String result = jwtService.createRefreshToken(email, role);
         String resultRole = (String) Jwts.parser().setSigningKey(encodeSecretKey).parseClaimsJws(result).getBody().get("roles");
+        String resultEmail = Jwts.parser().setSigningKey(encodeSecretKey).parseClaimsJws(result).getBody().getSubject();
 
         // Then
         assertEquals(role, resultRole);
+        assertEquals(email, resultEmail);
     }
 }

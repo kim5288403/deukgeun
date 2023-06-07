@@ -83,6 +83,7 @@
 				if (res.code === 200) {
 					defaultSuccessAlert(res.message, "성공").then(function (){
 						setCookie("authToken", "Bearer "+ res.data.authToken);
+						setCookie("role", res.data.role);
 						window.location.replace("http://localhost:8080/");
 					});
 				}

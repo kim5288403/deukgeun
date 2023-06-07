@@ -165,17 +165,6 @@ public class UserServiceImpl implements UserService {
   }
 
   /**
-   * 주어진 비밀번호와 확인 비밀번호가 일치하는지 확인합니다.
-   *
-   * @param password 확인할 비밀번호
-   * @param confirm  확인할 확인 비밀번호
-   * @return 일치 여부 (true: 일치, false: 불일치)
-   */
-  public boolean isPasswordConfirmation(String password, String confirm) {
-    return password.equals(confirm);
-  }
-
-  /**
    * 그룹명이 비어있는지 여부를 확인합니다.
    * 그룹 상태가 "Y"가 아니거나 그룹명이 비어있지 않은 경우에는 true 를 반환합니다.
    *

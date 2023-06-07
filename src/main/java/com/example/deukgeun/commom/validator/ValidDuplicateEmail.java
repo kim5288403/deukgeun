@@ -1,5 +1,7 @@
 package com.example.deukgeun.commom.validator;
 
+import com.example.deukgeun.trainer.validator.DuplicateEmailValidator;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

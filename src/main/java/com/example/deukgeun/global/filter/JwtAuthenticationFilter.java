@@ -1,6 +1,7 @@
 package com.example.deukgeun.global.filter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -25,25 +26,82 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
   private final JwtServiceImpl jwtService;
 
+//  @Override
+//  public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
+//      throws IOException, ServletException, AccessDeniedException {
+//
+//    HttpServletRequest request = (HttpServletRequest) req;
+//    HttpServletResponse response = (HttpServletResponse) res;
+//    String servletPath = request.getServletPath();
+//
+//    if (servletPath.equals("/jwt/check")) {
+//      System.out.println("Gd");
+//      String authToken = jwtService.resolveAuthToken(request);
+//
+//      // 유효한 auth token 인지 확인합니다.
+//      if (jwtService.validateToken(authToken)) {
+//        String role = jwtService.getUserRole(authToken);
+//
+//        setHeader(response, role, authToken);
+//
+//        setAuthentication(authToken);
+//      }
+//      // 유효하지 않은 auth token 일 경우
+//      else {
+//          String refreshToken = jwtService.getRefreshTokenByAuthToken(authToken);
+//
+//         //유효한 refresh token 인지 확인합니다.
+//         if (jwtService.validateToken(refreshToken)) {
+//           String newAuthToken = createAuthTokenByRefreshToken(refreshToken);
+//           String role = jwtService.getUserRole(newAuthToken);
+//
+//           jwtService.updateAuthToken(authToken, newAuthToken);
+//           setHeader(response, role, newAuthToken);
+//
+//           setAuthentication(newAuthToken);
+//         }
+//         // auth token and refresh token 이 유효 하지 않은 경우
+//         else {
+//           jwtService.deleteToken(authToken);
+//
+//           response.setContentType("application/json");
+//           response.setCharacterEncoding("utf-8");
+//
+//           RestResponse messageResponse = RestResponse
+//               .builder()
+//               .code(StatusEnum.FORBIDDEN.getCode())
+//               .status(StatusEnum.FORBIDDEN.getStatus())
+//               .message("로그인 유효기간이 초과했습니다. 재로그인 해주세요.")
+//               .data(null)
+//               .build();
+//
+//           new ObjectMapper().writeValue(response.getOutputStream(),
+//               ResponseEntity.status(403).body(messageResponse));
+//         }
+//      }
+//    }
+//
+//    chain.doFilter(request, response);
+//  }
+
   @Override
   public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
       throws IOException, ServletException, AccessDeniedException {
-    
+
     HttpServletRequest request = (HttpServletRequest) req;
     HttpServletResponse response = (HttpServletResponse) res;
-    
-    String servletPath = request.getServletPath();
-    if (servletPath.equals("/jwt/check")) {
+
+    if (request.getHeader("Authorization") != null) {
+      System.out.println("gd");
       String authToken = jwtService.resolveAuthToken(request);
 
       // 유효한 auth token 인지 확인합니다.
       if (jwtService.validateToken(authToken)) {
         String role = jwtService.getUserRole(authToken);
 
-        jwtService.setHeaderRole(response, role);
-        jwtService.setHeaderAuthToken(response, authToken);
-        
-        this.setAuthentication(authToken);
+        setHeader(response, role, authToken);
+
+        setAuthentication(authToken);
       }
       // 유효하지 않은 auth token 일 경우
       else {
@@ -51,22 +109,21 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
          //유효한 refresh token 인지 확인합니다.
          if (jwtService.validateToken(refreshToken)) {
-           String newAuthToken = getNewAuthToken(refreshToken);
+           String newAuthToken = createAuthTokenByRefreshToken(refreshToken);
            String role = jwtService.getUserRole(newAuthToken);
-           
+
            jwtService.updateAuthToken(authToken, newAuthToken);
-           jwtService.setHeaderRole(response, role);
-           jwtService.setHeaderAuthToken(response, newAuthToken);
-           
-           this.setAuthentication(newAuthToken);
+           setHeader(response, role, newAuthToken);
+
+           setAuthentication(newAuthToken);
          }
          // auth token and refresh token 이 유효 하지 않은 경우
          else {
            jwtService.deleteToken(authToken);
-           
+
            response.setContentType("application/json");
            response.setCharacterEncoding("utf-8");
-           
+
            RestResponse messageResponse = RestResponse
                .builder()
                .code(StatusEnum.FORBIDDEN.getCode())
@@ -80,8 +137,21 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
          }
       }
     }
-    
+
     chain.doFilter(request, response);
+  }
+
+  private String getStartServletPath(String servletPath) {
+    if (servletPath.equals("/")) {
+      return "/";
+    }
+
+    return servletPath.split("/")[1];
+  }
+
+  private void setHeader(HttpServletResponse response, String role, String token) {
+    jwtService.setHeaderRole(response, role);
+    jwtService.setHeaderAuthToken(response, token);
   }
   
   // SecurityContext 에 Authentication 객체를 저장합니다.
@@ -92,7 +162,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
       SecurityContextHolder.getContext().setAuthentication(authentication);
   }
   
-  private String getNewAuthToken(String refreshToken) {
+  private String createAuthTokenByRefreshToken(String refreshToken) {
     String email = jwtService.getUserPk(refreshToken);
     String role = jwtService.getUserRole(refreshToken);
 

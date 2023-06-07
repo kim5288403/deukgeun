@@ -14,5 +14,4 @@ public class DeukgeunApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(DeukgeunApplication.class, args);
 	}
-
 }

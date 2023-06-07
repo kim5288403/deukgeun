@@ -35,7 +35,6 @@ import java.io.IOException;
 public class UserController {
 
     private final UserServiceImpl userService;
-    private final ValidateServiceImpl validateService;
     private final JwtServiceImpl jwtService;
     private final ProfileServiceImpl profileService;
 

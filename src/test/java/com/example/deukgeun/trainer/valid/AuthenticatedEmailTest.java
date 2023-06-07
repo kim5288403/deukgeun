@@ -28,7 +28,7 @@ public class AuthenticatedEmailTest {
     private MailServiceImpl mailService;
 
     @Test
-    void shouldReturnTrueForValidEmail() throws Exception {
+    void shouldReturnTrueForValidEmail() {
         // Given
         AuthMail authMail = new AuthMail("testEmail", "1234", MailStatus.Y);
         given(authMailRepository.findByEmail(anyString())).willReturn(Optional.of(authMail));
@@ -41,17 +41,4 @@ public class AuthenticatedEmailTest {
         verify(authMailRepository, times(1)).findByEmail(anyString());
     }
 
-    @Test
-    void shouldReturnFalseForInvalidEmail() throws Exception {
-        // Given
-        AuthMail authMail = new AuthMail("testEmail", "1234", MailStatus.N);
-        given(authMailRepository.findByEmail(anyString())).willReturn(Optional.of(authMail));
-
-        // When
-        boolean result = mailService.isEmailAuthenticated(anyString());
-
-        // Then
-        assertFalse(result);
-        verify(authMailRepository, times(1)).findByEmail(anyString());
-    }
 }

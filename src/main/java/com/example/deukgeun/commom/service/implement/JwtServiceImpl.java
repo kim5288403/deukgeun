@@ -77,11 +77,12 @@ public class JwtServiceImpl implements JwtService{
    * 현재 시간과 리프레시 토큰의 만료 시간을 설정하여 토큰을 생성합니다.
    * 생성된 토큰은 시크릿 키를 사용하여 서명되어 반환됩니다.
    *
+   * @param email 사용자 이메일
    * @param roles 사용자 역할 정보
    * @return 생성된 리프레시 토큰
    */
-  public String createRefreshToken(String roles) {
-    Claims claims = Jwts.claims().setSubject("");
+  public String createRefreshToken(String email, String roles) {
+    Claims claims = Jwts.claims().setSubject(email);
     claims.put("roles", roles);
     Date now = new Date();
 
@@ -182,9 +183,12 @@ public class JwtServiceImpl implements JwtService{
 
     // 응답 헤더에 인증 토큰 설정
     setHeaderAuthToken(response, authToken);
+    
+    // 응답 헤더에 role 설정
+    setHeaderRole(response, role);
 
     // 리프레시 토큰 생성
-    String refreshToken = createRefreshToken(role);
+    String refreshToken = createRefreshToken(email, role);
 
     // 토큰 정보 데이터베이스에 저장
     createToken(authToken, refreshToken);

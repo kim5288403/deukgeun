@@ -112,8 +112,8 @@
 
 		$(document).ready(function(){
 			getPostAjax();
-			getProfileInfo(authToken);
-			getLicense(authToken);
+			getProfileInfo();
+			getLicense();
 		});
 		
 		function getPostAjax(){
@@ -132,20 +132,17 @@
 			});
 		}
 
-		function getProfileInfo(authToken){
+		function getProfileInfo(){
 			$.ajax({
 				url : "/api/trainer/profile/" + id,
 				type : "get",
-				beforeSend: function (xhr) {
-					xhr.setRequestHeader("Authorization", "Bearer " + authToken);
-			    },
 				success : function(res, status, request) {
 					setUserInfo(res.data);
 				}
 			});
 		}
 		
-		function getLicense(authToken){
+		function getLicense(){
 			$.ajax({
 				url : "/api/trainer/license/" + id,
 				type : "get",

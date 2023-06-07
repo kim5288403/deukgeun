@@ -22,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 public class MailController {
 
   private final MailServiceImpl mailService;
-  private final ValidateServiceImpl validateService;
 
   /**
    * 이메일을 보내는 메소드입니다.

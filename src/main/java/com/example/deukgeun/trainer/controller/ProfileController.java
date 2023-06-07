@@ -26,7 +26,6 @@ import javax.validation.Valid;
 public class ProfileController {
     private final ProfileServiceImpl profileService;
     private final UserServiceImpl userService;
-    private final ValidateServiceImpl validateService;
     private final JwtServiceImpl jwtService;
 
     /**

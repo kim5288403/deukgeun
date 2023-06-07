@@ -17,13 +17,6 @@ public class JwtController {
   private final JwtServiceImpl jwtService;
 
   /**
-   * authToken check 용
-   */
-  @RequestMapping(method = RequestMethod.POST, path = "/check")
-  public void check() {
-  }
-
-  /**
    * 로그아웃을 수행합니다.
    *
    * @param request HTTP 요청 객체
