@@ -3,7 +3,6 @@ package com.example.deukgeun.trainer.controller;
 
 import com.example.deukgeun.commom.response.LoginResponse;
 import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
-import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
 import com.example.deukgeun.commom.util.RestResponseUtil;
 import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.entity.User;

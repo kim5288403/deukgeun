@@ -1,24 +1,24 @@
 package com.example.deukgeun.global.filter;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import com.example.deukgeun.commom.enums.StatusEnum;
+import com.example.deukgeun.commom.response.RestResponse;
+import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
-import com.example.deukgeun.commom.enums.StatusEnum;
-import com.example.deukgeun.commom.response.RestResponse;
-import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @RequiredArgsConstructor
 @Component
