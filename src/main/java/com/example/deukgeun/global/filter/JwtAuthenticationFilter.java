@@ -92,7 +92,6 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     HttpServletResponse response = (HttpServletResponse) res;
 
     if (request.getHeader("Authorization") != null) {
-      System.out.println("gd");
       String authToken = jwtService.resolveAuthToken(request);
 
       // 유효한 auth token 인지 확인합니다.
@@ -139,14 +138,6 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     }
 
     chain.doFilter(request, response);
-  }
-
-  private String getStartServletPath(String servletPath) {
-    if (servletPath.equals("/")) {
-      return "/";
-    }
-
-    return servletPath.split("/")[1];
   }
 
   private void setHeader(HttpServletResponse response, String role, String token) {

@@ -182,7 +182,8 @@ public class UserController {
     public ResponseEntity<?> login(@Valid LoginRequest request, BindingResult bindingResult, HttpServletResponse response) {
         // 사용자 로그인 처리
         userService.isPasswordMatches(request);
-
+        //test
+        System.out.println("test");
         // JWT 토큰 생성 및 설정
         String authToken = jwtService.setToken(request.getEmail(), response);
 

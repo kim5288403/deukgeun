@@ -27,45 +27,10 @@
 	        /*]]*/
 
 	        $("ul[class=links]").find("li[id=" + menu + "]").addClass("active");
-			
-<!--			// 매 페이지 마다 -->
-<!--			// 1. 쿠키에 토큰 저장 유무 확인-->
-<!--			// 2. 저장된 토큰 있을 경우 백으로 토큰 유효성 검사를 넘김-->
-<!--			// 2-1. 성공 시 로그인된 경우에 필요 없는 메뉴들 하이드-->
-<!--			// 2-2. 실패 시 로그인 페이지로 이동 및 쿠키 삭제-->
-<!--			// 3. 없을 경우 아무일도 일어나지 않는다.-->
-<!--			-->
-<!--			-->
-<!--			if (authToken !== null) {-->
-<!--				$.ajax({-->
-<!--					url : "/jwt/check",-->
-<!--					type : "post",-->
-<!--					beforeSend: function (xhr) {-->
-<!--				    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);-->
-<!--				    },-->
-<!--					success : function(res, status, request) {-->
-<!--						if (res !== "" && res.body.code === 403) {-->
-<!--							logoutCookie(res.body.message);-->
-<!--							logoutSetMenu();-->
-<!--						} -->
-<!--						-->
-<!--						if (request.getResponseHeader("Authorization") !== null) {-->
-<!--							let newAuthToken = request.getResponseHeader("Authorization");-->
-<!--							setCookie("authToken", newAuthToken);-->
-<!--							loginSetMenu();-->
-<!--						}-->
-<!--						-->
-<!--						if (request.getResponseHeader("role") !== null) {-->
-<!--							let role = request.getResponseHeader("role");-->
-<!--							setCookie("role", role);-->
-<!--						}-->
-<!--					}-->
-<!--				});-->
-<!--			} else {-->
-<!--				logoutSetMenu();-->
-<!--			}-->
+
 
 			let authToken = getCookie("authToken");
+
 			if (authToken === null) {
 				logoutSetMenu();
 			} else {
