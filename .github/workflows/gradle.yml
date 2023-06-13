@@ -14,9 +14,7 @@ on:
     branches: [ "master" , "CITest"]
 
 permissions:
-  contents: read
-  another_permissions:
-    contents: write
+  contents: write
 
 jobs:
   build:
