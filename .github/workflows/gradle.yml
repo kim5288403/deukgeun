@@ -35,6 +35,10 @@ jobs:
           --health-timeout=5s
           --health-retries=3
     steps:
+      - name: Start Redis
+        uses: supercharge/redis-github-action@1.5.0
+        with:
+        redis-version: 7
 
       - name: Test Connection
         run: |
