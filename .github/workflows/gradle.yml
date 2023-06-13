@@ -13,7 +13,10 @@ on:
   pull_request:
     branches: [ "master" , "CITest"]
 
-permissions: read, write
+permissions:
+  contents: read
+  another_permissions:
+    contents: write
 
 jobs:
   build:
