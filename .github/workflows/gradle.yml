@@ -13,7 +13,8 @@ on:
   pull_request:
     branches: [ "master" , "CITest"]
 
-permissions: read-all|write-all
+permissions:
+  contents: read|write|none
 
 jobs:
   build:
