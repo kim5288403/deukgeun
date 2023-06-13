@@ -14,7 +14,7 @@ on:
     branches: [ "master" , "CITest"]
 
 permissions:
-  contents: read
+  contents: all
 
 jobs:
   build:
@@ -41,7 +41,7 @@ jobs:
           redis-version: 7
           host: ${{ secrets.REDIS_HOST }}
 
-      - name: Test Connection
+      - name: Test Connection # DB 연결 테스트
         run: |
           mysql -h 127.0.0.1 -P 3306 -u ci_test -p${{ secrets.MYSQL_PASSWORD }} -e "SELECT 1";
 
