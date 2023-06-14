@@ -14,12 +14,12 @@ on:
     branches: [ "master" , "CITest"]
 
 permissions:
-  contents: write
+  contents: read
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    services:
+jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정의하는 부분
+  build: # build 작업을 정의하는 부분
+    runs-on: ubuntu-latest # ubuntu-latest 운영 체제에서 실행됨을 정의함
+    services: # 섹션은 추가 서비스를 정의하는 부분
       mysql: # 사용할 서비스 명
         image: mysql:8.0  # 사용할 서비스의 이미지(도커 개념 기반)
         env: # 사용할 서비스의 환경설정
@@ -34,6 +34,7 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=3
+
     steps:
       - name: Start Redis # Redis 시작
         uses: supercharge/redis-github-action@1.5.0
@@ -43,7 +44,7 @@ jobs:
 
       - name: Test Connection # DB 연결 테스트
         run: |
-          mysql -h 127.0.0.1 -P 3306 -u ci_test -p${{ secrets.MYSQL_PASSWORD }} -e "SELECT 1";
+          mysql -h 127.0.0.1 -P 3306 -u ${{ secrets.MYSQL_USER }} -p${{ secrets.MYSQL_PASSWORD }} -e "SELECT 1";
 
       - name: Checkout repository
         uses: actions/checkout@v3
