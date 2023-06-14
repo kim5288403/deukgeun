@@ -23,11 +23,10 @@
 	<script th:inline="javascript">
 		$(document).ready(function(){
 			/*<![CDATA[*/
-	        let menu = /*[[ ${menu} ]]*/
+	        	let menu = /*[[ ${menu} ]]*/
 	        /*]]*/
 
 	        $("ul[class=links]").find("li[id=" + menu + "]").addClass("active");
-
 
 			let authToken = getCookie("authToken");
 
