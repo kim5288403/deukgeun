@@ -16,6 +16,7 @@ on:
 permissions:
   contents: read
 
+
 jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정의하는 부분
   build: # build 작업을 정의하는 부분
     runs-on: ubuntu-latest # ubuntu-latest 운영 체제에서 실행됨을 정의함
