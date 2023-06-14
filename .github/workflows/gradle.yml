@@ -44,7 +44,7 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
 
       - name: Test Connection # DB 연결 테스트
         run: |
-          mysql -h 127.0.0.1 -P ${{ secrets.MYSQL_PORT }} -u ${{ secrets.MYSQL_USER }} -p${{ secrets.MYSQL_PASSWORD }} -e "SELECT 1";
+          mysql -h ${{ secrets.MYSQL_HOST }} -P ${{ secrets.MYSQL_PORT }} -u ${{ secrets.MYSQL_USER }} -p${{ secrets.MYSQL_PASSWORD }} -e "SELECT 1";
 
       - name: Checkout repository
         uses: actions/checkout@v3
