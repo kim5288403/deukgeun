@@ -10,6 +10,7 @@ import javax.transaction.Transactional;
 import java.util.Optional;
 
 public interface TokenRepository extends JpaRepository<Token, Long>{
+
   Optional<Token> findByAuthToken(String authToken);
   
   @Transactional
