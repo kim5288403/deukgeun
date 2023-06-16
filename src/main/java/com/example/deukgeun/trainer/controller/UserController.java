@@ -4,8 +4,8 @@ package com.example.deukgeun.trainer.controller;
 import com.example.deukgeun.commom.response.LoginResponse;
 import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
 import com.example.deukgeun.commom.util.RestResponseUtil;
+import com.example.deukgeun.trainer.entity.Member;
 import com.example.deukgeun.trainer.entity.Profile;
-import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.request.*;
 import com.example.deukgeun.trainer.response.UserResponse;
 import com.example.deukgeun.trainer.response.UserResponse.UserListResponse;
@@ -68,10 +68,10 @@ public class UserController {
     public ResponseEntity<?> getDetail(HttpServletRequest request) {
         // 인증 토큰에서 사용자의 인증 정보를 추출
         String authToken = jwtService.resolveAuthToken(request);
-        User user = userService.getUserByAuthToken(authToken);
+        Member member = userService.getByAuthToken(authToken);
 
         // 사용자 정보를 응답 객체로 변환
-        UserResponse response = new UserResponse(user);
+        UserResponse response = new UserResponse(member);
 
         return RestResponseUtil.ok("마이 페이지 조회 성공했습니다.", response);
     }
@@ -88,10 +88,10 @@ public class UserController {
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> save(@Valid JoinRequest request, BindingResult bindingResult) throws IOException {
         // 사용자 저장
-        User saveUser = userService.save(request);
+        Member saveMember = userService.save(request);
 
         // 프로필 저장
-        profileService.save(request.getProfile(), saveUser.getId());
+        profileService.save(request.getProfile(), saveMember.getId());
 
         return RestResponseUtil.ok("회원 가입 성공 했습니다.", null);
     }
@@ -147,10 +147,10 @@ public class UserController {
 
 
         // 이메일을 기반으로 사용자 조회
-        User user = userService.getUserByEmail(withdrawalRequest.getEmail());
+        Member member = userService.getByEmail(withdrawalRequest.getEmail());
 
         // 프로필 조회
-        Profile userProfile = profileService.getByUserId(user.getId());
+        Profile userProfile = profileService.getByUserId(member.getId());
 
         // 디렉토리 프로필 삭제
         profileService.deleteFileToDirectory(userProfile.getPath());
@@ -159,7 +159,7 @@ public class UserController {
         profileService.withdrawal(userProfile.getId());
 
         //사용자 삭제
-        userService.withdrawal(user.getId());
+        userService.withdrawal(member.getId());
 
         //토큰 삭제
         String authToken = jwtService.resolveAuthToken(request);

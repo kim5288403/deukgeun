@@ -9,7 +9,6 @@ import javax.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.UniqueElements;
 
 @Entity
 @Getter
@@ -30,6 +29,10 @@ public class Token {
   public Token(String authToken,String refreshToken) {
     this.authToken = authToken;
     this.refreshToken = refreshToken;
+  }
+
+  public void updateAuthToken(String authToken) {
+    this.authToken = authToken;
   }
   
 }

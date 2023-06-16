@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.UUID;
 
+import com.example.deukgeun.trainer.entity.Member;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import com.example.deukgeun.trainer.entity.Profile;
-import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.repository.ProfileRepository;
 import com.example.deukgeun.trainer.request.ProfileRequest;
 import com.example.deukgeun.trainer.service.ProfileService;
@@ -56,8 +56,8 @@ public class ProfileServiceImpl implements ProfileService {
      * @throws Exception 프로필을 조회하는 도중 예외가 발생한 경우
      */
     public Long getProfileId(String authToken) {
-        User user = userService.getUserByAuthToken(authToken);
-        Profile profile = getByUserId(user.getId());
+        Member member = userService.getByAuthToken(authToken);
+        Profile profile = getByUserId(member.getId());
 
         return profile.getId();
     }

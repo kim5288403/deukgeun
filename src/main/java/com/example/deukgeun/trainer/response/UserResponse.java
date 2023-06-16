@@ -2,8 +2,8 @@ package com.example.deukgeun.trainer.response;
 
 import com.example.deukgeun.commom.enums.Gender;
 import com.example.deukgeun.trainer.entity.GroupStatus;
+import com.example.deukgeun.trainer.entity.Member;
 import com.example.deukgeun.trainer.entity.Profile;
-import com.example.deukgeun.trainer.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,19 +38,19 @@ public class UserResponse {
   
   private Integer price;
   
-  public UserResponse (User user) {
-    this.email = user.getEmail();
-    this.name = user.getName();
-    this.groupStatus = user.getGroupStatus();
-    this.groupName = user.getGroupName();
-    this.postcode = user.getPostcode();
-    this.jibunAddress = user.getJibunAddress();
-    this.roadAddress = user.getRoadAddress();
-    this.detailAddress = user.getDetailAddress();
-    this.extraAddress = user.getExtraAddress();
-    this.gender = user.getGender();
-    this.price = user.getPrice();
-    this.introduction = user.getIntroduction();
+  public UserResponse (Member member) {
+    this.email = member.getEmail();
+    this.name = member.getName();
+    this.groupStatus = member.getGroupStatus();
+    this.groupName = member.getGroupName();
+    this.postcode = member.getPostcode();
+    this.jibunAddress = member.getJibunAddress();
+    this.roadAddress = member.getRoadAddress();
+    this.detailAddress = member.getDetailAddress();
+    this.extraAddress = member.getExtraAddress();
+    this.gender = member.getGender();
+    this.price = member.getPrice();
+    this.introduction = member.getIntroduction();
   }
   
   @Data
@@ -73,10 +73,10 @@ public class UserResponse {
     public UserListResponse(Profile profile) {
       this.id = profile.getUserId();
       this.path = profile.getPath();
-      this.name = profile.getUser().getName();
-      this.groupStatus = profile.getUser().getGroupStatus();
-      this.groupName = profile.getUser().getGroupName();
-      this.introduction = profile.getUser().getIntroduction();
+      this.name = profile.getMember().getName();
+      this.groupStatus = profile.getMember().getGroupStatus();
+      this.groupName = profile.getMember().getGroupName();
+      this.introduction = profile.getMember().getIntroduction();
     }
   }
 

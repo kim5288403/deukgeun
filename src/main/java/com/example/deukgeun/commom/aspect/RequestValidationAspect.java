@@ -4,13 +4,11 @@ import com.example.deukgeun.commom.exception.RequestValidException;
 import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
-import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 
 import java.util.Map;
 
@@ -18,8 +16,8 @@ import java.util.Map;
 @Component
 public class RequestValidationAspect {
 
-    @Autowired
-    private ValidateServiceImpl validateService;
+//    @Autowired(required=true)
+//    private ValidateServiceImpl validateService;
 
     /**
      * 요청 DTO가 누락된 경우를 확인하여 요청을 유효성 검사합니다.
@@ -43,15 +41,14 @@ public class RequestValidationAspect {
      *
      * @param bindingResult bindingResult 유효성 검사 결과를 담고 있는 BindingResult 객체
      */
-    @After(value = "@annotation(org.springframework.web.bind.annotation.RequestMapping) && args(.., bindingResult)")
-    public void handleBindingResult(BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            Map<String, String> validatorResult = validateService.fieldErrorsMessageHandling(bindingResult);
-
-            validatorResult = validateService.globalErrorsMessageHandling(validatorResult, bindingResult);
-
-            throw new RequestValidException(validatorResult, "request error!");
-        }
-
-    }
+//    @After(value = "@annotation(org.springframework.web.bind.annotation.RequestMapping) && args(.., bindingResult)")
+//    public void handleBindingResult(BindingResult bindingResult) {
+//        if (bindingResult.hasErrors()) {
+//            Map<String, String> validatorResult = validateService.fieldErrorsMessageHandling(bindingResult);
+//
+//            validatorResult = validateService.globalErrorsMessageHandling(validatorResult, bindingResult);
+//
+//            throw new RequestValidException(validatorResult, "request error!");
+//        }
+//    }
 }

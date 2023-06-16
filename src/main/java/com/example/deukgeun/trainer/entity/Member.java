@@ -1,32 +1,26 @@
 package com.example.deukgeun.trainer.entity;
 
-import java.util.Collection;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import com.example.deukgeun.commom.enums.Gender;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import javax.persistence.*;
+import java.util.Collection;
 
 @Entity
 @Getter
 @Table(name = "trainer_user")
 @NoArgsConstructor
-public class User extends BaseEntity implements UserDetails{
+public class Member extends BaseEntity implements UserDetails{
 
   private static final long serialVersionUID = 1L;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "user_id")
+  @Column(name = "member_id")
   private Long id;
 
   @Column(length = 50, nullable = false)
@@ -41,37 +35,37 @@ public class User extends BaseEntity implements UserDetails{
   @Column(name = "group_status", nullable = false)
   @Enumerated(EnumType.STRING)
   private GroupStatus groupStatus;
-  
+
   @Column(name = "gender", nullable = false)
   @Enumerated(EnumType.STRING)
   private Gender gender;
 
   @Column(length = 50, nullable = false)
   private String groupName;
-  
+
   @Column(length = 50, nullable = false)
   private String postcode;
-  
+
   @Column(length = 50, nullable = false)
   private String jibunAddress;
-  
+
   @Column(length = 50, nullable = false)
   private String roadAddress;
-  
+
   @Column(length = 50, nullable = false)
   private String detailAddress;
-  
+
   @Column(length = 50, nullable = false)
   private String extraAddress;
-  
+
   @Column(length = 50, nullable = false)
   private Integer price;
-  
+
   @Column(length = 50, nullable = false)
   private String introduction;
 
   @Builder
-  public User(
+  public Member(
           String name,
           String email,
           String password,

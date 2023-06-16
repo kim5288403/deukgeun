@@ -1,15 +1,12 @@
 package com.example.deukgeun.trainer.service.implement;
 
+import com.example.deukgeun.trainer.entity.Member;
 import com.example.deukgeun.trainer.entity.Post;
-import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.repository.PostRepository;
 import com.example.deukgeun.trainer.request.PostRequest;
 import com.example.deukgeun.trainer.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
 
@@ -48,11 +45,11 @@ public class PostServiceImpl implements PostService {
      */
     public void upload(PostRequest request, String authToken) throws Exception {
         // 인증 토큰을 이용하여 사용자 정보를 가져옵니다.
-        User user = userService.getUserByAuthToken(authToken);
-        Long userId = user.getId();
+        Member member = userService.getByAuthToken(authToken);
+        Long memberId = member.getId();
 
         // 해당 사용자의 게시글을 조회합니다.
-        Post post = postRepository.findByUserId(userId).orElse(null);
+        Post post = postRepository.findByUserId(memberId).orElse(null);
 
         // 게시글 내용을 HTML 이스케이프하여 저장합니다.
         String content = request.getContent();
@@ -60,10 +57,10 @@ public class PostServiceImpl implements PostService {
 
         if (post != null) {
             // 이미 게시글이 존재하는 경우, 게시글을 업데이트합니다.
-            update(userId, html);
+            update(memberId, html);
         } else {
             // 게시글이 존재하지 않는 경우, 새로운 게시글을 저장합니다.
-            save(userId, html);
+            save(memberId, html);
         }
     }
 

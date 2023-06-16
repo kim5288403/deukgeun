@@ -1,10 +1,7 @@
 package com.example.deukgeun.trainer.response;
 
-import java.util.List;
 import com.example.deukgeun.commom.enums.Gender;
-import com.example.deukgeun.trainer.entity.License;
 import com.example.deukgeun.trainer.entity.Profile;
-import com.example.deukgeun.trainer.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -33,11 +30,11 @@ public class ProfileResponse {
 
     public ProfileAndUserResponse (Profile profile) {
       this.path = profile.getPath();
-      this.name = profile.getUser().getName();
-      this.price = profile.getUser().getPrice();
-      this.address = profile.getUser().getJibunAddress() + profile.getUser().getDetailAddress() + profile.getUser().getRoadAddress();
-      this.gender = profile.getUser().getGender() == Gender.M ? "남" : "여";
-      this.groupName = profile.getUser().getGroupName();
+      this.name = profile.getMember().getName();
+      this.price = profile.getMember().getPrice();
+      this.address = profile.getMember().getJibunAddress() + profile.getMember().getDetailAddress() + profile.getMember().getRoadAddress();
+      this.gender = profile.getMember().getGender() == Gender.M ? "남" : "여";
+      this.groupName = profile.getMember().getGroupName();
     }
   }
 }

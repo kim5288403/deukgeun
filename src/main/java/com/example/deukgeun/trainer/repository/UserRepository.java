@@ -2,6 +2,8 @@ package com.example.deukgeun.trainer.repository;
 
 
 import java.util.Optional;
+
+import com.example.deukgeun.trainer.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -9,16 +11,15 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.deukgeun.commom.enums.Gender;
 import com.example.deukgeun.trainer.entity.GroupStatus;
-import com.example.deukgeun.trainer.entity.User;
 
-public interface UserRepository extends JpaRepository<User, Long> {
-  Optional<User> findByEmail(String email);
+public interface UserRepository extends JpaRepository<Member, Long> {
+  Optional<Member> findByEmail(String email);
    
   boolean existsByEmail(String email);
   
   @Modifying
   @Transactional
-  @Query("update User m set m.name = :name,"
+  @Query("update Member m set m.name = :name,"
       + " m.gender = :gender,"
       + " m.postcode = :postcode,"
       + " m.jibunAddress = :jibunAddress,"
@@ -47,7 +48,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
   
   @Modifying
   @Transactional
-  @Query("update User m set m.password = :password where m.email = :email")
+  @Query("update Member m set m.password = :password where m.email = :email")
   void updatePassword(@Param(value = "email")String email, @Param(value = "password")String password);
 
   @Transactional

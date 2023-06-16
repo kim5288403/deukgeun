@@ -27,16 +27,16 @@ public class Profile extends BaseEntity {
   private Long userId;
   
   @OneToOne()
-  @JoinColumn(name = "user_id", insertable = false, updatable = false, nullable = false)
-  private User user;
+  @JoinColumn(name = "member_id", insertable = false, updatable = false, nullable = false)
+  private Member member;
 
   @Column(length = 100, nullable = false)
   private String path;
 
   @Builder
-  public Profile(String path, Long userId, User user) {
+  public Profile(String path, Long userId, Member member) {
     this.userId = userId;
     this.path = path;
-    this.user = user;
+    this.member = member;
   }
 }

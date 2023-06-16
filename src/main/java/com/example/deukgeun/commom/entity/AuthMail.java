@@ -33,13 +33,13 @@ public class AuthMail extends BaseEntity{
   
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
-  private MailStatus status;
+  private MailStatus mailStatus;
   
   @Builder
-  public AuthMail(String email, String code, MailStatus status) {
+  public AuthMail(String email, String code, MailStatus mailStatus) {
     this.email = email;
     this.code = code;
-    this.status = status;
+    this.mailStatus = mailStatus;
   }
   
 }

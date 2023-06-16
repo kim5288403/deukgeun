@@ -16,7 +16,7 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
   
   Optional<Profile> findByUserId(Long userId);
   
-  @Query("select p from Profile p where p.user.name like :keyword or p.user.groupName like :keyword or p.user.jibunAddress like :keyword or p.user.roadAddress like :keyword or p.user.detailAddress like :keyword or p.user.extraAddress like :keyword")
+  @Query("select p from Profile p where p.member.name like :keyword or p.member.groupName like :keyword or p.member.jibunAddress like :keyword or p.member.roadAddress like :keyword or p.member.detailAddress like :keyword or p.member.extraAddress like :keyword")
   Page<UserListResponse> findByUserLikeKeyword(@Param(value = "keyword")String keyword, Pageable pageable);
 
   @Modifying

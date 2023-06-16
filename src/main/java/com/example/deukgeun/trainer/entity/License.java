@@ -32,17 +32,17 @@ public class License extends BaseEntity{
   @Column(length = 50, nullable = false)
   private String licenseNumber;
   
-  @Column(name = "user_id")
-  private Long userId;
+  @Column(name = "member_id")
+  private Long memberId;
   
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", insertable = false, updatable = false, nullable = false)
-  private User user;
+  @JoinColumn(name = "member_id", insertable = false, updatable = false, nullable = false)
+  private Member member;
   
   @Builder
-  public License(String certificateName, String licenseNumber, Long userId) {
+  public License(String certificateName, String licenseNumber, Long memberId) {
     this.certificateName = certificateName;
-    this.userId = userId;
+    this.memberId = memberId;
     this.licenseNumber = licenseNumber;
   }
 }

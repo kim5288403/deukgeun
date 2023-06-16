@@ -20,12 +20,12 @@ public class AuthMailRequest {
   @Length(min = 8, max = 8, message = "인증번호는 8글자 입니다.")
   private String code;
 
-  public static AuthMail create(String email, String code, MailStatus status) {
+  public static AuthMail create(String email, String code, MailStatus mailStatus) {
     return AuthMail
         .builder()
         .email(email)
         .code(code)
-        .status(status)
+        .mailStatus(mailStatus)
         .build();
   }
 

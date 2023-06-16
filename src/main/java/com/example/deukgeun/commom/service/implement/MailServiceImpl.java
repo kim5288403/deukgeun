@@ -146,7 +146,7 @@ public class MailServiceImpl implements MailService {
         AuthMail authMail = authMailRepository.findByEmail(email).orElseThrow(
                 () -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
 
-        return authMail.getStatus() == MailStatus.Y;
+        return authMail.getMailStatus() == MailStatus.Y;
     }
 
     /**

@@ -30,12 +30,12 @@ public class LicenseServiceImpl implements LicenseService {
     /**
      * 사용자 ID에 해당하는 라이선스 목록을 조회합니다.
      *
-     * @param userId 사용자 ID
+     * @param memberId 사용자 ID
      * @return 라이선스 목록
      */
     @Cacheable(value = "license", key = "#userId", cacheManager = "projectCacheManager")
-    public List<LicenseListResponse> findByUserId(Long userId) {
-        return licenseRepository.findByUserId(userId);
+    public List<LicenseListResponse> findByMemberId(Long memberId) {
+        return licenseRepository.findByMemberId(memberId);
     }
 
     /**

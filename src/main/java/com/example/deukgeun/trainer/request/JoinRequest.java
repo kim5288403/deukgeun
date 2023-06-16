@@ -6,7 +6,7 @@ import com.example.deukgeun.commom.validator.ValidDuplicateEmail;
 import com.example.deukgeun.commom.validator.ValidEnum;
 import com.example.deukgeun.commom.validator.ValidPasswordConfirm;
 import com.example.deukgeun.trainer.entity.GroupStatus;
-import com.example.deukgeun.trainer.entity.User;
+import com.example.deukgeun.trainer.entity.Member;
 import com.example.deukgeun.trainer.validator.ValidFileType;
 import com.example.deukgeun.trainer.validator.ValidGroupName;
 import lombok.Data;
@@ -71,8 +71,8 @@ public class JoinRequest {
     @ValidFileType
     private MultipartFile profile;
 
-    public static User create(JoinRequest request, PasswordEncoder passwordEncoder) {
-        return User
+    public static Member create(JoinRequest request, PasswordEncoder passwordEncoder) {
+        return Member
                 .builder()
                 .name(request.getName())
                 .email(request.getEmail())

@@ -38,7 +38,7 @@ public class LicenseController {
      */
     @RequestMapping(method = RequestMethod.GET, path = "/{id}")
     public ResponseEntity<?> getListById(@PathVariable Long id) {
-        List<LicenseListResponse> response = licenseService.findByUserId(id);
+        List<LicenseListResponse> response = licenseService.findByMemberId(id);
 
         return RestResponseUtil
                 .ok("자격증 조회 성공했습니다.", response);
@@ -54,10 +54,10 @@ public class LicenseController {
     public ResponseEntity<?> getListByAuthToken(HttpServletRequest request) {
         // 인증 토큰을 사용하여 사용자 ID 조회
         String authToken = jwtService.resolveAuthToken(request);
-        Long userId = userService.getUserId(authToken);
+        Long memberId = userService.getUserId(authToken);
 
         // 사용자 ID를 기반으로 자격증 목록 조회
-        List<LicenseListResponse> response = licenseService.findByUserId(userId);
+        List<LicenseListResponse> response = licenseService.findByMemberId(memberId);
 
         return RestResponseUtil
                 .ok("자격증 조회 성공했습니다.", response);

@@ -2,6 +2,7 @@ package com.example.deukgeun.trainer.service.implement;
 
 import com.example.deukgeun.commom.exception.PasswordMismatchException;
 import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
+import com.example.deukgeun.trainer.entity.Member;
 import com.example.deukgeun.trainer.request.JoinRequest;
 import com.example.deukgeun.trainer.request.LoginRequest;
 import com.example.deukgeun.trainer.request.UpdatePasswordRequest;
@@ -9,7 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.example.deukgeun.trainer.entity.User;
 import com.example.deukgeun.trainer.repository.ProfileRepository;
 import com.example.deukgeun.trainer.repository.UserRepository;
 import com.example.deukgeun.trainer.request.UpdateInfoRequest;
@@ -39,9 +39,9 @@ public class UserServiceImpl implements UserService {
     String email = request.getEmail();
     String password = request.getPassword();
 
-    User user = getUserByEmail(email);
+    Member member = getByEmail(email);
 
-    boolean check = passwordEncoder.matches(password, user.getPassword());
+    boolean check = passwordEncoder.matches(password, member.getPassword());
 
     if (!check) {
       throw new PasswordMismatchException("사용자를 찾을 수 없습니다.");
@@ -58,7 +58,8 @@ public class UserServiceImpl implements UserService {
   public Page<UserListResponse> getList(String keyword, Integer currentPage) {
     String likeKeyword = "%" + keyword + "%";
     PageRequest pageable = PageRequest.of(currentPage, 10);
-    return profileRepository.findByUserLikeKeyword(likeKeyword, pageable);
+    return null;
+//    return profileRepository.findByUserLikeKeyword(likeKeyword, pageable);
   }
 
   /**
@@ -67,10 +68,10 @@ public class UserServiceImpl implements UserService {
    * @param request 회원가입 요청 객체
    * @return 저장된 사용자
    */
-  public User save(JoinRequest request) {
-    User user = JoinRequest.create(request, passwordEncoder);
+  public Member save(JoinRequest request) {
+    Member member = JoinRequest.create(request, passwordEncoder);
 
-    return userRepository.save(user);
+    return userRepository.save(member);
   }
 
   /**
@@ -80,7 +81,7 @@ public class UserServiceImpl implements UserService {
    * @return 조회된 사용자
    * @throws EntityNotFoundException 주어진 이메일에 해당하는 사용자가 없는 경우 발생하는 예외
    */
-  public User getUserByEmail(String email) throws EntityNotFoundException {
+  public Member getByEmail(String email) throws EntityNotFoundException {
     return userRepository.findByEmail(email)
             .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
   }
@@ -92,10 +93,10 @@ public class UserServiceImpl implements UserService {
    * @return 조회된 사용자
    * @throws EntityNotFoundException 주어진 인증 토큰에 해당하는 사용자가 없는 경우 발생하는 예외
    */
-  public User getUserByAuthToken(String authToken) throws EntityNotFoundException {
+  public Member getByAuthToken(String authToken) throws EntityNotFoundException {
     String email = jwtService.getUserPk(authToken);
     
-    return getUserByEmail(email);
+    return getByEmail(email);
   }
 
   /**
@@ -149,9 +150,9 @@ public class UserServiceImpl implements UserService {
    * @throws EntityNotFoundException 사용자를 찾을 수 없는 경우 발생하는 예외
    */
   public Long getUserId(String authToken) throws EntityNotFoundException {
-    User user = getUserByAuthToken(authToken);
+    Member member = getByAuthToken(authToken);
     
-    return user.getId();
+    return member.getId();
   }
 
   /**
