@@ -5,40 +5,40 @@ spring:
     password: Abcd123@
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-    jpa:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
       hibernate:
-        ddl-auto: update
-      properties:
-        hibernate:
-          show_sql: true
-          new_generator_mappings: true
-          dialect: org.hibernate.dialect.MySQL57Dialect
+        show_sql: true
+        new_generator_mappings: true
+        dialect: org.hibernate.dialect.MySQL57Dialect
 
-    servlet:
-      multipart:
-        maxFileSize: 10MB
-        maxRequestSize: 10MB
+  servlet:
+    multipart:
+      maxFileSize: 10MB
+      maxRequestSize: 10MB
 
-    mail:
-      host: smtp.gmail.com
-      port: 587
-      username: kim5288403@gmail.com
-      password: glxbfqsristuwjko
-      properties:
-        mail:
-          smtp:
-            auth: true
-            starttls:
-              enable: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: kim5288403@gmail.com
+    password: glxbfqsristuwjko
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
+  redis:
+    host: 127.0.0.1
+    port: 6379
+
+  cache:
+    type: redis
     redis:
-      host: 127.0.0.1
-      port: 6379
-
-    cache:
-      type: redis
-      redis:
-        cache-null-values: true
+      cache-null-values: true
 
 logging:
   level:
@@ -53,11 +53,9 @@ trainer:
     backupPath: C:\\eclipse\\deukgeun_workspace\\deukgeun\\src\\main\\resources\\static\\images\\trainer\\backup\\post
     filePath: C:\\eclipse\\deukgeun_workspace\\deukgeun\\src\\main\\resources\\static\\images\\trainer\\post
     url: http://localhost:8080/api/trainer/post/image/
-
   profile:
     filePath: C:\\eclipse\\deukgeun_workspace\\deukgeun\\src\\main\\resources\\static\\images\\trainer\\profile
     backupPath: C:\\eclipse\\deukgeun_workspace\\deukgeun\\src\\main\\resources\\static\\images\\trainer\\backup\\profile
-
   mail:
     email: kim5288403@gmail.com
 
