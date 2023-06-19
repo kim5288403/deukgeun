@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "trainer_user_profile")
+@Table(name = "trainer_member_profile")
 @NoArgsConstructor
 public class Profile extends BaseEntity {
 

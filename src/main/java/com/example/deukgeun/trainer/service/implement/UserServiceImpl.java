@@ -58,8 +58,7 @@ public class UserServiceImpl implements UserService {
   public Page<UserListResponse> getList(String keyword, Integer currentPage) {
     String likeKeyword = "%" + keyword + "%";
     PageRequest pageable = PageRequest.of(currentPage, 10);
-    return null;
-//    return profileRepository.findByUserLikeKeyword(likeKeyword, pageable);
+    return profileRepository.findByUserLikeKeyword(likeKeyword, pageable);
   }
 
   /**

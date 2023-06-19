@@ -4,27 +4,21 @@ import com.example.deukgeun.commom.entity.Token;
 import com.example.deukgeun.commom.repository.TokenRepository;
 import com.example.deukgeun.commom.request.TokenRequest;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-@ExtendWith(SpringExtension.class)
+@ActiveProfiles("test")
 @DataJpaTest
-@TestPropertySource(locations = "classpath:application-test.properties")
+@TestPropertySource(locations = "classpath:application-test.yml")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class TokenRepositoryTest {
     @Autowired
     private TokenRepository tokenRepository;
-
-    @Autowired
-    private TestEntityManager entityManager;
 
     @Test
     void shouldNotNullRepository() {

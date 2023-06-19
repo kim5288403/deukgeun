@@ -12,7 +12,7 @@ import java.util.Collection;
 
 @Entity
 @Getter
-@Table(name = "trainer_user")
+@Table(name = "trainer_member")
 @NoArgsConstructor
 public class Member extends BaseEntity implements UserDetails{
 
