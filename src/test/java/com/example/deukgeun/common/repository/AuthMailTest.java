@@ -44,8 +44,8 @@ public class AuthMailTest {
         // Then
         AuthMail  retrievedAuthMail = authMailRepository.findById(saveAuthMail.getId()).orElse(null);
         assertNotNull(retrievedAuthMail);
-        assertEquals(retrievedAuthMail.getEmail(), saveAuthMail.getEmail());
-        assertEquals(retrievedAuthMail.getCode(), saveAuthMail.getCode());
+        assertEquals(saveAuthMail.getEmail(), retrievedAuthMail.getEmail());
+        assertEquals(saveAuthMail.getCode(), retrievedAuthMail.getCode());
     }
 
     @Test
@@ -114,7 +114,7 @@ public class AuthMailTest {
     }
 
     @Test
-    void givenAuthMail_whenDeleteByEmail_thenEmailIsDeleted() {
+    void givenAuthMail_whenDeleteByEmail_thenIsDeleted() {
         // Given
         String email = "testEmail@test.com";
         String code = "1t2e3s4t";

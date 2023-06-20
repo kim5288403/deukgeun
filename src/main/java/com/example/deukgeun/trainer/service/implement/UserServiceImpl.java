@@ -3,19 +3,19 @@ package com.example.deukgeun.trainer.service.implement;
 import com.example.deukgeun.commom.exception.PasswordMismatchException;
 import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
 import com.example.deukgeun.trainer.entity.Member;
+import com.example.deukgeun.trainer.repository.MemberRepository;
+import com.example.deukgeun.trainer.repository.ProfileRepository;
 import com.example.deukgeun.trainer.request.JoinRequest;
 import com.example.deukgeun.trainer.request.LoginRequest;
+import com.example.deukgeun.trainer.request.UpdateInfoRequest;
 import com.example.deukgeun.trainer.request.UpdatePasswordRequest;
+import com.example.deukgeun.trainer.response.UserResponse.UserListResponse;
+import com.example.deukgeun.trainer.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.example.deukgeun.trainer.repository.ProfileRepository;
-import com.example.deukgeun.trainer.repository.UserRepository;
-import com.example.deukgeun.trainer.request.UpdateInfoRequest;
-import com.example.deukgeun.trainer.response.UserResponse.UserListResponse;
-import com.example.deukgeun.trainer.service.UserService;
-import lombok.RequiredArgsConstructor;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -23,7 +23,7 @@ import javax.persistence.EntityNotFoundException;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-  private final UserRepository userRepository;
+  private final MemberRepository userRepository;
   private final ProfileRepository profileRepository;
   private final JwtServiceImpl jwtService;
   private final PasswordEncoder passwordEncoder;

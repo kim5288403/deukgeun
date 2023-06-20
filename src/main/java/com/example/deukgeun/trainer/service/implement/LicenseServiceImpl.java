@@ -1,12 +1,5 @@
 package com.example.deukgeun.trainer.service.implement;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 import com.example.deukgeun.commom.util.WebClientUtil;
 import com.example.deukgeun.trainer.entity.License;
 import com.example.deukgeun.trainer.repository.LicenseRepository;
@@ -15,6 +8,13 @@ import com.example.deukgeun.trainer.response.LicenseListResponse;
 import com.example.deukgeun.trainer.response.LicenseResultResponse;
 import com.example.deukgeun.trainer.service.LicenseService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -42,12 +42,17 @@ public class LicenseServiceImpl implements LicenseService {
      * 라이선스를 저장합니다.
      *
      * @param licenseResult 라이선스 진위여부 결과 응답 객체
-     * @param userId        사용자 ID
+     * @param memberId        사용자 ID
      * @return 저장된 라이선스 객체
      * @throws Exception 저장 중 발생한 예외
      */
-    public License save(LicenseResultResponse licenseResult, Long userId) throws Exception {
-        License license = SaveLicenseRequest.create(licenseResult.getCertificatename(), licenseResult.getNo(), userId);
+    public License save(LicenseResultResponse licenseResult, Long memberId) throws Exception {
+        License license = License.builder()
+                .certificateName(licenseResult.getCertificatename())
+                .memberId(memberId)
+                .licenseNumber(licenseResult.getNo())
+                .build();
+
         licenseRepository.save(license);
         return license;
     }

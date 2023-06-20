@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.deukgeun.commom.enums.Gender;
 import com.example.deukgeun.trainer.entity.GroupStatus;
 
-public interface UserRepository extends JpaRepository<Member, Long> {
+public interface MemberRepository extends JpaRepository<Member, Long> {
   Optional<Member> findByEmail(String email);
    
   boolean existsByEmail(String email);
@@ -50,7 +50,4 @@ public interface UserRepository extends JpaRepository<Member, Long> {
   @Transactional
   @Query("update Member m set m.password = :password where m.email = :email")
   void updatePassword(@Param(value = "email")String email, @Param(value = "password")String password);
-
-  @Transactional
-  void deleteByEmail(String email);
 }
