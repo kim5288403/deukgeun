@@ -10,7 +10,7 @@ import com.example.deukgeun.trainer.request.*;
 import com.example.deukgeun.trainer.response.UserResponse;
 import com.example.deukgeun.trainer.response.UserResponse.UserListResponse;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
-import com.example.deukgeun.trainer.service.implement.UserServiceImpl;
+import com.example.deukgeun.trainer.service.implement.MemberServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -33,7 +33,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserServiceImpl userService;
+    private final MemberServiceImpl memberService;
     private final JwtServiceImpl jwtService;
     private final ProfileServiceImpl profileService;
 
@@ -50,7 +50,7 @@ public class UserController {
     @RequestMapping(method = RequestMethod.GET, path = "/")
     public ResponseEntity<?> getList(@RequestParam(value = "keyword", defaultValue = "") String keyword, @RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage) {
         // 키워드와 현재 페이지를 기반으로 사용자 목록 조회
-        Page<UserListResponse> page = userService.getList(keyword, currentPage);
+        Page<UserListResponse> page = memberService.getList(keyword, currentPage);
 
         // 사용자 목록을 UserListPaginationResponse 형식으로 변환
         UserResponse.UserListPaginationResponse list = new UserResponse.UserListPaginationResponse(page, currentPage);
@@ -68,7 +68,7 @@ public class UserController {
     public ResponseEntity<?> getDetail(HttpServletRequest request) {
         // 인증 토큰에서 사용자의 인증 정보를 추출
         String authToken = jwtService.resolveAuthToken(request);
-        Member member = userService.getByAuthToken(authToken);
+        Member member = memberService.getByAuthToken(authToken);
 
         // 사용자 정보를 응답 객체로 변환
         UserResponse response = new UserResponse(member);
@@ -88,7 +88,7 @@ public class UserController {
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> save(@Valid JoinRequest request, BindingResult bindingResult) throws IOException {
         // 사용자 저장
-        Member saveMember = userService.save(request);
+        Member saveMember = memberService.save(request);
 
         // 프로필 저장
         profileService.save(request.getProfile(), saveMember.getId());
@@ -106,7 +106,7 @@ public class UserController {
     @RequestMapping(method = RequestMethod.PUT, path = "/")
     public ResponseEntity<?> update(@Valid UpdateInfoRequest request, BindingResult bindingResult) {
         // 정보 업데이트
-        userService.updateInfo(request);
+        memberService.updateInfo(request);
 
         return RestResponseUtil.ok("내 정보 수정 성공했습니다.", null);
     }
@@ -123,7 +123,7 @@ public class UserController {
             @Valid UpdatePasswordRequest request,
             BindingResult bindingResult) {
         // 비밀번호 업데이트
-        userService.updatePassword(request);
+        memberService.updatePassword(request);
 
         return RestResponseUtil
                 .ok("비밀번호 변경 성공했습니다.", null);
@@ -147,7 +147,7 @@ public class UserController {
 
 
         // 이메일을 기반으로 사용자 조회
-        Member member = userService.getByEmail(withdrawalRequest.getEmail());
+        Member member = memberService.getByEmail(withdrawalRequest.getEmail());
 
         // 프로필 조회
         Profile userProfile = profileService.getByUserId(member.getId());
@@ -159,7 +159,7 @@ public class UserController {
         profileService.withdrawal(userProfile.getId());
 
         //사용자 삭제
-        userService.withdrawal(member.getId());
+        memberService.withdrawal(member.getId());
 
         //토큰 삭제
         String authToken = jwtService.resolveAuthToken(request);
@@ -180,7 +180,7 @@ public class UserController {
     @RequestMapping(method = RequestMethod.POST, path = "/login")
     public ResponseEntity<?> login(@Valid LoginRequest request, BindingResult bindingResult, HttpServletResponse response) {
         // 사용자 로그인 처리
-        userService.isPasswordMatches(request);
+        memberService.isPasswordMatches(request);
         //test
         System.out.println("test");
         // JWT 토큰 생성 및 설정

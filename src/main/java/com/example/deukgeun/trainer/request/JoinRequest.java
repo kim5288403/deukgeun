@@ -6,11 +6,9 @@ import com.example.deukgeun.commom.validator.ValidDuplicateEmail;
 import com.example.deukgeun.commom.validator.ValidEnum;
 import com.example.deukgeun.commom.validator.ValidPasswordConfirm;
 import com.example.deukgeun.trainer.entity.GroupStatus;
-import com.example.deukgeun.trainer.entity.Member;
 import com.example.deukgeun.trainer.validator.ValidFileType;
 import com.example.deukgeun.trainer.validator.ValidGroupName;
 import lombok.Data;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Email;
@@ -70,23 +68,4 @@ public class JoinRequest {
 
     @ValidFileType
     private MultipartFile profile;
-
-    public static Member create(JoinRequest request, PasswordEncoder passwordEncoder) {
-        return Member
-                .builder()
-                .name(request.getName())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .groupStatus(request.getGroupStatus())
-                .groupName(request.getGroupName())
-                .postcode(request.getPostcode())
-                .jibunAddress(request.getJibunAddress())
-                .roadAddress(request.getRoadAddress())
-                .detailAddress(request.getDetailAddress())
-                .extraAddress(request.getExtraAddress())
-                .gender(request.getGender())
-                .price(request.getPrice())
-                .introduction(request.getIntroduction())
-                .build();
-    }
 }

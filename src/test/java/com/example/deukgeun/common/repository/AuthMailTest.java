@@ -42,10 +42,10 @@ public class AuthMailTest {
         AuthMail saveAuthMail = authMailRepository.save(authMail);
 
         // Then
-        AuthMail  retrievedAuthMail = authMailRepository.findById(saveAuthMail.getId()).orElse(null);
-        assertNotNull(retrievedAuthMail);
-        assertEquals(saveAuthMail.getEmail(), retrievedAuthMail.getEmail());
-        assertEquals(saveAuthMail.getCode(), retrievedAuthMail.getCode());
+        AuthMail  foundAuthMail = authMailRepository.findById(saveAuthMail.getId()).orElse(null);
+        assertNotNull(foundAuthMail);
+        assertEquals(saveAuthMail.getEmail(), foundAuthMail.getEmail());
+        assertEquals(saveAuthMail.getCode(), foundAuthMail.getCode());
     }
 
     @Test
@@ -105,12 +105,12 @@ public class AuthMailTest {
         authMailRepository.save(authMail);
 
         // When
-        AuthMail findAuthMail = authMailRepository.findByEmail(authMail.getEmail()).orElse(null);
+        AuthMail foundAuthMail = authMailRepository.findByEmail(authMail.getEmail()).orElse(null);
 
         // Then
-        assertNotNull(findAuthMail);
-        assertEquals(findAuthMail.getEmail(), authMail.getEmail());
-        assertEquals(findAuthMail.getCode(), authMail.getCode());
+        assertNotNull(foundAuthMail);
+        assertEquals(authMail.getEmail(), foundAuthMail.getEmail());
+        assertEquals(authMail.getCode(), foundAuthMail.getEmail());
     }
 
     @Test
@@ -136,7 +136,7 @@ public class AuthMailTest {
     }
 
     @Test
-    void givenAuthMail_whenUpdateMailStatus_thenEmailIsDeleted() {
+    void givenAuthMail_whenUpdateMailStatus_thenIsUpdated() {
         // Given
         String email = "testEmail@test.com";
         String code = "1t2e3s4t";
@@ -148,17 +148,17 @@ public class AuthMailTest {
                 .mailStatus(mailStatus)
                 .build();
         authMailRepository.save(authMail);
-        AuthMail findAuthMail = authMailRepository.findByEmail(email).orElse(null);
+        AuthMail foundAuthMail = authMailRepository.findByEmail(email).orElse(null);
 
         // When
-        assert findAuthMail != null;
-        findAuthMail.updateMailStatus(MailStatus.Y);
-        authMailRepository.save(findAuthMail);
+        assert foundAuthMail != null;
+        foundAuthMail.updateMailStatus(MailStatus.Y);
+        authMailRepository.save(foundAuthMail);
 
         // Then
-        AuthMail resultAuthMail = authMailRepository.findById(findAuthMail.getId()).orElse(null);
+        AuthMail resultAuthMail = authMailRepository.findById(foundAuthMail.getId()).orElse(null);
         assertNotNull(resultAuthMail);
-        assertEquals(findAuthMail.getId(), resultAuthMail.getId());
+        assertEquals(foundAuthMail.getId(), resultAuthMail.getId());
         assertNotEquals(mailStatus, resultAuthMail.getMailStatus());
     }
 }

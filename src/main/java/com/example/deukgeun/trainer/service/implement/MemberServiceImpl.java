@@ -10,7 +10,7 @@ import com.example.deukgeun.trainer.request.LoginRequest;
 import com.example.deukgeun.trainer.request.UpdateInfoRequest;
 import com.example.deukgeun.trainer.request.UpdatePasswordRequest;
 import com.example.deukgeun.trainer.response.UserResponse.UserListResponse;
-import com.example.deukgeun.trainer.service.UserService;
+import com.example.deukgeun.trainer.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,9 +21,9 @@ import javax.persistence.EntityNotFoundException;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class MemberServiceImpl implements MemberService {
 
-  private final MemberRepository userRepository;
+  private final MemberRepository memberRepository;
   private final ProfileRepository profileRepository;
   private final JwtServiceImpl jwtService;
   private final PasswordEncoder passwordEncoder;
@@ -68,9 +68,24 @@ public class UserServiceImpl implements UserService {
    * @return 저장된 사용자
    */
   public Member save(JoinRequest request) {
-    Member member = JoinRequest.create(request, passwordEncoder);
+    Member member = Member
+            .builder()
+            .name(request.getName())
+            .email(request.getEmail())
+            .password(passwordEncoder.encode(request.getPassword()))
+            .groupStatus(request.getGroupStatus())
+            .groupName(request.getGroupName())
+            .postcode(request.getPostcode())
+            .jibunAddress(request.getJibunAddress())
+            .roadAddress(request.getRoadAddress())
+            .detailAddress(request.getDetailAddress())
+            .extraAddress(request.getExtraAddress())
+            .gender(request.getGender())
+            .price(request.getPrice())
+            .introduction(request.getIntroduction())
+            .build();
 
-    return userRepository.save(member);
+    return memberRepository.save(member);
   }
 
   /**
@@ -81,7 +96,7 @@ public class UserServiceImpl implements UserService {
    * @throws EntityNotFoundException 주어진 이메일에 해당하는 사용자가 없는 경우 발생하는 예외
    */
   public Member getByEmail(String email) throws EntityNotFoundException {
-    return userRepository.findByEmail(email)
+    return memberRepository.findByEmail(email)
             .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
   }
 
@@ -104,20 +119,10 @@ public class UserServiceImpl implements UserService {
    * @param request 업데이트할 사용자 정보 요청 객체
    */
   public void updateInfo(UpdateInfoRequest request) {
-    userRepository.updateInfo(
-        request.getEmail(),
-        request.getName(),
-        request.getGender(),
-        request.getPostcode(),
-        request.getJibunAddress(),
-        request.getRoadAddress(),
-        request.getDetailAddress(),
-        request.getExtraAddress(),
-        request.getPrice(),
-        request.getGroupStatus(),
-        request.getGroupName(),
-        request.getIntroduction()
-        );
+    Member foundMember = memberRepository.findByEmail(request.getEmail()).orElse(null);
+    assert foundMember != null;
+    foundMember.updateInfo(request);
+    memberRepository.save(foundMember);
   }
 
   /**
@@ -127,9 +132,11 @@ public class UserServiceImpl implements UserService {
    */
   public void updatePassword(UpdatePasswordRequest request) {
     String email = request.getEmail();
-    String password = passwordEncoder.encode(request.getNewPassword());
-
-    userRepository.updatePassword(email, password);
+    String newPassword = passwordEncoder.encode(request.getNewPassword());
+    Member foundMember = memberRepository.findByEmail(email).orElse(null);
+    assert foundMember != null;
+    foundMember.updatePassword(newPassword);
+    memberRepository.save(foundMember);
   }
 
   /**
@@ -138,7 +145,7 @@ public class UserServiceImpl implements UserService {
    * @param id 삭제할 사용자의 ID
    */
   public void withdrawal(Long id) {
-    userRepository.deleteById(id);
+    memberRepository.deleteById(id);
   }
 
   /**
@@ -161,7 +168,7 @@ public class UserServiceImpl implements UserService {
    * @return 중복 여부 (true: 중복됨, false: 중복되지 않음)
    */
   public boolean isDuplicateEmail(String email) {
-    return userRepository.existsByEmail(email);
+    return memberRepository.existsByEmail(email);
   }
 
   /**

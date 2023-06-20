@@ -70,10 +70,10 @@ public class LicenseTest {
         License saveLicense = licenseRepository.save(license);
 
         // Then
-        License findLicense = licenseRepository.findById(memberId).orElse(null);
-        assertNotNull(findLicense);
-        assertEquals(saveLicense.getCertificateName(), findLicense.getCertificateName());
-        assertEquals(saveLicense.getLicenseNumber(), findLicense.getLicenseNumber());
+        License foundLicense = licenseRepository.findById(memberId).orElse(null);
+        assertNotNull(foundLicense);
+        assertEquals(saveLicense.getCertificateName(), foundLicense.getCertificateName());
+        assertEquals(saveLicense.getLicenseNumber(), foundLicense.getLicenseNumber());
     }
 
     @Test

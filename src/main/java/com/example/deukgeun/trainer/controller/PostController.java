@@ -1,13 +1,12 @@
 package com.example.deukgeun.trainer.controller;
 
 import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
-import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
 import com.example.deukgeun.commom.util.RestResponseUtil;
 import com.example.deukgeun.trainer.entity.Post;
 import com.example.deukgeun.trainer.request.PostRequest;
 import com.example.deukgeun.trainer.response.PostResponse;
+import com.example.deukgeun.trainer.service.implement.MemberServiceImpl;
 import com.example.deukgeun.trainer.service.implement.PostServiceImpl;
-import com.example.deukgeun.trainer.service.implement.UserServiceImpl;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,8 +26,7 @@ import java.util.Map;
 public class PostController {
 
     private final PostServiceImpl postService;
-    private final UserServiceImpl userService;
-    private final ValidateServiceImpl validateService;
+    private final MemberServiceImpl memberService;
     private final JwtServiceImpl jwtService;
 
     /**
@@ -36,10 +34,9 @@ public class PostController {
      *
      * @param id 사용자 ID
      * @return ResponseEntity 객체
-     * @throws Exception 예외가 발생한 경우
      */
     @RequestMapping(method = RequestMethod.GET, path = "/{id}")
-    public ResponseEntity<?> getDetailByUserId(@PathVariable("id") Long id) throws Exception {
+    public ResponseEntity<?> getDetailByUserId(@PathVariable("id") Long id) {
         Post post = postService.findByUserId(id);
         PostResponse response = new PostResponse(post);
 
@@ -52,12 +49,11 @@ public class PostController {
      *
      * @param request HttpServletRequest 객체
      * @return ResponseEntity 객체
-     * @throws Exception 예외가 발생한 경우
      */
     @RequestMapping(method = RequestMethod.GET, path = "/")
-    public ResponseEntity<?> getDetailByAuthToken(HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> getDetailByAuthToken(HttpServletRequest request) {
         String authToken = jwtService.resolveAuthToken(request);
-        Long userId = userService.getUserId(authToken);
+        Long userId = memberService.getUserId(authToken);
         Post post = postService.findByUserId(userId);
         postService.findByUserId(userId);
         PostResponse response = new PostResponse(post);

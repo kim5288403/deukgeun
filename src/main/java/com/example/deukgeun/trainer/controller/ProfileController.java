@@ -1,13 +1,12 @@
 package com.example.deukgeun.trainer.controller;
 
 import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
-import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
 import com.example.deukgeun.commom.util.RestResponseUtil;
 import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.request.UpdateProfileRequest;
 import com.example.deukgeun.trainer.response.ProfileResponse;
+import com.example.deukgeun.trainer.service.implement.MemberServiceImpl;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
-import com.example.deukgeun.trainer.service.implement.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -25,7 +23,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class ProfileController {
     private final ProfileServiceImpl profileService;
-    private final UserServiceImpl userService;
+    private final MemberServiceImpl memberService;
     private final JwtServiceImpl jwtService;
 
     /**
@@ -57,7 +55,7 @@ public class ProfileController {
         String authToken = jwtService.resolveAuthToken(request);
 
         // 인증 토큰을 이용하여 사용자 ID를 조회합니다.
-        Long userId = userService.getUserId(authToken);
+        Long userId = memberService.getUserId(authToken);
 
         // 사용자 ID에 해당하는 프로필 정보를 조회합니다.
         Profile profile = profileService.getByUserId(userId);

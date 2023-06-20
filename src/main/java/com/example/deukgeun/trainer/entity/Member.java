@@ -1,6 +1,7 @@
 package com.example.deukgeun.trainer.entity;
 
 import com.example.deukgeun.commom.enums.Gender;
+import com.example.deukgeun.trainer.request.UpdateInfoRequest;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -93,6 +94,25 @@ public class Member extends BaseEntity implements UserDetails{
     this.gender = gender;
     this.price = price;
     this.introduction = introduction;
+  }
+
+  public void updateInfo(UpdateInfoRequest request) {
+    this.email = request.getEmail();
+    this.name = request.getName();
+    this.gender = request.getGender();
+    this.postcode = request.getPostcode();
+    this.jibunAddress = request.getJibunAddress();
+    this.roadAddress = request.getRoadAddress();
+    this.detailAddress = request.getDetailAddress();
+    this.extraAddress = request.getExtraAddress();
+    this.price = request.getPrice();
+    this.groupStatus = request.getGroupStatus();
+    this.groupName = request.getGroupName();
+    this.introduction = request.getIntroduction();
+  }
+
+  public void updatePassword(String newPassword) {
+    this.password = newPassword;
   }
 
 

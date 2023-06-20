@@ -6,14 +6,14 @@ import javax.validation.ConstraintValidatorContext;
 import com.example.deukgeun.trainer.entity.Member;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
-import com.example.deukgeun.trainer.service.implement.UserServiceImpl;
+import com.example.deukgeun.trainer.service.implement.MemberServiceImpl;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class EmailAndPwValidator implements ConstraintValidator<ValidEmailAndPw, Object> {
 
     private final ValidateServiceImpl validateService;
-    private final UserServiceImpl userService;
+    private final MemberServiceImpl memberService;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -21,7 +21,7 @@ public class EmailAndPwValidator implements ConstraintValidator<ValidEmailAndPw,
         String email = validateService.getFieldValue(object, "email");
         String password = validateService.getFieldValue(object, "password");
         try {
-            Member user = userService.getByEmail(email);
+            Member user = memberService.getByEmail(email);
             return passwordEncoder.matches(password, user.getPassword());
         } catch (Exception e) {
             return false;

@@ -1,14 +1,13 @@
 package com.example.deukgeun.trainer.controller;
 
 import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
-import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
 import com.example.deukgeun.commom.util.RestResponseUtil;
 import com.example.deukgeun.trainer.request.RemoveLicenseRequest;
 import com.example.deukgeun.trainer.request.SaveLicenseRequest;
 import com.example.deukgeun.trainer.response.LicenseListResponse;
 import com.example.deukgeun.trainer.response.LicenseResultResponse;
 import com.example.deukgeun.trainer.service.implement.LicenseServiceImpl;
-import com.example.deukgeun.trainer.service.implement.UserServiceImpl;
+import com.example.deukgeun.trainer.service.implement.MemberServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -26,8 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LicenseController {
     private final LicenseServiceImpl licenseService;
-    private final UserServiceImpl userService;
-    private final ValidateServiceImpl validateService;
+    private final MemberServiceImpl memberService;
     private final JwtServiceImpl jwtService;
 
     /**
@@ -54,7 +52,7 @@ public class LicenseController {
     public ResponseEntity<?> getListByAuthToken(HttpServletRequest request) {
         // 인증 토큰을 사용하여 사용자 ID 조회
         String authToken = jwtService.resolveAuthToken(request);
-        Long memberId = userService.getUserId(authToken);
+        Long memberId = memberService.getUserId(authToken);
 
         // 사용자 ID를 기반으로 자격증 목록 조회
         List<LicenseListResponse> response = licenseService.findByMemberId(memberId);
@@ -79,7 +77,7 @@ public class LicenseController {
 
         // 인증 토큰에서 사용자 ID 추출
         String authToken = jwtService.resolveAuthToken(request);
-        Long userId = userService.getUserId(authToken);
+        Long userId = memberService.getUserId(authToken);
 
         // 자격증 저장
         licenseService.save(licenseResult, userId);

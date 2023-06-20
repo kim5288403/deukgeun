@@ -28,7 +28,7 @@ import javax.persistence.EntityNotFoundException;
 public class ProfileServiceImpl implements ProfileService {
 
     private final ProfileRepository profileRepository;
-    private final UserServiceImpl userService;
+    private final MemberServiceImpl memberService;
 
     @Value("${trainer.profile.filePath}")
     private String FILE_PATH;
@@ -53,10 +53,9 @@ public class ProfileServiceImpl implements ProfileService {
      *
      * @param authToken 조회할 사용자의 인증 토큰
      * @return 사용자의 프로필 ID
-     * @throws Exception 프로필을 조회하는 도중 예외가 발생한 경우
      */
     public Long getProfileId(String authToken) {
-        Member member = userService.getByAuthToken(authToken);
+        Member member = memberService.getByAuthToken(authToken);
         Profile profile = getByUserId(member.getId());
 
         return profile.getId();

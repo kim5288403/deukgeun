@@ -27,7 +27,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 
-    private final UserServiceImpl userService;
+    private final MemberServiceImpl memberService;
     private final PostRepository postRepository;
 
     @Value("${trainer.post.filePath}")
@@ -45,7 +45,7 @@ public class PostServiceImpl implements PostService {
      */
     public void upload(PostRequest request, String authToken) throws Exception {
         // 인증 토큰을 이용하여 사용자 정보를 가져옵니다.
-        Member member = userService.getByAuthToken(authToken);
+        Member member = memberService.getByAuthToken(authToken);
         Long memberId = member.getId();
 
         // 해당 사용자의 게시글을 조회합니다.
