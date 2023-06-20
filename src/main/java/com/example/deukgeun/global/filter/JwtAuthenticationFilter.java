@@ -26,64 +26,6 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
   private final JwtServiceImpl jwtService;
 
-//  @Override
-//  public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
-//      throws IOException, ServletException, AccessDeniedException {
-//
-//    HttpServletRequest request = (HttpServletRequest) req;
-//    HttpServletResponse response = (HttpServletResponse) res;
-//    String servletPath = request.getServletPath();
-//
-//    if (servletPath.equals("/jwt/check")) {
-//      System.out.println("Gd");
-//      String authToken = jwtService.resolveAuthToken(request);
-//
-//      // 유효한 auth token 인지 확인합니다.
-//      if (jwtService.validateToken(authToken)) {
-//        String role = jwtService.getUserRole(authToken);
-//
-//        setHeader(response, role, authToken);
-//
-//        setAuthentication(authToken);
-//      }
-//      // 유효하지 않은 auth token 일 경우
-//      else {
-//          String refreshToken = jwtService.getRefreshTokenByAuthToken(authToken);
-//
-//         //유효한 refresh token 인지 확인합니다.
-//         if (jwtService.validateToken(refreshToken)) {
-//           String newAuthToken = createAuthTokenByRefreshToken(refreshToken);
-//           String role = jwtService.getUserRole(newAuthToken);
-//
-//           jwtService.updateAuthToken(authToken, newAuthToken);
-//           setHeader(response, role, newAuthToken);
-//
-//           setAuthentication(newAuthToken);
-//         }
-//         // auth token and refresh token 이 유효 하지 않은 경우
-//         else {
-//           jwtService.deleteToken(authToken);
-//
-//           response.setContentType("application/json");
-//           response.setCharacterEncoding("utf-8");
-//
-//           RestResponse messageResponse = RestResponse
-//               .builder()
-//               .code(StatusEnum.FORBIDDEN.getCode())
-//               .status(StatusEnum.FORBIDDEN.getStatus())
-//               .message("로그인 유효기간이 초과했습니다. 재로그인 해주세요.")
-//               .data(null)
-//               .build();
-//
-//           new ObjectMapper().writeValue(response.getOutputStream(),
-//               ResponseEntity.status(403).body(messageResponse));
-//         }
-//      }
-//    }
-//
-//    chain.doFilter(request, response);
-//  }
-
   @Override
   public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
       throws IOException, ServletException, AccessDeniedException {

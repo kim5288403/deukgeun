@@ -1,25 +1,25 @@
 package com.example.deukgeun.commom.service.implement;
 
-import java.util.Random;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-import javax.persistence.EntityNotFoundException;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Service;
-import org.thymeleaf.context.Context;
-import org.thymeleaf.spring5.SpringTemplateEngine;
 import com.example.deukgeun.commom.entity.AuthMail;
 import com.example.deukgeun.commom.enums.MailStatus;
 import com.example.deukgeun.commom.repository.AuthMailRepository;
 import com.example.deukgeun.commom.request.AuthMailRequest;
 import com.example.deukgeun.commom.service.MailService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring5.SpringTemplateEngine;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import javax.persistence.EntityNotFoundException;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
-public class MailServiceImpl implements MailService {
+public class AuthMailServiceImpl implements MailService {
 
     private final AuthMailRepository authMailRepository;
     private final JavaMailSender emailSender;
@@ -109,7 +109,13 @@ public class MailServiceImpl implements MailService {
      * @param toEmail 저장할 이메일 주소
      */
     public void save(String toEmail, String authCode) {
-        AuthMail authMail = AuthMailRequest.create(toEmail, authCode, MailStatus.N);
+        AuthMail authMail  = AuthMail
+                .builder()
+                .email(toEmail)
+                .code(authCode)
+                .mailStatus(MailStatus.N)
+                .build();
+
         authMailRepository.save(authMail);
     }
 
@@ -155,6 +161,11 @@ public class MailServiceImpl implements MailService {
      * @param request 업데이트할 메일 인증 정보의 이메일과 코드
      */
     public void confirm(AuthMailRequest request) {
-        authMailRepository.updateStatusByEmailAndCode(request.getEmail(), request.getCode(), MailStatus.Y);
+        AuthMail findAuthMail = authMailRepository.findByEmail(request.getEmail()).orElseThrow(
+                () -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+
+        findAuthMail.updateMailStatus(MailStatus.Y);
+        authMailRepository.save(findAuthMail);
+
     }
 }

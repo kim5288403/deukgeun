@@ -1,8 +1,7 @@
-package com.example.deukgeun.common.jwt;
+package com.example.deukgeun.common.repository;
 
 import com.example.deukgeun.commom.entity.Token;
 import com.example.deukgeun.commom.repository.TokenRepository;
-import com.example.deukgeun.commom.request.TokenRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -12,11 +11,12 @@ import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-@ActiveProfiles("test")
+
 @DataJpaTest
+@ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application-test.yml")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class TokenRepositoryTest {
+public class TokenTest {
     @Autowired
     private TokenRepository tokenRepository;
 
@@ -26,11 +26,15 @@ public class TokenRepositoryTest {
     }
 
     @Test
-    void givenToken_whenSaveToken_thenSuccess() {
+    void givenToken_whenSaved_thenReturnValid() {
         // Given
         String authToken = "testAuthToken";
         String refreshToken = "testRefreshToken";
-        Token token = TokenRequest.create(authToken, refreshToken);
+        Token token = Token
+                .builder()
+                .authToken(authToken)
+                .refreshToken(refreshToken)
+                .build();
 
         // When
         Token saveToken = tokenRepository.save(token);
@@ -43,38 +47,48 @@ public class TokenRepositoryTest {
     }
 
     @Test
-    void givenExisting_whenFindByAuthToken_thenIsFound() {
+    void givenToken_whenFindByAuthToken_thenReturnValid() {
         // Given
         String authToken = "testAuthToken";
         String refreshToken = "testRefreshToken";
-        Token token = TokenRequest.create(authToken, refreshToken);
+        Token token = Token
+                .builder()
+                .authToken(authToken)
+                .refreshToken(refreshToken)
+                .build();
         tokenRepository.save(token);
 
         // When
-        Token foundToken = tokenRepository.findByAuthToken(authToken).orElse(null);
+        Token findToken = tokenRepository.findByAuthToken(authToken).orElse(null);
 
         // Then
-        assertNotNull(foundToken);
-        assertEquals(foundToken.getAuthToken(), authToken);
-        assertEquals(foundToken.getRefreshToken(), refreshToken);
+        assertNotNull(findToken);
+        assertEquals(findToken.getAuthToken(), authToken);
+        assertEquals(findToken.getRefreshToken(), refreshToken);
     }
 
     @Test
-    public void givenNewAuthToken_whenUpdateAuthToken_thenAuthTokenShouldBeUpdated() {
+    public void givenNewAuthToken_whenUpdateAuthToken_thenTokenIsUpdatedWithNewAuthToken() {
         // Given
         String authToken = "oldAuthToken";
+        String refreshToken = "testRefreshToken";
         String newAuthToken = "newAuthToken";
-        Token token = TokenRequest.create(authToken, "refreshToken");
+        Token token = Token
+                .builder()
+                .authToken(authToken)
+                .refreshToken(refreshToken)
+                .build();
         tokenRepository.save(token);
+        Token findToken = tokenRepository.findByAuthToken(authToken).orElse(null);
 
         // When
-        Token saveToken = tokenRepository.findById(token.getId()).orElse(null);
-        assert saveToken != null;
-        saveToken.updateAuthToken(newAuthToken);
-        tokenRepository.save(saveToken);
+        assert findToken != null;
+        findToken.setAuthToken(newAuthToken);
+        tokenRepository.save(findToken);
 
         // Then
         Token updatedToken = tokenRepository.findById(token.getId()).orElse(null);
+
         assertNotNull(updatedToken);
         assertEquals(newAuthToken, updatedToken.getAuthToken());
     }

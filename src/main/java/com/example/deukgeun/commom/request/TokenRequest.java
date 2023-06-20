@@ -11,12 +11,4 @@ public class TokenRequest {
   
   @Column(name = "refresh_token")
   private String refreshToken;
-  
-  public static Token create(String authToken, String refreshToken) {
-    return Token
-        .builder()
-        .authToken(authToken)
-        .refreshToken(refreshToken)
-        .build();
-  }
 }

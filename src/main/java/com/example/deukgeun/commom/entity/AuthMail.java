@@ -41,5 +41,9 @@ public class AuthMail extends BaseEntity{
     this.code = code;
     this.mailStatus = mailStatus;
   }
+
+  public void updateMailStatus(MailStatus mailStatus) {
+    this.mailStatus = mailStatus;
+  }
   
 }

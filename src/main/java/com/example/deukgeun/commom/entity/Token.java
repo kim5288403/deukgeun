@@ -32,7 +32,7 @@ public class Token {
     this.refreshToken = refreshToken;
   }
 
-  public void updateAuthToken(String authToken) {
+  public void setAuthToken(String authToken) {
     this.authToken = authToken;
   }
   

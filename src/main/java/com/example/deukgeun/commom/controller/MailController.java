@@ -1,27 +1,26 @@
 package com.example.deukgeun.commom.controller;
 
-import java.io.UnsupportedEncodingException;
-import javax.mail.MessagingException;
-import javax.validation.Valid;
+import com.example.deukgeun.commom.request.AuthMailRequest;
+import com.example.deukgeun.commom.request.EmailRequest;
+import com.example.deukgeun.commom.service.implement.AuthMailServiceImpl;
+import com.example.deukgeun.commom.util.RestResponseUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import com.example.deukgeun.commom.enums.MailStatus;
-import com.example.deukgeun.commom.request.AuthMailRequest;
-import com.example.deukgeun.commom.request.EmailRequest;
-import com.example.deukgeun.commom.service.implement.MailServiceImpl;
-import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
-import com.example.deukgeun.commom.util.RestResponseUtil;
-import lombok.RequiredArgsConstructor;
+
+import javax.mail.MessagingException;
+import javax.validation.Valid;
+import java.io.UnsupportedEncodingException;
 
 @RestController()
 @RequestMapping("/api/mail")
 @RequiredArgsConstructor
 public class MailController {
 
-  private final MailServiceImpl mailService;
+  private final AuthMailServiceImpl mailService;
 
   /**
    * 이메일을 보내는 메소드입니다.

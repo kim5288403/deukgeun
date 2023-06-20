@@ -1,25 +1,25 @@
 package com.example.deukgeun.commom.service.implement;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.example.deukgeun.commom.entity.Token;
+import com.example.deukgeun.commom.repository.TokenRepository;
+import com.example.deukgeun.commom.service.JwtService;
 import com.example.deukgeun.trainer.service.implement.UserDetailServiceImpl;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import com.example.deukgeun.commom.entity.Token;
-import com.example.deukgeun.commom.repository.TokenRepository;
-import com.example.deukgeun.commom.request.TokenRequest;
-import com.example.deukgeun.commom.service.JwtService;
-import lombok.RequiredArgsConstructor;
 
+import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Base64;
 import java.util.Date;
 
@@ -203,7 +203,11 @@ public class JwtServiceImpl implements JwtService{
    * @param refreshToken 생성할 리프레시 토큰
    */
   public void createToken(String authToken, String refreshToken) {
-    Token token = TokenRequest.create(authToken, refreshToken);
+    Token token = Token
+            .builder()
+            .authToken(authToken)
+            .refreshToken(refreshToken)
+            .build();
 
     tokenRepository.save(token);
   }
@@ -226,7 +230,10 @@ public class JwtServiceImpl implements JwtService{
    */
   @CachePut(value = "token", key = "#authToken", cacheManager = "projectCacheManager", unless="#result == null")
   public void updateAuthToken(String authToken, String newAuthToken) {
-    tokenRepository.updateAuthToken(authToken, newAuthToken);
+    Token saveToken = tokenRepository.findByAuthToken(authToken).orElse(null);
+    assert saveToken != null;
+    saveToken.setAuthToken(newAuthToken);
+    tokenRepository.save(saveToken);
   }
 
   /**

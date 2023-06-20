@@ -19,10 +19,4 @@ public interface AuthMailRepository extends JpaRepository<AuthMail, Long>{
   
   @Transactional
   void deleteByEmail(String email);
-  
-  @Modifying
-  @Transactional
-  @Query("update AuthMail m set m.mailStatus = :mailStatus where m.email = :email and m.code = :code")
-  void updateStatusByEmailAndCode(@Param(value = "email") String email, @Param(value = "code") String code, @Param(value = "mailStatus") MailStatus mailStatus);
-  
 }

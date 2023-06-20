@@ -1,15 +1,15 @@
 package com.example.deukgeun.commom.validator;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-import com.example.deukgeun.commom.repository.AuthMailRepository;
-import com.example.deukgeun.commom.service.implement.MailServiceImpl;
+import com.example.deukgeun.commom.service.implement.AuthMailServiceImpl;
 import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
 import lombok.RequiredArgsConstructor;
 
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+
 @RequiredArgsConstructor
 public class AuthMailCodeValidator implements ConstraintValidator<ValidAuthMailCode, Object>{
-  private final MailServiceImpl mailService;
+  private final AuthMailServiceImpl mailService;
   private final ValidateServiceImpl validateService;
   
   @Override
