@@ -110,7 +110,7 @@ public class AuthMailTest {
         // Then
         assertNotNull(foundAuthMail);
         assertEquals(authMail.getEmail(), foundAuthMail.getEmail());
-        assertEquals(authMail.getCode(), foundAuthMail.getEmail());
+        assertEquals(authMail.getCode(), foundAuthMail.getCode());
     }
 
     @Test
