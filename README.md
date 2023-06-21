@@ -114,5 +114,5 @@ spring run DeukgeunApplication.java
 ## **작성자 정보**
 
 - 작성자: limJyeok
-- 이메일 주소: kim5288403**[@gmail.com](mailto:myusername@example.com)**
+- 이메일 주소: kim5288403[@gmail.com](mailto:myusername@example.com)
 - GitHub: [**https://github.com/myusername**](https://github.com/kim5288403/deukgeun)
