@@ -23,7 +23,7 @@ public class Post extends BaseEntity{
   private Long id;
   
   @Column(name = "member_id")
-  private Long userId;
+  private Long memberId;
   
   @Column(nullable = false)
   private String html;
@@ -33,9 +33,12 @@ public class Post extends BaseEntity{
   private Member member;
   
   @Builder
-  public Post(String html, Long userId, Member member) {
+  public Post(String html, Long memberId) {
     this.html = html;
-    this.userId = userId;
-    this.member = member;
+    this.memberId = memberId;
+  }
+
+  public void updateHtml(String html) {
+    this.html = html;
   }
 }

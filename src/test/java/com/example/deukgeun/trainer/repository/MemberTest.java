@@ -27,6 +27,7 @@ public class MemberTest {
     void shouldNotNullRepository() {
         assertNotNull(memberRepository);
     }
+
     @Test
     void givenMember_whenSaved_thenReturnValid() {
         // Given

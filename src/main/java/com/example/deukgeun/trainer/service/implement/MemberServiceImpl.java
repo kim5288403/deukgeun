@@ -119,8 +119,8 @@ public class MemberServiceImpl implements MemberService {
    * @param request 업데이트할 사용자 정보 요청 객체
    */
   public void updateInfo(UpdateInfoRequest request) {
-    Member foundMember = memberRepository.findByEmail(request.getEmail()).orElse(null);
-    assert foundMember != null;
+    Member foundMember = memberRepository.findByEmail(request.getEmail())
+            .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
     foundMember.updateInfo(request);
     memberRepository.save(foundMember);
   }

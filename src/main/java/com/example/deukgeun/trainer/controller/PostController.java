@@ -37,7 +37,7 @@ public class PostController {
      */
     @RequestMapping(method = RequestMethod.GET, path = "/{id}")
     public ResponseEntity<?> getDetailByUserId(@PathVariable("id") Long id) {
-        Post post = postService.findByUserId(id);
+        Post post = postService.findByMemberId(id);
         PostResponse response = new PostResponse(post);
 
         return RestResponseUtil
@@ -54,8 +54,8 @@ public class PostController {
     public ResponseEntity<?> getDetailByAuthToken(HttpServletRequest request) {
         String authToken = jwtService.resolveAuthToken(request);
         Long userId = memberService.getUserId(authToken);
-        Post post = postService.findByUserId(userId);
-        postService.findByUserId(userId);
+        Post post = postService.findByMemberId(userId);
+
         PostResponse response = new PostResponse(post);
 
         return RestResponseUtil

@@ -150,7 +150,7 @@ public class UserController {
         Member member = memberService.getByEmail(withdrawalRequest.getEmail());
 
         // 프로필 조회
-        Profile userProfile = profileService.getByUserId(member.getId());
+        Profile userProfile = profileService.getByMemberId(member.getId());
 
         // 디렉토리 프로필 삭제
         profileService.deleteFileToDirectory(userProfile.getPath());

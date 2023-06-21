@@ -29,10 +29,6 @@ public class LicenseTest {
     private MemberRepository memberRepository;
 
     private long memberId;
-    @Test
-    void shouldNotNullRepository() {
-        assertNotNull(licenseRepository);
-    }
 
     @BeforeEach
     void setUp() {
@@ -55,6 +51,11 @@ public class LicenseTest {
 
         Member saveMember = memberRepository.save(member);
         memberId = saveMember.getId();
+    }
+
+    @Test
+    void shouldNotNullRepository() {
+        assertNotNull(licenseRepository);
     }
 
     @Test

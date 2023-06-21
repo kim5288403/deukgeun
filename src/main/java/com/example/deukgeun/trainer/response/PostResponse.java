@@ -8,15 +8,15 @@ import org.springframework.web.util.HtmlUtils;
 @Data
 @NoArgsConstructor
 public class PostResponse {
-  private Long user_id;
-  
-  private Long post_id;
-  
+  private Long memberId;
+
+  private Long postId;
+
   private String html;
-  
+
   public PostResponse(Post post) {
-      this.post_id = post.getId();
-      this.user_id = post.getUserId();
+      this.postId = post.getId();
+      this.memberId = post.getMemberId();
       this.html = HtmlUtils.htmlUnescape(post.getHtml());
   }
 }

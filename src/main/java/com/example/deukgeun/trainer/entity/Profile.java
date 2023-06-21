@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "trainer_member_profile")
+@Table(name = "trainer_profile")
 @NoArgsConstructor
 public class Profile extends BaseEntity {
 
@@ -23,8 +23,8 @@ public class Profile extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   
-  @Column(name = "user_id")
-  private Long userId;
+  @Column(name = "member_id")
+  private Long memberId;
   
   @OneToOne()
   @JoinColumn(name = "member_id", insertable = false, updatable = false, nullable = false)
@@ -34,9 +34,12 @@ public class Profile extends BaseEntity {
   private String path;
 
   @Builder
-  public Profile(String path, Long userId, Member member) {
-    this.userId = userId;
+  public Profile(String path, Long memberId) {
+    this.memberId = memberId;
     this.path = path;
-    this.member = member;
+  }
+
+  public void updatePath(String path) {
+    this.path = path;
   }
 }

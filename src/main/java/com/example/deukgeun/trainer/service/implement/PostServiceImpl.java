@@ -49,7 +49,7 @@ public class PostServiceImpl implements PostService {
         Long memberId = member.getId();
 
         // 해당 사용자의 게시글을 조회합니다.
-        Post post = postRepository.findByUserId(memberId).orElse(null);
+        Post post = postRepository.findByMemberId(memberId).orElse(null);
 
         // 게시글 내용을 HTML 이스케이프하여 저장합니다.
         String content = request.getContent();
@@ -57,7 +57,7 @@ public class PostServiceImpl implements PostService {
 
         if (post != null) {
             // 이미 게시글이 존재하는 경우, 게시글을 업데이트합니다.
-            update(memberId, html);
+            updateHtml(memberId, html);
         } else {
             // 게시글이 존재하지 않는 경우, 새로운 게시글을 저장합니다.
             save(memberId, html);
@@ -78,11 +78,14 @@ public class PostServiceImpl implements PostService {
     /**
      * 기존 게시글을 업데이트합니다.
      *
-     * @param userId 사용자 ID
+     * @param memberId 사용자 ID
      * @param html   HTML 이스케이프된 게시글 내용
      */
-    public void update(Long userId, String html) {
-        postRepository.update(userId, html);
+    public void updateHtml(Long memberId, String html) {
+        Post foundPost = postRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+        foundPost.updateHtml(html);
+        postRepository.save(foundPost);
     }
 
     /**
@@ -104,7 +107,7 @@ public class PostServiceImpl implements PostService {
 
         // 파일 확장자 추출
         String extension = getExtensionFromContentType(contentType);
-        String name = UUID.randomUUID().toString() + extension;
+        String name = UUID.randomUUID() + extension;
         String linkName = postUrl + name;
         // MIME 타입 검증
         validMimeType(contentType, uploads, name);
@@ -235,8 +238,8 @@ public class PostServiceImpl implements PostService {
      * @return 조회된 게시글
      * @throws EntityNotFoundException 게시글을 찾을 수 없을 때 발생하는 예외
      */
-    public Post findByUserId(Long id) throws EntityNotFoundException {
-        return postRepository.findByUserId(id).orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+    public Post findByMemberId(Long id) throws EntityNotFoundException {
+        return postRepository.findByMemberId(id).orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
     }
 
     /**

@@ -35,7 +35,7 @@ public class ProfileController {
     @RequestMapping(method = RequestMethod.GET, path = "/{id}")
     public ResponseEntity<?> getByUserId(@PathVariable Long id) {
         // profileService 를 통해 해당 사용자 ID에 해당하는 프로필 정보를 조회합니다.
-        Profile profile = profileService.getByUserId(id);
+        Profile profile = profileService.getByMemberId(id);
 
         // 조회된 프로필 정보를 이용하여 ProfileResponse 객체를 생성합니다.
         ProfileResponse.ProfileAndUserResponse response = new ProfileResponse.ProfileAndUserResponse(profile);
@@ -58,7 +58,7 @@ public class ProfileController {
         Long userId = memberService.getUserId(authToken);
 
         // 사용자 ID에 해당하는 프로필 정보를 조회합니다.
-        Profile profile = profileService.getByUserId(userId);
+        Profile profile = profileService.getByMemberId(userId);
 
         // 조회된 프로필 정보를 이용하여 ProfileResponse 객체를 생성합니다.
         ProfileResponse.ProfileAndUserResponse response = new ProfileResponse.ProfileAndUserResponse(profile);
