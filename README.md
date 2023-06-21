@@ -30,7 +30,7 @@
 
 1. MySQL 8.0.33 데이터베이스를 설치합니다.
 
- 2. 이 프로젝트를 clone 합니다.
+2. 이 프로젝트를 clone 합니다.
 
 ```java
 git clone https://github.com/kim5288403/deukgeun.git
@@ -94,6 +94,18 @@ spring run DeukgeunApplication.java
 ```
 
 7. 브라우저에서 http://localhost:8080으로 접속합니다.
+
+## **테스트 코드**
+- BDD 스타일 TDD
+    - 개발 순서 Repository -> Service -> Controller
+      - Repository
+        - DataJpaTest
+          - embedded DB Mysql
+          - Test DB H2
+      - Service
+        - SpringBootTest
+      - Controller
+        - SpringBootTest
 
 ## **참고**
 
