@@ -1,6 +1,6 @@
 package com.example.deukgeun.trainer.controller;
 
-import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
+import com.example.deukgeun.commom.service.implement.TokenServiceImpl;
 import com.example.deukgeun.commom.util.RestResponseUtil;
 import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.request.UpdateProfileRequest;
@@ -24,7 +24,7 @@ import javax.validation.Valid;
 public class ProfileController {
     private final ProfileServiceImpl profileService;
     private final MemberServiceImpl memberService;
-    private final JwtServiceImpl jwtService;
+    private final TokenServiceImpl tokenService;
 
     /**
      * 특정 사용자 ID에 해당하는 프로필 상세 정보를 조회합니다.
@@ -52,7 +52,7 @@ public class ProfileController {
     @RequestMapping(method = RequestMethod.GET, path = "/")
     public ResponseEntity<?> getByAuthToken(HttpServletRequest request) {
         // 요청 헤더에서 인증 토큰을 추출합니다.
-        String authToken = jwtService.resolveAuthToken(request);
+        String authToken = tokenService.resolveAuthToken(request);
 
         // 인증 토큰을 이용하여 사용자 ID를 조회합니다.
         Long userId = memberService.getUserId(authToken);
@@ -78,7 +78,7 @@ public class ProfileController {
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> update(HttpServletRequest request, @Valid UpdateProfileRequest updateRequest, BindingResult bindingResult) throws Exception {
         // 요청 헤더에서 인증 토큰을 추출합니다.
-        String authToken = jwtService.resolveAuthToken(request);
+        String authToken = tokenService.resolveAuthToken(request);
 
         // 프로필 서비스를 이용하여 사용자의 프로필 정보를 업데이트합니다.
         profileService.updateProfile(updateRequest.getProfile(), authToken);

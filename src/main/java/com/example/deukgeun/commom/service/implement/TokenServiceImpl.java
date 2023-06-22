@@ -2,7 +2,7 @@ package com.example.deukgeun.commom.service.implement;
 
 import com.example.deukgeun.commom.entity.Token;
 import com.example.deukgeun.commom.repository.TokenRepository;
-import com.example.deukgeun.commom.service.JwtService;
+import com.example.deukgeun.commom.service.TokenService;
 import com.example.deukgeun.trainer.service.implement.UserDetailServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -25,7 +25,7 @@ import java.util.Date;
 
 @RequiredArgsConstructor
 @Service
-public class JwtServiceImpl implements JwtService{
+public class TokenServiceImpl implements TokenService {
   private final TokenRepository tokenRepository;
   private final UserDetailServiceImpl userDetailService;
 
@@ -77,12 +77,12 @@ public class JwtServiceImpl implements JwtService{
    * 현재 시간과 리프레시 토큰의 만료 시간을 설정하여 토큰을 생성합니다.
    * 생성된 토큰은 시크릿 키를 사용하여 서명되어 반환됩니다.
    *
-   * @param email 사용자 이메일
+   * @param userPk 사용자 이메일
    * @param roles 사용자 역할 정보
    * @return 생성된 리프레시 토큰
    */
-  public String createRefreshToken(String email, String roles) {
-    Claims claims = Jwts.claims().setSubject(email);
+  public String createRefreshToken(String userPk, String roles) {
+    Claims claims = Jwts.claims().setSubject(userPk);
     claims.put("roles", roles);
     Date now = new Date();
 

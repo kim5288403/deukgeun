@@ -166,6 +166,5 @@ public class AuthMailServiceImpl implements MailService {
 
         findAuthMail.updateMailStatus(MailStatus.Y);
         authMailRepository.save(findAuthMail);
-
     }
 }

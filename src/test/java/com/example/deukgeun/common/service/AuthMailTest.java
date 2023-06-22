@@ -1,7 +1,9 @@
 package com.example.deukgeun.common.service;
 
 import com.example.deukgeun.commom.entity.AuthMail;
+import com.example.deukgeun.commom.enums.MailStatus;
 import com.example.deukgeun.commom.repository.AuthMailRepository;
+import com.example.deukgeun.commom.request.AuthMailRequest;
 import com.example.deukgeun.commom.service.implement.AuthMailServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -12,6 +14,8 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import javax.persistence.EntityNotFoundException;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -124,6 +128,117 @@ public class AuthMailTest {
 
         // Then
         verify(authMailRepository, times(1)).deleteByEmail(email);
+    }
+
+    @Test
+    public void givenEmailAndCode_whenConfirmMail_thenReturnTrue() {
+        // Given
+        String email = "example@example.com";
+        String code = "123456";
+        AuthMailServiceImpl authMailService = new AuthMailServiceImpl(authMailRepository, mockEmailSender, mockTemplateEngine);
+
+        when(authMailRepository.existsByEmailAndCode(email, code)).thenReturn(true);
+
+        // When
+        boolean result = authMailService.confirmMail(email, code);
+
+        // Then
+        assertTrue(result);
+        verify(authMailRepository, times(1)).existsByEmailAndCode(email, code);
+    }
+
+    @Test
+    public void givenAuthMail_whenIsEmailAuthenticated_thenReturnTrue() {
+        // Given
+        String email = "example@example.com";
+        AuthMail authMail = AuthMail
+                .builder()
+                .email(email)
+                .mailStatus(MailStatus.Y)
+                .build();
+
+        given(authMailRepository.findByEmail(email)).willReturn(Optional.of(authMail));
+        AuthMailServiceImpl authMailService = new AuthMailServiceImpl(authMailRepository, mockEmailSender, mockTemplateEngine);
+
+        // When
+        boolean result = authMailService.isEmailAuthenticated(email);
+
+        // Then
+        assertTrue(result);
+        verify(authMailRepository, times(1)).findByEmail(email);
+    }
+
+    @Test
+    public void givenUnauthenticatedEmail_whenIsEmailAuthenticated_thenReturnFalse() {
+        // Given
+        String email = "example@example.com";
+        AuthMail authMail = AuthMail
+                .builder()
+                .email(email)
+                .mailStatus(MailStatus.N)
+                .build();
+
+        given(authMailRepository.findByEmail(email)).willReturn(Optional.of(authMail));
+        AuthMailServiceImpl authMailService = new AuthMailServiceImpl(authMailRepository, mockEmailSender, mockTemplateEngine);
+
+        // When
+        boolean result = authMailService.isEmailAuthenticated(email);
+
+        // Then
+        assertFalse(result);
+        verify(authMailRepository, times(1)).findByEmail(email);
+    }
+
+    @Test
+    public void givenNonexistentEmail_whenIsEmailAuthenticated_thenThrowEntityNotFoundException() {
+        // Given
+        String email = "example@example.com";
+        AuthMailServiceImpl authMailService = new AuthMailServiceImpl(authMailRepository, mockEmailSender, mockTemplateEngine);
+        given(authMailRepository.findByEmail(email)).willReturn(Optional.empty());
+
+        // When and Then
+        assertThrows(EntityNotFoundException.class, () -> authMailService.isEmailAuthenticated(email));
+        verify(authMailRepository, times(1)).findByEmail(email);
+    }
+
+
+    @Test
+    public void givenAuthMailRequest_whenConfirm_thenMailStatusUpdated() throws EntityNotFoundException {
+        // Given
+        AuthMailRequest request = new AuthMailRequest();
+        request.setEmail("example@example.com");
+        AuthMail authMail = AuthMail
+                .builder()
+                .mailStatus(MailStatus.N)
+                .build();
+        given(authMailRepository.findByEmail(request.getEmail())).willReturn(Optional.of(authMail));
+        AuthMailServiceImpl authMailService = new AuthMailServiceImpl(authMailRepository, mockEmailSender, mockTemplateEngine);
+
+        // When
+        authMailService.confirm(request);
+
+        // Then
+        verify(authMailRepository, times(1)).findByEmail(request.getEmail());
+        verify(authMailRepository, times(1)).save(authMail);
+        assertEquals(MailStatus.Y, authMail.getMailStatus());
+    }
+
+    @Test
+    public void givenNonexistentAuthMailRequest_whenConfirm_thenThrowEntityNotFoundException() throws EntityNotFoundException {
+        // Given
+        AuthMailRequest request = new AuthMailRequest();
+        request.setEmail("example@example.com");
+        AuthMail authMail = AuthMail
+                .builder()
+                .mailStatus(MailStatus.N)
+                .build();
+        given(authMailRepository.findByEmail(request.getEmail())).willReturn(Optional.empty());
+        AuthMailServiceImpl authMailService = new AuthMailServiceImpl(authMailRepository, mockEmailSender, mockTemplateEngine);
+
+        // When and Then
+        assertThrows(EntityNotFoundException.class, () -> authMailService.confirm(request));
+        verify(authMailRepository, times(1)).findByEmail(request.getEmail());
+        verify(authMailRepository, never()).save(any(AuthMail.class));
     }
 
 }

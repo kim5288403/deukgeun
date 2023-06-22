@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
+import com.example.deukgeun.commom.service.implement.TokenServiceImpl;
 import com.example.deukgeun.commom.util.RestResponseUtil;
 import lombok.RequiredArgsConstructor;
 
@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JwtController {
   
-  private final JwtServiceImpl jwtService;
+  private final TokenServiceImpl tokenService;
 
   /**
    * 로그아웃을 수행합니다.
@@ -25,8 +25,8 @@ public class JwtController {
   @RequestMapping(method = RequestMethod.GET, path = "/logout")
   public ResponseEntity<?> logout(HttpServletRequest request) {
     
-    String authToken = jwtService.resolveAuthToken(request);
-    jwtService.deleteToken(authToken);
+    String authToken = tokenService.resolveAuthToken(request);
+    tokenService.deleteToken(authToken);
     
     return RestResponseUtil
         .ok("로그아웃 성공 했습니다.", null);
@@ -40,8 +40,8 @@ public class JwtController {
    */
   @RequestMapping(method = RequestMethod.GET, path = "/pk")
   public ResponseEntity<?> getUserPK(HttpServletRequest request) {
-    String authToken = jwtService.resolveAuthToken(request);
-    String email = jwtService.getUserPk(authToken);
+    String authToken = tokenService.resolveAuthToken(request);
+    String email = tokenService.getUserPk(authToken);
 
     return RestResponseUtil.ok("이메일 조회 성공했습니다.", email);
   }

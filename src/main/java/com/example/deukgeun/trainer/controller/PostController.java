@@ -1,6 +1,6 @@
 package com.example.deukgeun.trainer.controller;
 
-import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
+import com.example.deukgeun.commom.service.implement.TokenServiceImpl;
 import com.example.deukgeun.commom.util.RestResponseUtil;
 import com.example.deukgeun.trainer.entity.Post;
 import com.example.deukgeun.trainer.request.PostRequest;
@@ -27,7 +27,7 @@ public class PostController {
 
     private final PostServiceImpl postService;
     private final MemberServiceImpl memberService;
-    private final JwtServiceImpl jwtService;
+    private final TokenServiceImpl tokenService;
 
     /**
      * 사용자 ID에 해당하는 게시물 상세 정보를 가져옵니다.
@@ -52,7 +52,7 @@ public class PostController {
      */
     @RequestMapping(method = RequestMethod.GET, path = "/")
     public ResponseEntity<?> getDetailByAuthToken(HttpServletRequest request) {
-        String authToken = jwtService.resolveAuthToken(request);
+        String authToken = tokenService.resolveAuthToken(request);
         Long userId = memberService.getUserId(authToken);
         Post post = postService.findByMemberId(userId);
 
@@ -73,7 +73,7 @@ public class PostController {
      */
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> upload(HttpServletRequest request, @Valid PostRequest postRequest, BindingResult bindingResult) throws Exception {
-        String authToken = jwtService.resolveAuthToken(request);
+        String authToken = tokenService.resolveAuthToken(request);
         postService.upload(postRequest, authToken);
 
         return RestResponseUtil.ok("게시글 저장 성공했습니다.", null);

@@ -1,7 +1,7 @@
 package com.example.deukgeun.trainer.service.implement;
 
 import com.example.deukgeun.commom.exception.PasswordMismatchException;
-import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
+import com.example.deukgeun.commom.service.implement.TokenServiceImpl;
 import com.example.deukgeun.trainer.entity.Member;
 import com.example.deukgeun.trainer.repository.MemberRepository;
 import com.example.deukgeun.trainer.repository.ProfileRepository;
@@ -25,7 +25,7 @@ public class MemberServiceImpl implements MemberService {
 
   private final MemberRepository memberRepository;
   private final ProfileRepository profileRepository;
-  private final JwtServiceImpl jwtService;
+  private final TokenServiceImpl tokenService;
   private final PasswordEncoder passwordEncoder;
 
   /**
@@ -108,7 +108,7 @@ public class MemberServiceImpl implements MemberService {
    * @throws EntityNotFoundException 주어진 인증 토큰에 해당하는 사용자가 없는 경우 발생하는 예외
    */
   public Member getByAuthToken(String authToken) throws EntityNotFoundException {
-    String email = jwtService.getUserPk(authToken);
+    String email = tokenService.getUserPk(authToken);
     
     return getByEmail(email);
   }

@@ -2,7 +2,7 @@ package com.example.deukgeun.trainer.controller;
 
 
 import com.example.deukgeun.commom.response.LoginResponse;
-import com.example.deukgeun.commom.service.implement.JwtServiceImpl;
+import com.example.deukgeun.commom.service.implement.TokenServiceImpl;
 import com.example.deukgeun.commom.util.RestResponseUtil;
 import com.example.deukgeun.trainer.entity.Member;
 import com.example.deukgeun.trainer.entity.Profile;
@@ -34,7 +34,7 @@ import java.io.IOException;
 public class UserController {
 
     private final MemberServiceImpl memberService;
-    private final JwtServiceImpl jwtService;
+    private final TokenServiceImpl tokenService;
     private final ProfileServiceImpl profileService;
 
     @Value("${deukgeun.role.trainer}")
@@ -67,7 +67,7 @@ public class UserController {
     @RequestMapping(method = RequestMethod.GET, path = "/detail")
     public ResponseEntity<?> getDetail(HttpServletRequest request) {
         // 인증 토큰에서 사용자의 인증 정보를 추출
-        String authToken = jwtService.resolveAuthToken(request);
+        String authToken = tokenService.resolveAuthToken(request);
         Member member = memberService.getByAuthToken(authToken);
 
         // 사용자 정보를 응답 객체로 변환
@@ -162,8 +162,8 @@ public class UserController {
         memberService.withdrawal(member.getId());
 
         //토큰 삭제
-        String authToken = jwtService.resolveAuthToken(request);
-        jwtService.deleteToken(authToken);
+        String authToken = tokenService.resolveAuthToken(request);
+        tokenService.deleteToken(authToken);
 
         return RestResponseUtil
                 .ok("회원 탈퇴 성공했습니다.", null);
@@ -184,7 +184,7 @@ public class UserController {
         //test
         System.out.println("test");
         // JWT 토큰 생성 및 설정
-        String authToken = jwtService.setToken(request.getEmail(), response);
+        String authToken = tokenService.setToken(request.getEmail(), response);
 
         // 로그인 응답 객체 생성
         LoginResponse loginResponse = LoginResponse
