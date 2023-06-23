@@ -73,13 +73,15 @@ public class LicenseController {
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> save(HttpServletRequest request, @Valid SaveLicenseRequest saveLicenseRequest, BindingResult bindingResult) throws Exception {
         // 자격증 진위여부를 위한 외부 API 호출
-        LicenseResultResponse licenseResult = licenseService.checkLicense(saveLicenseRequest);
+        LicenseResultResponse licenseResult = licenseService.getLicenseVerificationResult(saveLicenseRequest);
+        licenseService.checkLicense(licenseResult);
 
         // 인증 토큰에서 사용자 ID 추출
         String authToken = tokenService.resolveAuthToken(request);
         Long userId = memberService.getUserId(authToken);
 
         // 자격증 저장
+        licenseResult.setNo(saveLicenseRequest.getNo());
         licenseService.save(licenseResult, userId);
 
         return RestResponseUtil

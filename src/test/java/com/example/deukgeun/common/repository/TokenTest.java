@@ -83,7 +83,7 @@ public class TokenTest {
 
         // When
         assert findToken != null;
-        findToken.setAuthToken(newAuthToken);
+        findToken.updateAuthToken(newAuthToken);
         tokenRepository.save(findToken);
 
         // Then

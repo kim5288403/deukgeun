@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -232,7 +233,7 @@ public class TokenServiceImpl implements TokenService {
   public void updateAuthToken(String authToken, String newAuthToken) {
     Token saveToken = tokenRepository.findByAuthToken(authToken).orElse(null);
     assert saveToken != null;
-    saveToken.setAuthToken(newAuthToken);
+    saveToken.updateAuthToken(newAuthToken);
     tokenRepository.save(saveToken);
   }
 
@@ -242,7 +243,7 @@ public class TokenServiceImpl implements TokenService {
    * @param authToken  조회할 인증 토큰
    * @return 조회된 토큰 객체, 인증 토큰이 없는 경우 null 을 반환합니다.
    */
-//  @Cacheable(value = "token", key = "#authToken", cacheManager = "projectCacheManager", unless = "#result == null")
+  @Cacheable(value = "token", key = "#authToken", cacheManager = "projectCacheManager", unless = "#result == null")
   public Token findByAuthToken(String authToken) {
     return tokenRepository.findByAuthToken(authToken).orElse(null);
   }
