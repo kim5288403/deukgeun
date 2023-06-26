@@ -103,7 +103,8 @@ public class PostController {
     @RequestMapping(method = RequestMethod.DELETE, path = "/")
     public void deleteServerImage(@RequestParam("src") String src) {
         String path = postService.getFilePathFromUrl(src);
-        postService.deleteFileToDirectory(path);
+        File file = new File(path);
+        postService.deleteFileToDirectory(file);
     }
 
     /**

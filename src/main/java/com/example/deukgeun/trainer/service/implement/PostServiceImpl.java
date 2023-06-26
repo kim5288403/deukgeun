@@ -49,13 +49,13 @@ public class PostServiceImpl implements PostService {
         Long memberId = member.getId();
 
         // 해당 사용자의 게시글을 조회합니다.
-        Post post = postRepository.findByMemberId(memberId).orElse(null);
+        boolean existsPost = postRepository.existsByMemberId(memberId);
 
         // 게시글 내용을 HTML 이스케이프하여 저장합니다.
         String content = request.getContent();
         String html = HtmlUtils.htmlEscape(content);
 
-        if (post != null) {
+        if (existsPost) {
             // 이미 게시글이 존재하는 경우, 게시글을 업데이트합니다.
             updateHtml(memberId, html);
         } else {
@@ -109,6 +109,7 @@ public class PostServiceImpl implements PostService {
         String extension = getExtensionFromContentType(contentType);
         String name = UUID.randomUUID() + extension;
         String linkName = postUrl + name;
+
         // MIME 타입 검증
         validMimeType(contentType, uploads, name);
 
@@ -188,7 +189,8 @@ public class PostServiceImpl implements PostService {
         boolean contains = Arrays.asList(allowedMimeTypes).contains(mimeType.toLowerCase());
 
         if (!contains) {
-            deleteFileToDirectory(uploads + "/" + name);
+            File deleteFile = new File(uploads + "/" + name);
+            deleteFileToDirectory(deleteFile);
 
             throw new Exception("Image does not meet the validation.");
         }
@@ -222,10 +224,8 @@ public class PostServiceImpl implements PostService {
     /**
      * 서버에 저장된 이미지를 삭제합니다.
      *
-     * @param path 이미지 파일 경로
      */
-    public void deleteFileToDirectory(String path) {
-        File file = new File(path);
+    public void deleteFileToDirectory(File file) {
         if (file.exists()) {
             file.delete();
         }
