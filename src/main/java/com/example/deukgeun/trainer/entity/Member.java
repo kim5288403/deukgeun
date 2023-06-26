@@ -67,6 +67,7 @@ public class Member extends BaseEntity implements UserDetails{
 
   @Builder
   public Member(
+          Long id,
           String name,
           String email,
           String password,
@@ -81,6 +82,7 @@ public class Member extends BaseEntity implements UserDetails{
           Integer price,
           String introduction
   ) {
+    this.id = id;
     this.name = name;
     this.email = email;
     this.password = password;

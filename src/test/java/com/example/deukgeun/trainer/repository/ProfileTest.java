@@ -4,7 +4,7 @@ import com.example.deukgeun.commom.enums.Gender;
 import com.example.deukgeun.trainer.entity.GroupStatus;
 import com.example.deukgeun.trainer.entity.Member;
 import com.example.deukgeun.trainer.entity.Profile;
-import com.example.deukgeun.trainer.response.UserResponse.UserListResponse;
+import com.example.deukgeun.trainer.response.MemberResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,7 +104,7 @@ public class ProfileTest {
         PageRequest pageable = PageRequest.of(0, 10);
 
         // When
-        Page<UserListResponse> foundPost = profileRepository.findByUserLikeKeyword(converterKeyword, pageable);
+        Page<MemberResponse.MemberListResponse> foundPost = profileRepository.findByUserLikeKeyword(converterKeyword, pageable);
 
         // Then
         assertEquals(keyword, foundPost.getContent().get(0).getName());

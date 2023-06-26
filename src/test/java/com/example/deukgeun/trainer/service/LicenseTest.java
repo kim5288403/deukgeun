@@ -6,7 +6,6 @@ import com.example.deukgeun.trainer.request.SaveLicenseRequest;
 import com.example.deukgeun.trainer.response.LicenseListResponse;
 import com.example.deukgeun.trainer.response.LicenseResultResponse;
 import com.example.deukgeun.trainer.service.implement.LicenseServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -33,14 +32,6 @@ public class LicenseTest {
     private String licenseApiKey;
     @Value("${trainer.license.api.uri}")
     private String licenseApiUri;
-
-
-    @BeforeEach
-    public void setUp() {
-        ReflectionTestUtils.setField(licenseService, "licenseApiKey", licenseApiKey);
-        ReflectionTestUtils.setField(licenseService, "licenseApiUri", licenseApiUri);
-
-    }
 
     @Test
     public void givenValidMemberId_whenFindByMemberId_thenReturnLicenseListResponse() {
@@ -135,6 +126,9 @@ public class LicenseTest {
         SaveLicenseRequest request = new SaveLicenseRequest();
         request.setName("Test License");
         request.setNo("12345");
+
+        ReflectionTestUtils.setField(licenseService, "licenseApiKey", licenseApiKey);
+        ReflectionTestUtils.setField(licenseService, "licenseApiUri", licenseApiUri);
 
         // When
         LicenseResultResponse result = licenseService.getLicenseVerificationResult(request);

@@ -9,7 +9,7 @@ import com.example.deukgeun.trainer.request.JoinRequest;
 import com.example.deukgeun.trainer.request.LoginRequest;
 import com.example.deukgeun.trainer.request.UpdateInfoRequest;
 import com.example.deukgeun.trainer.request.UpdatePasswordRequest;
-import com.example.deukgeun.trainer.response.UserResponse.UserListResponse;
+import com.example.deukgeun.trainer.response.MemberResponse;
 import com.example.deukgeun.trainer.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -55,7 +55,7 @@ public class MemberServiceImpl implements MemberService {
    * @param currentPage  현재 페이지 번호
    * @return 페이지로 나뉘어진 사용자 목록
    */
-  public Page<UserListResponse> getList(String keyword, Integer currentPage) {
+  public Page<MemberResponse.MemberListResponse> getList(String keyword, Integer currentPage) {
     String likeKeyword = "%" + keyword + "%";
     PageRequest pageable = PageRequest.of(currentPage, 10);
     return profileRepository.findByUserLikeKeyword(likeKeyword, pageable);
@@ -109,7 +109,6 @@ public class MemberServiceImpl implements MemberService {
    */
   public Member getByAuthToken(String authToken) throws EntityNotFoundException {
     String email = tokenService.getUserPk(authToken);
-    
     return getByEmail(email);
   }
 
@@ -134,6 +133,7 @@ public class MemberServiceImpl implements MemberService {
     String email = request.getEmail();
     String newPassword = passwordEncoder.encode(request.getNewPassword());
     Member foundMember = memberRepository.findByEmail(email).orElse(null);
+
     assert foundMember != null;
     foundMember.updatePassword(newPassword);
     memberRepository.save(foundMember);

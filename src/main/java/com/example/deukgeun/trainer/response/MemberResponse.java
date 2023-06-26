@@ -13,7 +13,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class UserResponse {
+public class MemberResponse {
     private String email;
 
     private String name;
@@ -38,7 +38,7 @@ public class UserResponse {
 
     private Integer price;
 
-    public UserResponse(Member member) {
+    public MemberResponse(Member member) {
         this.email = member.getEmail();
         this.name = member.getName();
         this.groupStatus = member.getGroupStatus();
@@ -56,7 +56,7 @@ public class UserResponse {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class UserListResponse {
+    public static class MemberListResponse {
 
         private Long id;
 
@@ -70,7 +70,7 @@ public class UserResponse {
 
         private String introduction;
 
-        public UserListResponse(Profile profile) {
+        public MemberListResponse(Profile profile) {
             this.id = profile.getMemberId();
             this.path = profile.getPath();
             this.name = profile.getMember().getName();
@@ -86,13 +86,13 @@ public class UserResponse {
     @NoArgsConstructor
     public static class UserListPaginationResponse {
 
-        private List<UserListResponse> list;
+        private List<MemberListResponse> list;
 
         private Integer totalPages;
 
         private Integer currentPage;
 
-        public UserListPaginationResponse(Page<UserListResponse> page, Integer currentPage) {
+        public UserListPaginationResponse(Page<MemberListResponse> page, Integer currentPage) {
             this.list = page.getContent();
             this.totalPages = page.getTotalPages();
             this.currentPage = currentPage;

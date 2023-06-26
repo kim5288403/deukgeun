@@ -7,10 +7,9 @@ import com.example.deukgeun.commom.util.RestResponseUtil;
 import com.example.deukgeun.trainer.entity.Member;
 import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.request.*;
-import com.example.deukgeun.trainer.response.UserResponse;
-import com.example.deukgeun.trainer.response.UserResponse.UserListResponse;
-import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
+import com.example.deukgeun.trainer.response.MemberResponse;
 import com.example.deukgeun.trainer.service.implement.MemberServiceImpl;
+import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -50,10 +49,10 @@ public class UserController {
     @RequestMapping(method = RequestMethod.GET, path = "/")
     public ResponseEntity<?> getList(@RequestParam(value = "keyword", defaultValue = "") String keyword, @RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage) {
         // 키워드와 현재 페이지를 기반으로 사용자 목록 조회
-        Page<UserListResponse> page = memberService.getList(keyword, currentPage);
+        Page<MemberResponse.MemberListResponse> page = memberService.getList(keyword, currentPage);
 
         // 사용자 목록을 UserListPaginationResponse 형식으로 변환
-        UserResponse.UserListPaginationResponse list = new UserResponse.UserListPaginationResponse(page, currentPage);
+        MemberResponse.UserListPaginationResponse list = new MemberResponse.UserListPaginationResponse(page, currentPage);
 
         return RestResponseUtil.ok("조회 성공 했습니다.", list);
     }
@@ -71,7 +70,7 @@ public class UserController {
         Member member = memberService.getByAuthToken(authToken);
 
         // 사용자 정보를 응답 객체로 변환
-        UserResponse response = new UserResponse(member);
+        MemberResponse response = new MemberResponse(member);
 
         return RestResponseUtil.ok("마이 페이지 조회 성공했습니다.", response);
     }
@@ -136,7 +135,6 @@ public class UserController {
      * @param withdrawalRequest   회원 탈퇴 요청 객체
      * @param bindingResult       유효성 검사 결과 객체
      * @return ResponseEntity 객체
-     * @throws Exception         예외 발생 시
      */
     @RequestMapping(method = RequestMethod.DELETE, path = "/")
     public ResponseEntity<?> withdrawal(
