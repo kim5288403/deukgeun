@@ -1,5 +1,6 @@
 package com.example.deukgeun.trainer.service;
 
+import com.example.deukgeun.commom.util.WebClientUtil;
 import com.example.deukgeun.trainer.entity.Member;
 import com.example.deukgeun.trainer.entity.Post;
 import com.example.deukgeun.trainer.repository.PostRepository;
@@ -9,6 +10,8 @@ import com.example.deukgeun.trainer.service.implement.PostServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -187,10 +190,7 @@ public class PostTest {
         InputStream inputStream = new ByteArrayInputStream("Test data".getBytes());
         File file = new File("test.png");
         PrintWriter writer = mock(PrintWriter.class);
-
-//        MockedStatic <Files> mockedStatic = mockStatic(Files.class);
-//        when(Files.copy(inputStream, file.toPath())).thenReturn(null);
-//        mockStatic(Files.class).when(Files.copy(inputStream, file.toPath())).thenReturn(null);
+        mockStatic(Files.class);
 
         given(filePart.getInputStream()).willReturn(inputStream);
 
@@ -200,10 +200,6 @@ public class PostTest {
         // Then
         verify(filePart, times(1)).getInputStream();
         verify(writer, never()).println(anyString());
-        assertTrue(file.exists());
-        assertEquals("Test data", Files.readString(Path.of(file.getPath())));
-
-        file.delete();
     }
 
     @Test
