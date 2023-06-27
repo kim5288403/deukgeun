@@ -61,7 +61,6 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
 
       - name: Run Java Build
         run: |
-          cd my-project
           ./gradlew build -Dtemp.dir=${{ steps.tempdir.outputs.dir }}
 
 #      - name: Build with Gradle
