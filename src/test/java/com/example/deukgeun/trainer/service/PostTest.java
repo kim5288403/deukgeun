@@ -251,6 +251,7 @@ public class PostTest {
         // Given
         String getRequestURI = "/images/image.jpg";
         String postFilePath = "path/to/posts";
+        File file = new File(postFilePath , "/image.jpg");
         ReflectionTestUtils.setField(postService, "postFilePath", postFilePath);
 
         // When
@@ -258,7 +259,7 @@ public class PostTest {
 
         // Then
         assertNotNull(result);
-        assertEquals("path\\to\\posts\\image.jpg", result.getPath());
+        assertEquals(file.getPath(), result.getPath());
     }
 
     @Test
