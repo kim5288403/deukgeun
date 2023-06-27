@@ -61,14 +61,11 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
 
       - name: Run tests
         run: |
-            # Create a temporary directory
             TEMP_DIR=$(mktemp -d)
             echo "Temporary directory: $TEMP_DIR"
             
-            # Run tests with the temporary directory
             ./gradlew test --console=plain --tests "com.example.MyTest" --temp-dir "$TEMP_DIR"
             
-            # Clean up the temporary directory
             rm -rf "$TEMP_DIR"
 
 #      - name: Build with Gradle
