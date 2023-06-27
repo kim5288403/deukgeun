@@ -5,10 +5,8 @@ import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.repository.ProfileRepository;
 import com.example.deukgeun.trainer.service.implement.MemberServiceImpl;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,11 +36,12 @@ public class ProfileTest {
     private ProfileRepository profileRepository;
     @Mock
     private MemberServiceImpl memberService;
+    Path tempDir;
 
-//    @BeforeEach
-//    void setupTempDir() throws IOException {
-//        tempDir= Files.createTempDirectory("my-temp-dir");
-//    }
+    @BeforeEach
+    void setupTempDir() throws IOException {
+        tempDir= Files.createTempDirectory("");
+    }
 
     @Test
     public void givenExistingProfileId_whenGetProfile_thenReturnProfile() {
@@ -155,7 +154,7 @@ public class ProfileTest {
     }
 
     @Test
-    public void givenFileAndFileName_whenSaveFileToDirectory_thenFileIsSaved(@TempDir Path tempDir) throws IOException {
+    public void givenFileAndFileName_whenSaveFileToDirectory_thenFileIsSaved() throws IOException {
         // Given
         String fileName = "image.png";
         MultipartFile file = new MockMultipartFile("file", fileName, "image/png", new byte[0]);
@@ -170,7 +169,7 @@ public class ProfileTest {
     }
 
     @Test
-    public void givenExistingFile_whenDeleteFileToDirectory_thenFileIsDeleted(@TempDir Path tempDir) throws IOException {
+    public void givenExistingFile_whenDeleteFileToDirectory_thenFileIsDeleted() throws IOException {
         // Given
         String fileName = "test.txt";
         Path filePath = tempDir.resolve(fileName);
@@ -185,7 +184,7 @@ public class ProfileTest {
     }
 
     @Test
-    public void givenProfileAndMemberId_whenSave_thenProfileIsSavedAndFileIsSaved(@TempDir Path tempDir) throws IOException {
+    public void givenProfileAndMemberId_whenSave_thenProfileIsSavedAndFileIsSaved() throws IOException {
         // Given
         Long memberId = 1L;
         String fileName = "image.png";
@@ -200,7 +199,7 @@ public class ProfileTest {
     }
 
     @Test
-    public void givenProfileAndAuthToken_whenUpdateProfile_thenFileIsSavedAndProfileIsUpdated(@TempDir Path tempDir) throws Exception {
+    public void givenProfileAndAuthToken_whenUpdateProfile_thenFileIsSavedAndProfileIsUpdated() throws Exception {
         // Given
         String authToken = "testToken";
         Long profileId = 1L;
