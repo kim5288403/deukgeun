@@ -145,19 +145,17 @@ public class ProfileServiceImpl implements ProfileService {
         Profile userProfile = getProfile(profileId);
         deleteFileToDirectory(userProfile.getPath());
 
-        update(profileId, fileName);
+        update(userProfile, fileName);
     }
 
     /**
      * 프로필 ID에 해당하는 프로필을 업데이트합니다.
      *
-     * @param profileId 프로필 ID
      */
     @CachePut(value = "profile", key = "#profileId", cacheManager = "projectCacheManager", unless="#result == null")
-    public void update(Long profileId, String path) {
-        Profile foundProfile = profileRepository.findById(profileId)
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+    public void update(Profile foundProfile, String path) {
         foundProfile.updatePath(path);
+        profileRepository.save(foundProfile);
     }
 
     /**
