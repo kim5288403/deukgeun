@@ -54,9 +54,9 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
         with:
           java-version: '11'
           distribution: 'temurin'
-#
-#      - name: Grant execute permission to Gradle wrapper
-#        run: chmod +x ./gradlew
+
+      - name: Grant execute permission to Gradle wrapper
+        run: chmod +x ./gradlew
 
       - name: Run tests
         run: ./gradlew test --console=plain
