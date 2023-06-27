@@ -5,8 +5,10 @@ import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.repository.ProfileRepository;
 import com.example.deukgeun.trainer.service.implement.MemberServiceImpl;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,12 +38,13 @@ public class ProfileTest {
     private ProfileRepository profileRepository;
     @Mock
     private MemberServiceImpl memberService;
+    @TempDir
     Path tempDir;
 
-    @BeforeEach
-    void setupTempDir() throws IOException {
-        tempDir= Files.createTempDirectory("my-temp-dir");
-    }
+//    @BeforeEach
+//    void setupTempDir() throws IOException {
+//        tempDir= Files.createTempDirectory("my-temp-dir");
+//    }
 
     @Test
     public void givenExistingProfileId_whenGetProfile_thenReturnProfile() {
