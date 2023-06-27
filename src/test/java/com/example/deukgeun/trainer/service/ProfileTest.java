@@ -19,10 +19,15 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -162,14 +167,20 @@ public class ProfileTest {
     public void givenFileAndFileName_whenSaveFileToDirectory_thenFileIsSaved(@TempDir Path tempDir) throws IOException {
         // Given
         String fileName = "image.png";
+
+        File tempDir2 = Files.createTempDirectory("temp").toFile();
+        tempDir2.setWritable(true);
+        tempDir2.setReadable(true);
+        tempDir2.setExecutable(true);
+
         MultipartFile file = new MockMultipartFile("file", fileName, "image/png", new byte[0]);
-        ReflectionTestUtils.setField(profileService, "FILE_PATH", tempDir.toString());
+        ReflectionTestUtils.setField(profileService, "FILE_PATH", tempDir2.toString());
 
         // When
         profileService.saveFileToDirectory(file, fileName);
 
         // Then
-        Path filePath = tempDir.resolve(fileName);
+        Path filePath = tempDir2.toPath().resolve(fileName);
         assertTrue(Files.exists(filePath));
     }
 
@@ -195,7 +206,7 @@ public class ProfileTest {
         String fileName = "image.png";
         MultipartFile file = new MockMultipartFile("file", fileName, "image/png", new byte[0]);
         ReflectionTestUtils.setField(profileService, "FILE_PATH", tempDir.toString());
-
+        System.out.println(tempDir.toString());
         // When
         profileService.save(file, memberId);
 
