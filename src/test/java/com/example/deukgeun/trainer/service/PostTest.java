@@ -1,6 +1,5 @@
 package com.example.deukgeun.trainer.service;
 
-import com.example.deukgeun.commom.util.WebClientUtil;
 import com.example.deukgeun.trainer.entity.Member;
 import com.example.deukgeun.trainer.entity.Post;
 import com.example.deukgeun.trainer.repository.PostRepository;
@@ -10,8 +9,6 @@ import com.example.deukgeun.trainer.service.implement.PostServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -24,7 +21,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Map;
 import java.util.Optional;
 
