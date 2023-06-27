@@ -40,8 +40,6 @@ public class ProfileTest {
     private ProfileRepository profileRepository;
     @Mock
     private MemberServiceImpl memberService;
-    @TempDir
-    Path tempDir;
 
 //    @BeforeEach
 //    void setupTempDir() throws IOException {
@@ -161,7 +159,7 @@ public class ProfileTest {
     private ResourceLoader resourceLoader;
 
     @Test
-    public void givenFileAndFileName_whenSaveFileToDirectory_thenFileIsSaved() throws IOException {
+    public void givenFileAndFileName_whenSaveFileToDirectory_thenFileIsSaved(@TempDir Path tempDir) throws IOException {
         // Given
         String fileName = "image.png";
         MultipartFile file = new MockMultipartFile("file", fileName, "image/png", new byte[0]);
@@ -176,7 +174,7 @@ public class ProfileTest {
     }
 
     @Test
-    public void givenExistingFile_whenDeleteFileToDirectory_thenFileIsDeleted() throws IOException {
+    public void givenExistingFile_whenDeleteFileToDirectory_thenFileIsDeleted(@TempDir Path tempDir) throws IOException {
         // Given
         String fileName = "test.txt";
         Path filePath = tempDir.resolve(fileName);
@@ -191,7 +189,7 @@ public class ProfileTest {
     }
 
     @Test
-    public void givenProfileAndMemberId_whenSave_thenProfileIsSavedAndFileIsSaved() throws IOException {
+    public void givenProfileAndMemberId_whenSave_thenProfileIsSavedAndFileIsSaved(@TempDir Path tempDir) throws IOException {
         // Given
         Long memberId = 1L;
         String fileName = "image.png";
@@ -206,7 +204,7 @@ public class ProfileTest {
     }
 
     @Test
-    public void givenProfileAndAuthToken_whenUpdateProfile_thenFileIsSavedAndProfileIsUpdated() throws Exception {
+    public void givenProfileAndAuthToken_whenUpdateProfile_thenFileIsSavedAndProfileIsUpdated(@TempDir Path tempDir) throws Exception {
         // Given
         String authToken = "testToken";
         Long profileId = 1L;
