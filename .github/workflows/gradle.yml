@@ -43,6 +43,10 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
         run: |
           mysql -h ${{ secrets.MYSQL_HOST }} -P ${{ secrets.MYSQL_PORT }} -u ${{ secrets.MYSQL_USER }} -p${{ secrets.MYSQL_PASSWORD }} -e "SELECT 1";
 
+      - name: Set up temp directory
+        id: tempdir
+        run: echo "::set-output name=dir::$(mktemp -d)"
+
       - name: Checkout repository
         uses: actions/checkout@v2
 
@@ -55,11 +59,13 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
       - name: Grant execute permission to Gradle wrapper
         run: chmod +x ./gradlew
 
-#      - name: Run tests
-#        run: ./gradlew test --console=plain
+      - name: Run Java Build
+        run: |
+          cd my-project
+          ./gradlew build -Dtemp.dir=${{ steps.tempdir.outputs.dir }}
 
-      - name: Build with Gradle
-        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-        with:
+#      - name: Build with Gradle
+#        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+#        with:
 #          arguments: build
-          arguments: test -i
+#          arguments: test -i

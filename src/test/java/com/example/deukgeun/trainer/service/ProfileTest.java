@@ -7,9 +7,13 @@ import com.example.deukgeun.trainer.service.implement.MemberServiceImpl;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,12 +40,13 @@ public class ProfileTest {
     private ProfileRepository profileRepository;
     @Mock
     private MemberServiceImpl memberService;
+    @TempDir
     Path tempDir;
 
-    @BeforeEach
-    void setupTempDir() throws IOException {
-        tempDir= Files.createTempDirectory("");
-    }
+//    @BeforeEach
+//    void setupTempDir() throws IOException {
+//        tempDir= Files.createTempDirectory("");
+//    }
 
     @Test
     public void givenExistingProfileId_whenGetProfile_thenReturnProfile() {
@@ -152,6 +157,8 @@ public class ProfileTest {
         // Then
         assertFalse(result);
     }
+    @Autowired
+    private ResourceLoader resourceLoader;
 
     @Test
     public void givenFileAndFileName_whenSaveFileToDirectory_thenFileIsSaved() throws IOException {
