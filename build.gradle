@@ -64,7 +64,9 @@ tasks.register('excludeProfileTest', Test) {
 }
 
 tasks.register('profileTest', Test) {
-	include 'com/example/deukgeun/trainer/service/ProfileTest.java'
+	include 'com/example/deukgeun/trainer/service/ProfileTest.class'
+	include 'com/example/deukgeun/trainer/service/ProfileTest.Java'
+	include '**/ProfileTest.Java'
 }
 
 targetCompatibility = JavaVersion.VERSION_11
