@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -106,7 +105,7 @@ public class ProfileServiceImpl implements ProfileService {
         Path directory = Path.of(FILE_PATH);
 
         try (Stream<Path> pathStream = Files.find(directory, Integer.MAX_VALUE,
-                (path, attributes) -> path.toString().endsWith(".txt"))) {
+                (path, attributes) -> path.getFileName().toString().equals(fileName))) {
             pathStream.forEach(path -> {
                 try {
                     Files.delete(path);
