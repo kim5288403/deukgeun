@@ -60,17 +60,11 @@ test {
 	useJUnitPlatform()
 }
 
-tasks.register('customTest', Test) {
-	outputs.upToDateWhen { false }
+task customTest(type: Test) {
 	testClassesDirs = sourceSets.test.output.classesDirs
 	classpath = sourceSets.test.runtimeClasspath
-	include('**/ProfileTest.class')
 
-	testLogging {
-		events 'passed', 'skipped', 'failed'
-		exceptionFormat 'full'
-		showStandardStreams = true
-	}
+	include '**/CustomTest.class'
 }
 
 targetCompatibility = JavaVersion.VERSION_11
