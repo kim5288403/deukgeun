@@ -161,6 +161,9 @@ public class ProfileTest {
         String fileName = "image.png";
         MultipartFile file = new MockMultipartFile("file", fileName, "image/png", new byte[0]);
         ReflectionTestUtils.setField(profileService, "FILE_PATH", tempDir.toString());
+        System.out.println("==============================================================");
+        System.out.println(tempDir);
+        System.out.println("==============================================================");
 
         // When
         profileService.saveFileToDirectory(file, fileName);
