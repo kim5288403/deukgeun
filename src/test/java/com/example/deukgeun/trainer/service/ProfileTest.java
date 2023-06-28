@@ -41,10 +41,10 @@ public class ProfileTest {
 
     private Path tempDir;
 
-    @BeforeEach
-    void setupTempDir() throws IOException {
-        tempDir = Files.createTempDirectory("test");
-    }
+//    @BeforeEach
+//    void setupTempDir() throws IOException {
+//        tempDir = Files.createTempDirectory("test");
+//    }
 
     @Test
     public void givenExistingProfileId_whenGetProfile_thenReturnProfile() {
