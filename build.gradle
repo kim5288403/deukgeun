@@ -53,11 +53,13 @@ dependencies {
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
 }
 
-test {
+test1 {
 	filter {
 		excludeTestsMatching "*ProfileTest*"
 	}
 	useJUnitPlatform()
 }
+
+
 
 targetCompatibility = JavaVersion.VERSION_11
