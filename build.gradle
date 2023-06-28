@@ -61,7 +61,9 @@ test {
 }
 
 tasks.register('customTest', Test) {
-	include "*ProfileTest*"
+	testClassesDirs = sourceSets.test.output.classesDirs
+	classpath = sourceSets.test.runtimeClasspath
+	include 'com.example.deukgeun.trainer.service.ProfileTest.java'
 }
 
 targetCompatibility = JavaVersion.VERSION_11
