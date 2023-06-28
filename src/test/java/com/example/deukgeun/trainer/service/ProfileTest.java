@@ -40,12 +40,8 @@ public class ProfileTest {
 
     private Path tempDir;
 
-    @Value("${tempdir}")
-    private String temp_Dir;
-
     @BeforeEach
     void setupTempDir() throws IOException {
-        System.out.println(temp_Dir);
         tempDir = Files.createTempDirectory("test");
     }
 
