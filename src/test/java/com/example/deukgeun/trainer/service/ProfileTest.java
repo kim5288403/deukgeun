@@ -179,6 +179,9 @@ public class ProfileTest {
         String fileName = "test.txt";
         Path filePath = tempDir.resolve(fileName);
         Files.createFile(filePath);
+        System.out.println("======================================================================");
+        System.out.println(tempDir.toString());
+        System.out.println("======================================================================");
         ReflectionTestUtils.setField(profileService, "FILE_PATH", tempDir.toString());
 
         // When
