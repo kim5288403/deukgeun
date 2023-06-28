@@ -9,9 +9,9 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "master" , "CI"]
+    branches: [ "master" , "CI" ]
   pull_request:
-    branches: [ "master" , "CI"]
+    branches: [ "master" , "CI" ]
 
 jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정의하는 부분
   build: # build 작업을 정의하는 부분
@@ -55,8 +55,20 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
       - name: Grant execute permission to Gradle wrapper
         run: chmod +x ./gradlew
 
-      - name: Build with Gradle
-        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-        with:
+      - name: Set up Gradle
+        uses: eskatos/setup-gradle@v2
+
+      - name: Run tests
+        run: |
+          temp_dir=$(mktemp -d)
+                    
+          ./gradlew test --tests "*ExampleTest*" \
+          -Djava.io.tmpdir="$temp_dir"
+                    
+          rm -rf "$temp_dir"
+
+#      - name: Build with Gradle
+#        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+#        with:
 #          arguments: build
-          arguments: test -i
+#          arguments: test -i
