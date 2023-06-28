@@ -64,7 +64,7 @@ tasks.register('customTest', Test) {
 	outputs.upToDateWhen { false }
 	testClassesDirs = sourceSets.test.output.classesDirs
 	classpath = sourceSets.test.runtimeClasspath
-	include '**/ProfileTest.class'
+	include('**/ProfileTest.class')
 
 	testLogging {
 		events 'passed', 'skipped', 'failed'
