@@ -185,15 +185,22 @@ public class ProfileTest {
 
         try (Stream<Path> pathStream = Files.find(directory, Integer.MAX_VALUE,
                 (path, attributes) -> path.toString().endsWith(".txt"))) {
-            System.out.println("Gd");
-            pathStream.forEach(System.out::println);
+            pathStream.forEach(path -> {
+                try {
+                    Files.delete(path);
+                    System.out.println("Deleted file: " + path);
+                } catch (IOException e) {
+                    System.err.println("Failed to delete file: " + path);
+                    e.printStackTrace();
+                }
+            });
         }
 
         // When
-        profileService.deleteFileToDirectory(fileName);
+//        profileService.deleteFileToDirectory(fileName);
 
         // Then
-//        assertFalse(Files.exists(filePath));
+        assertFalse(Files.exists(filePath));
     }
 
     @Test
