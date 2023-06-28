@@ -58,7 +58,7 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
       - name: Run tests
         run: |
           temp_dir=$(mktemp -d)
-          ./gradlew test --tests "*ProfileTest*" \
+          ./gradlew test -i --tests "*ProfileTest*" \
             -Djava.io.tmpdir="$temp_dir"
           rm -rf "$temp_dir"
 
