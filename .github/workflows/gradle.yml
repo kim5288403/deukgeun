@@ -63,10 +63,10 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
         run: |
           temp_dir=${{ steps.tempdir.outputs.dir }}
           echo "Temporary directory: $temp_dir"
-          ./gradlew customTest2 -i --tests "*ProfileTest*" \
+          ./gradlew test -i --tests "*ProfileTest*" \
 
       - name: Run tests
-        run: ./gradlew test -ExcludeTests="*ProfileTest*"
+        run: ./gradlew customTest1
 
 #      - name: Build with Gradle
 #        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
