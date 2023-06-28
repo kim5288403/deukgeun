@@ -141,7 +141,7 @@ public class UserController {
             HttpServletRequest request,
             @Valid WithdrawalUserRequest withdrawalRequest,
             BindingResult bindingResult
-    ) {
+    ) throws IOException {
 
 
         // 이메일을 기반으로 사용자 조회

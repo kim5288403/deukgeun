@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.EntityNotFoundException;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
@@ -100,10 +101,12 @@ public class ProfileServiceImpl implements ProfileService {
      *
      * @param fileName 삭제할 파일명
      */
-    public void deleteFileToDirectory(String fileName) {
+    public void deleteFileToDirectory(String fileName) throws IOException {
         File file = new File(FILE_PATH + "\\" + fileName);
         System.out.println(FILE_PATH);
         System.out.println(file.exists());
+
+        Files.deleteIfExists(Path.of(FILE_PATH + "\\" + fileName));
 
         if (file.exists()) {
             System.out.println("gd");
