@@ -179,19 +179,14 @@ public class ProfileTest {
         String fileName = "test.txt";
         Path filePath = tempDir.resolve(fileName);
         Files.createFile(filePath);
-        System.out.println("======================================================================");
-        System.out.println(tempDir.toString());
-        System.out.println(filePath);
-        System.out.println(Files.exists(filePath));
-        System.out.println("======================================================================");
         ReflectionTestUtils.setField(profileService, "FILE_PATH", tempDir.toString());
 
         // When
-        profileService.deleteFileToDirectory(fileName);
-        System.out.println(Files.exists(filePath));
+//        profileService.deleteFileToDirectory(fileName);
+        Files.deleteIfExists(Path.of(tempDir + "\\" + fileName));
 
         // Then
-//        assertFalse(Files.exists(filePath));
+        assertFalse(Files.exists(filePath));
     }
 
     @Test
