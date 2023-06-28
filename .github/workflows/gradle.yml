@@ -59,11 +59,11 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
         id: tempdir
         run: echo "::set-output name=dir::$(mktemp -d)"
 
-#      - name: Run ProfileTest
-#        run: |
-#          temp_dir=${{ steps.tempdir.outputs.dir }}
-#          echo "Temporary directory: $temp_dir"
-#          ./gradlew test -i --tests "*ProfileTest*"
+      - name: Run ProfileTest
+        run: |
+          temp_dir=${{ steps.tempdir.outputs.dir }}
+          echo "Temporary directory: $temp_dir"
+          ./gradlew customTest -i
 
       - name: Run tests
         run: ./gradlew test -i
