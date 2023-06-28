@@ -53,23 +53,9 @@ dependencies {
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
 }
 
-//test {
-//	useJUnitPlatform()
-//	include("profileTest")
-//}
-
-tasks.register('excludeProfileTest', Test) {
-	outputs.upToDateWhen { false }
-
-	include '**/*Test.class' // 특정 테스트 클래스 포함
-	exclude '**/ProfileTest.class' // 특정 테스트 클래스 제외
-}
-
-tasks.register('profileTest', Test) {
-	outputs.upToDateWhen { false }
-//	include 'com/example/deukgeun/trainer/service/ProfileTest.class'
-	include 'com/example/deukgeun/trainer/service/ProfileTest.Java'
-//	include '**/ProfileTest.Java'
+test {
+	useJUnitPlatform()
+	exclude '**/ProfileTest.class'
 }
 
 targetCompatibility = JavaVersion.VERSION_11
