@@ -182,6 +182,7 @@ public class ProfileTest {
         System.out.println("======================================================================");
         System.out.println(tempDir.toString());
         System.out.println(filePath);
+        System.out.println(Files.exists(filePath));
         System.out.println("======================================================================");
         ReflectionTestUtils.setField(profileService, "FILE_PATH", tempDir.toString());
 
