@@ -55,7 +55,6 @@ dependencies {
 
 test {
 	useJUnitPlatform()
-	exclude '**/ProfileTest.class'
 }
 
 targetCompatibility = JavaVersion.VERSION_11
