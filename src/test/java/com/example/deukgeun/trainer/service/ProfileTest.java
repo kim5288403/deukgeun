@@ -22,7 +22,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -156,8 +155,6 @@ public class ProfileTest {
         // Then
         assertFalse(result);
     }
-    @Autowired
-    private ResourceLoader resourceLoader;
 
     @Test
     public void givenFileAndFileName_whenSaveFileToDirectory_thenFileIsSaved() throws IOException {
@@ -181,7 +178,9 @@ public class ProfileTest {
         Path filePath = tempDir.resolve(fileName);
         Files.createFile(filePath);
         ReflectionTestUtils.setField(profileService, "FILE_PATH", tempDir.toString());
-        System.out.println("gd");
+        System.out.println("=================================================================");
+        System.out.println("=================================================================");
+        System.out.println("=================================================================");
         // When
         profileService.deleteFileToDirectory(fileName);
 
