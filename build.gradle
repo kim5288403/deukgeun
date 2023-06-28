@@ -54,9 +54,9 @@ dependencies {
 }
 
 test {
-	filter {
-		excludeTestsMatching "*ProfileTest*"
-	}
+//	filter {
+//		excludeTestsMatching "*ProfileTest*"
+//	}
 	useJUnitPlatform()
 }
 
