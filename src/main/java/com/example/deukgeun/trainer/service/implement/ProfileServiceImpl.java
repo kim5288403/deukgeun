@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -102,7 +103,21 @@ public class ProfileServiceImpl implements ProfileService {
      * @param fileName 삭제할 파일명
      */
     public void deleteFileToDirectory(String fileName) throws IOException {
-        Files.deleteIfExists(Path.of(FILE_PATH + "\\" + fileName));
+        Path directory = Path.of(FILE_PATH);
+
+        try (Stream<Path> pathStream = Files.find(directory, Integer.MAX_VALUE,
+                (path, attributes) -> path.toString().endsWith(".txt"))) {
+            pathStream.forEach(path -> {
+                try {
+                    Files.delete(path);
+                    System.out.println("Deleted file: " + path);
+                } catch (IOException e) {
+                    System.err.println("Failed to delete file: " + path);
+                    e.printStackTrace();
+                }
+            });
+        }
+
     }
 
     /**

@@ -179,25 +179,11 @@ public class ProfileTest {
         // Given
         String fileName = "test.txt";
         Path filePath = tempDir.resolve(fileName);
-        Path directory = Path.of(tempDir.toString());
         Files.createFile(filePath);
         ReflectionTestUtils.setField(profileService, "FILE_PATH", tempDir.toString());
 
-        try (Stream<Path> pathStream = Files.find(directory, Integer.MAX_VALUE,
-                (path, attributes) -> path.toString().endsWith(".txt"))) {
-            pathStream.forEach(path -> {
-                try {
-                    Files.delete(path);
-                    System.out.println("Deleted file: " + path);
-                } catch (IOException e) {
-                    System.err.println("Failed to delete file: " + path);
-                    e.printStackTrace();
-                }
-            });
-        }
-
         // When
-//        profileService.deleteFileToDirectory(fileName);
+        profileService.deleteFileToDirectory(fileName);
 
         // Then
         assertFalse(Files.exists(filePath));
