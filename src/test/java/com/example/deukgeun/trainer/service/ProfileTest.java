@@ -41,10 +41,10 @@ public class ProfileTest {
 
     private Path tempDir;
 
-//    @BeforeEach
-//    void setupTempDir() throws IOException {
-//        tempDir = Files.createTempDirectory("test");
-//    }
+    @BeforeEach
+    void setupTempDir() throws IOException {
+        tempDir = Files.createTempDirectory("test");
+    }
 
     @Test
     public void givenExistingProfileId_whenGetProfile_thenReturnProfile() {
@@ -181,6 +181,7 @@ public class ProfileTest {
         Files.createFile(filePath);
         System.out.println("======================================================================");
         System.out.println(tempDir.toString());
+        System.out.println(filePath);
         System.out.println("======================================================================");
         ReflectionTestUtils.setField(profileService, "FILE_PATH", tempDir.toString());
 
