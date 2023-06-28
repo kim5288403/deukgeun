@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -39,8 +40,12 @@ public class ProfileTest {
 
     private Path tempDir;
 
+    @Value("${tempdir}")
+    private String temp_Dir;
+
     @BeforeEach
     void setupTempDir() throws IOException {
+        System.out.println(temp_Dir);
         tempDir = Files.createTempDirectory("test");
     }
 
