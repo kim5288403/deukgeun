@@ -59,14 +59,17 @@ dependencies {
 //}
 
 tasks.register('excludeProfileTest', Test) {
+	outputs.upToDateWhen { false }
+
 	include '**/*Test.class' // 특정 테스트 클래스 포함
 	exclude '**/ProfileTest.class' // 특정 테스트 클래스 제외
 }
 
 tasks.register('profileTest', Test) {
-	include 'com/example/deukgeun/trainer/service/ProfileTest.class'
+	outputs.upToDateWhen { false }
+//	include 'com/example/deukgeun/trainer/service/ProfileTest.class'
 	include 'com/example/deukgeun/trainer/service/ProfileTest.Java'
-	include '**/ProfileTest.Java'
+//	include '**/ProfileTest.Java'
 }
 
 targetCompatibility = JavaVersion.VERSION_11
