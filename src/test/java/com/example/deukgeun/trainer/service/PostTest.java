@@ -100,6 +100,7 @@ public class PostTest {
         verify(postRepository, times(1)).existsByMemberId(member.getId());
         verify(postRepository, times(1)).findByMemberId(member.getId());
         verify(postRepository, times(1)).save(existingPost);
+        verify(postRepository, times(2)).save(existingPost);
     }
 
     @Test
