@@ -61,9 +61,9 @@ test {
 }
 
 tasks.register('customTest', Test) {
-	filter {
-		includeTestsMatching "*ProfileTest*"
-	}
+	testClassesDirs = sourceSets.test.output.classesDirs
+	classpath = sourceSets.test.runtimeClasspath
+	include '**/ProfileTest.class'
 }
 
 targetCompatibility = JavaVersion.VERSION_11
