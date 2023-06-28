@@ -65,6 +65,12 @@ tasks.register('customTest', Test) {
 	testClassesDirs = sourceSets.test.output.classesDirs
 	classpath = sourceSets.test.runtimeClasspath
 	include '**/ProfileTest.class'
+
+	testLogging {
+		events 'passed', 'skipped', 'failed'
+		exceptionFormat 'full'
+		showStandardStreams = true
+	}
 }
 
 targetCompatibility = JavaVersion.VERSION_11

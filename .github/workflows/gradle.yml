@@ -55,21 +55,11 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
       - name: Grant execute permission to Gradle wrapper
         run: chmod +x ./gradlew
 
-      - name: Create temporary directory
-        id: tempdir
-        run: echo "::set-output name=dir::$(mktemp -d)"
-
-#      - name: Run ProfileTest
-#        run: |
-#          temp_dir=${{ steps.tempdir.outputs.dir }}
-#          echo "Temporary directory: $temp_dir"
-#          ./gradlew test -i --tests "*ProfileTest*"
-#
 #      - name: Run ProfileTest
 #        run: ./gradlew test -i --tests "*ProfileTest*"
 
       - name: Run tests
-        run: ./gradlew clean customTest -info
+        run: ./gradlew clean customTest -i
 
 #      - name: Build with Gradle
 #        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
