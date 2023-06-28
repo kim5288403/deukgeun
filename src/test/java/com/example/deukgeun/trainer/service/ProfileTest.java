@@ -183,7 +183,8 @@ public class ProfileTest {
 
         // When
 //        profileService.deleteFileToDirectory(fileName);
-        Files.deleteIfExists(Path.of(tempDir + "\\" + fileName));
+//        Files.deleteIfExists(Path.of(tempDir + "\\" + fileName));
+        Files.delete(Path.of(tempDir + "\\" + fileName));
 
         // Then
         assertFalse(Files.exists(filePath));
