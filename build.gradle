@@ -54,16 +54,16 @@ dependencies {
 }
 
 test {
-//	filter {
-//		excludeTestsMatching "*ProfileTest*"
-//	}
+	filter {
+		excludeTestsMatching "*ProfileTest*"
+	}
 	useJUnitPlatform()
 }
 
 tasks.register('customTest', Test) {
-	testClassesDirs = sourceSets.test.output.classesDirs
-	classpath = sourceSets.test.runtimeClasspath
-	include 'com.example.deukgeun.trainer.service.ProfileTest'
+	filter {
+		includeTestsMatching "*ProfileTest*"
+	}
 }
 
 targetCompatibility = JavaVersion.VERSION_11
