@@ -63,6 +63,8 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
           -Djava.io.tmpdir="$temp_dir"
                     
           rm -rf "$temp_dir"
+        with:
+          arguments: test -i
 
 #      - name: Build with Gradle
 #        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
