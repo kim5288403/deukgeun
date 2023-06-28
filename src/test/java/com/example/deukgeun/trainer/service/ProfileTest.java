@@ -181,7 +181,7 @@ public class ProfileTest {
         Path filePath = tempDir.resolve(fileName);
         Files.createFile(filePath);
         ReflectionTestUtils.setField(profileService, "FILE_PATH", tempDir.toString());
-
+        System.out.println("gd");
         // When
         profileService.deleteFileToDirectory(fileName);
 
