@@ -60,10 +60,10 @@ test {
 	useJUnitPlatform()
 }
 
-//tasks.register('customTest', Test) {
-//	testClassesDirs = sourceSets.test.output.classesDirs
-//	classpath = sourceSets.test.runtimeClasspath
-//	include '**/ProfileTest.class'
-//}
+tasks.register('customTest', Test) {
+	testClassesDirs = sourceSets.test.output.classesDirs
+	classpath = sourceSets.test.runtimeClasspath
+	include '**/ProfileTest.class'
+}
 
 targetCompatibility = JavaVersion.VERSION_11
