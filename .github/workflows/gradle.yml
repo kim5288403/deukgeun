@@ -43,10 +43,6 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
         run: |
           mysql -h ${{ secrets.MYSQL_HOST }} -P ${{ secrets.MYSQL_PORT }} -u ${{ secrets.MYSQL_USER }} -p${{ secrets.MYSQL_PASSWORD }} -e "SELECT 1";
 
-      - name: Set up temp directory
-        id: tempdir
-        run: echo "::set-output name=dir::$(mktemp -d)"
-
       - name: Checkout repository
         uses: actions/checkout@v2
 
