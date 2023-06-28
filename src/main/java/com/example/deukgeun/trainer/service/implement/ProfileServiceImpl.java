@@ -102,6 +102,9 @@ public class ProfileServiceImpl implements ProfileService {
      */
     public void deleteFileToDirectory(String fileName) {
         File file = new File(FILE_PATH + "\\" + fileName);
+        System.out.println(FILE_PATH);
+        System.out.println(file.exists());
+
         if (file.exists()) {
             System.out.println("gd");
             file.delete();
