@@ -57,4 +57,14 @@ test {
 	useJUnitPlatform()
 }
 
+tasks.register('customTest1', Test) {
+	include '**/*Test.class' // 특정 테스트 클래스 포함
+	exclude '**/ProfileTest.class' // 특정 테스트 클래스 제외
+}
+
+tasks.register('customTest2', Test) {
+	include '**/ProfileTest.class' // 특정 테스트 클래스 포함
+	exclude '**/*Test.class' // 특정 테스트 클래스 제외
+}
+
 targetCompatibility = JavaVersion.VERSION_11
