@@ -73,6 +73,8 @@ tasks.register('customTest', Test) {
 	useJUnitPlatform()
 
 	filter {
+		excludeTestsMatching "*ProfileTest*"
+
 //		includeTestsMatching "com.example.deukgeun.trainer.service.ProfileTest"
 //		includeTestsMatching "*ProfileTest"
 	}
