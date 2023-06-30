@@ -95,7 +95,7 @@ function back() {
 
 function getUserPKAjax(authToken){
 	$.ajax({
-		url : "/jwt/pk",
+		url : "/token/pk",
 		type : "get",
 		beforeSend: function (xhr) {
 		xhr.setRequestHeader("Authorization", "Bearer " + authToken);

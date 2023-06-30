@@ -41,7 +41,7 @@
 			
 				if (authToken !== null) {
 					$.ajax({
-						url : "/jwt/logout",
+						url : "/token/logout",
 						type : "get",
 						beforeSend : function (xhr) {
 							xhr.setRequestHeader("Authorization","Bearer " + authToken);

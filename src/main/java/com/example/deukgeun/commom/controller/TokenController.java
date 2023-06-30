@@ -10,9 +10,9 @@ import com.example.deukgeun.commom.util.RestResponseUtil;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/jwt")
+@RequestMapping("/token")
 @RequiredArgsConstructor
-public class JwtController {
+public class TokenController {
   
   private final TokenServiceImpl tokenService;
 
