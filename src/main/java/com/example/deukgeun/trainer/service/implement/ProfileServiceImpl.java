@@ -109,9 +109,7 @@ public class ProfileServiceImpl implements ProfileService {
             pathStream.forEach(path -> {
                 try {
                     Files.delete(path);
-                    System.out.println("Deleted file: " + path);
                 } catch (IOException e) {
-                    System.err.println("Failed to delete file: " + path);
                     e.printStackTrace();
                 }
             });
