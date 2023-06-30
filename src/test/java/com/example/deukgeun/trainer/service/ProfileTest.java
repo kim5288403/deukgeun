@@ -6,7 +6,6 @@ import com.example.deukgeun.trainer.repository.ProfileRepository;
 import com.example.deukgeun.trainer.service.implement.MemberServiceImpl;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -37,13 +36,6 @@ public class ProfileTest {
     private ProfileRepository profileRepository;
     @Mock
     private MemberServiceImpl memberService;
-
-    private static Path tempDir;
-
-    @BeforeAll
-    static void setupTempDir() throws IOException {
-        tempDir = Files.createTempDirectory("test");
-    }
 
     @Test
     public void givenExistingProfileId_whenGetProfile_thenReturnProfile() {
@@ -160,6 +152,7 @@ public class ProfileTest {
         // Given
         String fileName = "image.png";
         MultipartFile file = new MockMultipartFile("file", fileName, "image/png", new byte[0]);
+        Path tempDir = Files.createTempDirectory("test");
         ReflectionTestUtils.setField(profileService, "FILE_PATH", tempDir.toString());
 
         // When
@@ -174,6 +167,7 @@ public class ProfileTest {
     public void givenExistingFile_whenDeleteFileToDirectory_thenFileIsDeleted() throws IOException {
         // Given
         String fileName = "test.txt";
+        Path tempDir = Files.createTempDirectory("test");
         Path filePath = tempDir.resolve(fileName);
         Files.createFile(filePath);
         ReflectionTestUtils.setField(profileService, "FILE_PATH", tempDir.toString());
@@ -191,6 +185,7 @@ public class ProfileTest {
         Long memberId = 1L;
         String fileName = "image.png";
         MultipartFile file = new MockMultipartFile("file", fileName, "image/png", new byte[0]);
+        Path tempDir = Files.createTempDirectory("test");
         ReflectionTestUtils.setField(profileService, "FILE_PATH", tempDir.toString());
 
         // When
@@ -207,6 +202,7 @@ public class ProfileTest {
         Long profileId = 1L;
         String fileName = "image.png";
         MultipartFile file = new MockMultipartFile("file", fileName, "image/png", new byte[0]);
+        Path tempDir = Files.createTempDirectory("test");
         ReflectionTestUtils.setField(profileService, "FILE_PATH", tempDir.toString());
 
         Member member = Member
