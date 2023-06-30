@@ -71,7 +71,8 @@ tasks.register('customTest', Test) {
 	testClassesDirs = sourceSets.test.output.classesDirs
 	classpath = sourceSets.test.runtimeClasspath
 	filter {
-		includeTestsMatching "*com.example.deukgeun.trainer.service.ProfileTest"
+//		includeTestsMatching "*com.example.deukgeun.trainer.service.ProfileTest"
+		includeTestsMatching "*ProfileTest"
 	}
 }
 
