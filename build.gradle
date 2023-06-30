@@ -54,11 +54,10 @@ dependencies {
 }
 
 test {
-	maxParallelForks = 1
 	useJUnitPlatform()
-//	filter {
-//		excludeTestsMatching "*ProfileTest*"
-//	}
+	filter {
+		excludeTestsMatching "*ProfileTest*"
+	}
 }
 
 tasks.register('profileTest', Test) {
