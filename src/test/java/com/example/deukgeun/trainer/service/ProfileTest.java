@@ -41,9 +41,7 @@ public class ProfileTest {
 
     @BeforeEach
     void setupTempDir() throws IOException {
-//        tempDir = Files.createTempDirectory("test");
-        String uniqueName = "tempDir-" + System.currentTimeMillis();
-        tempDir = Files.createTempDirectory(uniqueName);
+        tempDir = Files.createTempDirectory("test");
     }
 
     @Test
