@@ -5,6 +5,7 @@ import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.repository.ProfileRepository;
 import com.example.deukgeun.trainer.service.implement.MemberServiceImpl;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -37,10 +38,10 @@ public class ProfileTest {
     @Mock
     private MemberServiceImpl memberService;
 
-    private Path tempDir;
+    private static Path tempDir;
 
-    @BeforeEach
-    void setupTempDir() throws IOException {
+    @BeforeAll
+    static void setupTempDir() throws IOException {
         tempDir = Files.createTempDirectory("test");
     }
 
