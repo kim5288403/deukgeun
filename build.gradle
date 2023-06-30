@@ -67,11 +67,4 @@ tasks.register('profileTest', Test) {
 	}
 }
 
-tasks.register('allTest', Test) {
-	useJUnitPlatform()
-//	filter {
-//		includeTestsMatching "*ProfileTest*"
-//	}
-}
-
 targetCompatibility = JavaVersion.VERSION_11
