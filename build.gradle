@@ -54,6 +54,7 @@ dependencies {
 }
 
 test {
+	maxParallelForks = 1
 	useJUnitPlatform()
 //	filter {
 //		excludeTestsMatching "*ProfileTest*"
