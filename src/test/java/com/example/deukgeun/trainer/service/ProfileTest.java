@@ -37,12 +37,12 @@ public class ProfileTest {
     @Mock
     private MemberServiceImpl memberService;
 
-    private Path tempDir;
+//    private Path tempDir;
 
-    @BeforeEach
-    void setupTempDir() throws IOException {
-        tempDir = Files.createTempDirectory("test");
-    }
+//    @BeforeEach
+//    void setupTempDir() throws IOException {
+//        tempDir = Files.createTempDirectory("test");
+//    }
 
     @Test
     public void givenExistingProfileId_whenGetProfile_thenReturnProfile() {
@@ -157,6 +157,7 @@ public class ProfileTest {
     @Test
     public void givenFileAndFileName_whenSaveFileToDirectory_thenFileIsSaved() throws IOException {
         // Given
+        Path tempDir = Files.createTempDirectory("test");
         String fileName = "image.png";
         MultipartFile file = new MockMultipartFile("file", fileName, "image/png", new byte[0]);
         ReflectionTestUtils.setField(profileService, "FILE_PATH", tempDir.toString());
@@ -172,6 +173,7 @@ public class ProfileTest {
     @Test
     public void givenExistingFile_whenDeleteFileToDirectory_thenFileIsDeleted() throws IOException {
         // Given
+        Path tempDir = Files.createTempDirectory("test");
         String fileName = "test.txt";
         Path filePath = tempDir.resolve(fileName);
         Files.createFile(filePath);
@@ -187,6 +189,7 @@ public class ProfileTest {
     @Test
     public void givenProfileAndMemberId_whenSave_thenProfileIsSavedAndFileIsSaved() throws IOException {
         // Given
+        Path tempDir = Files.createTempDirectory("test");
         Long memberId = 1L;
         String fileName = "image.png";
         MultipartFile file = new MockMultipartFile("file", fileName, "image/png", new byte[0]);
@@ -202,6 +205,7 @@ public class ProfileTest {
     @Test
     public void givenProfileAndAuthToken_whenUpdateProfile_thenFileIsSavedAndProfileIsUpdated() throws Exception {
         // Given
+        Path tempDir = Files.createTempDirectory("test");
         String authToken = "testToken";
         Long profileId = 1L;
         String fileName = "image.png";
