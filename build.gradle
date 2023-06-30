@@ -68,10 +68,7 @@ sourceSets {
 }
 
 tasks.register('customTest', Test) {
-	testClassesDirs = sourceSets.test.output.classesDirs
-	classpath = sourceSets.test.runtimeClasspath
 	useJUnitPlatform()
-
 	filter {
 		excludeTestsMatching "*ProfileTest*"
 	}
