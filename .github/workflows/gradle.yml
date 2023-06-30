@@ -55,8 +55,8 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
       - name: Grant execute permission to Gradle wrapper
         run: chmod +x ./gradlew
 
-#      - name: Run ProfileTest
-#        run: ./gradlew test -i --tests "*ProfileTest*"
+      - name: Run ProfileTest
+        run: ./gradlew test -i --tests "*ProfileTest*"
 
       - name: Run tests
         run: ./gradlew clean customTest -i

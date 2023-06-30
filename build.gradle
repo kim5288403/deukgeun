@@ -54,10 +54,10 @@ dependencies {
 }
 
 test {
-//	filter {
-//		excludeTestsMatching "*ProfileTest*"
-//	}
 	useJUnitPlatform()
+	filter {
+		includeTestsMatching "*ProfileTest*"
+	}
 }
 
 sourceSets {
@@ -74,9 +74,6 @@ tasks.register('customTest', Test) {
 
 	filter {
 		excludeTestsMatching "*ProfileTest*"
-
-//		includeTestsMatching "com.example.deukgeun.trainer.service.ProfileTest"
-//		includeTestsMatching "*ProfileTest"
 	}
 }
 
