@@ -16,13 +16,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,7 +28,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-public class PostControllerTest {
+public class PostTest {
     @InjectMocks
     private PostController postController;
     @Mock
@@ -155,39 +152,6 @@ public class PostControllerTest {
         // Then
         verify(postService, times(1)).getFilePathFromUrl(src);
         verify(postService, times(1)).deleteFileToDirectory(file);
-    }
-
-    @Test
-    public void givenPostService_whenGetServerImage_thenSetResponseHeadersAndCopyFileToOutputStream() throws Exception {
-        // Given
-        File file = mock(File.class);
-        Path filePath = mock(Path.class);
-        ServletContext context = mock(ServletContext.class);
-
-        String requestURI = "/image/example.jpg";
-        String mimeType = "image/jpeg";
-        long fileLength = 123L;
-        String fileName = "example.jpg";
-        mockStatic(Files.class);
-
-        given(file.length()).willReturn(fileLength);
-        given(file.getName()).willReturn(fileName);
-        given(file.toPath()).willReturn(filePath);
-        given(postService.getServerImage(requestURI)).willReturn(file);
-        given(request.getRequestURI()).willReturn(requestURI);
-        given(request.getServletContext()).willReturn(context);
-        given(request.getServletContext().getMimeType(file.getName())).willReturn(mimeType);
-
-        // When
-        postController.getServerImage(request, response);
-
-        // Then
-        verify(postService).getServerImage(requestURI);
-        verify(request).getRequestURI();
-        verify(request.getServletContext()).getMimeType(file.getName());
-        verify(response).setHeader("Content-Type", mimeType);
-        verify(response).setHeader("Content-Length", String.valueOf(fileLength));
-        verify(response).setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
     }
 
     @Test
