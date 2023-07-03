@@ -186,7 +186,7 @@ public class PostTest {
         InputStream inputStream = new ByteArrayInputStream("Test data".getBytes());
         File file = new File("test.png");
         PrintWriter writer = mock(PrintWriter.class);
-        mockStatic(Files.class);
+//        mockStatic(Files.class);
 
         given(filePart.getInputStream()).willReturn(inputStream);
 
