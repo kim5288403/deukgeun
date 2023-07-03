@@ -140,23 +140,23 @@ public class PostTest {
         verify(writer).write("{\"key1\":\"value1\",\"key2\":\"value2\"}");
     }
 
-//    @Test
-//    public void givenPostService_whenDeleteServerImage_thenDeleteFile() {
-//        // Given
-//        String src = "example/src/image.jpg";
-//        String filePath = "/path/to/image.jpg";
-//        File file = new File(filePath);
-//
-//        given(postService.getFilePathFromUrl(src)).willReturn(filePath);
-//
-//        // When
-//        postController.deleteServerImage(src);
-//
-//        // Then
-//        verify(postService, times(1)).getFilePathFromUrl(src);
-//        verify(postService, times(1)).deleteFileToDirectory(file);
-//    }
-//
+    @Test
+    public void givenPostService_whenDeleteServerImage_thenDeleteFile() {
+        // Given
+        String src = "example/src/image.jpg";
+        String filePath = "/path/to/image.jpg";
+        File file = new File(filePath);
+
+        given(postService.getFilePathFromUrl(src)).willReturn(filePath);
+
+        // When
+        postController.deleteServerImage(src);
+
+        // Then
+        verify(postService, times(1)).getFilePathFromUrl(src);
+        verify(postService, times(1)).deleteFileToDirectory(file);
+    }
+
 //    @Test
 //    public void givenPostService_whenGetServerImage_thenSetResponseHeadersAndCopyFileToOutputStream() throws Exception {
 //        // Given
