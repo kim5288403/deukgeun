@@ -1,52 +1,52 @@
-//package com.example.deukgeun.trainer.controller;
-//
-//import com.example.deukgeun.commom.response.RestResponse;
-//import com.example.deukgeun.commom.service.implement.TokenServiceImpl;
-//import com.example.deukgeun.commom.util.RestResponseUtil;
-//import com.example.deukgeun.trainer.entity.Post;
-//import com.example.deukgeun.trainer.request.PostRequest;
-//import com.example.deukgeun.trainer.response.PostResponse;
-//import com.example.deukgeun.trainer.service.implement.MemberServiceImpl;
-//import com.example.deukgeun.trainer.service.implement.PostServiceImpl;
-//import org.junit.jupiter.api.Test;
-//import org.mockito.InjectMocks;
-//import org.mockito.Mock;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.http.HttpStatus;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.validation.BindingResult;
-//
-//import javax.servlet.ServletContext;
-//import javax.servlet.http.HttpServletRequest;
-//import javax.servlet.http.HttpServletResponse;
-//import java.io.File;
-//import java.io.PrintWriter;
-//import java.nio.file.Files;
-//import java.nio.file.Path;
-//import java.util.HashMap;
-//import java.util.Map;
-//
-//import static org.junit.jupiter.api.Assertions.assertEquals;
-//import static org.mockito.BDDMockito.given;
-//import static org.mockito.Mockito.*;
-//
-//@SpringBootTest
-//public class PostTest {
-//    @InjectMocks
-//    private PostController postController;
-//    @Mock
-//    private PostServiceImpl postService;
-//    @Mock
-//    private MemberServiceImpl memberService;
-//    @Mock
-//    private TokenServiceImpl tokenService;
-//    @Mock
-//    private HttpServletRequest request;
-//    @Mock
-//    private BindingResult bindingResult;
-//    @Mock
-//    private HttpServletResponse response;
-//
+package com.example.deukgeun.trainer.controller;
+
+import com.example.deukgeun.commom.response.RestResponse;
+import com.example.deukgeun.commom.service.implement.TokenServiceImpl;
+import com.example.deukgeun.commom.util.RestResponseUtil;
+import com.example.deukgeun.trainer.entity.Post;
+import com.example.deukgeun.trainer.request.PostRequest;
+import com.example.deukgeun.trainer.response.PostResponse;
+import com.example.deukgeun.trainer.service.implement.MemberServiceImpl;
+import com.example.deukgeun.trainer.service.implement.PostServiceImpl;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
+
+@SpringBootTest
+public class PostTest {
+    @InjectMocks
+    private PostController postController;
+    @Mock
+    private PostServiceImpl postService;
+    @Mock
+    private MemberServiceImpl memberService;
+    @Mock
+    private TokenServiceImpl tokenService;
+    @Mock
+    private HttpServletRequest request;
+    @Mock
+    private BindingResult bindingResult;
+    @Mock
+    private HttpServletResponse response;
+
 //    @Test
 //    public void givenPostService_whenGetDetailByUserId_thenReturnResponseEntityWithPostResponse() {
 //        // Given
@@ -204,4 +204,4 @@
 //        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 //        assertEquals(expectedResponse.getBody(), responseEntity.getBody());
 //    }
-//}
+}
