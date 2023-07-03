@@ -33,7 +33,8 @@ public class Post extends BaseEntity{
   private Member member;
   
   @Builder
-  public Post(String html, Long memberId) {
+  public Post(Long id, String html, Long memberId) {
+    this.id = id;
     this.html = html;
     this.memberId = memberId;
   }

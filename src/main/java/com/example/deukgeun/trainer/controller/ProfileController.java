@@ -55,10 +55,10 @@ public class ProfileController {
         String authToken = tokenService.resolveAuthToken(request);
 
         // 인증 토큰을 이용하여 사용자 ID를 조회합니다.
-        Long userId = memberService.getUserId(authToken);
+        Long memberId = memberService.getMemberId(authToken);
 
         // 사용자 ID에 해당하는 프로필 정보를 조회합니다.
-        Profile profile = profileService.getByMemberId(userId);
+        Profile profile = profileService.getByMemberId(memberId);
 
         // 조회된 프로필 정보를 이용하여 ProfileResponse 객체를 생성합니다.
         ProfileResponse.ProfileAndUserResponse response = new ProfileResponse.ProfileAndUserResponse(profile);

@@ -155,7 +155,7 @@ public class MemberServiceImpl implements MemberService {
    * @return 사용자의 ID
    * @throws EntityNotFoundException 사용자를 찾을 수 없는 경우 발생하는 예외
    */
-  public Long getUserId(String authToken) throws EntityNotFoundException {
+  public Long getMemberId(String authToken) throws EntityNotFoundException {
     Member member = getByAuthToken(authToken);
     
     return member.getId();

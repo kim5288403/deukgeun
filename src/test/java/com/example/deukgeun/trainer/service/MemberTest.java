@@ -351,7 +351,7 @@ public class MemberTest {
         given(memberRepository.findByEmail(email)).willReturn(Optional.ofNullable(member));
 
         // When
-        Long result = memberService.getUserId(authToken);
+        Long result = memberService.getMemberId(authToken);
 
         // Then
         assertEquals(userId, result);

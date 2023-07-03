@@ -53,8 +53,8 @@ public class PostController {
     @RequestMapping(method = RequestMethod.GET, path = "/")
     public ResponseEntity<?> getDetailByAuthToken(HttpServletRequest request) {
         String authToken = tokenService.resolveAuthToken(request);
-        Long userId = memberService.getUserId(authToken);
-        Post post = postService.findByMemberId(userId);
+        Long memberId = memberService.getMemberId(authToken);
+        Post post = postService.findByMemberId(memberId);
 
         PostResponse response = new PostResponse(post);
 

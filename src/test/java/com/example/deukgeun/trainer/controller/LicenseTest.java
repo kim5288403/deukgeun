@@ -67,7 +67,7 @@ public class LicenseTest {
         List<LicenseListResponse> mockResponse = new ArrayList<>();
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("자격증 조회 성공했습니다.", mockResponse);
         given(tokenService.resolveAuthToken(request)).willReturn(authToken);
-        given(memberService.getUserId(authToken)).willReturn(memberId);
+        given(memberService.getMemberId(authToken)).willReturn(memberId);
         given(licenseService.findByMemberId(memberId)).willReturn(mockResponse);
 
         // When
@@ -75,7 +75,7 @@ public class LicenseTest {
 
         // Then
         verify(tokenService, times(1)).resolveAuthToken(request);
-        verify(memberService, times(1)).getUserId(authToken);
+        verify(memberService, times(1)).getMemberId(authToken);
         verify(licenseService, times(1)).findByMemberId(memberId);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
@@ -89,10 +89,10 @@ public class LicenseTest {
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("자격증 등록 성공했습니다.", null);
 
         String authToken = "exampleAuthToken";
-        Long userId = 123L;
+        Long memberId = 123L;
 
         given(tokenService.resolveAuthToken(request)).willReturn(authToken);
-        given(memberService.getUserId(authToken)).willReturn(userId);
+        given(memberService.getMemberId(authToken)).willReturn(memberId);
         given(licenseService.getLicenseVerificationResult(saveLicenseRequest)).willReturn(licenseResult);
 
         // When
@@ -102,8 +102,8 @@ public class LicenseTest {
         verify(licenseService).getLicenseVerificationResult(saveLicenseRequest);
         verify(licenseService).checkLicense(licenseResult);
         verify(tokenService).resolveAuthToken(request);
-        verify(memberService).getUserId(authToken);
-        verify(licenseService).save(licenseResult, userId);
+        verify(memberService).getMemberId(authToken);
+        verify(licenseService).save(licenseResult, memberId);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
     }

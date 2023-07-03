@@ -52,7 +52,7 @@ public class LicenseController {
     public ResponseEntity<?> getListByAuthToken(HttpServletRequest request) {
         // 인증 토큰을 사용하여 사용자 ID 조회
         String authToken = tokenService.resolveAuthToken(request);
-        Long memberId = memberService.getUserId(authToken);
+        Long memberId = memberService.getMemberId(authToken);
 
         // 사용자 ID를 기반으로 자격증 목록 조회
         List<LicenseListResponse> response = licenseService.findByMemberId(memberId);
@@ -78,11 +78,11 @@ public class LicenseController {
 
         // 인증 토큰에서 사용자 ID 추출
         String authToken = tokenService.resolveAuthToken(request);
-        Long userId = memberService.getUserId(authToken);
+        Long memberid = memberService.getMemberId(authToken);
 
         // 자격증 저장
         licenseResult.setNo(saveLicenseRequest.getNo());
-        licenseService.save(licenseResult, userId);
+        licenseService.save(licenseResult, memberid);
 
         return RestResponseUtil
                 .ok("자격증 등록 성공했습니다.", null);
