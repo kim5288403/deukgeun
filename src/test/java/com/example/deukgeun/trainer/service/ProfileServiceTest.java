@@ -33,8 +33,7 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-@ActiveProfiles("test")
-@TestPropertySource(locations = "classpath:application-test.yml")
+@TestPropertySource(locations = "classpath:application.yml")
 public class ProfileServiceTest {
     @InjectMocks
     private ProfileServiceImpl profileService;
