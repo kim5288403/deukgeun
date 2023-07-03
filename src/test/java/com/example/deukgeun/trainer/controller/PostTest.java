@@ -189,19 +189,19 @@ public class PostTest {
         verify(response).setHeader("Content-Length", String.valueOf(fileLength));
         verify(response).setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
     }
-//
-//    @Test
-//    public void givenPostService_whenDeletePost_thenDeletePostAndReturnSuccessResponse() {
-//        // Given
-//        Long postId = 123L;
-//        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("게시글 삭제 성공했습니다.", null);
-//
-//        // When
-//        ResponseEntity<?> responseEntity = postController.delete(postId);
-//
-//        // Then
-//        verify(postService).deletePost(postId);
-//        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-//        assertEquals(expectedResponse.getBody(), responseEntity.getBody());
-//    }
+
+    @Test
+    public void givenPostService_whenDeletePost_thenDeletePostAndReturnSuccessResponse() {
+        // Given
+        Long postId = 123L;
+        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("게시글 삭제 성공했습니다.", null);
+
+        // When
+        ResponseEntity<?> responseEntity = postController.delete(postId);
+
+        // Then
+        verify(postService).deletePost(postId);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(expectedResponse.getBody(), responseEntity.getBody());
+    }
 }
