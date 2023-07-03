@@ -31,7 +31,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-public class PostTest {
+public class PostServiceTest {
     @InjectMocks
     private PostServiceImpl postService;
     @Mock

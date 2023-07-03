@@ -28,7 +28,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @SpringBootTest
-public class ProfileTest {
+public class ProfileServiceTest {
     @InjectMocks
     private ProfileServiceImpl profileService;
     @Mock

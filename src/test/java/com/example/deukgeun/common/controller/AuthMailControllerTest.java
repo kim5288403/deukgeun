@@ -23,7 +23,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @SpringBootTest
-public class AuthMailTest {
+public class AuthMailControllerTest {
     @InjectMocks
     private AuthMailController authMailController;
     @Mock

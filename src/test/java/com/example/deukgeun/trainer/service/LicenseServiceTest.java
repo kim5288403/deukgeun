@@ -23,7 +23,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @SpringBootTest
-public class LicenseTest {
+public class LicenseServiceTest {
     @InjectMocks
     private LicenseServiceImpl licenseService;
     @Mock

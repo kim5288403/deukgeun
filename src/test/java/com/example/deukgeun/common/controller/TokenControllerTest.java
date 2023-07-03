@@ -18,7 +18,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 @SpringBootTest
-public class TokenTest {
+public class TokenControllerTest {
     @InjectMocks
     private TokenController logoutController;
     @Mock

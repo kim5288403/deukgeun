@@ -23,7 +23,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-public class AuthMailTest {
+public class AuthMailServiceTest {
 
     @Mock
     private AuthMailRepository authMailRepository;

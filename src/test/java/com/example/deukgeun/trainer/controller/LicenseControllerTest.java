@@ -28,7 +28,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @SpringBootTest
-public class LicenseTest {
+public class LicenseControllerTest {
     @InjectMocks
     private LicenseController licenseController;
     @Mock

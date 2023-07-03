@@ -29,7 +29,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-public class TokenTest {
+public class TokenServiceTest {
     @Mock
     private HttpServletResponse response;
     @Mock
@@ -48,7 +48,7 @@ public class TokenTest {
 
     @BeforeEach
     public void setUp() {
-        secretKey =  secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
         ReflectionTestUtils.setField(tokenService, "secretKey", secretKey);
         ReflectionTestUtils.setField(tokenService, "refreshTokenTime", refreshTokenTime);
         ReflectionTestUtils.setField(tokenService, "authTokenTime", authTokenTime);

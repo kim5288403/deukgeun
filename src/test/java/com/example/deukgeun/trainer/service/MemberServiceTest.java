@@ -31,7 +31,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-public class MemberTest {
+public class MemberServiceTest {
     @Mock
     private MemberRepository memberRepository;
     @Mock

@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class ProfileTest {
+public class ProfileControllerTest {
 
     @InjectMocks
     private ProfileController profileController;
