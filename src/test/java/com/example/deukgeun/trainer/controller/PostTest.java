@@ -32,7 +32,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-public class PostControllerTest {
+public class PostTest {
     @InjectMocks
     private PostController postController;
     @Mock
