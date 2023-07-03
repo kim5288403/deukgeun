@@ -56,22 +56,22 @@ dependencies {
 test {
 	useJUnitPlatform()
 	filter {
-		excludeTestsMatching "com.example.deukgeun.trainer.service.ProfileTest"
-		excludeTestsMatching "com.example.deukgeun.trainer.controller.PostTest"
+		excludeTestsMatching "com.example.deukgeun.trainer.service.ProfileTest*"
+		excludeTestsMatching "com.example.deukgeun.trainer.controller.PostTest*"
 	}
 }
 
 tasks.register('profileTest', Test) {
 	useJUnitPlatform()
 	filter {
-		includeTestsMatching "com.example.deukgeun.trainer.service.ProfileTest"
+		includeTestsMatching "com.example.deukgeun.trainer.service.ProfileTest*"
 	}
 }
 
 tasks.register('postControllerTest', Test) {
 	useJUnitPlatform()
 	filter {
-		includeTestsMatching "com.example.deukgeun.trainer.controller.PostTest"
+		includeTestsMatching "com.example.deukgeun.trainer.controller.PostTest*"
 	}
 }
 
