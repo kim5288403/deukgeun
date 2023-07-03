@@ -164,12 +164,12 @@ public class PostTest {
         Path filePath = mock(Path.class);
         ServletContext context = mock(ServletContext.class);
 
-//        String requestURI = "/image/example.jpg";
-//        String mimeType = "image/jpeg";
-//        long fileLength = 123L;
-//        String fileName = "example.jpg";
-//        mockStatic(Files.class);
-//
+        String requestURI = "/image/example.jpg";
+        String mimeType = "image/jpeg";
+        long fileLength = 123L;
+        String fileName = "example.jpg";
+        mockStatic(Files.class);
+
 //        given(file.length()).willReturn(fileLength);
 //        given(file.getName()).willReturn(fileName);
 //        given(file.toPath()).willReturn(filePath);
