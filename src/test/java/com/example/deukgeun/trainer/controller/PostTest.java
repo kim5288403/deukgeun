@@ -70,35 +70,35 @@ public class PostTest {
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
     }
 
-//    @Test
-//    public void givenTokenServiceMemberServicePostService_whenGetDetailByAuthToken_thenReturnResponseEntityWithPostResponse() {
-//        // Given
-//        String authToken = "exampleAuthToken";
-//        Long memberId = 123L;
-//        Post post = Post
-//                .builder()
-//                .id(123L)
-//                .memberId(memberId)
-//                .html("test")
-//                .build();
-//        PostResponse response = new PostResponse(post);
-//        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공 했습니다.", response);
-//
-//        given(tokenService.resolveAuthToken(request)).willReturn(authToken);
-//        given(memberService.getMemberId(authToken)).willReturn(memberId);
-//        given(postService.findByMemberId(memberId)).willReturn(post);
-//
-//        // When
-//        ResponseEntity<?> responseEntity = postController.getDetailByAuthToken(request);
-//
-//        // Then
-//        verify(tokenService, times(1)).resolveAuthToken(request);
-//        verify(memberService, times(1)).getMemberId(authToken);
-//        verify(postService, times(1)).findByMemberId(memberId);
-//        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-//        assertEquals(expectedResponse.getBody(), responseEntity.getBody());
-//    }
-//
+    @Test
+    public void givenTokenServiceMemberServicePostService_whenGetDetailByAuthToken_thenReturnResponseEntityWithPostResponse() {
+        // Given
+        String authToken = "exampleAuthToken";
+        Long memberId = 123L;
+        Post post = Post
+                .builder()
+                .id(123L)
+                .memberId(memberId)
+                .html("test")
+                .build();
+        PostResponse response = new PostResponse(post);
+        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공 했습니다.", response);
+
+        given(tokenService.resolveAuthToken(request)).willReturn(authToken);
+        given(memberService.getMemberId(authToken)).willReturn(memberId);
+        given(postService.findByMemberId(memberId)).willReturn(post);
+
+        // When
+        ResponseEntity<?> responseEntity = postController.getDetailByAuthToken(request);
+
+        // Then
+        verify(tokenService, times(1)).resolveAuthToken(request);
+        verify(memberService, times(1)).getMemberId(authToken);
+        verify(postService, times(1)).findByMemberId(memberId);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(expectedResponse.getBody(), responseEntity.getBody());
+    }
+
 //    @Test
 //    public void givenTokenServicePostService_whenUploadPost_thenReturnResponseEntity() throws Exception {
 //        // Given
