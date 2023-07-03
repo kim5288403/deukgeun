@@ -173,10 +173,10 @@ public class PostTest {
         given(file.length()).willReturn(fileLength);
         given(file.getName()).willReturn(fileName);
         given(file.toPath()).willReturn(filePath);
-//        given(postService.getServerImage(requestURI)).willReturn(file);
-//        given(request.getRequestURI()).willReturn(requestURI);
-//        given(request.getServletContext()).willReturn(context);
-//        given(request.getServletContext().getMimeType(file.getName())).willReturn(mimeType);
+        given(postService.getServerImage(requestURI)).willReturn(file);
+        given(request.getRequestURI()).willReturn(requestURI);
+        given(request.getServletContext()).willReturn(context);
+        given(request.getServletContext().getMimeType(file.getName())).willReturn(mimeType);
 
         // When
 //        postController.getServerImage(request, response);
