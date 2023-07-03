@@ -47,29 +47,29 @@ public class PostTest {
     @Mock
     private HttpServletResponse response;
 
-//    @Test
-//    public void givenPostService_whenGetDetailByUserId_thenReturnResponseEntityWithPostResponse() {
-//        // Given
-//        Long memberId = 123L;
-//        Post post = Post
-//                .builder()
-//                .id(123L)
-//                .memberId(memberId)
-//                .html("test")
-//                .build();
-//        PostResponse response = new PostResponse(post);
-//        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공 했습니다.", response);
-//
-//        given(postService.findByMemberId(memberId)).willReturn(post);
-//
-//        // When
-//        ResponseEntity<?> responseEntity = postController.getDetailByUserId(memberId);
-//
-//        // Then
-//        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-//        assertEquals(expectedResponse.getBody(), responseEntity.getBody());
-//    }
-//
+    @Test
+    public void givenPostService_whenGetDetailByUserId_thenReturnResponseEntityWithPostResponse() {
+        // Given
+        Long memberId = 123L;
+        Post post = Post
+                .builder()
+                .id(123L)
+                .memberId(memberId)
+                .html("test")
+                .build();
+        PostResponse response = new PostResponse(post);
+        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공 했습니다.", response);
+
+        given(postService.findByMemberId(memberId)).willReturn(post);
+
+        // When
+        ResponseEntity<?> responseEntity = postController.getDetailByUserId(memberId);
+
+        // Then
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(expectedResponse.getBody(), responseEntity.getBody());
+    }
+
 //    @Test
 //    public void givenTokenServiceMemberServicePostService_whenGetDetailByAuthToken_thenReturnResponseEntityWithPostResponse() {
 //        // Given
