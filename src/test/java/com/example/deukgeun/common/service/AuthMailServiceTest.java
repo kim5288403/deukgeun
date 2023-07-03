@@ -37,7 +37,7 @@ public class AuthMailServiceTest {
     private SpringTemplateEngine mockTemplateEngine;
 
     @Test
-    public void given_whenCreateCode_thenValidCodeGenerated() {
+    void given_whenCreateCode_thenValidCodeGenerated() {
         // Given
         AuthMailServiceImpl authMailService = new AuthMailServiceImpl(authMailRepository, mockEmailSender, mockTemplateEngine);
 
@@ -56,7 +56,7 @@ public class AuthMailServiceTest {
     }
 
     @Test
-    public void givenEmailAndCode_whenSave_thenIsSaved() {
+    void givenEmailAndCode_whenSave_thenIsSaved() {
         // Given
         String toEmail = "test@example.com";
         String authCode = "123456";
@@ -70,7 +70,7 @@ public class AuthMailServiceTest {
     }
 
     @Test
-    public void givenToEmailAndAuthCode_whenCreateMailForm_thenIsCreated() throws MessagingException {
+    void givenToEmailAndAuthCode_whenCreateMailForm_thenIsCreated() throws MessagingException {
         // Given
         String toEmail = "test@example.com";
         String authCode = "123456";
@@ -88,7 +88,7 @@ public class AuthMailServiceTest {
     }
 
     @Test
-    public void givenToEmailAndAuthCode_whenSend_thenIsSend() throws MessagingException {
+    void givenToEmailAndAuthCode_whenSend_thenIsSend() throws MessagingException {
         // Given
         String toEmail = "test@example.com";
         String authCode = "123456";
@@ -104,7 +104,7 @@ public class AuthMailServiceTest {
     }
 
     @Test
-    public void givenCode_whenSetContext_thenProcessTemplate() {
+    void givenCode_whenSetContext_thenProcessTemplate() {
         // Given
         String code = "123456";
         AuthMailServiceImpl authMailService = new AuthMailServiceImpl(authMailRepository, mockEmailSender, templateEngine);
@@ -117,7 +117,7 @@ public class AuthMailServiceTest {
     }
 
     @Test
-    public void givenEmail_whenDeleteByEmail_thenIsDeleted() {
+    void givenEmail_whenDeleteByEmail_thenIsDeleted() {
         // Given
         String email = "test@example.com";
         given(authMailRepository.existsByEmail(email)).willReturn(true);
@@ -131,7 +131,7 @@ public class AuthMailServiceTest {
     }
 
     @Test
-    public void givenEmailAndCode_whenConfirmMail_thenReturnTrue() {
+    void givenEmailAndCode_whenConfirmMail_thenReturnTrue() {
         // Given
         String email = "example@example.com";
         String code = "123456";
@@ -148,7 +148,7 @@ public class AuthMailServiceTest {
     }
 
     @Test
-    public void givenAuthMail_whenIsEmailAuthenticated_thenReturnTrue() {
+    void givenAuthMail_whenIsEmailAuthenticated_thenReturnTrue() {
         // Given
         String email = "example@example.com";
         AuthMail authMail = AuthMail
@@ -169,7 +169,7 @@ public class AuthMailServiceTest {
     }
 
     @Test
-    public void givenUnauthenticatedEmail_whenIsEmailAuthenticated_thenReturnFalse() {
+    void givenUnauthenticatedEmail_whenIsEmailAuthenticated_thenReturnFalse() {
         // Given
         String email = "example@example.com";
         AuthMail authMail = AuthMail
@@ -190,7 +190,7 @@ public class AuthMailServiceTest {
     }
 
     @Test
-    public void givenNonexistentEmail_whenIsEmailAuthenticated_thenThrowEntityNotFoundException() {
+    void givenNonexistentEmail_whenIsEmailAuthenticated_thenThrowEntityNotFoundException() {
         // Given
         String email = "example@example.com";
         AuthMailServiceImpl authMailService = new AuthMailServiceImpl(authMailRepository, mockEmailSender, mockTemplateEngine);
@@ -203,7 +203,7 @@ public class AuthMailServiceTest {
 
 
     @Test
-    public void givenAuthMailRequest_whenConfirm_thenMailStatusUpdated() throws EntityNotFoundException {
+    void givenAuthMailRequest_whenConfirm_thenMailStatusUpdated() throws EntityNotFoundException {
         // Given
         AuthMailRequest request = new AuthMailRequest();
         request.setEmail("example@example.com");
@@ -224,7 +224,7 @@ public class AuthMailServiceTest {
     }
 
     @Test
-    public void givenNonexistentAuthMailRequest_whenConfirm_thenThrowEntityNotFoundException() throws EntityNotFoundException {
+    void givenNonexistentAuthMailRequest_whenConfirm_thenThrowEntityNotFoundException() throws EntityNotFoundException {
         // Given
         AuthMailRequest request = new AuthMailRequest();
         request.setEmail("example@example.com");
@@ -240,5 +240,4 @@ public class AuthMailServiceTest {
         verify(authMailRepository, times(1)).findByEmail(request.getEmail());
         verify(authMailRepository, never()).save(any(AuthMail.class));
     }
-
 }
