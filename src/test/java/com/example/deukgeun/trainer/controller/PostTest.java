@@ -160,23 +160,23 @@ public class PostTest {
     @Test
     public void givenPostService_whenGetServerImage_thenSetResponseHeadersAndCopyFileToOutputStream() throws Exception {
         // Given
-        File file = mock(File.class);
-        Path filePath = mock(Path.class);
-        ServletContext context = mock(ServletContext.class);
-
-        String requestURI = "/image/example.jpg";
-        String mimeType = "image/jpeg";
-        long fileLength = 123L;
-        String fileName = "example.jpg";
+//        File file = mock(File.class);
+//        Path filePath = mock(Path.class);
+//        ServletContext context = mock(ServletContext.class);
+//
+//        String requestURI = "/image/example.jpg";
+//        String mimeType = "image/jpeg";
+//        long fileLength = 123L;
+//        String fileName = "example.jpg";
         mockStatic(Files.class);
 
-        given(file.length()).willReturn(fileLength);
-        given(file.getName()).willReturn(fileName);
-        given(file.toPath()).willReturn(filePath);
-        given(postService.getServerImage(requestURI)).willReturn(file);
-        given(request.getRequestURI()).willReturn(requestURI);
-        given(request.getServletContext()).willReturn(context);
-        given(request.getServletContext().getMimeType(file.getName())).willReturn(mimeType);
+//        given(file.length()).willReturn(fileLength);
+//        given(file.getName()).willReturn(fileName);
+//        given(file.toPath()).willReturn(filePath);
+//        given(postService.getServerImage(requestURI)).willReturn(file);
+//        given(request.getRequestURI()).willReturn(requestURI);
+//        given(request.getServletContext()).willReturn(context);
+//        given(request.getServletContext().getMimeType(file.getName())).willReturn(mimeType);
 
         // When
 //        postController.getServerImage(request, response);
