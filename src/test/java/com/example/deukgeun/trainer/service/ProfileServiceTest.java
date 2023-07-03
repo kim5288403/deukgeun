@@ -30,9 +30,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@TestPropertySource(locations = "classpath:application-test.yml")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ProfileServiceTest {
     @InjectMocks
     private ProfileServiceImpl profileService;
