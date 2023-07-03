@@ -67,4 +67,11 @@ tasks.register('profileTest', Test) {
 	}
 }
 
+tasks.register('postControllerTest', Test) {
+	useJUnitPlatform()
+	filter {
+		includeTestsMatching "*PostControllerTest*"
+	}
+}
+
 targetCompatibility = JavaVersion.VERSION_11
