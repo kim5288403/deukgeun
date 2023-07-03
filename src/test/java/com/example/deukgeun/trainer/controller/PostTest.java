@@ -99,25 +99,25 @@ public class PostTest {
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
     }
 
-//    @Test
-//    public void givenTokenServicePostService_whenUploadPost_thenReturnResponseEntity() throws Exception {
-//        // Given
-//        PostRequest postRequest = new PostRequest();
-//        String authToken = "exampleAuthToken";
-//        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("게시글 저장 성공했습니다.", null);
-//
-//        given(tokenService.resolveAuthToken(request)).willReturn(authToken);
-//
-//        // When
-//        ResponseEntity<?> responseEntity = postController.upload(request, postRequest, bindingResult);
-//
-//        // Then
-//        verify(tokenService, times(1)).resolveAuthToken(request);
-//        verify(postService, times(1)).upload(postRequest, authToken);
-//        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-//        assertEquals(expectedResponse.getBody(), responseEntity.getBody());
-//    }
-//
+    @Test
+    public void givenTokenServicePostService_whenUploadPost_thenReturnResponseEntity() throws Exception {
+        // Given
+        PostRequest postRequest = new PostRequest();
+        String authToken = "exampleAuthToken";
+        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("게시글 저장 성공했습니다.", null);
+
+        given(tokenService.resolveAuthToken(request)).willReturn(authToken);
+
+        // When
+        ResponseEntity<?> responseEntity = postController.upload(request, postRequest, bindingResult);
+
+        // Then
+        verify(tokenService, times(1)).resolveAuthToken(request);
+        verify(postService, times(1)).upload(postRequest, authToken);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(expectedResponse.getBody(), responseEntity.getBody());
+    }
+
 //    @Test
 //    public void givenPostService_whenUploadServerImage_thenSaveImageAndWriteJsonResponse() throws Exception {
 //        // Given
