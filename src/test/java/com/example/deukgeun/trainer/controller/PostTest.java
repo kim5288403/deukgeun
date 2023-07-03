@@ -118,28 +118,28 @@ public class PostTest {
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
     }
 
-//    @Test
-//    public void givenPostService_whenUploadServerImage_thenSaveImageAndWriteJsonResponse() throws Exception {
-//        // Given
-//        PrintWriter writer = mock(PrintWriter.class);
-//
-//        Map<Object, Object> responseData = new HashMap<>();
-//        responseData.put("key1", "value1");
-//        responseData.put("key2", "value2");
-//
-//        given(postService.saveImage(request, response)).willReturn(responseData);
-//        given(response.getWriter()).willReturn(writer);
-//
-//        // When
-//        postController.uploadServerImage(request, response);
-//
-//        // Then
-//        verify(postService, times(1)).saveImage(request, response);
-//        verify(response, times(1)).setContentType("application/json");
-//        verify(response, times(1)).setCharacterEncoding("UTF-8");
-//        verify(writer).write("{\"key1\":\"value1\",\"key2\":\"value2\"}");
-//    }
-//
+    @Test
+    public void givenPostService_whenUploadServerImage_thenSaveImageAndWriteJsonResponse() throws Exception {
+        // Given
+        PrintWriter writer = mock(PrintWriter.class);
+
+        Map<Object, Object> responseData = new HashMap<>();
+        responseData.put("key1", "value1");
+        responseData.put("key2", "value2");
+
+        given(postService.saveImage(request, response)).willReturn(responseData);
+        given(response.getWriter()).willReturn(writer);
+
+        // When
+        postController.uploadServerImage(request, response);
+
+        // Then
+        verify(postService, times(1)).saveImage(request, response);
+        verify(response, times(1)).setContentType("application/json");
+        verify(response, times(1)).setCharacterEncoding("UTF-8");
+        verify(writer).write("{\"key1\":\"value1\",\"key2\":\"value2\"}");
+    }
+
 //    @Test
 //    public void givenPostService_whenDeleteServerImage_thenDeleteFile() {
 //        // Given
