@@ -57,6 +57,7 @@ test {
 	useJUnitPlatform()
 	filter {
 		excludeTestsMatching "com.example.deukgeun.trainer.service.ProfileTest"
+		excludeTestsMatching "com.example.deukgeun.trainer.service.ProfileTest"
 	}
 }
 
@@ -70,7 +71,7 @@ tasks.register('profileTest', Test) {
 tasks.register('postControllerTest', Test) {
 	useJUnitPlatform()
 	filter {
-		includeTestsMatching "com.example.deukgeun.trainer.controller.PostControllerTest"
+		includeTestsMatching "com.example.deukgeun.trainer.controller.PostTest"
 	}
 }
 
