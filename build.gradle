@@ -64,7 +64,7 @@ test {
 tasks.register('profileTest', Test) {
 	useJUnitPlatform()
 	filter {
-		includeTestsMatching "com.example.deukgeun.trainer.service.ProfileTest*"
+		includeTestsMatching "com.example.deukgeun.trainer.service.*ProfileTest*"
 	}
 }
 
