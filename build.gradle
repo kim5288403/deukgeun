@@ -71,7 +71,7 @@ tasks.register('profileTest', Test) {
 tasks.register('postControllerTest', Test) {
 	useJUnitPlatform()
 	filter {
-		includeTestsMatching "com.example.deukgeun.trainer.controller.PostTest*"
+		includeTestsMatching "*PostControllerTest*"
 	}
 }
 
