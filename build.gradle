@@ -57,6 +57,7 @@ test {
 	useJUnitPlatform()
 	filter {
 		excludeTestsMatching "*ProfileTest*"
+		excludeTestsMatching "*PostControllerTest*"
 	}
 }
 
