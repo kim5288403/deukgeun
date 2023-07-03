@@ -70,7 +70,7 @@ tasks.register('profileTest', Test) {
 tasks.register('postTest', Test) {
 	useJUnitPlatform()
 	filter {
-		includeTestsMatching "*PostTest*"
+		includeTestsMatching "com.example.deukgeun.trainer.PostTest"
 	}
 }
 
