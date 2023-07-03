@@ -170,9 +170,9 @@ public class PostTest {
         String fileName = "example.jpg";
         mockStatic(Files.class);
 
-//        given(file.length()).willReturn(fileLength);
-//        given(file.getName()).willReturn(fileName);
-//        given(file.toPath()).willReturn(filePath);
+        given(file.length()).willReturn(fileLength);
+        given(file.getName()).willReturn(fileName);
+        given(file.toPath()).willReturn(filePath);
 //        given(postService.getServerImage(requestURI)).willReturn(file);
 //        given(request.getRequestURI()).willReturn(requestURI);
 //        given(request.getServletContext()).willReturn(context);
