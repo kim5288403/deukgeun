@@ -1,4 +1,4 @@
-package com.example.deukgeun.trainer.service;
+package com.example.deukgeun;
 
 import com.example.deukgeun.trainer.entity.Member;
 import com.example.deukgeun.trainer.entity.Profile;
