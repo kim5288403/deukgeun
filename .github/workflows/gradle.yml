@@ -59,7 +59,7 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
 #        run: ./gradlew build -x test
 
       - name: Run ProfileServiceTest
-        run: ./gradlew clean test
+        run: ./gradlew clean build profileServiceTest -i
 
 #      - name: Run tests
 #        run: ./gradlew test -i
