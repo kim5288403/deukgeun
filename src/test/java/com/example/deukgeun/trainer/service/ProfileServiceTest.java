@@ -1,5 +1,6 @@
 package com.example.deukgeun.trainer.service;
 
+import com.example.deukgeun.DeukgeunApplication;
 import com.example.deukgeun.trainer.entity.Member;
 import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.repository.ProfileRepository;
@@ -33,10 +34,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest
-@ActiveProfiles("test")
-@TestPropertySource(locations = "classpath:application-test.yml")
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@SpringBootTest(classes = DeukgeunApplication.class)
 class ProfileServiceTest {
     @InjectMocks
     private ProfileServiceImpl profileService;
