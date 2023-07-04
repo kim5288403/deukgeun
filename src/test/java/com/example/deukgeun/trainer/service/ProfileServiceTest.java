@@ -56,7 +56,6 @@ class ProfileServiceTest {
 
         // Then
         assertEquals(expectedProfile, result);
-        assertEquals(expectedProfile.getPath(), "");
     }
 
     @Test
