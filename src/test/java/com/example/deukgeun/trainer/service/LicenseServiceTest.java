@@ -117,7 +117,7 @@ public class LicenseServiceTest {
         licenseService.delete(licenseId);
 
         // Then
-        verify(licenseRepository, times(2)).deleteById(licenseId);
+        verify(licenseRepository, times(1)).deleteById(licenseId);
     }
 
     @Test
