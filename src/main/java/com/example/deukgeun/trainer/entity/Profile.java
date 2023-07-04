@@ -1,16 +1,10 @@
 package com.example.deukgeun.trainer.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -34,10 +28,11 @@ public class Profile extends BaseEntity {
   private String path;
 
   @Builder
-  public Profile(Long id, String path, Long memberId) {
+  public Profile(Long id, String path, Long memberId, Member member) {
     this.id = id;
     this.memberId = memberId;
     this.path = path;
+    this.member = member;
   }
 
   public void updatePath(String path) {

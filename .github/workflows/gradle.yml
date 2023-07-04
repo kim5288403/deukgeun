@@ -61,12 +61,6 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
       - name: Run tests
         run: ./gradlew test -i
 
-      - name: Upload Test Reports
-        uses: actions/upload-artifact@v2
-        with:
-          name: test-reports
-          path: target/surefire-reports/
-
 #      - name: Build with Gradle
 #        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
 #        with:
