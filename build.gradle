@@ -53,16 +53,16 @@ dependencies {
 
 test {
 	useJUnitPlatform()
-	filter {
-		excludeTestsMatching "*ProfileServiceTest*"
-	}
+//	filter {
+//		excludeTestsMatching "*ProfileServiceTest*"
+//	}
 }
 
-tasks.register('profileServiceTest', Test) {
-	useJUnitPlatform()
-	filter {
-		includeTestsMatching "*ProfileServiceTest*"
-	}
-}
+//tasks.register('profileServiceTest', Test) {
+//	useJUnitPlatform()
+//	filter {
+//		includeTestsMatching "*ProfileServiceTest*"
+//	}
+//}
 
 targetCompatibility = JavaVersion.VERSION_11
