@@ -5,8 +5,8 @@ import com.example.deukgeun.commom.util.RestResponseUtil;
 import com.example.deukgeun.trainer.entity.Post;
 import com.example.deukgeun.trainer.request.PostRequest;
 import com.example.deukgeun.trainer.response.PostResponse;
-import com.example.deukgeun.trainer.service.implement.MemberServiceImpl;
 import com.example.deukgeun.trainer.service.implement.PostServiceImpl;
+import com.example.deukgeun.trainer.service.implement.TrainerServiceImpl;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +26,7 @@ import java.util.Map;
 public class PostController {
 
     private final PostServiceImpl postService;
-    private final MemberServiceImpl memberService;
+    private final TrainerServiceImpl trainerService;
     private final TokenServiceImpl tokenService;
 
     /**
@@ -37,7 +37,7 @@ public class PostController {
      */
     @RequestMapping(method = RequestMethod.GET, path = "/{id}")
     public ResponseEntity<?> getDetailByUserId(@PathVariable("id") Long id) {
-        Post post = postService.findByMemberId(id);
+        Post post = postService.findByTrainerId(id);
         PostResponse response = new PostResponse(post);
 
         return RestResponseUtil
@@ -53,8 +53,8 @@ public class PostController {
     @RequestMapping(method = RequestMethod.GET, path = "/")
     public ResponseEntity<?> getDetailByAuthToken(HttpServletRequest request) {
         String authToken = tokenService.resolveAuthToken(request);
-        Long memberId = memberService.getMemberId(authToken);
-        Post post = postService.findByMemberId(memberId);
+        Long trainerId = trainerService.getTrainerId(authToken);
+        Post post = postService.findByTrainerId(trainerId);
 
         PostResponse response = new PostResponse(post);
 

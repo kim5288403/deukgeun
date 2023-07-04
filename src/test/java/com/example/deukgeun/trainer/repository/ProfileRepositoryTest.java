@@ -2,9 +2,9 @@ package com.example.deukgeun.trainer.repository;
 
 import com.example.deukgeun.commom.enums.Gender;
 import com.example.deukgeun.trainer.entity.GroupStatus;
-import com.example.deukgeun.trainer.entity.Member;
 import com.example.deukgeun.trainer.entity.Profile;
-import com.example.deukgeun.trainer.response.MemberResponse;
+import com.example.deukgeun.trainer.entity.Trainer;
+import com.example.deukgeun.trainer.response.TrainerResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +27,13 @@ public class ProfileRepositoryTest {
     @Autowired
     private ProfileRepository profileRepository;
     @Autowired
-    private MemberRepository memberRepository;
+    private TrainerRepository trainerRepository;
 
-    private long memberId;
+    private long trainerId;
 
     @BeforeEach
     void setUp() {
-        Member member = Member
+        Trainer trainer = Trainer
                 .builder()
                 .name("테스트")
                 .email("testEmail@test.com")
@@ -50,8 +50,8 @@ public class ProfileRepositoryTest {
                 .price(3000)
                 .build();
 
-        Member saveMember = memberRepository.save(member);
-        memberId = saveMember.getId();
+        Trainer saveTrainer = trainerRepository.save(trainer);
+        trainerId = saveTrainer.getId();
     }
 
     @Test
@@ -64,7 +64,7 @@ public class ProfileRepositoryTest {
         // Given
         Profile profile = Profile
                 .builder()
-                .memberId(memberId)
+                .trainerId(trainerId)
                 .path("test")
                 .build();
 
@@ -78,17 +78,17 @@ public class ProfileRepositoryTest {
     }
 
     @Test
-    void givenProfile_whenFindByMemberId_thenReturnValid() {
+    void givenProfile_whenFindByTrainerId_thenReturnValid() {
         // Given
         Profile profile = Profile
                 .builder()
-                .memberId(memberId)
+                .trainerId(trainerId)
                 .path("test")
                 .build();
         profileRepository.save(profile);
 
         // When
-        Profile foundProfile = profileRepository.findByMemberId(memberId).orElse(null);
+        Profile foundProfile = profileRepository.findByTrainerId(trainerId).orElse(null);
 
         // Then
         assertNotNull(foundProfile);
@@ -104,7 +104,7 @@ public class ProfileRepositoryTest {
         PageRequest pageable = PageRequest.of(0, 10);
 
         // When
-        Page<MemberResponse.MemberListResponse> foundPost = profileRepository.findByUserLikeKeyword(converterKeyword, pageable);
+        Page<TrainerResponse.TrainerListResponse> foundPost = profileRepository.findByTrainerLikeKeyword(converterKeyword, pageable);
 
         // Then
         assertEquals(keyword, foundPost.getContent().get(0).getName());
@@ -118,7 +118,7 @@ public class ProfileRepositoryTest {
         String newPath = "newPath";
         Profile profile = Profile
                 .builder()
-                .memberId(memberId)
+                .trainerId(trainerId)
                 .path("test")
                 .build();
         Profile saveProfile = profileRepository.save(profile);

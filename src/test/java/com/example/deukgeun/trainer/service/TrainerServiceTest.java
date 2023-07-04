@@ -2,15 +2,15 @@ package com.example.deukgeun.trainer.service;
 
 import com.example.deukgeun.commom.exception.PasswordMismatchException;
 import com.example.deukgeun.commom.service.implement.TokenServiceImpl;
-import com.example.deukgeun.trainer.entity.Member;
-import com.example.deukgeun.trainer.repository.MemberRepository;
+import com.example.deukgeun.trainer.entity.Trainer;
 import com.example.deukgeun.trainer.repository.ProfileRepository;
+import com.example.deukgeun.trainer.repository.TrainerRepository;
 import com.example.deukgeun.trainer.request.JoinRequest;
 import com.example.deukgeun.trainer.request.LoginRequest;
 import com.example.deukgeun.trainer.request.UpdateInfoRequest;
 import com.example.deukgeun.trainer.request.UpdatePasswordRequest;
-import com.example.deukgeun.trainer.response.MemberResponse;
-import com.example.deukgeun.trainer.service.implement.MemberServiceImpl;
+import com.example.deukgeun.trainer.response.TrainerResponse;
+import com.example.deukgeun.trainer.service.implement.TrainerServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -31,9 +31,9 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-public class MemberServiceTest {
+public class TrainerServiceTest {
     @Mock
-    private MemberRepository memberRepository;
+    private TrainerRepository trainerRepository;
     @Mock
     private PasswordEncoder passwordEncoder;
     @Mock
@@ -41,7 +41,7 @@ public class MemberServiceTest {
     @Mock
     private TokenServiceImpl tokenService;
     @InjectMocks
-    private MemberServiceImpl memberService;
+    private TrainerServiceImpl trainerService;
 
     @Test
     public void givenMatchingPassword_whenIsPasswordMatches_thenNoExceptionThrown() throws EntityNotFoundException {
@@ -51,20 +51,20 @@ public class MemberServiceTest {
         String encodedPassword = "encodedPassword123";
 
         LoginRequest request = new LoginRequest(email, password);
-        Member member = Member
+        Trainer trainer = Trainer
                 .builder()
                 .email(email)
                 .password(encodedPassword)
                 .build();
 
-        given(memberRepository.findByEmail(email)).willReturn(Optional.ofNullable(member));
+        given(trainerRepository.findByEmail(email)).willReturn(Optional.ofNullable(trainer));
         given(passwordEncoder.matches(password, encodedPassword)).willReturn(true);
 
         // When & Then
-        assertDoesNotThrow(() -> memberService.isPasswordMatches(request));
+        assertDoesNotThrow(() -> trainerService.isPasswordMatches(request));
 
         // Verify
-        verify(memberRepository, times(1)).findByEmail(email);
+        verify(trainerRepository, times(1)).findByEmail(email);
         verify(passwordEncoder, times(1)).matches(password, encodedPassword);
     }
 
@@ -76,20 +76,20 @@ public class MemberServiceTest {
         String encodedPassword = "encodedPassword123";
 
         LoginRequest request = new LoginRequest(email, password);
-        Member member = Member
+        Trainer trainer = Trainer
                 .builder()
                 .email(email)
                 .password(encodedPassword)
                 .build();
 
-        given(memberRepository.findByEmail(email)).willReturn(Optional.ofNullable(member));
+        given(trainerRepository.findByEmail(email)).willReturn(Optional.ofNullable(trainer));
         given(passwordEncoder.matches(password, encodedPassword)).willReturn(false);
 
         // When & Then
-        assertThrows(PasswordMismatchException.class, () -> memberService.isPasswordMatches(request));
+        assertThrows(PasswordMismatchException.class, () -> trainerService.isPasswordMatches(request));
 
         // Verify
-        verify(memberRepository, times(1)).findByEmail(email);
+        verify(trainerRepository, times(1)).findByEmail(email);
         verify(passwordEncoder, times(1)).matches(password, encodedPassword);
     }
 
@@ -102,84 +102,84 @@ public class MemberServiceTest {
         String likeKeyword = "%" + keyword + "%";
         PageRequest pageable = PageRequest.of(currentPage, 10);
 
-        MemberResponse.MemberListResponse member1 = new MemberResponse.MemberListResponse();
-        member1.setId(1L);
-        member1.setName("name1");
-        member1.setPath("path1");
+        TrainerResponse.TrainerListResponse trainer1 = new TrainerResponse.TrainerListResponse();
+        trainer1.setId(1L);
+        trainer1.setName("name1");
+        trainer1.setPath("path1");
 
-        MemberResponse.MemberListResponse member2 = new MemberResponse.MemberListResponse();
-        member2.setId(2L);
-        member2.setName("name2");
-        member2.setPath("path2");
+        TrainerResponse.TrainerListResponse trainer2 = new TrainerResponse.TrainerListResponse();
+        trainer2.setId(2L);
+        trainer2.setName("name2");
+        trainer2.setPath("path2");
 
-        List<MemberResponse.MemberListResponse> memberList = new ArrayList<>();
-        memberList.add(member1);
-        memberList.add(member2);
-        Page<MemberResponse.MemberListResponse> userPage = new PageImpl<>(memberList, pageable, memberList.size());
+        List<TrainerResponse.TrainerListResponse> trainerList = new ArrayList<>();
+        trainerList.add(trainer1);
+        trainerList.add(trainer2);
+        Page<TrainerResponse.TrainerListResponse> userPage = new PageImpl<>(trainerList, pageable, trainerList.size());
 
-        given(profileRepository.findByUserLikeKeyword(likeKeyword, pageable)).willReturn(userPage);
+        given(profileRepository.findByTrainerLikeKeyword(likeKeyword, pageable)).willReturn(userPage);
 
         // When
-        Page<MemberResponse.MemberListResponse> result = memberService.getList(keyword, currentPage);
+        Page<TrainerResponse.TrainerListResponse> result = trainerService.getList(keyword, currentPage);
 
         // Then
         assertNotNull(result);
-        assertEquals(memberList.size(), result.getContent().size());
+        assertEquals(trainerList.size(), result.getContent().size());
 
         // Verify
-        verify(profileRepository, times(1)).findByUserLikeKeyword(likeKeyword, pageable);
+        verify(profileRepository, times(1)).findByTrainerLikeKeyword(likeKeyword, pageable);
     }
 
     @Test
-    public void givenJoinRequest_whenSave_thenMemberIsSavedAndReturned() {
+    public void givenJoinRequest_whenSave_thenTrainerIsSavedAndReturned() {
         // Given
         JoinRequest request = new JoinRequest();
         request.setName("John Doe");
         request.setEmail("johndoe@example.com");
         request.setPassword("password123");
 
-        Member savedMember = Member
+        Trainer savedTrainer = Trainer
                 .builder()
                 .name(request.getName())
                 .email(request.getEmail())
                 .build();
 
         given(passwordEncoder.encode(request.getPassword())).willReturn("encodedPassword123");
-        given(memberRepository.save(any(Member.class))).willReturn(savedMember);
+        given(trainerRepository.save(any(Trainer.class))).willReturn(savedTrainer);
 
         // When
-        Member result = memberService.save(request);
+        Trainer result = trainerService.save(request);
 
         // Then
         assertNotNull(result);
-        assertEquals(savedMember.getId(), result.getId());
-        assertEquals(savedMember.getName(), result.getName());
-        assertEquals(savedMember.getEmail(), result.getEmail());
+        assertEquals(savedTrainer.getId(), result.getId());
+        assertEquals(savedTrainer.getName(), result.getName());
+        assertEquals(savedTrainer.getEmail(), result.getEmail());
 
         // Verify
         verify(passwordEncoder, times(1)).encode(request.getPassword());
-        verify(memberRepository, times(1)).save(any(Member.class));
+        verify(trainerRepository, times(1)).save(any(Trainer.class));
     }
 
     @Test
-    public void givenExistingEmail_whenGetByEmail_thenReturnsMatchingMember() throws EntityNotFoundException {
+    public void givenExistingEmail_whenGetByEmail_thenReturnsMatchingTrainer() throws EntityNotFoundException {
         // Given
         String email = "johndoe@example.com";
-        Member member = Member
+        Trainer trainer = Trainer
                 .builder()
                 .email(email)
                 .build();
 
-        given(memberRepository.findByEmail(email)).willReturn(Optional.of(member));
+        given(trainerRepository.findByEmail(email)).willReturn(Optional.of(trainer));
 
-        Member result = memberService.getByEmail(email);
+        Trainer result = trainerService.getByEmail(email);
 
         // Then
         assertNotNull(result);
-        assertEquals(member.getEmail(), result.getEmail());
+        assertEquals(trainer.getEmail(), result.getEmail());
 
         // Verify
-        verify(memberRepository, times(1)).findByEmail(email);
+        verify(trainerRepository, times(1)).findByEmail(email);
     }
 
     @Test
@@ -187,39 +187,39 @@ public class MemberServiceTest {
         // Given
         String email = "nonexistent@example.com";
 
-        given(memberRepository.findByEmail(email)).willReturn(Optional.empty());
+        given(trainerRepository.findByEmail(email)).willReturn(Optional.empty());
 
         // When & Then
-        assertThrows(EntityNotFoundException.class, () -> memberService.getByEmail(email));
+        assertThrows(EntityNotFoundException.class, () -> trainerService.getByEmail(email));
 
         // Verify
-        verify(memberRepository, times(1)).findByEmail(email);
+        verify(trainerRepository, times(1)).findByEmail(email);
     }
 
     @Test
-    public void givenValidAuthToken_whenGetByAuthToken_thenReturnsMatchingMember() throws EntityNotFoundException {
+    public void givenValidAuthToken_whenGetByAuthToken_thenReturnsMatchingTrainer() throws EntityNotFoundException {
         // Given
         String authToken = "validAuthToken";
         String email = "johndoe@example.com";
-        Member member = Member
+        Trainer trainer = Trainer
                 .builder()
                 .email(email)
                 .build();
 
         given(tokenService.getUserPk(authToken)).willReturn(email);
-        given(memberRepository.findByEmail(email)).willReturn(Optional.ofNullable(member));
+        given(trainerRepository.findByEmail(email)).willReturn(Optional.ofNullable(trainer));
 
         // When
-        Member result = memberService.getByAuthToken(authToken);
+        Trainer result = trainerService.getByAuthToken(authToken);
 
         // Then
         assertNotNull(result);
-        assertNotNull(member);
-        assertEquals(member.getEmail(), result.getEmail());
+        assertNotNull(trainer);
+        assertEquals(trainer.getEmail(), result.getEmail());
 
         // Verify
         verify(tokenService, times(1)).getUserPk(authToken);
-        verify(memberRepository, times(1)).findByEmail(email);
+        verify(trainerRepository, times(1)).findByEmail(email);
     }
 
     @Test
@@ -230,32 +230,32 @@ public class MemberServiceTest {
         given(tokenService.getUserPk(authToken)).willReturn(null);
 
         // When & Then
-        assertThrows(EntityNotFoundException.class, () -> memberService.getByAuthToken(authToken));
+        assertThrows(EntityNotFoundException.class, () -> trainerService.getByAuthToken(authToken));
 
         // Verify
         verify(tokenService, times(1)).getUserPk(authToken);
     }
 
     @Test
-    public void givenValidUpdateInfoRequest_whenUpdateInfo_thenMemberIsUpdatedAndSaved() throws EntityNotFoundException {
+    public void givenValidUpdateInfoRequest_whenUpdateInfo_thenTrainerIsUpdatedAndSaved() throws EntityNotFoundException {
         // Given
         UpdateInfoRequest request = new UpdateInfoRequest();
         request.setEmail("johndoe@example.com");
 
-        Member foundMember = Member
+        Trainer foundTrainer = Trainer
                 .builder()
                 .email(request.getEmail())
                 .build();
 
-        given(memberRepository.findByEmail(request.getEmail())).willReturn(Optional.of(foundMember));
-        given(memberRepository.save(foundMember)).willReturn(foundMember);
+        given(trainerRepository.findByEmail(request.getEmail())).willReturn(Optional.of(foundTrainer));
+        given(trainerRepository.save(foundTrainer)).willReturn(foundTrainer);
 
         // When
-        memberService.updateInfo(request);
+        trainerService.updateInfo(request);
 
         // Verify
-        verify(memberRepository, times(1)).findByEmail(request.getEmail());
-        verify(memberRepository, times(1)).save(foundMember);
+        verify(trainerRepository, times(1)).findByEmail(request.getEmail());
+        verify(trainerRepository, times(1)).save(foundTrainer);
     }
 
     @Test
@@ -264,14 +264,14 @@ public class MemberServiceTest {
         UpdateInfoRequest request = new UpdateInfoRequest();
         request.setEmail("nonexistent@example.com");
 
-        given(memberRepository.findByEmail(request.getEmail())).willReturn(Optional.empty());
+        given(trainerRepository.findByEmail(request.getEmail())).willReturn(Optional.empty());
 
         // When & Then
-        assertThrows(EntityNotFoundException.class, () -> memberService.updateInfo(request));
+        assertThrows(EntityNotFoundException.class, () -> trainerService.updateInfo(request));
 
         // Verify
-        verify(memberRepository, times(1)).findByEmail(request.getEmail());
-        verify(memberRepository, never()).save(any(Member.class));
+        verify(trainerRepository, times(1)).findByEmail(request.getEmail());
+        verify(trainerRepository, never()).save(any(Trainer.class));
     }
 
     @Test
@@ -281,58 +281,58 @@ public class MemberServiceTest {
         request.setEmail("johndoe@example.com");
         request.setNewPassword("newPassword123");
 
-        Member foundMember = Member
+        Trainer foundTrainer = Trainer
                 .builder()
                 .email(request.getEmail())
                 .build();
 
         String encodedNewPassword = "encodedNewPassword123";
 
-        given(memberRepository.findByEmail(request.getEmail())).willReturn(Optional.of(foundMember));
+        given(trainerRepository.findByEmail(request.getEmail())).willReturn(Optional.of(foundTrainer));
         given(passwordEncoder.encode(request.getNewPassword())).willReturn(encodedNewPassword);
-        given(memberRepository.save(foundMember)).willReturn(foundMember);
+        given(trainerRepository.save(foundTrainer)).willReturn(foundTrainer);
 
         // When
-        memberService.updatePassword(request);
+        trainerService.updatePassword(request);
 
         // Then
-        assertEquals(encodedNewPassword, foundMember.getPassword());
+        assertEquals(encodedNewPassword, foundTrainer.getPassword());
 
         // Verify
-        verify(memberRepository, times(1)).findByEmail(request.getEmail());
+        verify(trainerRepository, times(1)).findByEmail(request.getEmail());
         verify(passwordEncoder, times(1)).encode(request.getNewPassword());
-        verify(memberRepository, times(1)).save(foundMember);
+        verify(trainerRepository, times(1)).save(foundTrainer);
     }
 
     @Test
-    public void givenInvalidUpdatePasswordRequest_whenUpdatePassword_thenMemberIsNotFound() {
+    public void givenInvalidUpdatePasswordRequest_whenUpdatePassword_thenTrainerIsNotFound() {
         // Given
         UpdatePasswordRequest request = new UpdatePasswordRequest();
         String encodedNewPassword = "encodedNewPassword123";
         request.setEmail("nonexistent@example.com");
         request.setNewPassword("newPassword123");
 
-        given(memberRepository.findByEmail(request.getEmail())).willReturn(Optional.empty());
+        given(trainerRepository.findByEmail(request.getEmail())).willReturn(Optional.empty());
         given(passwordEncoder.encode(request.getNewPassword())).willReturn(encodedNewPassword);
 
         // When & Then
-        assertThrows(AssertionError.class, () -> memberService.updatePassword(request));
+        assertThrows(AssertionError.class, () -> trainerService.updatePassword(request));
 
         // Verify
-        verify(memberRepository, times(1)).findByEmail(request.getEmail());
+        verify(trainerRepository, times(1)).findByEmail(request.getEmail());
         verify(passwordEncoder, times(1)).encode(request.getNewPassword());
     }
 
     @Test
-    public void givenExistingMemberId_whenWithdrawal_thenMemberIsDeleted() {
+    public void givenExistingTrainerId_whenWithdrawal_thenTrainerIsDeleted() {
         // Given
-        Long memberId = 123L;
+        Long trainerId = 123L;
 
         // When
-        memberService.withdrawal(memberId);
+        trainerService.withdrawal(trainerId);
 
         // Verify
-        verify(memberRepository, times(1)).deleteById(memberId);
+        verify(trainerRepository, times(1)).deleteById(trainerId);
     }
 
     @Test
@@ -341,24 +341,24 @@ public class MemberServiceTest {
         String authToken = "validAuthToken";
         String email = "johndoe@example.com";
         Long userId = 123L;
-        Member member = Member
+        Trainer trainer = Trainer
                 .builder()
                 .id(userId)
                 .email(email)
                 .build();
 
         given(tokenService.getUserPk(authToken)).willReturn(email);
-        given(memberRepository.findByEmail(email)).willReturn(Optional.ofNullable(member));
+        given(trainerRepository.findByEmail(email)).willReturn(Optional.ofNullable(trainer));
 
         // When
-        Long result = memberService.getMemberId(authToken);
+        Long result = trainerService.getTrainerId(authToken);
 
         // Then
         assertEquals(userId, result);
 
         // Verify
         verify(tokenService, times(1)).getUserPk(authToken);
-        verify(memberRepository, times(1)).findByEmail(email);
+        verify(trainerRepository, times(1)).findByEmail(email);
     }
 
     @Test
@@ -366,16 +366,16 @@ public class MemberServiceTest {
         // Given
         String email = "johndoe@example.com";
 
-        given(memberRepository.existsByEmail(email)).willReturn(true);
+        given(trainerRepository.existsByEmail(email)).willReturn(true);
 
         // When
-        boolean result = memberService.isDuplicateEmail(email);
+        boolean result = trainerService.isDuplicateEmail(email);
 
         // Then
         assertTrue(result);
 
         // Verify
-        verify(memberRepository, times(1)).existsByEmail(email);
+        verify(trainerRepository, times(1)).existsByEmail(email);
     }
 
     @Test
@@ -383,16 +383,16 @@ public class MemberServiceTest {
         // Given
         String email = "nonexistent@example.com";
 
-        given(memberRepository.existsByEmail(email)).willReturn(false);
+        given(trainerRepository.existsByEmail(email)).willReturn(false);
 
         // When
-        boolean result = memberService.isDuplicateEmail(email);
+        boolean result = trainerService.isDuplicateEmail(email);
 
         // Then
         assertFalse(result);
 
         // Verify
-        verify(memberRepository, times(1)).existsByEmail(email);
+        verify(trainerRepository, times(1)).existsByEmail(email);
     }
 
     @Test
@@ -402,7 +402,7 @@ public class MemberServiceTest {
         String groupStatus = "Y";
 
         // When
-        boolean result = memberService.isEmptyGroupName(groupName, groupStatus);
+        boolean result = trainerService.isEmptyGroupName(groupName, groupStatus);
 
         // Then
         assertTrue(result);
@@ -415,7 +415,7 @@ public class MemberServiceTest {
         String groupStatus = "Y";
 
         // When
-        boolean result = memberService.isEmptyGroupName(groupName, groupStatus);
+        boolean result = trainerService.isEmptyGroupName(groupName, groupStatus);
 
         // Then
         assertFalse(result);
@@ -428,7 +428,7 @@ public class MemberServiceTest {
         String groupStatus = "N";
 
         // When
-        boolean result = memberService.isEmptyGroupName(groupName, groupStatus);
+        boolean result = trainerService.isEmptyGroupName(groupName, groupStatus);
 
         // Then
         assertTrue(result);
@@ -441,7 +441,7 @@ public class MemberServiceTest {
         String groupStatus = "N";
 
         // When
-        boolean result = memberService.isEmptyGroupName(groupName, groupStatus);
+        boolean result = trainerService.isEmptyGroupName(groupName, groupStatus);
 
         // Then
         assertTrue(result);

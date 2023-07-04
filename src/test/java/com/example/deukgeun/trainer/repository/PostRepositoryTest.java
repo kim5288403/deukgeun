@@ -2,7 +2,7 @@ package com.example.deukgeun.trainer.repository;
 
 import com.example.deukgeun.commom.enums.Gender;
 import com.example.deukgeun.trainer.entity.GroupStatus;
-import com.example.deukgeun.trainer.entity.Member;
+import com.example.deukgeun.trainer.entity.Trainer;
 import com.example.deukgeun.trainer.entity.Post;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,13 +23,13 @@ public class PostRepositoryTest {
     @Autowired
     private PostRepository postRepository;
     @Autowired
-    private MemberRepository memberRepository;
+    private TrainerRepository trainerRepository;
 
-    private long memberId;
+    private long trainerId;
 
     @BeforeEach
     void setUp() {
-        Member member = Member
+        Trainer trainer = Trainer
                 .builder()
                 .name("테스트")
                 .email("testEmail@test.com")
@@ -46,8 +46,8 @@ public class PostRepositoryTest {
                 .price(3000)
                 .build();
 
-        Member saveMember = memberRepository.save(member);
-        memberId = saveMember.getId();
+        Trainer saveTrainer = trainerRepository.save(trainer);
+        trainerId = saveTrainer.getId();
     }
 
     @Test
@@ -61,7 +61,7 @@ public class PostRepositoryTest {
         Post post = Post
                 .builder()
                 .html("test")
-                .memberId(memberId)
+                .trainerId(trainerId)
                 .build();
 
         // When
@@ -74,17 +74,17 @@ public class PostRepositoryTest {
     }
 
     @Test
-    void givenPost_whenFindByMemberId_thenReturnValid() {
+    void givenPost_whenFindByTrainerId_thenReturnValid() {
         // Given
         Post post = Post
                 .builder()
                 .html("test")
-                .memberId(memberId)
+                .trainerId(trainerId)
                 .build();
         postRepository.save(post);
 
         // When
-        Post foundPost = postRepository.findByMemberId(memberId).orElse(null);
+        Post foundPost = postRepository.findByTrainerId(trainerId).orElse(null);
 
         // Then
         assertNotNull(foundPost);
@@ -100,11 +100,11 @@ public class PostRepositoryTest {
         Post post = Post
                 .builder()
                 .html(html)
-                .memberId(memberId)
+                .trainerId(trainerId)
                 .build();
 
         postRepository.save(post);
-        Post foundPost = postRepository.findByMemberId(memberId).orElse(null);
+        Post foundPost = postRepository.findByTrainerId(trainerId).orElse(null);
 
         // When
         assert foundPost != null;

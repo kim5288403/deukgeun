@@ -1,6 +1,6 @@
 package com.example.deukgeun.trainer.service.implement;
 
-import com.example.deukgeun.trainer.repository.MemberRepository;
+import com.example.deukgeun.trainer.repository.TrainerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class UserDetailServiceImpl implements UserDetailsService{
-  private final MemberRepository userRepository;
+  private final TrainerRepository trainerRepository;
 
   /**
    * 지정된 이메일을 사용하여 사용자 정보를 로드합니다.
@@ -21,7 +21,7 @@ public class UserDetailServiceImpl implements UserDetailsService{
    */
   @Override
   public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-    return userRepository.findByEmail(email)
+    return trainerRepository.findByEmail(email)
         .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
   }
 }

@@ -8,7 +8,7 @@ import org.springframework.web.util.HtmlUtils;
 @Data
 @NoArgsConstructor
 public class PostResponse {
-  private Long memberId;
+  private Long trainerId;
 
   private Long postId;
 
@@ -16,7 +16,7 @@ public class PostResponse {
 
   public PostResponse(Post post) {
       this.postId = post.getId();
-      this.memberId = post.getMemberId();
+      this.trainerId = post.getTrainerId();
       this.html = HtmlUtils.htmlUnescape(post.getHtml());
   }
 }

@@ -7,7 +7,7 @@ import com.example.deukgeun.trainer.request.SaveLicenseRequest;
 import com.example.deukgeun.trainer.response.LicenseListResponse;
 import com.example.deukgeun.trainer.response.LicenseResultResponse;
 import com.example.deukgeun.trainer.service.implement.LicenseServiceImpl;
-import com.example.deukgeun.trainer.service.implement.MemberServiceImpl;
+import com.example.deukgeun.trainer.service.implement.TrainerServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -25,7 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LicenseController {
     private final LicenseServiceImpl licenseService;
-    private final MemberServiceImpl memberService;
+    private final TrainerServiceImpl trainerService;
     private final TokenServiceImpl tokenService;
 
     /**
@@ -36,7 +36,7 @@ public class LicenseController {
      */
     @RequestMapping(method = RequestMethod.GET, path = "/{id}")
     public ResponseEntity<?> getListById(@PathVariable Long id) {
-        List<LicenseListResponse> response = licenseService.findByMemberId(id);
+        List<LicenseListResponse> response = licenseService.findByTrainerId(id);
 
         return RestResponseUtil
                 .ok("자격증 조회 성공했습니다.", response);
@@ -52,10 +52,10 @@ public class LicenseController {
     public ResponseEntity<?> getListByAuthToken(HttpServletRequest request) {
         // 인증 토큰을 사용하여 사용자 ID 조회
         String authToken = tokenService.resolveAuthToken(request);
-        Long memberId = memberService.getMemberId(authToken);
+        Long trainerId = trainerService.getTrainerId(authToken);
 
         // 사용자 ID를 기반으로 자격증 목록 조회
-        List<LicenseListResponse> response = licenseService.findByMemberId(memberId);
+        List<LicenseListResponse> response = licenseService.findByTrainerId(trainerId);
 
         return RestResponseUtil
                 .ok("자격증 조회 성공했습니다.", response);
@@ -78,11 +78,11 @@ public class LicenseController {
 
         // 인증 토큰에서 사용자 ID 추출
         String authToken = tokenService.resolveAuthToken(request);
-        Long memberid = memberService.getMemberId(authToken);
+        Long trainerid = trainerService.getTrainerId(authToken);
 
         // 자격증 저장
         licenseResult.setNo(saveLicenseRequest.getNo());
-        licenseService.save(licenseResult, memberid);
+        licenseService.save(licenseResult, trainerid);
 
         return RestResponseUtil
                 .ok("자격증 등록 성공했습니다.", null);

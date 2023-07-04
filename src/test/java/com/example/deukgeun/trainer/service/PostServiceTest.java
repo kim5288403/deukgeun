@@ -1,11 +1,11 @@
 package com.example.deukgeun.trainer.service;
 
-import com.example.deukgeun.trainer.entity.Member;
 import com.example.deukgeun.trainer.entity.Post;
+import com.example.deukgeun.trainer.entity.Trainer;
 import com.example.deukgeun.trainer.repository.PostRepository;
 import com.example.deukgeun.trainer.request.PostRequest;
-import com.example.deukgeun.trainer.service.implement.MemberServiceImpl;
 import com.example.deukgeun.trainer.service.implement.PostServiceImpl;
+import com.example.deukgeun.trainer.service.implement.TrainerServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -37,7 +37,7 @@ public class PostServiceTest {
     @Mock
     private PostRepository postRepository;
     @Mock
-    private MemberServiceImpl memberService;
+    private TrainerServiceImpl trainerService;
     @Mock
     private HttpServletRequest request;
 
@@ -55,21 +55,21 @@ public class PostServiceTest {
         request.setContent("Sample content");
 
         String authToken = "validAuthToken";
-        Member member = Member
+        Trainer trainer = Trainer
                 .builder()
                 .id(123L)
                 .email("johndoe@example.com")
                 .build();
 
-        given(memberService.getByAuthToken(anyString())).willReturn(member);
-        given(postRepository.existsByMemberId(member.getId())).willReturn(false);
+        given(trainerService.getByAuthToken(anyString())).willReturn(trainer);
+        given(postRepository.existsByTrainerId(trainer.getId())).willReturn(false);
 
         // When
         postService.upload(request, authToken);
 
         // Verify
-        verify(memberService, times(1)).getByAuthToken(authToken);
-        verify(postRepository, times(1)).existsByMemberId(member.getId());
+        verify(trainerService, times(1)).getByAuthToken(authToken);
+        verify(postRepository, times(1)).existsByTrainerId(trainer.getId());
         verify(postRepository, times(1)).save(any(Post.class));
     }
 
@@ -80,7 +80,7 @@ public class PostServiceTest {
         request.setContent("Sample content");
 
         String authToken = "validAuthToken";
-        Member member = Member
+        Trainer trainer = Trainer
                 .builder()
                 .id(123L)
                 .email("johndoe@example.com")
@@ -88,17 +88,17 @@ public class PostServiceTest {
 
         Post existingPost = new Post();
 
-        given(memberService.getByAuthToken(authToken)).willReturn(member);
-        given(postRepository.existsByMemberId(member.getId())).willReturn(true);
-        given(postRepository.findByMemberId(member.getId())).willReturn(Optional.of(existingPost));
+        given(trainerService.getByAuthToken(authToken)).willReturn(trainer);
+        given(postRepository.existsByTrainerId(trainer.getId())).willReturn(true);
+        given(postRepository.findByTrainerId(trainer.getId())).willReturn(Optional.of(existingPost));
 
         // When
         postService.upload(request, authToken);
 
         // Verify
-        verify(memberService, times(1)).getByAuthToken(authToken);
-        verify(postRepository, times(1)).existsByMemberId(member.getId());
-        verify(postRepository, times(1)).findByMemberId(member.getId());
+        verify(trainerService, times(1)).getByAuthToken(authToken);
+        verify(postRepository, times(1)).existsByTrainerId(trainer.getId());
+        verify(postRepository, times(1)).findByTrainerId(trainer.getId());
         verify(postRepository, times(1)).save(existingPost);
     }
 
@@ -116,36 +116,36 @@ public class PostServiceTest {
     }
 
     @Test
-    public void givenMemberIdAndHtml_whenUpdateHtml_thenPostIsUpdatedAndSaved() {
+    public void givenTrainerIdAndHtml_whenUpdateHtml_thenPostIsUpdatedAndSaved() {
         // Given
-        Long memberId = 123L;
+        Long trainerId = 123L;
         String html = "<p>Updated HTML content</p>";
 
         Post foundPost = new Post();
 
-        given(postRepository.findByMemberId(memberId)).willReturn(Optional.of(foundPost));
+        given(postRepository.findByTrainerId(trainerId)).willReturn(Optional.of(foundPost));
 
         // When
-        postService.updateHtml(memberId, html);
+        postService.updateHtml(trainerId, html);
 
         // Verify
-        verify(postRepository, times(1)).findByMemberId(memberId);
+        verify(postRepository, times(1)).findByTrainerId(trainerId);
         verify(postRepository, times(1)).save(foundPost);
     }
 
     @Test
-    public void givenInvalidMemberIdAndHtml_whenUpdateHtml_thenEntityNotFoundExceptionIsThrown() {
+    public void givenInvalidTrainerIdAndHtml_whenUpdateHtml_thenEntityNotFoundExceptionIsThrown() {
         // Given
-        Long memberId = 123L;
+        Long trainerId = 123L;
         String html = "<p>Updated HTML content</p>";
 
-        given(postRepository.findByMemberId(memberId)).willThrow(EntityNotFoundException.class);
+        given(postRepository.findByTrainerId(trainerId)).willThrow(EntityNotFoundException.class);
 
         // When
-        assertThrows(EntityNotFoundException.class, () -> postService.updateHtml(memberId, html));
+        assertThrows(EntityNotFoundException.class, () -> postService.updateHtml(trainerId, html));
 
         // Verify
-        verify(postRepository, times(1)).findByMemberId(memberId);
+        verify(postRepository, times(1)).findByTrainerId(trainerId);
         verify(postRepository, never()).save(any(Post.class));
     }
 
@@ -297,27 +297,27 @@ public class PostServiceTest {
     }
 
     @Test
-    void givenExistingMemberId_whenFindByMemberId_thenReturnsPost() throws EntityNotFoundException {
+    void givenExistingTrainerId_whenFindByTrainerId_thenReturnsPost() throws EntityNotFoundException {
         // Given
-        Long memberId = 1L;
+        Long trainerId = 1L;
         Post expectedPost = new Post();
-        given(postRepository.findByMemberId(memberId)).willReturn(Optional.of(expectedPost));
+        given(postRepository.findByTrainerId(trainerId)).willReturn(Optional.of(expectedPost));
 
         // When
-        Post result = postService.findByMemberId(memberId);
+        Post result = postService.findByTrainerId(trainerId);
 
         // Then
         assertEquals(expectedPost, result);
     }
 
     @Test
-    void givenNonExistingMemberId_whenFindByMemberId_thenThrowsEntityNotFoundException() {
+    void givenNonExistingTrainerId_whenFindByTrainerId_thenThrowsEntityNotFoundException() {
         // Given
-        Long memberId = 1L;
-        given(postRepository.findByMemberId(memberId)).willReturn(Optional.empty());
+        Long trainerId = 1L;
+        given(postRepository.findByTrainerId(trainerId)).willReturn(Optional.empty());
 
         // When & Then
-        assertThrows(EntityNotFoundException.class, () -> postService.findByMemberId(memberId));
+        assertThrows(EntityNotFoundException.class, () -> postService.findByTrainerId(trainerId));
     }
     @Test
     void givenPostId_whenDeletePost_thenRepositoryDeleteByIdCalled() {

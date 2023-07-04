@@ -1,7 +1,7 @@
 package com.example.deukgeun.trainer.service.implement;
 
-import com.example.deukgeun.trainer.entity.Member;
 import com.example.deukgeun.trainer.entity.Post;
+import com.example.deukgeun.trainer.entity.Trainer;
 import com.example.deukgeun.trainer.repository.PostRepository;
 import com.example.deukgeun.trainer.request.PostRequest;
 import com.example.deukgeun.trainer.service.PostService;
@@ -27,7 +27,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 
-    private final MemberServiceImpl memberService;
+    private final TrainerServiceImpl trainerService;
     private final PostRepository postRepository;
 
     @Value("${trainer.post.filePath}")
@@ -45,11 +45,11 @@ public class PostServiceImpl implements PostService {
      */
     public void upload(PostRequest request, String authToken) throws Exception {
         // 인증 토큰을 이용하여 사용자 정보를 가져옵니다.
-        Member member = memberService.getByAuthToken(authToken);
-        Long memberId = member.getId();
+        Trainer trainer = trainerService.getByAuthToken(authToken);
+        Long trainerId = trainer.getId();
 
         // 해당 사용자의 게시글을 조회합니다.
-        boolean existsPost = postRepository.existsByMemberId(memberId);
+        boolean existsPost = postRepository.existsByTrainerId(trainerId);
 
         // 게시글 내용을 HTML 이스케이프하여 저장합니다.
         String content = request.getContent();
@@ -57,10 +57,10 @@ public class PostServiceImpl implements PostService {
 
         if (existsPost) {
             // 이미 게시글이 존재하는 경우, 게시글을 업데이트합니다.
-            updateHtml(memberId, html);
+            updateHtml(trainerId, html);
         } else {
             // 게시글이 존재하지 않는 경우, 새로운 게시글을 저장합니다.
-            save(memberId, html);
+            save(trainerId, html);
         }
     }
 
@@ -78,11 +78,11 @@ public class PostServiceImpl implements PostService {
     /**
      * 기존 게시글을 업데이트합니다.
      *
-     * @param memberId 사용자 ID
+     * @param trainerId 사용자 ID
      * @param html   HTML 이스케이프된 게시글 내용
      */
-    public void updateHtml(Long memberId, String html) {
-        Post foundPost = postRepository.findByMemberId(memberId)
+    public void updateHtml(Long trainerId, String html) {
+        Post foundPost = postRepository.findByTrainerId(trainerId)
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
         foundPost.updateHtml(html);
         postRepository.save(foundPost);
@@ -238,8 +238,8 @@ public class PostServiceImpl implements PostService {
      * @return 조회된 게시글
      * @throws EntityNotFoundException 게시글을 찾을 수 없을 때 발생하는 예외
      */
-    public Post findByMemberId(Long id) throws EntityNotFoundException {
-        return postRepository.findByMemberId(id).orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+    public Post findByTrainerId(Long id) throws EntityNotFoundException {
+        return postRepository.findByTrainerId(id).orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
     }
 
     /**

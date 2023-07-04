@@ -1,8 +1,9 @@
 package com.example.deukgeun.trainer.request;
 
-import javax.validation.constraints.NotBlank;
 import com.example.deukgeun.trainer.entity.Post;
 import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
 
 @Data
 public class PostRequest {
@@ -10,9 +11,9 @@ public class PostRequest {
   @NotBlank(message = "필수 입력 값입니다.")
   private String content;
   
-  public static Post create(String html, Long memberId) {
+  public static Post create(String html, Long trainerId) {
     return Post.builder()
-        .memberId(memberId)
+        .trainerId(trainerId)
         .html(html)
         .build();
   }

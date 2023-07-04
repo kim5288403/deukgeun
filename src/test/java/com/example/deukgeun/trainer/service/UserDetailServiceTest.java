@@ -1,7 +1,7 @@
 package com.example.deukgeun.trainer.service;
 
-import com.example.deukgeun.trainer.entity.Member;
-import com.example.deukgeun.trainer.repository.MemberRepository;
+import com.example.deukgeun.trainer.entity.Trainer;
+import com.example.deukgeun.trainer.repository.TrainerRepository;
 import com.example.deukgeun.trainer.service.implement.UserDetailServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -21,25 +21,25 @@ public class UserDetailServiceTest {
     @InjectMocks
     private UserDetailServiceImpl userDetailService;
     @Mock
-    private MemberRepository memberRepository;
+    private TrainerRepository trainerRepository;
 
     @Test
     public void givenExistingEmail_whenLoadUserByUsername_thenUserDetailsIsReturned() {
         // Given
         String email = "test@example.com";
-        Member member = Member
+        Trainer trainer = Trainer
                 .builder()
                 .id(1L)
                 .email(email)
                 .build();
 
-        given(memberRepository.findByEmail(email)).willReturn(Optional.of(member));
+        given(trainerRepository.findByEmail(email)).willReturn(Optional.of(trainer));
 
         // When
         UserDetails userDetails = userDetailService.loadUserByUsername(email);
 
         // Then
-        assertEquals(member.getEmail(), userDetails.getUsername());
+        assertEquals(trainer.getEmail(), userDetails.getUsername());
     }
 
     @Test
@@ -48,7 +48,7 @@ public class UserDetailServiceTest {
         String email = "test@example.com";
 
         // Mocking the behavior of userRepository.findByEmail()
-        given(memberRepository.findByEmail(email)).willReturn(Optional.empty());
+        given(trainerRepository.findByEmail(email)).willReturn(Optional.empty());
 
         // When/Then
         assertThrows(UsernameNotFoundException.class, () -> userDetailService.loadUserByUsername(email));

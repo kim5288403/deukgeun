@@ -2,15 +2,15 @@ package com.example.deukgeun.trainer.service.implement;
 
 import com.example.deukgeun.commom.exception.PasswordMismatchException;
 import com.example.deukgeun.commom.service.implement.TokenServiceImpl;
-import com.example.deukgeun.trainer.entity.Member;
-import com.example.deukgeun.trainer.repository.MemberRepository;
+import com.example.deukgeun.trainer.entity.Trainer;
 import com.example.deukgeun.trainer.repository.ProfileRepository;
+import com.example.deukgeun.trainer.repository.TrainerRepository;
 import com.example.deukgeun.trainer.request.JoinRequest;
 import com.example.deukgeun.trainer.request.LoginRequest;
 import com.example.deukgeun.trainer.request.UpdateInfoRequest;
 import com.example.deukgeun.trainer.request.UpdatePasswordRequest;
-import com.example.deukgeun.trainer.response.MemberResponse;
-import com.example.deukgeun.trainer.service.MemberService;
+import com.example.deukgeun.trainer.response.TrainerResponse;
+import com.example.deukgeun.trainer.service.TrainerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,9 +21,9 @@ import javax.persistence.EntityNotFoundException;
 
 @Service
 @RequiredArgsConstructor
-public class MemberServiceImpl implements MemberService {
+public class TrainerServiceImpl implements TrainerService {
 
-  private final MemberRepository memberRepository;
+  private final TrainerRepository trainerRepository;
   private final ProfileRepository profileRepository;
   private final TokenServiceImpl tokenService;
   private final PasswordEncoder passwordEncoder;
@@ -39,9 +39,9 @@ public class MemberServiceImpl implements MemberService {
     String email = request.getEmail();
     String password = request.getPassword();
 
-    Member member = getByEmail(email);
+    Trainer trainer = getByEmail(email);
 
-    boolean check = passwordEncoder.matches(password, member.getPassword());
+    boolean check = passwordEncoder.matches(password, trainer.getPassword());
 
     if (!check) {
       throw new PasswordMismatchException("사용자를 찾을 수 없습니다.");
@@ -55,10 +55,10 @@ public class MemberServiceImpl implements MemberService {
    * @param currentPage  현재 페이지 번호
    * @return 페이지로 나뉘어진 사용자 목록
    */
-  public Page<MemberResponse.MemberListResponse> getList(String keyword, Integer currentPage) {
+  public Page<TrainerResponse.TrainerListResponse> getList(String keyword, Integer currentPage) {
     String likeKeyword = "%" + keyword + "%";
     PageRequest pageable = PageRequest.of(currentPage, 10);
-    return profileRepository.findByUserLikeKeyword(likeKeyword, pageable);
+    return profileRepository.findByTrainerLikeKeyword(likeKeyword, pageable);
   }
 
   /**
@@ -67,8 +67,8 @@ public class MemberServiceImpl implements MemberService {
    * @param request 회원가입 요청 객체
    * @return 저장된 사용자
    */
-  public Member save(JoinRequest request) {
-    Member member = Member
+  public Trainer save(JoinRequest request) {
+    Trainer trainer = Trainer
             .builder()
             .name(request.getName())
             .email(request.getEmail())
@@ -85,7 +85,7 @@ public class MemberServiceImpl implements MemberService {
             .introduction(request.getIntroduction())
             .build();
 
-    return memberRepository.save(member);
+    return trainerRepository.save(trainer);
   }
 
   /**
@@ -95,8 +95,8 @@ public class MemberServiceImpl implements MemberService {
    * @return 조회된 사용자
    * @throws EntityNotFoundException 주어진 이메일에 해당하는 사용자가 없는 경우 발생하는 예외
    */
-  public Member getByEmail(String email) throws EntityNotFoundException {
-    return memberRepository.findByEmail(email)
+  public Trainer getByEmail(String email) throws EntityNotFoundException {
+    return trainerRepository.findByEmail(email)
             .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
   }
 
@@ -107,7 +107,7 @@ public class MemberServiceImpl implements MemberService {
    * @return 조회된 사용자
    * @throws EntityNotFoundException 주어진 인증 토큰에 해당하는 사용자가 없는 경우 발생하는 예외
    */
-  public Member getByAuthToken(String authToken) throws EntityNotFoundException {
+  public Trainer getByAuthToken(String authToken) throws EntityNotFoundException {
     String email = tokenService.getUserPk(authToken);
     return getByEmail(email);
   }
@@ -118,10 +118,10 @@ public class MemberServiceImpl implements MemberService {
    * @param request 업데이트할 사용자 정보 요청 객체
    */
   public void updateInfo(UpdateInfoRequest request) {
-    Member foundMember = memberRepository.findByEmail(request.getEmail())
+    Trainer foundTrainer = trainerRepository.findByEmail(request.getEmail())
             .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
-    foundMember.updateInfo(request);
-    memberRepository.save(foundMember);
+    foundTrainer.updateInfo(request);
+    trainerRepository.save(foundTrainer);
   }
 
   /**
@@ -132,11 +132,11 @@ public class MemberServiceImpl implements MemberService {
   public void updatePassword(UpdatePasswordRequest request) {
     String email = request.getEmail();
     String newPassword = passwordEncoder.encode(request.getNewPassword());
-    Member foundMember = memberRepository.findByEmail(email).orElse(null);
+    Trainer foundTrainer = trainerRepository.findByEmail(email).orElse(null);
 
-    assert foundMember != null;
-    foundMember.updatePassword(newPassword);
-    memberRepository.save(foundMember);
+    assert foundTrainer != null;
+    foundTrainer.updatePassword(newPassword);
+    trainerRepository.save(foundTrainer);
   }
 
   /**
@@ -145,7 +145,7 @@ public class MemberServiceImpl implements MemberService {
    * @param id 삭제할 사용자의 ID
    */
   public void withdrawal(Long id) {
-    memberRepository.deleteById(id);
+    trainerRepository.deleteById(id);
   }
 
   /**
@@ -155,10 +155,10 @@ public class MemberServiceImpl implements MemberService {
    * @return 사용자의 ID
    * @throws EntityNotFoundException 사용자를 찾을 수 없는 경우 발생하는 예외
    */
-  public Long getMemberId(String authToken) throws EntityNotFoundException {
-    Member member = getByAuthToken(authToken);
+  public Long getTrainerId(String authToken) throws EntityNotFoundException {
+    Trainer Trainer = getByAuthToken(authToken);
     
-    return member.getId();
+    return Trainer.getId();
   }
 
   /**
@@ -168,7 +168,7 @@ public class MemberServiceImpl implements MemberService {
    * @return 중복 여부 (true: 중복됨, false: 중복되지 않음)
    */
   public boolean isDuplicateEmail(String email) {
-    return memberRepository.existsByEmail(email);
+    return trainerRepository.existsByEmail(email);
   }
 
   /**

@@ -13,15 +13,15 @@ import java.util.Collection;
 
 @Entity
 @Getter
-@Table(name = "trainer_member")
+@Table(name = "trainer")
 @NoArgsConstructor
-public class Member extends BaseEntity implements UserDetails{
+public class Trainer extends BaseEntity implements UserDetails{
 
   private static final long serialVersionUID = 1L;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "member_id")
+  @Column(name = "trainer_id")
   private Long id;
 
   @Column(length = 50, nullable = false)
@@ -66,7 +66,7 @@ public class Member extends BaseEntity implements UserDetails{
   private String introduction;
 
   @Builder
-  public Member(
+  public Trainer(
           Long id,
           String name,
           String email,

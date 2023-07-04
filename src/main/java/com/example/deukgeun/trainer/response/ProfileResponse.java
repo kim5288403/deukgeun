@@ -30,11 +30,11 @@ public class ProfileResponse {
 
     public ProfileAndUserResponse (Profile profile) {
       this.path = profile.getPath();
-      this.name = profile.getMember().getName();
-      this.price = profile.getMember().getPrice();
-      this.address = profile.getMember().getJibunAddress() + profile.getMember().getDetailAddress() + profile.getMember().getRoadAddress();
-      this.gender = profile.getMember().getGender() == Gender.M ? "남" : "여";
-      this.groupName = profile.getMember().getGroupName();
+      this.name = profile.getTrainer().getName();
+      this.price = profile.getTrainer().getPrice();
+      this.address = profile.getTrainer().getJibunAddress() + profile.getTrainer().getDetailAddress() + profile.getTrainer().getRoadAddress();
+      this.gender = profile.getTrainer().getGender() == Gender.M ? "남" : "여";
+      this.groupName = profile.getTrainer().getGroupName();
     }
   }
 }

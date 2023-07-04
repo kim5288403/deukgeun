@@ -1,11 +1,11 @@
 package com.example.deukgeun.trainer.service;
 
 import com.example.deukgeun.DeukgeunApplication;
-import com.example.deukgeun.trainer.entity.Member;
 import com.example.deukgeun.trainer.entity.Profile;
+import com.example.deukgeun.trainer.entity.Trainer;
 import com.example.deukgeun.trainer.repository.ProfileRepository;
-import com.example.deukgeun.trainer.service.implement.MemberServiceImpl;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
+import com.example.deukgeun.trainer.service.implement.TrainerServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -38,7 +38,7 @@ class ProfileServiceTest {
     @Mock
     private ProfileRepository profileRepository;
     @Mock
-    private MemberServiceImpl memberService;
+    private TrainerServiceImpl trainerService;
 
     @Test
     void givenExistingProfileId_whenGetProfile_thenReturnProfile() {
@@ -73,7 +73,7 @@ class ProfileServiceTest {
     void givenValidAuthToken_whenGetProfileId_thenReturnProfileId() {
         // Given
         String authToken = "validAuthToken";
-        Member member = Member
+        Trainer trainer = Trainer
                 .builder()
                 .id(1L)
                 .name("John Doe")
@@ -82,12 +82,12 @@ class ProfileServiceTest {
         Profile profile = Profile
                 .builder()
                 .id(1L)
-                .memberId(1L)
+                .trainerId(1L)
                 .path("John Doe")
                 .build();
 
-        given(memberService.getByAuthToken(authToken)).willReturn(member);
-        given(profileRepository.findByMemberId(member.getId())).willReturn(Optional.ofNullable(profile));
+        given(trainerService.getByAuthToken(authToken)).willReturn(trainer);
+        given(profileRepository.findByTrainerId(trainer.getId())).willReturn(Optional.ofNullable(profile));
 
         // When
         Long result = profileService.getProfileId(authToken);
@@ -97,32 +97,32 @@ class ProfileServiceTest {
     }
 
     @Test
-    void givenExistingMemberId_whenGetByMemberId_thenReturnProfile() {
+    void givenExistingTrainerId_whenGetByTrainerId_thenReturnProfile() {
         // Given
-        Long memberId = 1L;
+        Long trainerId = 1L;
         Profile expectedProfile = Profile
                 .builder()
                 .id(1L)
-                .memberId(1L)
+                .trainerId(1L)
                 .build();
 
-        given(profileRepository.findByMemberId(memberId)).willReturn(Optional.of(expectedProfile));
+        given(profileRepository.findByTrainerId(trainerId)).willReturn(Optional.of(expectedProfile));
 
         // When
-        Profile result = profileService.getByMemberId(memberId);
+        Profile result = profileService.getByTrainerId(trainerId);
 
         // Then
         assertEquals(expectedProfile, result);
     }
 
     @Test
-    void givenNonExistingMemberId_whenGetByMemberId_thenThrowEntityNotFoundException() {
+    void givenNonExistingTrainerId_whenGetByTrainerId_thenThrowEntityNotFoundException() {
         // Given
-        Long memberId = 1L;
-        given(profileRepository.findByMemberId(memberId)).willReturn(Optional.empty());
+        Long trainerId = 1L;
+        given(profileRepository.findByTrainerId(trainerId)).willReturn(Optional.empty());
 
         // When, Then
-        assertThrows(EntityNotFoundException.class, () -> profileService.getByMemberId(memberId),
+        assertThrows(EntityNotFoundException.class, () -> profileService.getByTrainerId(trainerId),
                 "프로필을 찾을 수 없습니다.");
     }
 
@@ -183,16 +183,16 @@ class ProfileServiceTest {
     }
 
     @Test
-    void givenProfileAndMemberId_whenSave_thenProfileIsSavedAndFileIsSaved() throws IOException {
+    void givenProfileAndTrainerId_whenSave_thenProfileIsSavedAndFileIsSaved() throws IOException {
         // Given
-        Long memberId = 1L;
+        Long trainerId = 1L;
         String fileName = "image.png";
         MultipartFile file = new MockMultipartFile("file", fileName, "image/png", new byte[0]);
         Path tempDir = Files.createTempDirectory("test");
         ReflectionTestUtils.setField(profileService, "FILE_PATH", tempDir.toString());
 
         // When
-        profileService.save(file, memberId);
+        profileService.save(file, trainerId);
 
         // Then
         verify(profileRepository, times(1)).save(any(Profile.class));
@@ -208,7 +208,7 @@ class ProfileServiceTest {
         Path tempDir = Files.createTempDirectory("test");
         ReflectionTestUtils.setField(profileService, "FILE_PATH", tempDir.toString());
 
-        Member member = Member
+        Trainer trainer = Trainer
                 .builder()
                 .id(123L)
                 .email("johndoe@example.com")
@@ -216,13 +216,13 @@ class ProfileServiceTest {
 
         Profile profile = Profile
                 .builder()
-                .memberId(member.getId())
+                .trainerId(trainer.getId())
                 .id(profileId)
                 .path(fileName)
                 .build();
 
-        given(memberService.getByAuthToken(authToken)).willReturn(member);
-        given(profileRepository.findByMemberId(member.getId())).willReturn(Optional.ofNullable(profile));
+        given(trainerService.getByAuthToken(authToken)).willReturn(trainer);
+        given(profileRepository.findByTrainerId(trainer.getId())).willReturn(Optional.ofNullable(profile));
         given(profileRepository.findById(profileId)).willReturn(Optional.ofNullable(profile));
 
         // When
@@ -230,7 +230,7 @@ class ProfileServiceTest {
 
         // Then
         verify(profileRepository, times(1)).findById(anyLong());
-        verify(profileRepository, times(1)).findByMemberId(anyLong());
+        verify(profileRepository, times(1)).findByTrainerId(anyLong());
         verify(profileRepository, times(1)).save(any(Profile.class));
     }
 

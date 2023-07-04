@@ -5,8 +5,8 @@ import com.example.deukgeun.commom.util.RestResponseUtil;
 import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.request.UpdateProfileRequest;
 import com.example.deukgeun.trainer.response.ProfileResponse;
-import com.example.deukgeun.trainer.service.implement.MemberServiceImpl;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
+import com.example.deukgeun.trainer.service.implement.TrainerServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -23,7 +23,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class ProfileController {
     private final ProfileServiceImpl profileService;
-    private final MemberServiceImpl memberService;
+    private final TrainerServiceImpl trainerService;
     private final TokenServiceImpl tokenService;
 
     /**
@@ -35,7 +35,7 @@ public class ProfileController {
     @RequestMapping(method = RequestMethod.GET, path = "/{id}")
     public ResponseEntity<?> getByUserId(@PathVariable Long id) {
         // profileService 를 통해 해당 사용자 ID에 해당하는 프로필 정보를 조회합니다.
-        Profile profile = profileService.getByMemberId(id);
+        Profile profile = profileService.getByTrainerId(id);
 
         // 조회된 프로필 정보를 이용하여 ProfileResponse 객체를 생성합니다.
         ProfileResponse.ProfileAndUserResponse response = new ProfileResponse.ProfileAndUserResponse(profile);
@@ -55,10 +55,10 @@ public class ProfileController {
         String authToken = tokenService.resolveAuthToken(request);
 
         // 인증 토큰을 이용하여 사용자 ID를 조회합니다.
-        Long memberId = memberService.getMemberId(authToken);
+        Long trainerId = trainerService.getTrainerId(authToken);
 
         // 사용자 ID에 해당하는 프로필 정보를 조회합니다.
-        Profile profile = profileService.getByMemberId(memberId);
+        Profile profile = profileService.getByTrainerId(trainerId);
 
         // 조회된 프로필 정보를 이용하여 ProfileResponse 객체를 생성합니다.
         ProfileResponse.ProfileAndUserResponse response = new ProfileResponse.ProfileAndUserResponse(profile);

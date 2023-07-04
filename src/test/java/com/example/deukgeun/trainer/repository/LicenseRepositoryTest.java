@@ -3,7 +3,7 @@ package com.example.deukgeun.trainer.repository;
 import com.example.deukgeun.commom.enums.Gender;
 import com.example.deukgeun.trainer.entity.GroupStatus;
 import com.example.deukgeun.trainer.entity.License;
-import com.example.deukgeun.trainer.entity.Member;
+import com.example.deukgeun.trainer.entity.Trainer;
 import com.example.deukgeun.trainer.response.LicenseListResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,13 +26,13 @@ public class LicenseRepositoryTest {
     @Autowired
     private LicenseRepository licenseRepository;
     @Autowired
-    private MemberRepository memberRepository;
+    private TrainerRepository trainerRepository;
 
-    private long memberId;
+    private long trainerId;
 
     @BeforeEach
     void setUp() {
-        Member member = Member
+        Trainer trainer = Trainer
                 .builder()
                 .name("테스트")
                 .email("testEmail@test.com")
@@ -49,8 +49,8 @@ public class LicenseRepositoryTest {
                 .price(3000)
                 .build();
 
-        Member saveMember = memberRepository.save(member);
-        memberId = saveMember.getId();
+        Trainer saveTrainer = trainerRepository.save(trainer);
+        trainerId = saveTrainer.getId();
     }
 
     @Test
@@ -62,7 +62,7 @@ public class LicenseRepositoryTest {
     void givenLicense_whenSaved_thenReturnValid() {
         // Given
         License license = License.builder()
-                .memberId(memberId)
+                .trainerId(trainerId)
                 .certificateName("testCertificateName")
                 .licenseNumber("testLicenseNumber")
                 .build();
@@ -71,23 +71,23 @@ public class LicenseRepositoryTest {
         License saveLicense = licenseRepository.save(license);
 
         // Then
-        License foundLicense = licenseRepository.findById(memberId).orElse(null);
+        License foundLicense = licenseRepository.findById(trainerId).orElse(null);
         assertNotNull(foundLicense);
         assertEquals(saveLicense.getCertificateName(), foundLicense.getCertificateName());
         assertEquals(saveLicense.getLicenseNumber(), foundLicense.getLicenseNumber());
     }
 
     @Test
-    void givenLicenses_whenFindByMemberId_thenReturnValid() {
+    void givenLicenses_whenFindByTrainerId_thenReturnValid() {
         // Given
         License license1 = License.builder()
-                .memberId(memberId)
+                .trainerId(trainerId)
                 .certificateName("testCertificateName1")
                 .licenseNumber("testLicenseNumber1")
                 .build();
 
         License license2 = License.builder()
-                .memberId(memberId)
+                .trainerId(trainerId)
                 .certificateName("testCertificateName2")
                 .licenseNumber("testLicenseNumber2")
                 .build();
@@ -96,7 +96,7 @@ public class LicenseRepositoryTest {
         licenseRepository.save(license2);
 
         // When
-        List<LicenseListResponse> licenseList = licenseRepository.findByMemberId(memberId);
+        List<LicenseListResponse> licenseList = licenseRepository.findByTrainerId(trainerId);
 
         // Then
         assertEquals(2, licenseList.size());
@@ -111,7 +111,7 @@ public class LicenseRepositoryTest {
     @Test
     void givenLicense_whenDeleteById_thenIsDeleted() {
         License license = License.builder()
-                .memberId(memberId)
+                .trainerId(trainerId)
                 .certificateName("testCertificateName")
                 .licenseNumber("testLicenseNumber")
                 .build();

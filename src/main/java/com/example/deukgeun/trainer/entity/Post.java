@@ -22,21 +22,21 @@ public class Post extends BaseEntity{
   @Column(name = "post_id")
   private Long id;
   
-  @Column(name = "member_id")
-  private Long memberId;
+  @Column(name = "trainer_id")
+  private Long trainerId;
   
   @Column(nullable = false)
   private String html;
   
   @OneToOne()
-  @JoinColumn(name = "member_id", insertable = false, updatable = false, nullable = false)
-  private Member member;
+  @JoinColumn(name = "trainer_id", insertable = false, updatable = false, nullable = false)
+  private Trainer trainer;
   
   @Builder
-  public Post(Long id, String html, Long memberId) {
+  public Post(Long id, String html, Long trainerId) {
     this.id = id;
     this.html = html;
-    this.memberId = memberId;
+    this.trainerId = trainerId;
   }
 
   public void updateHtml(String html) {

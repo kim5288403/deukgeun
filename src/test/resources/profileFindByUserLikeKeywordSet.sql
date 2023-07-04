@@ -1,4 +1,4 @@
-INSERT INTO trainer_member(
+INSERT INTO trainer(
 created_date,
 updated_date,
 detail_address,
@@ -33,10 +33,10 @@ values
 'test'
  );
 
-INSERT INTO trainer_profile(created_date, updated_date, member_id, path)
+INSERT INTO trainer_profile(created_date, updated_date, trainer_id, path)
 values
-(null, null, (select member_id from trainer_member where name = 'test'), 'test1');
+(null, null, (select trainer_id from trainer where name = 'test'), 'test1');
 
-INSERT INTO trainer_profile(created_date, updated_date, member_id, path)
+INSERT INTO trainer_profile(created_date, updated_date, trainer_id, path)
 values
-(null, null, (select member_id from trainer_member where name = 'test'), 'test2');
+(null, null, (select trainer_id from trainer where name = 'test'), 'test2');

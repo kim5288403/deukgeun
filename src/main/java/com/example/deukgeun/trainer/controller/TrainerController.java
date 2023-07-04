@@ -4,12 +4,12 @@ package com.example.deukgeun.trainer.controller;
 import com.example.deukgeun.commom.response.LoginResponse;
 import com.example.deukgeun.commom.service.implement.TokenServiceImpl;
 import com.example.deukgeun.commom.util.RestResponseUtil;
-import com.example.deukgeun.trainer.entity.Member;
 import com.example.deukgeun.trainer.entity.Profile;
+import com.example.deukgeun.trainer.entity.Trainer;
 import com.example.deukgeun.trainer.request.*;
-import com.example.deukgeun.trainer.response.MemberResponse;
-import com.example.deukgeun.trainer.service.implement.MemberServiceImpl;
+import com.example.deukgeun.trainer.response.TrainerResponse;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
+import com.example.deukgeun.trainer.service.implement.TrainerServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -27,12 +27,12 @@ import javax.validation.Valid;
 import java.io.IOException;
 
 
-@RestController("trainer.controller.MemberController")
+@RestController("trainer.controller.TrainerController")
 @RequestMapping("/api/trainer")
 @RequiredArgsConstructor
-public class MemberController {
+public class TrainerController {
 
-    private final MemberServiceImpl memberService;
+    private final TrainerServiceImpl trainerService;
     private final TokenServiceImpl tokenService;
     private final ProfileServiceImpl profileService;
 
@@ -49,10 +49,10 @@ public class MemberController {
     @RequestMapping(method = RequestMethod.GET, path = "/")
     public ResponseEntity<?> getList(@RequestParam(value = "keyword", defaultValue = "") String keyword, @RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage) {
         // 키워드와 현재 페이지를 기반으로 사용자 목록 조회
-        Page<MemberResponse.MemberListResponse> page = memberService.getList(keyword, currentPage);
+        Page<TrainerResponse.TrainerListResponse> page = trainerService.getList(keyword, currentPage);
 
         // 사용자 목록을 UserListPaginationResponse 형식으로 변환
-        MemberResponse.UserListPaginationResponse list = new MemberResponse.UserListPaginationResponse(page, currentPage);
+        TrainerResponse.TrainerListPaginationResponse list = new TrainerResponse.TrainerListPaginationResponse(page, currentPage);
 
         return RestResponseUtil.ok("조회 성공 했습니다.", list);
     }
@@ -67,10 +67,10 @@ public class MemberController {
     public ResponseEntity<?> getDetail(HttpServletRequest request) {
         // 인증 토큰에서 사용자의 인증 정보를 추출
         String authToken = tokenService.resolveAuthToken(request);
-        Member member = memberService.getByAuthToken(authToken);
+        Trainer trainer = trainerService.getByAuthToken(authToken);
 
         // 사용자 정보를 응답 객체로 변환
-        MemberResponse response = new MemberResponse(member);
+        TrainerResponse response = new TrainerResponse(trainer);
 
         return RestResponseUtil.ok("마이 페이지 조회 성공했습니다.", response);
     }
@@ -87,10 +87,10 @@ public class MemberController {
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> save(@Valid JoinRequest request, BindingResult bindingResult) throws IOException {
         // 사용자 저장
-        Member saveMember = memberService.save(request);
+        Trainer saveTrainer = trainerService.save(request);
 
         // 프로필 저장
-        profileService.save(request.getProfile(), saveMember.getId());
+        profileService.save(request.getProfile(), saveTrainer.getId());
 
         return RestResponseUtil.ok("회원 가입 성공 했습니다.", null);
     }
@@ -105,7 +105,7 @@ public class MemberController {
     @RequestMapping(method = RequestMethod.PUT, path = "/")
     public ResponseEntity<?> update(@Valid UpdateInfoRequest request, BindingResult bindingResult) {
         // 정보 업데이트
-        memberService.updateInfo(request);
+        trainerService.updateInfo(request);
 
         return RestResponseUtil.ok("내 정보 수정 성공했습니다.", null);
     }
@@ -122,7 +122,7 @@ public class MemberController {
             @Valid UpdatePasswordRequest request,
             BindingResult bindingResult) {
         // 비밀번호 업데이트
-        memberService.updatePassword(request);
+        trainerService.updatePassword(request);
 
         return RestResponseUtil.ok("비밀번호 변경 성공했습니다.", null);
     }
@@ -144,10 +144,10 @@ public class MemberController {
 
 
         // 이메일을 기반으로 사용자 조회
-        Member member = memberService.getByEmail(withdrawalRequest.getEmail());
+        Trainer trainer = trainerService.getByEmail(withdrawalRequest.getEmail());
 
         // 프로필 조회
-        Profile userProfile = profileService.getByMemberId(member.getId());
+        Profile userProfile = profileService.getByTrainerId(trainer.getId());
 
         // 디렉토리 프로필 삭제
         profileService.deleteFileToDirectory(userProfile.getPath());
@@ -156,7 +156,7 @@ public class MemberController {
         profileService.withdrawal(userProfile.getId());
 
         //사용자 삭제
-        memberService.withdrawal(member.getId());
+        trainerService.withdrawal(trainer.getId());
 
         //토큰 삭제
         String authToken = tokenService.resolveAuthToken(request);
@@ -177,7 +177,7 @@ public class MemberController {
     @RequestMapping(method = RequestMethod.POST, path = "/login")
     public ResponseEntity<?> login(@Valid LoginRequest request, BindingResult bindingResult, HttpServletResponse response) {
         // 사용자 로그인 처리
-        memberService.isPasswordMatches(request);
+        trainerService.isPasswordMatches(request);
 
         // JWT 토큰 생성 및 설정
         String authToken = tokenService.setToken(request.getEmail(), response);

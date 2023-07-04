@@ -1,7 +1,7 @@
 package com.example.deukgeun.trainer.service.implement;
 
-import com.example.deukgeun.trainer.entity.Member;
 import com.example.deukgeun.trainer.entity.Profile;
+import com.example.deukgeun.trainer.entity.Trainer;
 import com.example.deukgeun.trainer.repository.ProfileRepository;
 import com.example.deukgeun.trainer.service.ProfileService;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 public class ProfileServiceImpl implements ProfileService {
 
     private final ProfileRepository profileRepository;
-    private final MemberServiceImpl memberService;
+    private final TrainerServiceImpl trainerService;
 
     @Value("${trainer.profile.filePath}")
     private String FILE_PATH;
@@ -54,8 +54,8 @@ public class ProfileServiceImpl implements ProfileService {
      * @return 사용자의 프로필 ID
      */
     public Long getProfileId(String authToken) {
-        Member member = memberService.getByAuthToken(authToken);
-        Profile profile = getByMemberId(member.getId());
+        Trainer trainer = trainerService.getByAuthToken(authToken);
+        Profile profile = getByTrainerId(trainer.getId());
 
         return profile.getId();
     }
@@ -63,12 +63,12 @@ public class ProfileServiceImpl implements ProfileService {
     /**
      * 주어진 사용자 ID에 해당하는 프로필을 조회합니다.
      *
-     * @param memberId 조회할 프로필의 사용자 ID
+     * @param trainerId 조회할 프로필의 사용자 ID
      * @return 조회된 프로필
      * @throws EntityNotFoundException 프로필을 찾을 수 없는 경우 발생하는 예외
      */
-    public Profile getByMemberId(Long memberId) throws EntityNotFoundException {
-        return profileRepository.findByMemberId(memberId).orElseThrow(() -> new EntityNotFoundException("프로필을 찾을 수 없습니다."));
+    public Profile getByTrainerId(Long trainerId) throws EntityNotFoundException {
+        return profileRepository.findByTrainerId(trainerId).orElseThrow(() -> new EntityNotFoundException("프로필을 찾을 수 없습니다."));
     }
 
     /**
@@ -120,15 +120,15 @@ public class ProfileServiceImpl implements ProfileService {
      * 프로필 이미지를 저장하고 관련 데이터를 데이터베이스에 저장합니다.
      *
      * @param profile 업로드된 프로필 이미지 파일
-     * @param memberId  사용자 ID
+     * @param trainerId  사용자 ID
      * @throws IOException 입출력 예외가 발생할 경우
      */
-    public void save(MultipartFile profile, Long memberId) throws IOException {
+    public void save(MultipartFile profile, Long trainerId) throws IOException {
         fileName = getUUIDPath(profile.getOriginalFilename());
 
         Profile saveProfileData =  Profile
                 .builder()
-                .memberId(memberId)
+                .trainerId(trainerId)
                 .path("test")
                 .build();
 

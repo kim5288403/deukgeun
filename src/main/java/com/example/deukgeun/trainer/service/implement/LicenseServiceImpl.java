@@ -31,26 +31,26 @@ public class LicenseServiceImpl implements LicenseService {
     /**
      * 사용자 ID에 해당하는 라이선스 목록을 조회합니다.
      *
-     * @param memberId 사용자 ID
+     * @param trainerId 사용자 ID
      * @return 라이선스 목록
      */
     @Cacheable(value = "license", key = "#userId", cacheManager = "projectCacheManager")
-    public List<LicenseListResponse> findByMemberId(Long memberId) {
-        return licenseRepository.findByMemberId(memberId);
+    public List<LicenseListResponse> findByTrainerId(Long trainerId) {
+        return licenseRepository.findByTrainerId(trainerId);
     }
 
     /**
      * 라이선스를 저장합니다.
      *
      * @param licenseResult 라이선스 진위여부 결과 응답 객체
-     * @param memberId      사용자 ID
+     * @param trainerId      사용자 ID
      * @return 저장된 라이선스 객체
      * @throws Exception 저장 중 발생한 예외
      */
-    public License save(LicenseResultResponse licenseResult, Long memberId) throws Exception {
+    public License save(LicenseResultResponse licenseResult, Long trainerId) throws Exception {
         License license = License.builder()
                 .certificateName(licenseResult.getCertificatename())
-                .memberId(memberId)
+                .trainerId(trainerId)
                 .licenseNumber(licenseResult.getNo())
                 .build();
 

@@ -6,7 +6,7 @@ import com.example.deukgeun.commom.util.RestResponseUtil;
 import com.example.deukgeun.trainer.entity.Post;
 import com.example.deukgeun.trainer.request.PostRequest;
 import com.example.deukgeun.trainer.response.PostResponse;
-import com.example.deukgeun.trainer.service.implement.MemberServiceImpl;
+import com.example.deukgeun.trainer.service.implement.TrainerServiceImpl;
 import com.example.deukgeun.trainer.service.implement.PostServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -34,7 +34,7 @@ public class PostControllerTest {
     @Mock
     private PostServiceImpl postService;
     @Mock
-    private MemberServiceImpl memberService;
+    private TrainerServiceImpl trainerService;
     @Mock
     private TokenServiceImpl tokenService;
     @Mock
@@ -47,20 +47,20 @@ public class PostControllerTest {
     @Test
     public void givenPostService_whenGetDetailByUserId_thenReturnResponseEntityWithPostResponse() {
         // Given
-        Long memberId = 123L;
+        Long trainerId = 123L;
         Post post = Post
                 .builder()
                 .id(123L)
-                .memberId(memberId)
+                .trainerId(trainerId)
                 .html("test")
                 .build();
         PostResponse response = new PostResponse(post);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공 했습니다.", response);
 
-        given(postService.findByMemberId(memberId)).willReturn(post);
+        given(postService.findByTrainerId(trainerId)).willReturn(post);
 
         // When
-        ResponseEntity<?> responseEntity = postController.getDetailByUserId(memberId);
+        ResponseEntity<?> responseEntity = postController.getDetailByUserId(trainerId);
 
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -68,30 +68,30 @@ public class PostControllerTest {
     }
 
     @Test
-    public void givenTokenServiceMemberServicePostService_whenGetDetailByAuthToken_thenReturnResponseEntityWithPostResponse() {
+    public void givenTokenServiceTrainerServicePostService_whenGetDetailByAuthToken_thenReturnResponseEntityWithPostResponse() {
         // Given
         String authToken = "exampleAuthToken";
-        Long memberId = 123L;
+        Long trainerId = 123L;
         Post post = Post
                 .builder()
                 .id(123L)
-                .memberId(memberId)
+                .trainerId(trainerId)
                 .html("test")
                 .build();
         PostResponse response = new PostResponse(post);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공 했습니다.", response);
 
         given(tokenService.resolveAuthToken(request)).willReturn(authToken);
-        given(memberService.getMemberId(authToken)).willReturn(memberId);
-        given(postService.findByMemberId(memberId)).willReturn(post);
+        given(trainerService.getTrainerId(authToken)).willReturn(trainerId);
+        given(postService.findByTrainerId(trainerId)).willReturn(post);
 
         // When
         ResponseEntity<?> responseEntity = postController.getDetailByAuthToken(request);
 
         // Then
         verify(tokenService, times(1)).resolveAuthToken(request);
-        verify(memberService, times(1)).getMemberId(authToken);
-        verify(postService, times(1)).findByMemberId(memberId);
+        verify(trainerService, times(1)).getTrainerId(authToken);
+        verify(postService, times(1)).findByTrainerId(trainerId);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
     }

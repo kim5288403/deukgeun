@@ -34,18 +34,18 @@ public class LicenseServiceTest {
     private String licenseApiUri;
 
     @Test
-    public void givenValidMemberId_whenFindByMemberId_thenReturnLicenseListResponse() {
+    public void givenValidTrainerId_whenFindByTrainerId_thenReturnLicenseListResponse() {
         // Given
-        Long memberId = 1L;
+        Long trainerId = 1L;
         License LicenseA = License
                 .builder()
-                .memberId(1L)
+                .trainerId(1L)
                 .certificateName("LicenseA")
                 .licenseNumber("t1e2s3t4")
                 .build();
         License LicenseB = License
                 .builder()
-                .memberId(2L)
+                .trainerId(2L)
                 .certificateName("LicenseB")
                 .licenseNumber("t1e2s3t4")
                 .build();
@@ -53,10 +53,10 @@ public class LicenseServiceTest {
 
         List<LicenseListResponse> licenses = Arrays.asList(new LicenseListResponse(LicenseA), new LicenseListResponse(LicenseB));
 
-        given(licenseRepository.findByMemberId(memberId)).willReturn(licenses);
+        given(licenseRepository.findByTrainerId(trainerId)).willReturn(licenses);
 
         // When
-        List<LicenseListResponse> result = licenseService.findByMemberId(memberId);
+        List<LicenseListResponse> result = licenseService.findByTrainerId(trainerId);
 
         // Then
         assertNotNull(result);
@@ -68,22 +68,22 @@ public class LicenseServiceTest {
     }
 
     @Test
-    public void givenInvalidMemberId_whenFindByMemberId_thenReturnEmptyList() {
+    public void givenInvalidTrainerId_whenFindByTrainerId_thenReturnEmptyList() {
         // Given
-        Long memberId = 2L;
-        given(licenseRepository.findByMemberId(memberId)).willReturn(null);
+        Long trainerId = 2L;
+        given(licenseRepository.findByTrainerId(trainerId)).willReturn(null);
 
         // When
-        List<LicenseListResponse> result = licenseService.findByMemberId(memberId);
+        List<LicenseListResponse> result = licenseService.findByTrainerId(trainerId);
 
         // Then
         assertNull(result);
     }
 
     @Test
-    public void givenLicenseResultAndMemberId_whenSave_thenLicenseSavedAndReturned() throws Exception {
+    public void givenLicenseResultAndTrainerId_whenSave_thenLicenseSavedAndReturned() throws Exception {
         // Given
-        Long memberId = 1L;
+        Long trainerId = 1L;
 
         LicenseResultResponse licenseResult = new LicenseResultResponse();
         licenseResult.setCertificatename("License A");
@@ -91,19 +91,19 @@ public class LicenseServiceTest {
 
         License expectedLicense = License.builder()
                 .certificateName(licenseResult.getCertificatename())
-                .memberId(memberId)
+                .trainerId(trainerId)
                 .licenseNumber(licenseResult.getNo())
                 .build();
 
         given(licenseRepository.save(expectedLicense)).willReturn(expectedLicense);
 
         // When
-        License result = licenseService.save(licenseResult, memberId);
+        License result = licenseService.save(licenseResult, trainerId);
 
         // Then
         assertNotNull(result);
         assertEquals(expectedLicense.getCertificateName(), result.getCertificateName());
-        assertEquals(expectedLicense.getMemberId(), result.getMemberId());
+        assertEquals(expectedLicense.getTrainerId(), result.getTrainerId());
         assertEquals(expectedLicense.getLicenseNumber(), result.getLicenseNumber());
         verify(licenseRepository, times(1)).save(any(License.class));
     }

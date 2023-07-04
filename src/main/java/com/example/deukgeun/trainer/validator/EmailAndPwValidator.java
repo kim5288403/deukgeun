@@ -1,19 +1,19 @@
 package com.example.deukgeun.trainer.validator;
 
+import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
+import com.example.deukgeun.trainer.entity.Trainer;
+import com.example.deukgeun.trainer.service.implement.TrainerServiceImpl;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-
-import com.example.deukgeun.trainer.entity.Member;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
-import com.example.deukgeun.trainer.service.implement.MemberServiceImpl;
-import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class EmailAndPwValidator implements ConstraintValidator<ValidEmailAndPw, Object> {
 
     private final ValidateServiceImpl validateService;
-    private final MemberServiceImpl memberService;
+    private final TrainerServiceImpl trainerService;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -21,8 +21,8 @@ public class EmailAndPwValidator implements ConstraintValidator<ValidEmailAndPw,
         String email = validateService.getFieldValue(object, "email");
         String password = validateService.getFieldValue(object, "password");
         try {
-            Member user = memberService.getByEmail(email);
-            return passwordEncoder.matches(password, user.getPassword());
+            Trainer trainer = trainerService.getByEmail(email);
+            return passwordEncoder.matches(password, trainer.getPassword());
         } catch (Exception e) {
             return false;
         }

@@ -5,12 +5,12 @@ import com.example.deukgeun.commom.response.LoginResponse;
 import com.example.deukgeun.commom.response.RestResponse;
 import com.example.deukgeun.commom.service.implement.TokenServiceImpl;
 import com.example.deukgeun.commom.util.RestResponseUtil;
-import com.example.deukgeun.trainer.entity.Member;
 import com.example.deukgeun.trainer.entity.Profile;
+import com.example.deukgeun.trainer.entity.Trainer;
 import com.example.deukgeun.trainer.request.*;
-import com.example.deukgeun.trainer.response.MemberResponse;
-import com.example.deukgeun.trainer.service.implement.MemberServiceImpl;
+import com.example.deukgeun.trainer.response.TrainerResponse;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
+import com.example.deukgeun.trainer.service.implement.TrainerServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -34,13 +34,13 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-public class MemberControllerTest {
+public class TrainerControllerTest {
     @InjectMocks
-    private MemberController memberController;
+    private TrainerController trainerController;
     @Mock
     private ProfileServiceImpl profileService;
     @Mock
-    private MemberServiceImpl memberService;
+    private TrainerServiceImpl trainerService;
     @Mock
     private TokenServiceImpl tokenService;
     @Mock
@@ -52,7 +52,7 @@ public class MemberControllerTest {
 
     @BeforeEach
     void setup () {
-        ReflectionTestUtils.setField(memberController, "role", "trainer");
+        ReflectionTestUtils.setField(trainerController, "role", "trainer");
     }
 
     @Test
@@ -60,27 +60,27 @@ public class MemberControllerTest {
         // Given
         String keyword = "search keyword";
         Integer currentPage = 1;
-        List<MemberResponse.MemberListResponse> memberList = new ArrayList<>();
-        Page<MemberResponse.MemberListResponse> page = new PageImpl<>(memberList);
-        MemberResponse.UserListPaginationResponse list = new MemberResponse.UserListPaginationResponse(page, currentPage);
+        List<TrainerResponse.TrainerListResponse> trainerList = new ArrayList<>();
+        Page<TrainerResponse.TrainerListResponse> page = new PageImpl<>(trainerList);
+        TrainerResponse.TrainerListPaginationResponse list = new TrainerResponse.TrainerListPaginationResponse(page, currentPage);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공 했습니다.", list);
 
-        given(memberService.getList(keyword, currentPage)).willReturn(page);
+        given(trainerService.getList(keyword, currentPage)).willReturn(page);
 
         // When
-        ResponseEntity<?> responseEntity = memberController.getList(keyword, currentPage);
+        ResponseEntity<?> responseEntity = trainerController.getList(keyword, currentPage);
 
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
-        verify(memberService, times(1)).getList(keyword, currentPage);
+        verify(trainerService, times(1)).getList(keyword, currentPage);
     }
 
     @Test
     void givenValidAuthToken_whenGetDetail_thenReturnSuccessResponse() {
         // Given
         String authToken = "validAuthToken";
-        Member expectedMember = Member
+        Trainer expectedTrainer = Trainer
                 .builder()
                 .name("test")
                 .price(3000)
@@ -90,27 +90,27 @@ public class MemberControllerTest {
                 .gender(Gender.M)
                 .groupName("")
                 .build();
-        MemberResponse response = new MemberResponse(expectedMember);
+        TrainerResponse response = new TrainerResponse(expectedTrainer);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("마이 페이지 조회 성공했습니다.", response);
 
         given(tokenService.resolveAuthToken(request)).willReturn(authToken);
-        given(memberService.getByAuthToken(authToken)).willReturn(expectedMember);
+        given(trainerService.getByAuthToken(authToken)).willReturn(expectedTrainer);
 
         // When
-        ResponseEntity<?> responseEntity = memberController.getDetail(request);
+        ResponseEntity<?> responseEntity = trainerController.getDetail(request);
 
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
 
         verify(tokenService, times(1)).resolveAuthToken(request);
-        verify(memberService, times(1)).getByAuthToken(authToken);
+        verify(trainerService, times(1)).getByAuthToken(authToken);
     }
 
     @Test
-    void givenValidJoinRequest_whenSave_thenReturnSuccessResponse() throws IOException, IOException {
+    void givenValidJoinRequest_whenSave_thenReturnSuccessResponse() throws IOException {
         // Given
-        Member savedMember = Member
+        Trainer savedTrainer = Trainer
                 .builder()
                 .name("test")
                 .price(3000)
@@ -124,17 +124,17 @@ public class MemberControllerTest {
         JoinRequest joinRequest = mock(JoinRequest.class);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("회원 가입 성공 했습니다.", null);
 
-        given(memberService.save(joinRequest)).willReturn(savedMember);
+        given(trainerService.save(joinRequest)).willReturn(savedTrainer);
 
         // When
-        ResponseEntity<?> responseEntity = memberController.save(joinRequest, bindingResult);
+        ResponseEntity<?> responseEntity = trainerController.save(joinRequest, bindingResult);
 
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
 
-        verify(memberService).save(joinRequest);
-        verify(profileService).save(joinRequest.getProfile(), savedMember.getId());
+        verify(trainerService).save(joinRequest);
+        verify(profileService).save(joinRequest.getProfile(), savedTrainer.getId());
     }
 
     @Test
@@ -144,12 +144,12 @@ public class MemberControllerTest {
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("내 정보 수정 성공했습니다.", null);
 
         // When
-        ResponseEntity<?> responseEntity = memberController.update(updateInfoRequest, null);
+        ResponseEntity<?> responseEntity = trainerController.update(updateInfoRequest, null);
 
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
-        verify(memberService).updateInfo(updateInfoRequest);
+        verify(trainerService).updateInfo(updateInfoRequest);
     }
 
     @Test
@@ -159,12 +159,12 @@ public class MemberControllerTest {
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("비밀번호 변경 성공했습니다.", null);
 
         // When
-        ResponseEntity<?> responseEntity = memberController.updatePassword(updatePasswordRequest, null);
+        ResponseEntity<?> responseEntity = trainerController.updatePassword(updatePasswordRequest, null);
 
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
-        verify(memberService).updatePassword(updatePasswordRequest);
+        verify(trainerService).updatePassword(updatePasswordRequest);
     }
 
     @Test
@@ -172,16 +172,16 @@ public class MemberControllerTest {
         // Given
         String authToken = "validAuthToken";
         WithdrawalUserRequest withdrawalUserRequest = mock(WithdrawalUserRequest.class);
-        Member member = new Member();
+        Trainer trainer = new Trainer();
         Profile userProfile = new Profile();
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("회원 탈퇴 성공했습니다.", null);
 
-        given(memberService.getByEmail(withdrawalUserRequest.getEmail())).willReturn(member);
-        given(profileService.getByMemberId(member.getId())).willReturn(userProfile);
+        given(trainerService.getByEmail(withdrawalUserRequest.getEmail())).willReturn(trainer);
+        given(profileService.getByTrainerId(trainer.getId())).willReturn(userProfile);
         given(tokenService.resolveAuthToken(request)).willReturn(authToken);
 
         // When
-        ResponseEntity<?> responseEntity = memberController.withdrawal(request, withdrawalUserRequest, null);
+        ResponseEntity<?> responseEntity = trainerController.withdrawal(request, withdrawalUserRequest, null);
 
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -189,7 +189,7 @@ public class MemberControllerTest {
 
         verify(profileService, times(1)).deleteFileToDirectory(userProfile.getPath());
         verify(profileService, times(1)).withdrawal(userProfile.getId());
-        verify(memberService, times(1)).withdrawal(member.getId());
+        verify(trainerService, times(1)).withdrawal(trainer.getId());
         verify(tokenService, times(1)).resolveAuthToken(request);
         verify(tokenService, times(1)).deleteToken(anyString());
     }
@@ -210,12 +210,12 @@ public class MemberControllerTest {
         given(tokenService.setToken(loginRequest.getEmail(), response)).willReturn(authToken);
 
         // When
-        ResponseEntity<?> responseEntity = memberController.login(loginRequest, bindingResult, response);
+        ResponseEntity<?> responseEntity = trainerController.login(loginRequest, bindingResult, response);
 
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
-        verify(memberService, times(1)).isPasswordMatches(loginRequest);
+        verify(trainerService, times(1)).isPasswordMatches(loginRequest);
         verify(tokenService, times(1)).setToken(loginRequest.getEmail(), response);
     }
 }

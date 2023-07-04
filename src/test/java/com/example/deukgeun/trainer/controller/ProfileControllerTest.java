@@ -4,11 +4,11 @@ import com.example.deukgeun.commom.enums.Gender;
 import com.example.deukgeun.commom.response.RestResponse;
 import com.example.deukgeun.commom.service.implement.TokenServiceImpl;
 import com.example.deukgeun.commom.util.RestResponseUtil;
-import com.example.deukgeun.trainer.entity.Member;
+import com.example.deukgeun.trainer.entity.Trainer;
 import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.request.UpdateProfileRequest;
 import com.example.deukgeun.trainer.response.ProfileResponse;
-import com.example.deukgeun.trainer.service.implement.MemberServiceImpl;
+import com.example.deukgeun.trainer.service.implement.TrainerServiceImpl;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -34,7 +34,7 @@ public class ProfileControllerTest {
     @Mock
     private ProfileServiceImpl profileService;
     @Mock
-    private MemberServiceImpl memberService;
+    private TrainerServiceImpl trainerService;
     @Mock
     private TokenServiceImpl tokenService;
     @Mock
@@ -45,7 +45,7 @@ public class ProfileControllerTest {
     @Test
     void givenValidUserId_whenGetByUserId_thenReturnProfileResponse() {
         // Given
-        Member member = Member
+        Trainer trainer = Trainer
                 .builder()
                 .name("test")
                 .price(3000)
@@ -60,14 +60,14 @@ public class ProfileControllerTest {
                 .builder()
                 .id(123L)
                 .path("test")
-                .memberId(123L)
-                .member(member)
+                .trainerId(123L)
+                .trainer(trainer)
                 .build();
 
         ProfileResponse.ProfileAndUserResponse response = new ProfileResponse.ProfileAndUserResponse(profile);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("트레이너 상세보기 성공했습니다.", response);
 
-        given(profileService.getByMemberId(anyLong())).willReturn(profile);
+        given(profileService.getByTrainerId(anyLong())).willReturn(profile);
 
         // When
         ResponseEntity<?> responseEntity = profileController.getByUserId(1L);
@@ -80,9 +80,9 @@ public class ProfileControllerTest {
     void givenValidAuthToken_whenGetByAuthToken_thenReturnProfileResponse() {
         // Given
         String authToken = "validAuthToken";
-        Long memberId = 1L;
+        Long trainerId = 1L;
 
-        Member member = Member
+        Trainer trainer = Trainer
                 .builder()
                 .name("test")
                 .price(3000)
@@ -97,8 +97,8 @@ public class ProfileControllerTest {
                 .builder()
                 .id(123L)
                 .path("test")
-                .memberId(123L)
-                .member(member)
+                .trainerId(123L)
+                .trainer(trainer)
                 .build();
 
         ProfileResponse.ProfileAndUserResponse response = new ProfileResponse.ProfileAndUserResponse(profile);
@@ -106,8 +106,8 @@ public class ProfileControllerTest {
 
 
         given(tokenService.resolveAuthToken(request)).willReturn(authToken);
-        given(memberService.getMemberId(authToken)).willReturn(memberId);
-        given(profileService.getByMemberId(memberId)).willReturn(profile);
+        given(trainerService.getTrainerId(authToken)).willReturn(trainerId);
+        given(profileService.getByTrainerId(trainerId)).willReturn(profile);
 
         // When
         ResponseEntity<?> responseEntity = profileController.getByAuthToken(request);

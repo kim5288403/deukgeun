@@ -17,22 +17,22 @@ public class Profile extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   
-  @Column(name = "member_id")
-  private Long memberId;
+  @Column(name = "trainer_id")
+  private Long trainerId;
   
   @OneToOne()
-  @JoinColumn(name = "member_id", insertable = false, updatable = false, nullable = false)
-  private Member member;
+  @JoinColumn(name = "trainer_id", insertable = false, updatable = false, nullable = false)
+  private Trainer trainer;
 
   @Column(length = 100, nullable = false)
   private String path;
 
   @Builder
-  public Profile(Long id, String path, Long memberId, Member member) {
+  public Profile(Long id, String path, Long trainerId, Trainer trainer) {
     this.id = id;
-    this.memberId = memberId;
+    this.trainerId = trainerId;
     this.path = path;
-    this.member = member;
+    this.trainer = trainer;
   }
 
   public void updatePath(String path) {

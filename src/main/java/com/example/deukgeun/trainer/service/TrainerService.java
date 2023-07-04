@@ -1,5 +1,5 @@
 package com.example.deukgeun.trainer.service;
 
-public interface MemberService {
+public interface TrainerService {
 	
 }

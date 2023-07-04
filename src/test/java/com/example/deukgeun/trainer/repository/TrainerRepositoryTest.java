@@ -2,7 +2,7 @@ package com.example.deukgeun.trainer.repository;
 
 import com.example.deukgeun.commom.enums.Gender;
 import com.example.deukgeun.trainer.entity.GroupStatus;
-import com.example.deukgeun.trainer.entity.Member;
+import com.example.deukgeun.trainer.entity.Trainer;
 import com.example.deukgeun.trainer.request.UpdateInfoRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,19 +19,19 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application-test.yml")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class MemberRepositoryTest {
+public class TrainerRepositoryTest {
     @Autowired
-    private MemberRepository memberRepository;
+    private TrainerRepository trainerRepository;
 
     @Test
     void shouldNotNullRepository() {
-        assertNotNull(memberRepository);
+        assertNotNull(trainerRepository);
     }
 
     @Test
-    void givenMember_whenSaved_thenReturnValid() {
+    void givenTrainer_whenSaved_thenReturnValid() {
         // Given
-        Member member = Member
+        Trainer trainer = Trainer
                 .builder()
                 .name("테스트")
                 .email("testEmail@test.com")
@@ -49,20 +49,20 @@ public class MemberRepositoryTest {
                 .build();
 
         // When
-        Member saveMember = memberRepository.save(member);
+        Trainer saveTrainer = trainerRepository.save(trainer);
 
         // Then
-        Member foundMember = memberRepository.findById(saveMember.getId()).orElse(null);
-        assertNotNull(foundMember);
-        assertEquals(saveMember.getEmail(), foundMember.getEmail());
-        assertEquals(saveMember.getName(), foundMember.getName());
+        Trainer foundTrainer = trainerRepository.findById(saveTrainer.getId()).orElse(null);
+        assertNotNull(foundTrainer);
+        assertEquals(saveTrainer.getEmail(), foundTrainer.getEmail());
+        assertEquals(saveTrainer.getName(), foundTrainer.getName());
     }
 
     @Test
-    void givenMember_whenFindByEmail_thenReturnValid() {
+    void givenTrainer_whenFindByEmail_thenReturnValid() {
         // Given
         String email = "testEmail@test.com";
-        Member member = Member
+        Trainer trainer = Trainer
                 .builder()
                 .name("테스트")
                 .email(email)
@@ -78,21 +78,21 @@ public class MemberRepositoryTest {
                 .postcode("test")
                 .price(3000)
                 .build();
-        memberRepository.save(member);
+        trainerRepository.save(trainer);
 
         // When
-        Optional<Member> foundMember = memberRepository.findByEmail(email);
+        Optional<Trainer> foundTrainer = trainerRepository.findByEmail(email);
 
         // Then
-        assertTrue(foundMember.isPresent());
-        assertEquals(email, foundMember.get().getEmail());
+        assertTrue(foundTrainer.isPresent());
+        assertEquals(email, foundTrainer.get().getEmail());
     }
 
     @Test
-    void givenMember_whenExistsByEmail_thenReturnTrue() {
+    void givenTrainer_whenExistsByEmail_thenReturnTrue() {
         // Given
         String email = "testEmail@test.com";
-        Member member = Member.builder()
+        Trainer trainer = Trainer.builder()
                 .name("테스트")
                 .email(email)
                 .password("test1234!")
@@ -107,20 +107,20 @@ public class MemberRepositoryTest {
                 .postcode("test")
                 .price(3000)
                 .build();
-        memberRepository.save(member);
+        trainerRepository.save(trainer);
 
         // When
-        boolean existsByEmail = memberRepository.existsByEmail(email);
+        boolean existsByEmail = trainerRepository.existsByEmail(email);
 
         // Then
         assertTrue(existsByEmail);
     }
 
     @Test
-    void givenMember_whenUpdateInfo_thenIsUpdated() {
+    void givenTrainer_whenUpdateInfo_thenIsUpdated() {
         // Given
         String email = "testEmail@test.com";
-        Member member = Member
+        Trainer trainer = Trainer
                 .builder()
                 .name("테스트")
                 .email(email)
@@ -136,8 +136,8 @@ public class MemberRepositoryTest {
                 .postcode("test")
                 .price(3000)
                 .build();
-        memberRepository.save(member);
-        Member foundMember = memberRepository.findByEmail(email).orElse(null);
+        trainerRepository.save(trainer);
+        Trainer foundTrainer = trainerRepository.findByEmail(email).orElse(null);
 
         UpdateInfoRequest updateInfoRequest = new UpdateInfoRequest();
         updateInfoRequest.setEmail("updateTestEmail@test.com");
@@ -154,22 +154,22 @@ public class MemberRepositoryTest {
         updateInfoRequest.setIntroduction("test");
 
         // When
-        assert foundMember != null;
-        foundMember.updateInfo(updateInfoRequest);
-        memberRepository.save(foundMember);
+        assert foundTrainer != null;
+        foundTrainer.updateInfo(updateInfoRequest);
+        trainerRepository.save(foundTrainer);
 
         // Then
-        Member resultMember = memberRepository.findById(foundMember.getId()).orElse(null);
-        assertNotNull(resultMember);
-        assertNotEquals(email, resultMember.getEmail());
+        Trainer resultTrainer = trainerRepository.findById(foundTrainer.getId()).orElse(null);
+        assertNotNull(resultTrainer);
+        assertNotEquals(email, resultTrainer.getEmail());
     }
 
     @Test
-    void givenMember_whenUpdatePassword_thenIsUpdated() {
+    void givenTrainer_whenUpdatePassword_thenIsUpdated() {
         // Given
         String email = "testEmail@test.com";
         String password = "testPassword";
-        Member member = Member
+        Trainer trainer = Trainer
                 .builder()
                 .name("테스트")
                 .email(email)
@@ -185,18 +185,18 @@ public class MemberRepositoryTest {
                 .postcode("test")
                 .price(3000)
                 .build();
-        memberRepository.save(member);
-        Member foundMember = memberRepository.findByEmail(email).orElse(null);
+        trainerRepository.save(trainer);
+        Trainer foundTrainer = trainerRepository.findByEmail(email).orElse(null);
 
         // When
-        assert foundMember != null;
-        foundMember.updatePassword("newPasswordTest");
-        memberRepository.save(foundMember);
+        assert foundTrainer != null;
+        foundTrainer.updatePassword("newPasswordTest");
+        trainerRepository.save(foundTrainer);
 
         // Then
-        Member resultMember = memberRepository.findById(foundMember.getId()).orElse(null);
-        assertNotNull(resultMember);
-        assertNotEquals(password, resultMember.getPassword());
+        Trainer resultTrainer = trainerRepository.findById(foundTrainer.getId()).orElse(null);
+        assertNotNull(resultTrainer);
+        assertNotEquals(password, resultTrainer.getPassword());
     }
 
 }
