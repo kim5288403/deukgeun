@@ -27,10 +27,10 @@ import javax.validation.Valid;
 import java.io.IOException;
 
 
-@RestController("trainer.controller.UserController")
+@RestController("trainer.controller.MemberController")
 @RequestMapping("/api/trainer")
 @RequiredArgsConstructor
-public class UserController {
+public class MemberController {
 
     private final MemberServiceImpl memberService;
     private final TokenServiceImpl tokenService;
@@ -124,8 +124,7 @@ public class UserController {
         // 비밀번호 업데이트
         memberService.updatePassword(request);
 
-        return RestResponseUtil
-                .ok("비밀번호 변경 성공했습니다.", null);
+        return RestResponseUtil.ok("비밀번호 변경 성공했습니다.", null);
     }
 
     /**
