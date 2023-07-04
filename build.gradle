@@ -53,9 +53,9 @@ dependencies {
 
 test {
 	useJUnitPlatform()
-//	filter {
-//		excludeTestsMatching "*ProfileServiceTest*"
-//	}
+	filter {
+		excludeTestsMatching "*ProfileServiceTest*"
+	}
 }
 
 tasks.register('profileServiceTest', Test) {
