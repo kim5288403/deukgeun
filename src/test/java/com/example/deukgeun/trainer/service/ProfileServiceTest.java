@@ -15,8 +15,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,9 +36,9 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@ContextConfiguration
+@TestExecutionListeners(listeners = DependencyInjectionTestExecutionListener.class)
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = DeukgeunApplication.class)
+@SpringBootTest
 public class ProfileServiceTest {
     @InjectMocks
     private ProfileServiceImpl profileService;
