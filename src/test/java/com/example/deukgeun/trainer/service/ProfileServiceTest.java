@@ -37,7 +37,7 @@ import static org.mockito.Mockito.verify;
 @ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application-test.yml")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class ProfileServiceTest {
+class ProfileServiceTest {
     @InjectMocks
     private ProfileServiceImpl profileService;
     @Mock
@@ -46,7 +46,7 @@ public class ProfileServiceTest {
     private MemberServiceImpl memberService;
 
     @Test
-    public void givenExistingProfileId_whenGetProfile_thenReturnProfile() {
+    void givenExistingProfileId_whenGetProfile_thenReturnProfile() {
         // Given
         Long profileId = 1L;
         Profile expectedProfile = Profile
@@ -64,7 +64,7 @@ public class ProfileServiceTest {
     }
 
     @Test
-    public void givenNonExistingProfileId_whenGetProfile_thenThrowEntityNotFoundException() {
+    void givenNonExistingProfileId_whenGetProfile_thenThrowEntityNotFoundException() {
         // Given
         Long profileId = 1L;
         given(profileRepository.findById(profileId)).willReturn(Optional.empty());
@@ -75,7 +75,7 @@ public class ProfileServiceTest {
     }
 
     @Test
-    public void givenValidAuthToken_whenGetProfileId_thenReturnProfileId() {
+    void givenValidAuthToken_whenGetProfileId_thenReturnProfileId() {
         // Given
         String authToken = "validAuthToken";
         Member member = Member
@@ -102,7 +102,7 @@ public class ProfileServiceTest {
     }
 
     @Test
-    public void givenExistingMemberId_whenGetByMemberId_thenReturnProfile() {
+    void givenExistingMemberId_whenGetByMemberId_thenReturnProfile() {
         // Given
         Long memberId = 1L;
         Profile expectedProfile = Profile
@@ -121,7 +121,7 @@ public class ProfileServiceTest {
     }
 
     @Test
-    public void givenNonExistingMemberId_whenGetByMemberId_thenThrowEntityNotFoundException() {
+    void givenNonExistingMemberId_whenGetByMemberId_thenThrowEntityNotFoundException() {
         // Given
         Long memberId = 1L;
         given(profileRepository.findByMemberId(memberId)).willReturn(Optional.empty());
@@ -132,7 +132,7 @@ public class ProfileServiceTest {
     }
 
     @Test
-    public void givenSupportedFileType_whenIsSupportedContentType_thenReturnTrue() {
+    void givenSupportedFileType_whenIsSupportedContentType_thenReturnTrue() {
         // Given
         MultipartFile file = new MockMultipartFile("file", "image.png", "image/png", new byte[0]);
 
@@ -144,7 +144,7 @@ public class ProfileServiceTest {
     }
 
     @Test
-    public void givenUnsupportedFileType_whenIsSupportedContentType_thenReturnFalse() {
+    void givenUnsupportedFileType_whenIsSupportedContentType_thenReturnFalse() {
         // Given
         MultipartFile file = new MockMultipartFile("file", "document.docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", new byte[0]);
 
@@ -156,7 +156,7 @@ public class ProfileServiceTest {
     }
 
     @Test
-    public void givenFileAndFileName_whenSaveFileToDirectory_thenFileIsSaved() throws IOException {
+    void givenFileAndFileName_whenSaveFileToDirectory_thenFileIsSaved() throws IOException {
         // Given
         String fileName = "image.png";
         MultipartFile file = new MockMultipartFile("file", fileName, "image/png", new byte[0]);
@@ -172,7 +172,7 @@ public class ProfileServiceTest {
     }
 
     @Test
-    public void givenExistingFile_whenDeleteFileToDirectory_thenFileIsDeleted() throws IOException {
+    void givenExistingFile_whenDeleteFileToDirectory_thenFileIsDeleted() throws IOException {
         // Given
         String fileName = "test.txt";
         Path tempDir = Files.createTempDirectory("test");
@@ -188,7 +188,7 @@ public class ProfileServiceTest {
     }
 
     @Test
-    public void givenProfileAndMemberId_whenSave_thenProfileIsSavedAndFileIsSaved() throws IOException {
+    void givenProfileAndMemberId_whenSave_thenProfileIsSavedAndFileIsSaved() throws IOException {
         // Given
         Long memberId = 1L;
         String fileName = "image.png";
@@ -204,7 +204,7 @@ public class ProfileServiceTest {
     }
 
     @Test
-    public void givenProfileAndAuthToken_whenUpdateProfile_thenFileIsSavedAndProfileIsUpdated() throws Exception {
+    void givenProfileAndAuthToken_whenUpdateProfile_thenFileIsSavedAndProfileIsUpdated() throws Exception {
         // Given
         String authToken = "testToken";
         Long profileId = 1L;
@@ -240,7 +240,7 @@ public class ProfileServiceTest {
     }
 
     @Test
-    public void givenFoundProfileAndPath_whenUpdate_thenProfileIsUpdated() {
+    void givenFoundProfileAndPath_whenUpdate_thenProfileIsUpdated() {
         // Given
         String path = "new/path";
         Profile foundProfile = Profile
@@ -258,7 +258,7 @@ public class ProfileServiceTest {
     }
 
     @Test
-    public void givenProfileId_whenWithdrawal_thenProfileIsDeleted() {
+    void givenProfileId_whenWithdrawal_thenProfileIsDeleted() {
         // Given
         Long profileId = 1L;
 
@@ -270,7 +270,7 @@ public class ProfileServiceTest {
     }
 
     @Test
-    public void givenValidFileName_whenGetUUIDPath_thenUUIDPathIsReturned() throws IOException {
+    void givenValidFileName_whenGetUUIDPath_thenUUIDPathIsReturned() throws IOException {
         // Given
         String fileName = "image.png";
 
@@ -283,7 +283,7 @@ public class ProfileServiceTest {
     }
 
     @Test
-    public void givenEmptyFileName_whenGetUUIDPath_thenIOExceptionIsThrown() {
+    void givenEmptyFileName_whenGetUUIDPath_thenIOExceptionIsThrown() {
         // Given
         String fileName = "";
 
