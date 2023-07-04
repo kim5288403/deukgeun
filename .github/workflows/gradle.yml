@@ -56,7 +56,7 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
         run: chmod +x ./gradlew
 
       - name: Run ProfileServiceTest
-        run: ./gradlew clean test --tests "com.example.deukgeun.trainer.service.ProfileServiceTest"
+        run: ./gradlew clean test --tests "com.example.deukgeun.trainer.service.ProfileServiceTest" -i
 
 #      - name: Run tests
 #        run: ./gradlew test -i
