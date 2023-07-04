@@ -59,7 +59,7 @@ test {
 }
 
 tasks.register('profileServiceTest', Test) {
-	useJUnitPlatform()
+//	useJUnitPlatform()
 	filter {
 		includeTestsMatching "*ProfileServiceTest*"
 //		includeTestsMatching "*ProfileRepositoryTest*"
