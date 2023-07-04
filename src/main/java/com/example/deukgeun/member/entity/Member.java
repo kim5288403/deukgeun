@@ -2,6 +2,7 @@ package com.example.deukgeun.member.entity;
 
 import com.example.deukgeun.commom.enums.Gender;
 import com.example.deukgeun.trainer.entity.BaseEntity;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -33,4 +34,21 @@ public class Member extends BaseEntity {
     @Column(name = "gender", nullable = false)
     @Enumerated(EnumType.STRING)
     private Gender gender;
+
+    @Builder
+    public Member(
+            Long id,
+            String email,
+            String password,
+            String name,
+            Integer age,
+            Gender gender
+    ) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.age = age;
+        this.gender = gender;
+    }
 }

@@ -31,7 +31,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-public class TrainerServiceTest {
+class TrainerServiceTest {
     @Mock
     private TrainerRepository trainerRepository;
     @Mock
@@ -44,7 +44,7 @@ public class TrainerServiceTest {
     private TrainerServiceImpl trainerService;
 
     @Test
-    public void givenMatchingPassword_whenIsPasswordMatches_thenNoExceptionThrown() throws EntityNotFoundException {
+    void givenMatchingPassword_whenIsPasswordMatches_thenNoExceptionThrown() throws EntityNotFoundException {
         // Given
         String email = "example@example.com";
         String password = "password123";
@@ -69,7 +69,7 @@ public class TrainerServiceTest {
     }
 
     @Test
-    public void givenMismatchingPassword_whenIsPasswordMatches_thenPasswordMismatchExceptionThrown() throws EntityNotFoundException {
+    void givenMismatchingPassword_whenIsPasswordMatches_thenPasswordMismatchExceptionThrown() throws EntityNotFoundException {
         // Given
         String email = "example@example.com";
         String password = "password123";
@@ -94,7 +94,7 @@ public class TrainerServiceTest {
     }
 
     @Test
-    public void givenKeywordAndPage_whenGetList_thenReturnsMatchingUsers() {
+    void givenKeywordAndPage_whenGetList_thenReturnsMatchingUsers() {
         // Given
         String keyword = "john";
         int currentPage = 0;
@@ -131,7 +131,7 @@ public class TrainerServiceTest {
     }
 
     @Test
-    public void givenJoinRequest_whenSave_thenTrainerIsSavedAndReturned() {
+    void givenJoinRequest_whenSave_thenTrainerIsSavedAndReturned() {
         // Given
         JoinRequest request = new JoinRequest();
         request.setName("John Doe");
@@ -162,7 +162,7 @@ public class TrainerServiceTest {
     }
 
     @Test
-    public void givenExistingEmail_whenGetByEmail_thenReturnsMatchingTrainer() throws EntityNotFoundException {
+    void givenExistingEmail_whenGetByEmail_thenReturnsMatchingTrainer() throws EntityNotFoundException {
         // Given
         String email = "johndoe@example.com";
         Trainer trainer = Trainer
@@ -183,7 +183,7 @@ public class TrainerServiceTest {
     }
 
     @Test
-    public void givenNonexistentEmail_whenGetByEmail_thenThrowsEntityNotFoundException() {
+    void givenNonexistentEmail_whenGetByEmail_thenThrowsEntityNotFoundException() {
         // Given
         String email = "nonexistent@example.com";
 
@@ -197,7 +197,7 @@ public class TrainerServiceTest {
     }
 
     @Test
-    public void givenValidAuthToken_whenGetByAuthToken_thenReturnsMatchingTrainer() throws EntityNotFoundException {
+    void givenValidAuthToken_whenGetByAuthToken_thenReturnsMatchingTrainer() throws EntityNotFoundException {
         // Given
         String authToken = "validAuthToken";
         String email = "johndoe@example.com";
@@ -223,7 +223,7 @@ public class TrainerServiceTest {
     }
 
     @Test
-    public void givenInvalidAuthToken_whenGetByAuthToken_thenThrowsEntityNotFoundException() throws EntityNotFoundException {
+    void givenInvalidAuthToken_whenGetByAuthToken_thenThrowsEntityNotFoundException() throws EntityNotFoundException {
         // Given
         String authToken = "invalidAuthToken";
 
@@ -237,7 +237,7 @@ public class TrainerServiceTest {
     }
 
     @Test
-    public void givenValidUpdateInfoRequest_whenUpdateInfo_thenTrainerIsUpdatedAndSaved() throws EntityNotFoundException {
+    void givenValidUpdateInfoRequest_whenUpdateInfo_thenTrainerIsUpdatedAndSaved() throws EntityNotFoundException {
         // Given
         UpdateInfoRequest request = new UpdateInfoRequest();
         request.setEmail("johndoe@example.com");
@@ -259,7 +259,7 @@ public class TrainerServiceTest {
     }
 
     @Test
-    public void givenInvalidUpdateInfoRequest_whenUpdateInfo_thenThrowsEntityNotFoundException() {
+    void givenInvalidUpdateInfoRequest_whenUpdateInfo_thenThrowsEntityNotFoundException() {
         // Given
         UpdateInfoRequest request = new UpdateInfoRequest();
         request.setEmail("nonexistent@example.com");
@@ -275,7 +275,7 @@ public class TrainerServiceTest {
     }
 
     @Test
-    public void givenValidUpdatePasswordRequest_whenUpdatePassword_thenPasswordIsUpdatedAndSaved() {
+    void givenValidUpdatePasswordRequest_whenUpdatePassword_thenPasswordIsUpdatedAndSaved() {
         // Given
         UpdatePasswordRequest request = new UpdatePasswordRequest();
         request.setEmail("johndoe@example.com");
@@ -305,7 +305,7 @@ public class TrainerServiceTest {
     }
 
     @Test
-    public void givenInvalidUpdatePasswordRequest_whenUpdatePassword_thenTrainerIsNotFound() {
+    void givenInvalidUpdatePasswordRequest_whenUpdatePassword_thenTrainerIsNotFound() {
         // Given
         UpdatePasswordRequest request = new UpdatePasswordRequest();
         String encodedNewPassword = "encodedNewPassword123";
@@ -324,7 +324,7 @@ public class TrainerServiceTest {
     }
 
     @Test
-    public void givenExistingTrainerId_whenWithdrawal_thenTrainerIsDeleted() {
+    void givenExistingTrainerId_whenWithdrawal_thenTrainerIsDeleted() {
         // Given
         Long trainerId = 123L;
 
@@ -336,7 +336,7 @@ public class TrainerServiceTest {
     }
 
     @Test
-    public void givenValidAuthToken_whenGetUserId_thenReturnUserId() throws EntityNotFoundException {
+    void givenValidAuthToken_whenGetUserId_thenReturnUserId() throws EntityNotFoundException {
         // Given
         String authToken = "validAuthToken";
         String email = "johndoe@example.com";
@@ -362,7 +362,7 @@ public class TrainerServiceTest {
     }
 
     @Test
-    public void givenExistingEmail_whenIsDuplicateEmail_thenReturnTrue() {
+    void givenExistingEmail_whenIsDuplicateEmail_thenReturnTrue() {
         // Given
         String email = "johndoe@example.com";
 
@@ -379,7 +379,7 @@ public class TrainerServiceTest {
     }
 
     @Test
-    public void givenNonExistingEmail_whenIsDuplicateEmail_thenReturnFalse() {
+    void givenNonExistingEmail_whenIsDuplicateEmail_thenReturnFalse() {
         // Given
         String email = "nonexistent@example.com";
 
@@ -396,7 +396,7 @@ public class TrainerServiceTest {
     }
 
     @Test
-    public void givenValidGroupStatusAndNonEmptyGroupName_whenIsEmptyGroupName_thenReturnFalse() {
+    void givenValidGroupStatusAndNonEmptyGroupName_whenIsEmptyGroupName_thenReturnFalse() {
         // Given
         String groupName = "Group A";
         String groupStatus = "Y";
@@ -409,7 +409,7 @@ public class TrainerServiceTest {
     }
 
     @Test
-    public void givenValidGroupStatusAndEmptyGroupName_whenIsEmptyGroupName_thenReturnTrue() {
+    void givenValidGroupStatusAndEmptyGroupName_whenIsEmptyGroupName_thenReturnTrue() {
         // Given
         String groupName = "";
         String groupStatus = "Y";
@@ -422,7 +422,7 @@ public class TrainerServiceTest {
     }
 
     @Test
-    public void givenInvalidGroupStatusAndNonEmptyGroupName_whenIsEmptyGroupName_thenReturnTrue() {
+    void givenInvalidGroupStatusAndNonEmptyGroupName_whenIsEmptyGroupName_thenReturnTrue() {
         // Given
         String groupName = "Group A";
         String groupStatus = "N";
@@ -435,7 +435,7 @@ public class TrainerServiceTest {
     }
 
     @Test
-    public void givenInvalidGroupStatusAndEmptyGroupName_whenIsEmptyGroupName_thenReturnTrue() {
+    void givenInvalidGroupStatusAndEmptyGroupName_whenIsEmptyGroupName_thenReturnTrue() {
         // Given
         String groupName = "";
         String groupStatus = "N";
