@@ -1,6 +1,7 @@
 package com.example.deukgeun.trainer.controller;
 
 import com.example.deukgeun.commom.enums.Gender;
+import com.example.deukgeun.commom.request.LoginRequest;
 import com.example.deukgeun.commom.response.LoginResponse;
 import com.example.deukgeun.commom.response.RestResponse;
 import com.example.deukgeun.commom.service.implement.TokenServiceImpl;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.validation.BindingResult;
 
@@ -49,6 +51,8 @@ public class TrainerControllerTest {
     private BindingResult bindingResult;
     @Mock
     private HttpServletResponse response;
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void setup () {
@@ -133,8 +137,8 @@ public class TrainerControllerTest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
 
-        verify(trainerService).save(joinRequest);
-        verify(profileService).save(joinRequest.getProfile(), savedTrainer.getId());
+        verify(trainerService, times(1)).save(joinRequest);
+        verify(profileService, times(1)).save(joinRequest.getProfile(), savedTrainer.getId());
     }
 
     @Test
@@ -198,16 +202,24 @@ public class TrainerControllerTest {
     void givenValidLoginRequest_whenLogin_thenReturnSuccessResponse() {
         // Given
         String authToken = "validAuthToken";
+        String role = "trainer";
         LoginRequest loginRequest =  mock(LoginRequest.class);
         LoginResponse loginResponse = LoginResponse
                 .builder()
                 .authToken(authToken)
-                .role("trainer")
+                .role(role)
+                .build();
+        Trainer trainer = Trainer
+                .builder()
+                .id(123L)
+                .password("encodePassword")
                 .build();
 
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("로그인 성공 했습니다.", loginResponse);
 
-        given(tokenService.setToken(loginRequest.getEmail(), response)).willReturn(authToken);
+        given(tokenService.setToken(loginRequest.getEmail(), response, role)).willReturn(authToken);
+        given(trainerService.getByEmail(anyString())).willReturn(trainer);
+        given(passwordEncoder.matches(anyString(), anyString())).willReturn(true);
 
         // When
         ResponseEntity<?> responseEntity = trainerController.login(loginRequest, bindingResult, response);
@@ -215,7 +227,7 @@ public class TrainerControllerTest {
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
-        verify(trainerService, times(1)).isPasswordMatches(loginRequest);
-        verify(tokenService, times(1)).setToken(loginRequest.getEmail(), response);
+        verify(trainerService, times(1)).isPasswordMatches(loginRequest.getPassword(), trainer);
+        verify(tokenService, times(1)).setToken(loginRequest.getEmail(), response, role);
     }
 }

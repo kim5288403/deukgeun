@@ -1,6 +1,7 @@
 package com.example.deukgeun.member.request;
 
 import com.example.deukgeun.commom.enums.Gender;
+import com.example.deukgeun.commom.validator.ValidAccessEmail;
 import com.example.deukgeun.commom.validator.ValidEnum;
 import lombok.Data;
 
@@ -21,6 +22,7 @@ public class JoinRequest {
 
     @NotBlank(message = "이메일 필수 입력 값입니다.")
     @Email(message = "이메일 형식이 아닙니다.")
+    @ValidAccessEmail
     private String email;
 
     @NotBlank(message = "비밀번호는 필수 입력 값입니다.")

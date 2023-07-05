@@ -3,8 +3,10 @@ package com.example.deukgeun.commom.exception.advice;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import javax.mail.MessagingException;
+import javax.persistence.EntityNotFoundException;
 import javax.validation.ValidationException;
 
+import com.example.deukgeun.commom.exception.PasswordMismatchException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,20 @@ public class RestControllerAdvisor {
     return RestResponseUtil
         .bad(e.getMessage(), null);
   }
+
+  @ExceptionHandler(PasswordMismatchException.class)
+  public ResponseEntity<?> passwordMismatchExceptionHandler(PasswordMismatchException e) {
+    return RestResponseUtil
+            .bad(e.getMessage(), null);
+  }
+
+  @ExceptionHandler(EntityNotFoundException.class)
+  public ResponseEntity<?> entityNotFoundExceptionHandler(EntityNotFoundException e) {
+    return RestResponseUtil
+            .bad(e.getMessage(), null);
+  }
+
+
 
   @ExceptionHandler(SignatureException.class)
   public ResponseEntity<?> signatureExceptionHandler(SignatureException e) {

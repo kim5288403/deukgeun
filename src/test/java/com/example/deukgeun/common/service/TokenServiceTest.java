@@ -3,7 +3,7 @@ package com.example.deukgeun.common.service;
 import com.example.deukgeun.commom.entity.Token;
 import com.example.deukgeun.commom.repository.TokenRepository;
 import com.example.deukgeun.commom.service.implement.TokenServiceImpl;
-import com.example.deukgeun.trainer.service.implement.UserDetailServiceImpl;
+import com.example.deukgeun.trainer.service.implement.TrainerDetailServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -33,7 +33,7 @@ public class TokenServiceTest {
     @Mock
     private HttpServletResponse response;
     @Mock
-    private UserDetailServiceImpl userDetailService;
+    private TrainerDetailServiceImpl trainerDetailService;
     @InjectMocks
     private TokenServiceImpl tokenService;
     @Mock
@@ -126,13 +126,13 @@ public class TokenServiceTest {
                 .compact();
 
         UserDetails userDetails = mock(UserDetails.class);
-        given(userDetailService.loadUserByUsername(anyString())).willReturn(userDetails);
+        given(trainerDetailService.loadUserByUsername(anyString())).willReturn(userDetails);
 
         // When
-        Authentication authentication = tokenService.getAuthentication(token);
+        Authentication authentication = tokenService.getAuthentication(token, roles);
 
         // Then
-        verify(userDetailService, times(1)).loadUserByUsername(userPk);
+        verify(trainerDetailService, times(1)).loadUserByUsername(userPk);
         assertEquals(userDetails, authentication.getPrincipal());
         assertEquals("", authentication.getCredentials());
         assertEquals(userDetails.getAuthorities(), authentication.getAuthorities());

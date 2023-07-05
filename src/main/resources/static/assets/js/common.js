@@ -124,4 +124,52 @@ function licenseDown(data) {
    	$(data).siblings("i").show();
    	$(data).parent().siblings("ul").slideDown();
 }
+
+        function codeSendAjax(email) {
+			$.ajax({
+				url : "/api/mail/send",
+				type : "post",
+				data : {email : email},
+			    beforeSend: function() {
+			        //마우스 커서를 로딩 중 커서로 변경
+			        $('html').css("cursor", "wait");
+			    },
+				success : function(res) {
+					 $('html').css("cursor", "auto");
+					if (res.code === 200) {
+						defaultSuccessAlert(res.message, "성공");
+					}
+				},
+				error : function(res) {
+					if (res.responseJSON.code === 400) {
+						errorMessage(res.responseJSON.data);
+					} else {
+						defaultErrorAlert(res.responseJSON.message);
+					}
+				}
+			});
+		}
+
+		function codeConfirmAjax(email, code) {
+			$.ajax({
+				url : "/api/mail/confirm",
+				type : "post",
+				data : {
+					email : email,
+					code : code
+					},
+				success : function(res) {
+					if (res.code === 200) {
+						defaultSuccessAlert(res.message, "성공");
+					}
+				},
+				error : function(res) {
+					if (res.responseJSON.code === 400) {
+						errorMessage(res.responseJSON.data);
+					} else {
+						defaultErrorAlert(res.responseJSON.message);
+					}
+				}
+			});
+		}
 	

@@ -1,12 +1,12 @@
 package com.example.deukgeun.trainer.service;
 
 import com.example.deukgeun.commom.exception.PasswordMismatchException;
+import com.example.deukgeun.commom.request.LoginRequest;
 import com.example.deukgeun.commom.service.implement.TokenServiceImpl;
 import com.example.deukgeun.trainer.entity.Trainer;
 import com.example.deukgeun.trainer.repository.ProfileRepository;
 import com.example.deukgeun.trainer.repository.TrainerRepository;
 import com.example.deukgeun.trainer.request.JoinRequest;
-import com.example.deukgeun.trainer.request.LoginRequest;
 import com.example.deukgeun.trainer.request.UpdateInfoRequest;
 import com.example.deukgeun.trainer.request.UpdatePasswordRequest;
 import com.example.deukgeun.trainer.response.TrainerResponse;
@@ -57,14 +57,12 @@ class TrainerServiceTest {
                 .password(encodedPassword)
                 .build();
 
-        given(trainerRepository.findByEmail(email)).willReturn(Optional.ofNullable(trainer));
         given(passwordEncoder.matches(password, encodedPassword)).willReturn(true);
 
         // When & Then
-        assertDoesNotThrow(() -> trainerService.isPasswordMatches(request));
+        assertDoesNotThrow(() -> trainerService.isPasswordMatches(request.getPassword(), trainer));
 
         // Verify
-        verify(trainerRepository, times(1)).findByEmail(email);
         verify(passwordEncoder, times(1)).matches(password, encodedPassword);
     }
 
@@ -82,14 +80,12 @@ class TrainerServiceTest {
                 .password(encodedPassword)
                 .build();
 
-        given(trainerRepository.findByEmail(email)).willReturn(Optional.ofNullable(trainer));
         given(passwordEncoder.matches(password, encodedPassword)).willReturn(false);
 
         // When & Then
-        assertThrows(PasswordMismatchException.class, () -> trainerService.isPasswordMatches(request));
+        assertThrows(PasswordMismatchException.class, () -> trainerService.isPasswordMatches(request.getPassword(), trainer));
 
         // Verify
-        verify(trainerRepository, times(1)).findByEmail(email);
         verify(passwordEncoder, times(1)).matches(password, encodedPassword);
     }
 

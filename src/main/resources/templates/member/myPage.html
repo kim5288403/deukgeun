@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{web/layout/layout}">
+<th:block layout:fragment="css">
+	<style>
+		.mypage{
+			display: flex;
+			border-bottom: solid #eeeeee;
+			margin-bottom: 5%;
+			cursor: pointer;
+		}
+		.fa{
+			margin-right: 4%;
+		}
+		.fa-2-5{
+			font-size: 2.5em;
+		}
+		.fa-3{
+			font-size: 3em;
+		}
+	</style>
+</th:block>
+<th:block layout:fragment="content">
+	<section class="post">
+		<header class="major">
+			<h1>
+				This is a<br /> My Page
+			</h1>
+			<p>
+				Aenean ornare velit lacus varius enim ullamcorper proin aliquam<br />
+				facilisis ante sed etiam magna interdum congue. Lorem ipsum dolor<br />
+				amet nullam sed etiam veroeros.
+			</p>
+		</header>
+		<div class="mypage" id="info">
+			<i class="fa fa-address-card-o fa-2-5" aria-hidden="true"></i>
+			<h2>내 정보</h2>
+		</div>
+		<div class="mypage" id="password">
+			<i class="fa fa-unlock-alt fa-3" aria-hidden="true"></i>
+			<h2>비밀 번호 변경</h2>
+		</div>
+		<div class="mypage" id="withdrawal">
+			<i class="fa fa-trash fa-3" aria-hidden="true"></i>
+			<h2>회원 탈퇴</h2>
+		</div>
+		<div class="mypage" id="jobPosting">
+			<i class="fa fa-clipboard fa-3" aria-hidden="true"></i>
+			<h2>공고 등록</h2>
+		</div>
+		<div class="mypage" id="post">
+			<i class="fa fa-clipboard fa-3" aria-hidden="true"></i>
+			<h2>공고</h2>
+		</div>
+	</section>
+</th:block>
+<th:block layout:fragment="script">
+	<script
+		src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	<script type="text/javascript">
+		$("div[class=mypage]").on("click", function () {
+			let url = $(this).attr("id");
+			window.location.href = "/member/my-page/" + url;
+		});
+	</script>
+</th:block>

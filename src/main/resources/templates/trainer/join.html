@@ -42,7 +42,7 @@
 							<span class="errorMessage" id="valid_email"></span>
 						</li>
 						<li>
-							<input type="button" onclick="codeSendAjax()" value="인증 번호 보내기">
+							<input id="codeSendBtn" type="button" value="인증 번호 보내기">
 						</li>	
 					</ul>
 				</div>
@@ -55,7 +55,7 @@
 							<span class="errorMessage" id="valid_code"></span>
 						</li>
 						<li>
-							<input type="button" onclick="codeConfirmAjax()" value="인증 확인">
+							<input id="codeConfirmBtn" type="button" value="인증 확인">
 						</li>	
 					</ul>
 				</div>
@@ -162,7 +162,7 @@
 				<div class="col-12">
 					<ul class="actions" style="justify-content: center;">
 						<li><input type="button" value="Join" class="primary"
-							onclick="saveUserAjax()"></li>
+							onclick="saveAjax()"></li>
 						<li><input type="reset" value="Reset"></li>
 					</ul>
 				</div>
@@ -192,7 +192,7 @@
 			return formData;
 		}
 
-		function saveUserAjax() {
+		function saveAjax() {
 			errorMessageReset();
 			let formData = joinFormData();
 
@@ -218,58 +218,16 @@
 			});
 		}
 
-		function codeSendAjax() {
+		$("#codeSendBtn").on("click", function() {
 			let email = $("input[name=email]").val();
-			
-			$.ajax({
-				url : "/api/mail/send",
-				type : "post",
-				data : {email : email},
-			    beforeSend: function() {
-			        //마우스 커서를 로딩 중 커서로 변경
-			        $('html').css("cursor", "wait");
-			    },
-				success : function(res) {
-					 $('html').css("cursor", "auto");
-					if (res.code === 200) {
-						defaultSuccessAlert(res.message, "성공");
-					}
-				},
-				error : function(res) {
-					if (res.responseJSON.code === 400) {
-						errorMessage(res.responseJSON.data);
-					} else {
-						defaultErrorAlert(res.responseJSON.message);
-					}
-				}
-			});
-		}
-		
-		function codeConfirmAjax() {
+			codeSendAjax(email);
+		});
+
+		$("#codeConfirmBtn").on("click", function() {
 			let email = $("input[name=email]").val();
 			let code = $("input[name=code]").val();
-		
-			$.ajax({
-				url : "/api/mail/confirmfirm",
-				type : "post",
-				data : {
-					email : email,
-					code : code
-					},
-				success : function(res) {
-					if (res.code === 200) {
-						defaultSuccessAlert(res.message, "성공");
-					}
-				},
-				error : function(res) {
-					if (res.responseJSON.code === 400) {
-						errorMessage(res.responseJSON.data);
-					} else {
-						defaultErrorAlert(res.responseJSON.message);
-					}
-				}
-			});
-		}
+			codeConfirmAjax(email, code);
+		});
 
 		$("input").on("change", function () {
 			$(this).siblings("span[class=errorMessage]").text("");

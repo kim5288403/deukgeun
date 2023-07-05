@@ -99,11 +99,11 @@ public class LicenseControllerTest {
         ResponseEntity<?> responseEntity = licenseController.save(request, saveLicenseRequest, bindingResult);
 
         // Then
-        verify(licenseService).getLicenseVerificationResult(saveLicenseRequest);
-        verify(licenseService).checkLicense(licenseResult);
-        verify(tokenService).resolveAuthToken(request);
-        verify(trainerService).getTrainerId(authToken);
-        verify(licenseService).save(licenseResult, trainerId);
+        verify(licenseService, times(1)).getLicenseVerificationResult(saveLicenseRequest);
+        verify(licenseService, times(1)).checkLicense(licenseResult);
+        verify(tokenService, times(1)).resolveAuthToken(request);
+        verify(trainerService, times(1)).getTrainerId(authToken);
+        verify(licenseService, times(1)).save(licenseResult, trainerId);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
     }

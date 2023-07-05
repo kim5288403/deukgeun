@@ -1,6 +1,8 @@
 package com.example.deukgeun.member.service;
 
 import com.example.deukgeun.commom.enums.Gender;
+import com.example.deukgeun.commom.exception.PasswordMismatchException;
+import com.example.deukgeun.commom.request.LoginRequest;
 import com.example.deukgeun.member.entity.Member;
 import com.example.deukgeun.member.repository.MemberRepository;
 import com.example.deukgeun.member.request.JoinRequest;
@@ -13,8 +15,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import javax.persistence.EntityNotFoundException;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -66,6 +70,90 @@ public class MemberServiceTest {
 
         // Verify
         verify(memberRepository, times(1)).save(any(Member.class));
+    }
+
+    @Test
+    void givenMatchingPassword_whenIsPasswordMatches_thenNoExceptionThrown() throws EntityNotFoundException {
+        // Given
+        String email = "example@example.com";
+        String password = "password123";
+        String encodedPassword = "encodedPassword123";
+
+        LoginRequest request = new LoginRequest(email, password);
+        Member member = Member
+                .builder()
+                .id(123L)
+                .email(request.getEmail())
+                .password(encodedPassword)
+                .build();
+
+        given(passwordEncoder.matches(password, member.getPassword())).willReturn(true);
+
+        // When & Then
+        assertDoesNotThrow(() -> memberService.isPasswordMatches(request.getPassword(), member));
+
+        // Verify
+        verify(passwordEncoder, times(1)).matches(password, encodedPassword);
+    }
+
+    @Test
+    void givenMismatchingPassword_whenIsPasswordMatches_thenPasswordMismatchExceptionThrown() throws EntityNotFoundException {
+        // Given
+        String email = "example@example.com";
+        String password = "password123";
+        String encodedPassword = "encodedPassword123";
+
+        LoginRequest request = new LoginRequest(email, password);
+        Member member = Member
+                .builder()
+                .id(123L)
+                .email(request.getEmail())
+                .password(encodedPassword)
+                .build();
+
+        given(passwordEncoder.matches(password, member.getPassword())).willReturn(false);
+
+        // When & Then
+        assertThrows(PasswordMismatchException.class, () -> memberService.isPasswordMatches(request.getPassword(), member));
+
+        // Verify
+        verify(passwordEncoder, times(1)).matches(password, encodedPassword);
+    }
+
+    @Test
+    void givenExistingEmail_whenGetByEmail_thenReturnsMatchingTrainer() throws EntityNotFoundException {
+        // Given
+        String email = "johndoe@example.com";
+        Member member = Member
+                .builder()
+                .id(123L)
+                .email(email)
+                .build();
+
+        given(memberRepository.findByEmail(email)).willReturn(Optional.of(member));
+
+        Member result = memberService.getByEmail(email);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(member.getEmail(), result.getEmail());
+
+        // Verify
+        verify(memberRepository, times(1)).findByEmail(email);
+    }
+
+    @Test
+    void givenNonexistentEmail_whenGetByEmail_thenThrowsEntityNotFoundException() {
+        // Given
+        String email = "nonexistent@example.com";
+
+        given(memberRepository.findByEmail(email)).willReturn(Optional.empty());
+
+        // When & Then
+        assertThrows(EntityNotFoundException.class, () -> memberService.getByEmail(email));
+
+        // Verify
+        verify(memberRepository, times(1)).findByEmail(email);
     }
 
 }

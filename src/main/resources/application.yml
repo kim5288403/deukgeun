@@ -67,6 +67,7 @@ trainer:
 deukgeun:
   role:
     trainer: trainer
+    member: member
 
 jwt:
   secretKey: deuckgeunproject

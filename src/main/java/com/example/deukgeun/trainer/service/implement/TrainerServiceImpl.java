@@ -1,12 +1,12 @@
 package com.example.deukgeun.trainer.service.implement;
 
 import com.example.deukgeun.commom.exception.PasswordMismatchException;
+import com.example.deukgeun.commom.request.LoginRequest;
 import com.example.deukgeun.commom.service.implement.TokenServiceImpl;
 import com.example.deukgeun.trainer.entity.Trainer;
 import com.example.deukgeun.trainer.repository.ProfileRepository;
 import com.example.deukgeun.trainer.repository.TrainerRepository;
 import com.example.deukgeun.trainer.request.JoinRequest;
-import com.example.deukgeun.trainer.request.LoginRequest;
 import com.example.deukgeun.trainer.request.UpdateInfoRequest;
 import com.example.deukgeun.trainer.request.UpdatePasswordRequest;
 import com.example.deukgeun.trainer.response.TrainerResponse;
@@ -31,16 +31,11 @@ public class TrainerServiceImpl implements TrainerService {
   /**
    * 인증을 위해 제공된 비밀번호가 사용자의 비밀번호와 일치하는지 확인합니다.
    *
-   * @param request 이메일과 비밀번호가 포함된 로그인 요청 객체
-   * @throws EntityNotFoundException   사용자가 찾을 수 없는 경우 예외가 발생합니다.
+   * @param trainer 이메일과 비밀번호가 포함된 객체
+   * @param password 로그인 요청 비밀번호
    * @throws PasswordMismatchException 비밀번호가 사용자의 비밀번호와 일치하지 않는 경우 예외가 발생합니다.
    */
-  public void isPasswordMatches(LoginRequest request) throws EntityNotFoundException {
-    String email = request.getEmail();
-    String password = request.getPassword();
-
-    Trainer trainer = getByEmail(email);
-
+  public void isPasswordMatches(String password, Trainer trainer) throws PasswordMismatchException {
     boolean check = passwordEncoder.matches(password, trainer.getPassword());
 
     if (!check) {

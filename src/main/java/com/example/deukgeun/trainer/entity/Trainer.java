@@ -47,16 +47,16 @@ public class Trainer extends BaseEntity implements UserDetails{
   @Column(length = 50, nullable = false)
   private String postcode;
 
-  @Column(length = 50, nullable = false)
+  @Column(length = 50)
   private String jibunAddress;
 
-  @Column(length = 50, nullable = false)
+  @Column(length = 50)
   private String roadAddress;
 
   @Column(length = 50, nullable = false)
   private String detailAddress;
 
-  @Column(length = 50, nullable = false)
+  @Column(length = 50)
   private String extraAddress;
 
   @Column(length = 50, nullable = false)

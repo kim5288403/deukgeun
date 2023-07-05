@@ -42,7 +42,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
         setHeader(response, role, authToken);
 
-        setAuthentication(authToken);
+        setAuthentication(authToken, role);
       }
       // 유효하지 않은 auth token 일 경우
       else {
@@ -56,7 +56,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
            tokenService.updateAuthToken(authToken, newAuthToken);
            setHeader(response, role, newAuthToken);
 
-           setAuthentication(newAuthToken);
+           setAuthentication(newAuthToken, role);
          }
          // auth token and refresh token 이 유효 하지 않은 경우
          else {
@@ -88,9 +88,9 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
   }
   
   // SecurityContext 에 Authentication 객체를 저장합니다.
-  private void setAuthentication(String token) {
+  private void setAuthentication(String token, String role) {
       // 토큰으로부터 유저 정보를 받아옵니다.
-      Authentication authentication = tokenService.getAuthentication(token);
+      Authentication authentication = tokenService.getAuthentication(token, role);
       // SecurityContext 에 Authentication 객체를 저장합니다.
       SecurityContextHolder.getContext().setAuthentication(authentication);
   }

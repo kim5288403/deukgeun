@@ -24,7 +24,6 @@ public class TokenController {
    */
   @RequestMapping(method = RequestMethod.GET, path = "/logout")
   public ResponseEntity<?> logout(HttpServletRequest request) {
-    
     String authToken = tokenService.resolveAuthToken(request);
     tokenService.deleteToken(authToken);
     

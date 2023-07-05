@@ -8,20 +8,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class MainController {
 	@GetMapping("/")
 	public String web(Model model) {
-		model.addAttribute("menu", "default");
+		model.addAttribute("menu", "main");
 
 		return "web/main";
 	}
 	
 	@GetMapping("/generic")
 	public String generic(Model model) {
-		model.addAttribute("menu", "default");
+		model.addAttribute("menu", "main");
 		return "/generic";
 	}
 	
 	@GetMapping("/elements")
 	public String elements(Model model) {
-		model.addAttribute("menu", "default");
+		model.addAttribute("menu", "main");
 		return "/elements";
 	}
 	
@@ -36,11 +36,4 @@ public class MainController {
 	  model.addAttribute("menu", "login");
 	  return "web/login";
     }
-	
-	@GetMapping("/my-page/user")
-	public String defaultMyPage(Model model) {
-	  model.addAttribute("menu", "myPage");
-	  return "user/myPage";
-	}
-	
 }

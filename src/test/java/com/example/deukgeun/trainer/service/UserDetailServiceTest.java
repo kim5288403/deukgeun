@@ -2,7 +2,7 @@ package com.example.deukgeun.trainer.service;
 
 import com.example.deukgeun.trainer.entity.Trainer;
 import com.example.deukgeun.trainer.repository.TrainerRepository;
-import com.example.deukgeun.trainer.service.implement.UserDetailServiceImpl;
+import com.example.deukgeun.trainer.service.implement.TrainerDetailServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -19,7 +19,7 @@ import static org.mockito.BDDMockito.given;
 @SpringBootTest
 public class UserDetailServiceTest {
     @InjectMocks
-    private UserDetailServiceImpl userDetailService;
+    private TrainerDetailServiceImpl trainerDetailService;
     @Mock
     private TrainerRepository trainerRepository;
 
@@ -36,7 +36,7 @@ public class UserDetailServiceTest {
         given(trainerRepository.findByEmail(email)).willReturn(Optional.of(trainer));
 
         // When
-        UserDetails userDetails = userDetailService.loadUserByUsername(email);
+        UserDetails userDetails = trainerDetailService.loadUserByUsername(email);
 
         // Then
         assertEquals(trainer.getEmail(), userDetails.getUsername());
@@ -51,7 +51,7 @@ public class UserDetailServiceTest {
         given(trainerRepository.findByEmail(email)).willReturn(Optional.empty());
 
         // When/Then
-        assertThrows(UsernameNotFoundException.class, () -> userDetailService.loadUserByUsername(email));
+        assertThrows(UsernameNotFoundException.class, () -> trainerDetailService.loadUserByUsername(email));
     }
 
 }

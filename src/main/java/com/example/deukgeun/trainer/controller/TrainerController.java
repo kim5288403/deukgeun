@@ -1,6 +1,7 @@
 package com.example.deukgeun.trainer.controller;
 
 
+import com.example.deukgeun.commom.request.LoginRequest;
 import com.example.deukgeun.commom.response.LoginResponse;
 import com.example.deukgeun.commom.service.implement.TokenServiceImpl;
 import com.example.deukgeun.commom.util.RestResponseUtil;
@@ -27,7 +28,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 
 
-@RestController("trainer.controller.TrainerController")
+@RestController
 @RequestMapping("/api/trainer")
 @RequiredArgsConstructor
 public class TrainerController {
@@ -177,10 +178,11 @@ public class TrainerController {
     @RequestMapping(method = RequestMethod.POST, path = "/login")
     public ResponseEntity<?> login(@Valid LoginRequest request, BindingResult bindingResult, HttpServletResponse response) {
         // 사용자 로그인 처리
-        trainerService.isPasswordMatches(request);
+        Trainer trainer = trainerService.getByEmail(request.getEmail());
+        trainerService.isPasswordMatches(request.getPassword(), trainer);
 
         // JWT 토큰 생성 및 설정
-        String authToken = tokenService.setToken(request.getEmail(), response);
+        String authToken = tokenService.setToken(request.getEmail(), response, role);
 
         // 로그인 응답 객체 생성
         LoginResponse loginResponse = LoginResponse

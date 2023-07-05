@@ -3,7 +3,8 @@ package com.example.deukgeun.commom.service.implement;
 import com.example.deukgeun.commom.entity.Token;
 import com.example.deukgeun.commom.repository.TokenRepository;
 import com.example.deukgeun.commom.service.TokenService;
-import com.example.deukgeun.trainer.service.implement.UserDetailServiceImpl;
+import com.example.deukgeun.member.service.implement.MemberDetailServiceImpl;
+import com.example.deukgeun.trainer.service.implement.TrainerDetailServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -28,10 +29,9 @@ import java.util.Date;
 @Service
 public class TokenServiceImpl implements TokenService {
   private final TokenRepository tokenRepository;
-  private final UserDetailServiceImpl userDetailService;
+  private final TrainerDetailServiceImpl trainerDetailService;
+  private final MemberDetailServiceImpl memberDetailService;
 
-  @Value("${deukgeun.role.trainer}")
-  private String role;
   @Value("${jwt.secretKey}")
   private String secretKey;
   @Value("${jwt.authTokenTime}")
@@ -126,8 +126,16 @@ public class TokenServiceImpl implements TokenService {
    * @param token 토큰 값
    * @return 인증(Authentication) 객체
    */
-  public Authentication getAuthentication(String token) {
-    UserDetails userDetails = userDetailService.loadUserByUsername(getUserPk(token));
+  public Authentication getAuthentication(String token, String role) {
+    String userPk = getUserPk(token);
+    UserDetails userDetails = null;
+
+    if (role.equals("trainer")) {
+      userDetails = trainerDetailService.loadUserByUsername(userPk);
+    } else if (role.equals("member")) {
+      userDetails = memberDetailService.loadUserByUsername(userPk);
+    }
+
     return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
   }
 
@@ -178,7 +186,7 @@ public class TokenServiceImpl implements TokenService {
    * @param response HttpServletResponse 객체
    * @return 생성된 인증 토큰
    */
-  public String setToken(String email, HttpServletResponse response) {
+  public String setToken(String email, HttpServletResponse response, String role) {
     // 인증 토큰 생성
     String authToken = createAuthToken(email, role);
 

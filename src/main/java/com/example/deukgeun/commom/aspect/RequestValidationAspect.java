@@ -42,7 +42,23 @@ public class RequestValidationAspect {
      * @param bindingResult bindingResult 유효성 검사 결과를 담고 있는 BindingResult 객체
      */
     @After(value = "@annotation(org.springframework.web.bind.annotation.RequestMapping) && args(.., bindingResult)")
-    public void handleBindingResult(BindingResult bindingResult) {
+    public void handleBindingResultTypeA(BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            Map<String, String> validatorResult = fieldErrorsMessageHandling(bindingResult);
+
+            validatorResult = globalErrorsMessageHandling(validatorResult, bindingResult);
+
+            throw new RequestValidException(validatorResult, "request error!");
+        }
+    }
+
+    /**
+     * BindingResult를 처리하는 메서드입니다.
+     *
+     * @param bindingResult bindingResult 유효성 검사 결과를 담고 있는 BindingResult 객체
+     */
+    @After(value = "@annotation(org.springframework.web.bind.annotation.RequestMapping) && args(*, bindingResult, *)")
+    public void handleBindingResultTypeB(BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             Map<String, String> validatorResult = fieldErrorsMessageHandling(bindingResult);
 
