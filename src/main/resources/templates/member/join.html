@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{web/layout/layout}">
+<th:block layout:fragment="css">
+    <style>
+		.errorMessage {
+			color: red;
+			margin-left: 10px;
+		}
+	</style>
+</th:block>
+<th:block layout:fragment="content">
+    <!-- Posts -->
+    <section class="post">
+        <header class="major">
+            <h1>
+                일반회원 <br> 회원가입
+            </h1>
+            <p>
+                Aenean ornare velit lacus varius enim ullamcorper proin aliquam<br>
+                facilisis ante sed etiam magna interdum congue. Lorem ipsum dolor<br>
+                amet nullam sed etiam veroeros.
+            </p>
+        </header>
+        <form id="join" method="post" action="">
+            <div class="row gtr-uniform">
+                <div class="col-6">
+                    <label>이름</label>
+                    <input type="text" name="name" value="" placeholder="이름">
+                    <span class="errorMessage" id="valid_name"></span>
+                </div>
+
+                <div class="col-6">
+                    <label>나이</label>
+                    <input type="text" name="age" value="" placeholder="나이">
+                    <span class="errorMessage" id="valid_age"></span>
+                </div>
+
+                <!-- Break -->
+                <div class="col-6 col-12-xsmall">
+                    <label>이메일</label>
+                    <ul class="actions">
+                        <li>
+                            <input type="email" name="email" value="" placeholder="이메일">
+                            <span class="errorMessage" id="valid_email"></span>
+                        </li>
+                        <li>
+                            <input id="codeSendBtn" type="button" value="인증 번호 보내기">
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Break -->
+                <div class="col-6 col-12-xsmall">
+                    <label>인증 번호</label>
+                    <ul class="actions">
+                        <li>
+                            <input type="text" name="code" value="" placeholder="인증번호">
+                            <span class="errorMessage" id="valid_code"></span>
+                        </li>
+                        <li>
+                            <input id="codeConfirmBtn" type="button" value="인증 확인">
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Break -->
+                <div class="col-6 col-12-xsmall">
+                    <label>비밀번호</label>
+                    <input type="password" name="password" id="password" value="" placeholder="비밀번호">
+                    <span class="errorMessage" id="valid_password"></span>
+                </div>
+
+                <!-- Break -->
+                <div class="col-6 col-12-xsmall">
+                    <label>비밀번호 확인</label>
+                    <input type="password" name="passwordConfirm" id="passwordConfirm" value="" placeholder="비밀번호 확인">
+                    <span class="errorMessage" id="valid_passwordConfirm"></span>
+                </div>
+
+                <!-- Break -->
+                <div class="col-6">
+                    <label>성별</label>
+                    <div>
+                        <input type="radio" id="male" name="gender" value="M" checked="checked">
+                        <label for="male">남</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="female" value=1 name="F">
+                        <label for="female">여</label>
+                    </div>
+                    <span class="errorMessage" id="valid_gender"></span>
+                </div>
+
+                <!-- Break -->
+                <div class="col-12">
+                    <ul class="actions" style="justify-content: center;">
+                        <li><input type="button" value="Join" class="primary"
+                                   onclick="saveAjax()"></li>
+                        <li><input type="reset" value="Reset"></li>
+                    </ul>
+                </div>
+
+            </div>
+        </form>
+        <input type="file" name="profileImage" accept="image/*" hidden="">
+    </section>
+</th:block>
+
+<th:block layout:fragment="script">
+    <script type="text/javascript">
+        function saveAjax() {
+            errorMessageReset();
+            let formData = $("form[id=join]").serialize();
+
+            $.ajax({
+				url : "/api/member/",
+				type : "post",
+				data :formData,
+				success : function(res) {
+					if (res.code === 200) {
+						defaultSuccessAlert(res.message, "성공").then(function (){
+							window.location.replace("http://localhost:8080/login");
+						});
+					}
+				},
+				error : function(res) {
+					if (res.responseJSON.code === 400) {
+						errorMessage(res.responseJSON.data);
+					}
+				}
+			});
+        }
+
+        $("#codeSendBtn").on("click", function() {
+			let email = $("input[name=email]").val();
+			console.log(email);
+			codeSendAjax(email);
+		});
+
+		$("#codeConfirmBtn").on("click", function() {
+			let email = $("input[name=email]").val();
+			let code = $("input[name=code]").val();
+			codeConfirmAjax(email, code);
+		});
+
+	</script>
+</th:block>
+</html>
