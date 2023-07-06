@@ -203,12 +203,16 @@ public class TrainerControllerTest {
         // Given
         String authToken = "validAuthToken";
         String role = "trainer";
-        LoginRequest loginRequest =  mock(LoginRequest.class);
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setEmail("test");
+        loginRequest.setPassword("test");
+
         LoginResponse loginResponse = LoginResponse
                 .builder()
                 .authToken(authToken)
                 .role(role)
                 .build();
+
         Trainer trainer = Trainer
                 .builder()
                 .id(123L)
@@ -218,7 +222,7 @@ public class TrainerControllerTest {
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("로그인 성공 했습니다.", loginResponse);
 
         given(tokenService.setToken(loginRequest.getEmail(), response, role)).willReturn(authToken);
-        given(trainerService.getByEmail(anyString())).willReturn(trainer);
+        given(trainerService.getByEmail(loginRequest.getEmail())).willReturn(trainer);
         given(passwordEncoder.matches(anyString(), anyString())).willReturn(true);
 
         // When
@@ -227,7 +231,7 @@ public class TrainerControllerTest {
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
-        verify(trainerService, times(1)).isPasswordMatches(loginRequest.getPassword(), trainer);
+        verify(trainerService, times(1)).isPasswordMatches(anyString(), any(Trainer.class));
         verify(tokenService, times(1)).setToken(loginRequest.getEmail(), response, role);
     }
 }

@@ -1,7 +1,6 @@
 package com.example.deukgeun.member.service.implement;
 
 import com.example.deukgeun.commom.exception.PasswordMismatchException;
-import com.example.deukgeun.commom.request.LoginRequest;
 import com.example.deukgeun.member.entity.Member;
 import com.example.deukgeun.member.repository.MemberRepository;
 import com.example.deukgeun.member.request.JoinRequest;
@@ -20,7 +19,6 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
 
     public Member save(JoinRequest request) {
-
         Member member = Member
                 .builder()
                 .name(request.getName())

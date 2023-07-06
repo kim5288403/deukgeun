@@ -38,6 +38,11 @@ public class TokenServiceImpl implements TokenService {
   private long authTokenTime;
   @Value("${jwt.refreshTokenTime}")
   private long refreshTokenTime;
+  @Value("${deukgeun.role.trainer}")
+  private String trainerRole;
+
+  @Value("${deukgeun.role.member}")
+  private String memberRole;
 
 
   /**
@@ -130,9 +135,9 @@ public class TokenServiceImpl implements TokenService {
     String userPk = getUserPk(token);
     UserDetails userDetails = null;
 
-    if (role.equals("trainer")) {
+    if (role.equals(trainerRole)) {
       userDetails = trainerDetailService.loadUserByUsername(userPk);
-    } else if (role.equals("member")) {
+    } else if (role.equals(memberRole)) {
       userDetails = memberDetailService.loadUserByUsername(userPk);
     }
 

@@ -127,6 +127,7 @@ public class TokenServiceTest {
 
         UserDetails userDetails = mock(UserDetails.class);
         given(trainerDetailService.loadUserByUsername(anyString())).willReturn(userDetails);
+        ReflectionTestUtils.setField(tokenService, "trainerRole", roles);
 
         // When
         Authentication authentication = tokenService.getAuthentication(token, roles);
