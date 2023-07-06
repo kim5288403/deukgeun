@@ -7,19 +7,20 @@ import com.example.deukgeun.commom.service.implement.TokenServiceImpl;
 import com.example.deukgeun.commom.util.RestResponseUtil;
 import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.entity.Trainer;
-import com.example.deukgeun.trainer.request.*;
+import com.example.deukgeun.trainer.request.JoinRequest;
+import com.example.deukgeun.trainer.request.UpdateInfoRequest;
+import com.example.deukgeun.trainer.request.UpdatePasswordRequest;
+import com.example.deukgeun.trainer.request.WithdrawalUserRequest;
 import com.example.deukgeun.trainer.response.TrainerResponse;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
 import com.example.deukgeun.trainer.service.implement.TrainerServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,24 +40,6 @@ public class TrainerController {
 
     @Value("${deukgeun.role.trainer}")
     private String role;
-
-    /**
-     * 키워드와 현재 페이지를 기반으로 사용자 목록을 조회합니다.
-     *
-     * @param keyword      검색 키워드 (기본값: "")
-     * @param currentPage  현재 페이지 번호 (기본값: 1)
-     * @return ResponseEntity 객체
-     */
-    @RequestMapping(method = RequestMethod.GET, path = "/")
-    public ResponseEntity<?> getList(@RequestParam(value = "keyword", defaultValue = "") String keyword, @RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage) {
-        // 키워드와 현재 페이지를 기반으로 사용자 목록 조회
-        Page<TrainerResponse.TrainerListResponse> page = trainerService.getList(keyword, currentPage);
-
-        // 사용자 목록을 UserListPaginationResponse 형식으로 변환
-        TrainerResponse.TrainerListPaginationResponse list = new TrainerResponse.TrainerListPaginationResponse(page, currentPage);
-
-        return RestResponseUtil.ok("조회 성공 했습니다.", list);
-    }
 
     /**
      * 사용자 상세 정보를 조회합니다.

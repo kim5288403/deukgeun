@@ -1,5 +1,7 @@
 package com.example.deukgeun.global.config;
 
+import com.example.deukgeun.global.filter.JwtAuthenticationFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,9 +12,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import com.example.deukgeun.commom.service.implement.TokenServiceImpl;
-import com.example.deukgeun.global.filter.JwtAuthenticationFilter;
-import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
@@ -40,8 +39,8 @@ public class SecurityConfig{
 		.cors().and()
 		.csrf().disable()
 		.authorizeRequests()
-		.antMatchers("/trainer/test").authenticated()
 		.antMatchers("/trainer").permitAll()
+		.antMatchers("/member").permitAll()
 		.and()
 		.addFilterBefore(jwtAuthenticationFilter,
             UsernamePasswordAuthenticationFilter.class)

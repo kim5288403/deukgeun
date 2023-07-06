@@ -4,25 +4,18 @@ import com.example.deukgeun.commom.exception.PasswordMismatchException;
 import com.example.deukgeun.commom.request.LoginRequest;
 import com.example.deukgeun.commom.service.implement.TokenServiceImpl;
 import com.example.deukgeun.trainer.entity.Trainer;
-import com.example.deukgeun.trainer.repository.ProfileRepository;
 import com.example.deukgeun.trainer.repository.TrainerRepository;
 import com.example.deukgeun.trainer.request.JoinRequest;
 import com.example.deukgeun.trainer.request.UpdateInfoRequest;
 import com.example.deukgeun.trainer.request.UpdatePasswordRequest;
-import com.example.deukgeun.trainer.response.TrainerResponse;
 import com.example.deukgeun.trainer.service.implement.TrainerServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,8 +29,6 @@ class TrainerServiceTest {
     private TrainerRepository trainerRepository;
     @Mock
     private PasswordEncoder passwordEncoder;
-    @Mock
-    private ProfileRepository profileRepository;
     @Mock
     private TokenServiceImpl tokenService;
     @InjectMocks
@@ -87,43 +78,6 @@ class TrainerServiceTest {
 
         // Verify
         verify(passwordEncoder, times(1)).matches(password, encodedPassword);
-    }
-
-    @Test
-    void givenKeywordAndPage_whenGetList_thenReturnsMatchingUsers() {
-        // Given
-        String keyword = "john";
-        int currentPage = 0;
-
-        String likeKeyword = "%" + keyword + "%";
-        PageRequest pageable = PageRequest.of(currentPage, 10);
-
-        TrainerResponse.TrainerListResponse trainer1 = new TrainerResponse.TrainerListResponse();
-        trainer1.setId(1L);
-        trainer1.setName("name1");
-        trainer1.setPath("path1");
-
-        TrainerResponse.TrainerListResponse trainer2 = new TrainerResponse.TrainerListResponse();
-        trainer2.setId(2L);
-        trainer2.setName("name2");
-        trainer2.setPath("path2");
-
-        List<TrainerResponse.TrainerListResponse> trainerList = new ArrayList<>();
-        trainerList.add(trainer1);
-        trainerList.add(trainer2);
-        Page<TrainerResponse.TrainerListResponse> userPage = new PageImpl<>(trainerList, pageable, trainerList.size());
-
-        given(profileRepository.findByTrainerLikeKeyword(likeKeyword, pageable)).willReturn(userPage);
-
-        // When
-        Page<TrainerResponse.TrainerListResponse> result = trainerService.getList(keyword, currentPage);
-
-        // Then
-        assertNotNull(result);
-        assertEquals(trainerList.size(), result.getContent().size());
-
-        // Verify
-        verify(profileRepository, times(1)).findByTrainerLikeKeyword(likeKeyword, pageable);
     }
 
     @Test

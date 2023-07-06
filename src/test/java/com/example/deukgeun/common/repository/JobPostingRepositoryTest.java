@@ -2,10 +2,13 @@ package com.example.deukgeun.common.repository;
 
 import com.example.deukgeun.commom.entity.JobPosting;
 import com.example.deukgeun.commom.repository.JobPostingRepository;
+import com.example.deukgeun.commom.response.JobPostingResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
@@ -28,27 +31,39 @@ public class JobPostingRepositoryTest {
     }
 
     @Test
-    void givenJobPosting_whenSaved_thenReturnValid() {
+    void givenJobPostings_whenFindByLikeKeyword_thenReturnValid() {
         // Given
-        String title = "test";
-        JobPosting jobPosting = JobPosting
+        JobPosting jobPosting1 = JobPosting
                 .builder()
-                .title(title)
                 .memberId(123L)
-                .postcode("12-2")
-                .isActive(1)
+                .title("test")
+                .postcode("123")
                 .startDate(LocalDateTime.now())
-                .endDate(LocalDateTime.now().plusDays(5))
+                .endDate(LocalDateTime.now())
                 .build();
 
+        JobPosting jobPosting2 = JobPosting
+                .builder()
+                .memberId(124L)
+                .title("test")
+                .postcode("123")
+                .startDate(LocalDateTime.now())
+                .endDate(LocalDateTime.now())
+                .build();
+
+        jobPostingRepository.save(jobPosting1);
+        jobPostingRepository.save(jobPosting2);
+
+        String keyword = "test";
+        String converterKeyword = "%" + keyword +"%";
+        PageRequest pageable = PageRequest.of(0, 10);
+
         // When
-        JobPosting saveJobPosting = jobPostingRepository.save(jobPosting);
+        Page<JobPostingResponse.ListResponse> foundJobPosting = jobPostingRepository.findByLikeKeyword(converterKeyword, pageable);
 
         // Then
-        JobPosting foundJobPosting = jobPostingRepository.findById(saveJobPosting.getId()).orElse(null);
-        assertNotNull(foundJobPosting);
-        assertEquals(saveJobPosting.getTitle(), foundJobPosting.getTitle());
-
+        assertEquals(keyword, foundJobPosting.getContent().get(0).getTitle());
+        assertEquals(keyword, foundJobPosting.getContent().get(1).getTitle());
     }
 
 }

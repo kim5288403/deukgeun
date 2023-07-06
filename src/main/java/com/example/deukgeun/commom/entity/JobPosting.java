@@ -3,6 +3,7 @@ package com.example.deukgeun.commom.entity;
 import com.example.deukgeun.trainer.entity.BaseEntity;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Table(name = "job_posting")
+@NoArgsConstructor
 public class JobPosting extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,10 +25,10 @@ public class JobPosting extends BaseEntity {
     private String title;
 
     @Column(length = 50)
-    private Integer requirementsLicense;
+    private Integer requirementLicense;
 
     @Column(length = 50)
-    private String requirementsEtc;
+    private String requirementEtc;
 
     @Column(length = 50, nullable = false)
     private String postcode;
@@ -57,8 +59,8 @@ public class JobPosting extends BaseEntity {
             Long id,
             Long memberId,
             String title,
-            Integer requirementsLicense,
-            String requirementsEtc,
+            Integer requirementLicense,
+            String requirementEtc,
             String postcode,
             String jibunAddress,
             String roadAddress,
@@ -71,8 +73,8 @@ public class JobPosting extends BaseEntity {
         this.id = id;
         this.title = title;
         this.memberId = memberId;
-        this.requirementsLicense = requirementsLicense;
-        this.requirementsEtc = requirementsEtc;
+        this.requirementLicense = requirementLicense;
+        this.requirementEtc = requirementEtc;
         this.postcode = postcode;
         this.jibunAddress = jibunAddress;
         this.roadAddress = roadAddress;

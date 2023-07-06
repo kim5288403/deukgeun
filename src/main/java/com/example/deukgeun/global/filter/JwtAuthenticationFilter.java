@@ -1,11 +1,9 @@
 package com.example.deukgeun.global.filter;
 
-import com.example.deukgeun.commom.enums.StatusEnum;
-import com.example.deukgeun.commom.response.RestResponse;
 import com.example.deukgeun.commom.service.implement.TokenServiceImpl;
+import com.example.deukgeun.commom.util.RestResponseUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,7 +33,6 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
     if (request.getHeader("Authorization") != null) {
       String authToken = tokenService.resolveAuthToken(request);
-
       // 유효한 auth token 인지 확인합니다.
       if (tokenService.validateToken(authToken)) {
         String role = tokenService.getUserRole(authToken);
@@ -65,16 +62,8 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
            response.setContentType("application/json");
            response.setCharacterEncoding("utf-8");
 
-           RestResponse messageResponse = RestResponse
-               .builder()
-               .code(StatusEnum.FORBIDDEN.getCode())
-               .status(StatusEnum.FORBIDDEN.getStatus())
-               .message("로그인 유효기간이 초과했습니다. 재로그인 해주세요.")
-               .data(null)
-               .build();
-
            new ObjectMapper().writeValue(response.getOutputStream(),
-               ResponseEntity.status(403).body(messageResponse));
+                   RestResponseUtil.FORBIDDEN("로그인 유효기간이 초과했습니다. 재로그인 해주세요.", null));
          }
       }
     }

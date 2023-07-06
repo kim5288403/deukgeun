@@ -1,9 +1,8 @@
 package com.example.deukgeun.commom.util;
 
-import lombok.NoArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import com.example.deukgeun.commom.enums.StatusEnum;
 import com.example.deukgeun.commom.response.RestResponse;
+import org.springframework.http.ResponseEntity;
 
 public class RestResponseUtil {
 
@@ -31,5 +30,18 @@ public class RestResponseUtil {
     
     return ResponseEntity.badRequest()
           .body(response);
+  }
+
+  public static ResponseEntity<RestResponse> FORBIDDEN(String message, Object data){
+    RestResponse response = RestResponse
+            .builder()
+            .code(StatusEnum.FORBIDDEN.getCode())
+            .status(StatusEnum.FORBIDDEN.getStatus())
+            .data(data)
+            .message(message)
+            .build();
+
+    return ResponseEntity.status(StatusEnum.FORBIDDEN.getCode())
+            .body(response);
   }
 }

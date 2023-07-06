@@ -8,7 +8,10 @@ import com.example.deukgeun.commom.service.implement.TokenServiceImpl;
 import com.example.deukgeun.commom.util.RestResponseUtil;
 import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.entity.Trainer;
-import com.example.deukgeun.trainer.request.*;
+import com.example.deukgeun.trainer.request.JoinRequest;
+import com.example.deukgeun.trainer.request.UpdateInfoRequest;
+import com.example.deukgeun.trainer.request.UpdatePasswordRequest;
+import com.example.deukgeun.trainer.request.WithdrawalUserRequest;
 import com.example.deukgeun.trainer.response.TrainerResponse;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
 import com.example.deukgeun.trainer.service.implement.TrainerServiceImpl;
@@ -17,8 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,8 +29,6 @@ import org.springframework.validation.BindingResult;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
@@ -57,27 +56,6 @@ public class TrainerControllerTest {
     @BeforeEach
     void setup () {
         ReflectionTestUtils.setField(trainerController, "role", "trainer");
-    }
-
-    @Test
-    void givenKeywordAndCurrentPage_whenGetList_thenReturnSuccessResponse() {
-        // Given
-        String keyword = "search keyword";
-        Integer currentPage = 1;
-        List<TrainerResponse.TrainerListResponse> trainerList = new ArrayList<>();
-        Page<TrainerResponse.TrainerListResponse> page = new PageImpl<>(trainerList);
-        TrainerResponse.TrainerListPaginationResponse list = new TrainerResponse.TrainerListPaginationResponse(page, currentPage);
-        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공 했습니다.", list);
-
-        given(trainerService.getList(keyword, currentPage)).willReturn(page);
-
-        // When
-        ResponseEntity<?> responseEntity = trainerController.getList(keyword, currentPage);
-
-        // Then
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(expectedResponse.getBody(), responseEntity.getBody());
-        verify(trainerService, times(1)).getList(keyword, currentPage);
     }
 
     @Test

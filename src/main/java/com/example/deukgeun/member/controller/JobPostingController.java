@@ -1,11 +1,9 @@
 package com.example.deukgeun.member.controller;
 
-import com.example.deukgeun.commom.entity.JobPosting;
-import com.example.deukgeun.commom.request.SaveJobPostingRequest;
+import com.example.deukgeun.member.request.SaveJobPostingRequest;
 import com.example.deukgeun.commom.service.implement.TokenServiceImpl;
 import com.example.deukgeun.commom.util.RestResponseUtil;
 import com.example.deukgeun.member.entity.Member;
-import com.example.deukgeun.member.request.JoinRequest;
 import com.example.deukgeun.member.service.JobPostingService;
 import com.example.deukgeun.member.service.implement.MemberServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-@RestController
+@RestController("member.jobPosting.controller")
 @RequestMapping("/api/member/job")
 @RequiredArgsConstructor
 public class JobPostingController {

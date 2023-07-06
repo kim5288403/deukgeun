@@ -4,19 +4,16 @@ import com.example.deukgeun.commom.enums.Gender;
 import com.example.deukgeun.trainer.entity.GroupStatus;
 import com.example.deukgeun.trainer.entity.Profile;
 import com.example.deukgeun.trainer.entity.Trainer;
-import com.example.deukgeun.trainer.response.TrainerResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.jdbc.Sql;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -93,23 +90,6 @@ public class ProfileRepositoryTest {
         // Then
         assertNotNull(foundProfile);
         assertEquals(profile.getPath(), foundProfile.getPath());
-    }
-
-    @Test
-    @Sql(scripts = "classpath:profileFindByUserLikeKeywordSet.sql")
-    void givenPosts_whenFindByUserLikeKeyword_thenReturnValid() {
-        // Given
-        String keyword = "test";
-        String converterKeyword = "%" + keyword +"%";
-        PageRequest pageable = PageRequest.of(0, 10);
-
-        // When
-        Page<TrainerResponse.TrainerListResponse> foundPost = profileRepository.findByTrainerLikeKeyword(converterKeyword, pageable);
-
-        // Then
-        assertEquals(keyword, foundPost.getContent().get(0).getName());
-        assertEquals(keyword, foundPost.getContent().get(1).getName());
-        assertNotEquals(foundPost.getContent().get(0).getPath(), foundPost.getContent().get(1).getPath());
     }
 
     @Test

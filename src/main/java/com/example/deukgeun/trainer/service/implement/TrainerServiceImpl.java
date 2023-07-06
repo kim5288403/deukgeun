@@ -1,19 +1,14 @@
 package com.example.deukgeun.trainer.service.implement;
 
 import com.example.deukgeun.commom.exception.PasswordMismatchException;
-import com.example.deukgeun.commom.request.LoginRequest;
 import com.example.deukgeun.commom.service.implement.TokenServiceImpl;
 import com.example.deukgeun.trainer.entity.Trainer;
-import com.example.deukgeun.trainer.repository.ProfileRepository;
 import com.example.deukgeun.trainer.repository.TrainerRepository;
 import com.example.deukgeun.trainer.request.JoinRequest;
 import com.example.deukgeun.trainer.request.UpdateInfoRequest;
 import com.example.deukgeun.trainer.request.UpdatePasswordRequest;
-import com.example.deukgeun.trainer.response.TrainerResponse;
 import com.example.deukgeun.trainer.service.TrainerService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +19,6 @@ import javax.persistence.EntityNotFoundException;
 public class TrainerServiceImpl implements TrainerService {
 
   private final TrainerRepository trainerRepository;
-  private final ProfileRepository profileRepository;
   private final TokenServiceImpl tokenService;
   private final PasswordEncoder passwordEncoder;
 
@@ -41,19 +35,6 @@ public class TrainerServiceImpl implements TrainerService {
     if (!check) {
       throw new PasswordMismatchException("사용자를 찾을 수 없습니다.");
     }
-  }
-
-  /**
-   * 주어진 키워드와 현재 페이지를 기반으로 사용자 목록을 조회합니다.
-   *
-   * @param keyword      사용자 목록에서 검색할 키워드
-   * @param currentPage  현재 페이지 번호
-   * @return 페이지로 나뉘어진 사용자 목록
-   */
-  public Page<TrainerResponse.TrainerListResponse> getList(String keyword, Integer currentPage) {
-    String likeKeyword = "%" + keyword + "%";
-    PageRequest pageable = PageRequest.of(currentPage, 10);
-    return profileRepository.findByTrainerLikeKeyword(likeKeyword, pageable);
   }
 
   /**

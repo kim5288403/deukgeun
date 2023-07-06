@@ -15,12 +15,12 @@
 	</style>
 </th:block>
 <th:block layout:fragment="content">
-	<article class="post featured">
+	<article class="post featured" style="padding: 8rem 8rem 1rem 8rem;">
 		<form method="get" action="#">
 			<div class="fields search">
 				<div class="field keyword" id="field-keyword">
 					<label for="keyword">검색창</label> 
-					<input type="text" name="keyword" id="keyword" placeholder="트레이너, 헬스장, 지역명을 입력해주세요." />
+					<input type="text" name="keyword" id="keyword" placeholder="제목, 지역명을 입력해주세요." />
 				</div>
 
 				<div class="field" id="field-button">
@@ -31,8 +31,23 @@
 	</article>
 
 	<!-- Posts -->
-	<section class="posts">
-		<p class="center-p" style="width: 100%; text-align:center;" >조회된 결과가 없습니다.</p>
+	<section class="post" style="padding: 2rem 8rem 6rem 8rem;">
+		<h3>검색 결과</h3>
+		<div class="table-wrapper">
+			<table name="list">
+				<thead>
+				<tr>
+					<th>Title</th>
+					<th>Start</th>
+					<th>End</th>
+					<th>Address</th>
+					<th>상세보기</th>
+				</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
 	</section>
 
 	<section class="page">
@@ -51,43 +66,41 @@
 			let keyword = getUrlParam("keyword");
 
 			$.ajax({
-				url : "/api/trainer/",
+				url : "/api/jobPosting/",
 				method : "get",
 				data : {
 					"keyword" : keyword,
 					"currentPage" : currentPage,
 				},
 				success : function(res) {
-					if (res.data.list.length > 0) {
-						$("section[class=posts]").find("article").remove();
-						$("section[class=posts]").find("p").remove();
-						setList(res.data.list);
-						setPage(res.data.currentPage, res.data.totalPages);
-					}
+					setList(res.data.content);
+					setPage(res.data.currentPage, res.data.totalPages);
 				}
 			});
 		}
 		
 		function setList(list) {
-			$.each(list, function(key, data) {
-				let section = $("section[class=posts]");
-				let appendHtml = '';
-				appendHtml += '<article>';
-					appendHtml += '<header>';
-					appendHtml += '<span class="date"></span>';
-					appendHtml += '<h2>';
-						appendHtml += '<a href="#">' + data.name + ' <br /> 트레이너님 </a>';
-					appendHtml += '</h2>';
-					appendHtml += '</header>';
-					appendHtml += '<a href="#" class="image fit" style="height: 450px; border: solid 1px #eeeeee;"><img src="/images/trainer/profile/' + data.path + '" alt="" /></a>';
-					appendHtml += '<p>' + data.introduction + '</p>';
-					appendHtml += '<ul class="actions special">';
-						appendHtml += '<li><a href="/trainer/detail/' + data.id + '" class="button">상세보기</a></li>';
-					appendHtml += '</ul>';
-				appendHtml += "</article>";
+			$("table[name=list]").find("tbody").find("tr").remove();
 
-				section.append(appendHtml);
-			});
+			let html = "";
+
+			if (list.length === 0) {
+				html += "<tr><td colspan=5 style='text-align: center;'> 조회된 결과가 없습니다. <td><tr>";
+			} else {
+				$.each(list, function(key, data) {
+					html += "<tr>";
+					html += "<td>" + data.title + "</td>";
+					html += "<td>" + data.startDate + "</td>";
+					html += "<td>" + data.endDate + "</td>";
+					html += "<td>" + data.address + "</td>";
+					html += "<td>";
+					html += "<a href='#' class='button small'>상세보기</a>";
+					html += "</td>";
+					html += "</tr>";
+				});
+			}
+
+			$("table[name=list]").find("tbody").append(html);
 		}
 
 		function setPage(currentPage, totalPages) {

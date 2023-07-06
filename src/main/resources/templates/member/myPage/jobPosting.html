@@ -38,28 +38,44 @@
                 <div class="col-6">
                     <label>트레이너 자격조건</label>
                     <div>
-                        <input type="radio" id="noneRequirementsLicense" name="requirementsLicense" value="1" checked="checked">
-                        <label for="noneRequirementsLicense">없음</label>
+                        <input type="radio" id="noneRequirementLicense" name="isRequirementLicense" checked="checked">
+                        <label for="noneRequirementLicense">없음</label>
                     </div>
+
                     <div>
-                        <input type="radio" id="LifelongSportsInstructor" name="requirementsLicense" value="2">
-                        <label for="LifelongSportsInstructor">생활체육지도사 자격증</label>
+                        <input type="radio" id="availableRequirementLicense" name="isRequirementLicense">
+                        <label for="availableRequirementLicense">있음</label>
                     </div>
-                    <span class="errorMessage" id="valid_requirementsLicense"></span>
+
+                    <div name="availableRequirementLicense" style="display:none;">
+                        <input type="checkbox" id="lifelongSportsInstructor" class="requirementLicenses" value="1">
+                        <label for="lifelongSportsInstructor">생활체육지도사 자격증</label>
+
+                        <input type="checkbox" id="fitnessInstructor" class="requirementLicenses" value="2">
+                        <label for="fitnessInstructor">피트니스 인스트럭터 자격증</label>
+
+                        <input type="checkbox" id="healthTrainer" class="requirementLicenses" value="4">
+                        <label for="healthTrainer">헬스 트레이너 자격증</label>
+                    </div>
+                    <input type="hidden" name="requirementLicense" value="0">
+                    <span class="errorMessage" id="valid_requirementLicense"></span>
                 </div>
 
                 <!-- Break -->
                 <div class="col-6">
                     <label>트레이너 요구사항</label>
                     <div>
-                        <input type="radio" id="noneRequirementsEtc" name="requirementsEtc" value="" checked="checked">
-                        <label for="noneRequirementsEtc">없음</label>
+                        <input type="radio" id="noneRequirementEtc" name="isRequirementEtc" checked="checked">
+                        <label for="noneRequirementEtc">없음</label>
                     </div>
+
                     <div>
-                        <input type="radio" id="availableRequirementsEtc" name="requirementsEtc" value="">
+                        <input type="radio" id="availableRequirementsEtc" name="isRequirementEtc">
                         <label for="availableRequirementsEtc">있음</label>
                     </div>
-                    <span class="errorMessage" id="valid_requirementsEtc"></span>
+
+                    <input type="text" name="requirementEtc" value="" style="display:none">
+                    <span class="errorMessage" id="valid_requirementEtc"></span>
                 </div>
 
                 <!-- Break -->
@@ -89,14 +105,14 @@
 
                 <div class="col-6">
                     <label for="startDate">시작 날짜 선택:</label>
-                    <input type="date" id="startDate" name="startDate">
+                    <input type="datetime-local" id="startDate" name="startDate">
                     <span class="errorMessage" id="valid_startDate"></span>
 
                 </div>
 
                 <div class="col-6">
                     <label for="endDate">종료 날짜 선택:</label>
-                    <input type="date" id="endDate" name="endDate">
+                    <input type="datetime-local" id="endDate" name="endDate">
                     <span class="errorMessage" id="valid_endDate"></span>
                 </div>
 
@@ -121,9 +137,65 @@
 <th:block layout:fragment="script">
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script type="text/javascript">
+
+        $("#availableRequirementLicense").on("click", function() {
+            $("div[name=availableRequirementLicense]").show();
+        });
+
+        $("#noneRequirementLicense").on("click", function() {
+             $("input[type=checkbox][class=requirementLicenses]:checked").each(function() {
+              $(this).prop("checked", false);
+            });
+            $("div[name=availableRequirementLicense]").hide();
+        });
+
+        $("#availableRequirementsEtc").on("click", function() {
+            $("input[name=requirementEtc]").show();
+        });
+
+        $("#noneRequirementEtc").on("click", function() {
+            $("input[name=requirementEtc]").hide();
+            $("input[name=requirementEtc]").val(null);
+        });
+
+        function amountRequirementLicense() {
+            let checkedLicenses = 0;
+            $("input[type=checkbox][class=requirementLicenses]:checked").each(function() {
+              checkedLicenses += parseInt($(this).val());
+            });
+            $("input[name=requirementLicense]").val(checkedLicenses);
+        }
+
+
         function saveAjax() {
             errorMessageReset();
+            amountRequirementLicense();
             let formData = $("form[id=job]").serialize();
+            let authToken = getCookie("authToken");
+
+            $.ajax({
+				url : "/api/member/job/",
+				type : "post",
+				data :formData,
+				beforeSend : function (xhr) {
+					xhr.setRequestHeader("Authorization","Bearer " + authToken + "sd");
+				},
+				success : function(res) {
+				    if (res.body.code === 403) {
+				        logoutCookie(res.body.message);
+				    }
+					if (res.code === 200) {
+						defaultSuccessAlert(res.message, "성공").then(function (){
+							window.location.replace("http://localhost:8080/");
+						});
+					}
+				},
+				error : function(res) {
+					if (res.responseJSON.code === 400) {
+						errorMessage(res.responseJSON.data);
+					}
+				}
+			});
         }
 
         function sample4_execDaumPostcode() {

@@ -204,6 +204,9 @@
 				cache : false,
 				data :formData,
 				success : function(res) {
+					if (res.body.code === 403) {
+				        logoutCookie(res.body.message);
+				    }
 					if (res.code === 200) {
 						defaultSuccessAlert(res.message, "성공").then(function (){
 							window.location.replace("http://localhost:8080/login");
