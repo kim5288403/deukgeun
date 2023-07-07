@@ -1,8 +1,8 @@
 package com.example.deukgeun.trainer.service;
 
-import com.example.deukgeun.trainer.entity.Post;
-import com.example.deukgeun.trainer.entity.Trainer;
-import com.example.deukgeun.trainer.repository.PostRepository;
+import com.example.deukgeun.global.entity.Post;
+import com.example.deukgeun.global.entity.Trainer;
+import com.example.deukgeun.global.repository.PostRepository;
 import com.example.deukgeun.trainer.request.PostRequest;
 import com.example.deukgeun.trainer.service.implement.PostServiceImpl;
 import com.example.deukgeun.trainer.service.implement.TrainerServiceImpl;

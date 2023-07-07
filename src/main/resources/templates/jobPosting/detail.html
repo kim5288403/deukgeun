@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{web/layout/layout}">
+<th:block layout:fragment="css">
+</th:block>
+<th:block layout:fragment="content">
+    <!-- Posts -->
+    <section class="post">
+        <header class="major">
+            <h1>
+                트레이너 구인 <br> 공고 상세
+            </h1>
+            <p>
+                Aenean ornare velit lacus varius enim ullamcorper proin aliquam<br>
+                facilisis ante sed etiam magna interdum congue. Lorem ipsum dolor<br>
+                amet nullam sed etiam veroeros.
+            </p>
+        </header>
+        <form id="job" method="post" action="">
+            <div class="row gtr-uniform">
+                <div class="col-6">
+                    <label>제목</label>
+                    <input type="text" name="title" value="" placeholder="제목">
+                </div>
+
+                <div class="col-6">
+                </div>
+
+                <!-- Break -->
+                <div class="col-6">
+                    <label>트레이너 자격조건</label>
+                    <div>
+                        <input type="radio" id="noneRequirementLicense" name="isRequirementLicense" checked="checked">
+                        <label for="noneRequirementLicense">없음</label>
+                    </div>
+
+                    <div>
+                        <input type="radio" id="availableRequirementLicense" name="isRequirementLicense">
+                        <label for="availableRequirementLicense">있음</label>
+                    </div>
+
+                    <div name="availableRequirementLicense" style="display:none;">
+                        <input type="checkbox" id="lifelongSportsInstructor" class="requirementLicenses" value="1">
+                        <label for="lifelongSportsInstructor">생활체육지도사 자격증</label>
+
+                        <input type="checkbox" id="fitnessInstructor" class="requirementLicenses" value="2">
+                        <label for="fitnessInstructor">피트니스 인스트럭터 자격증</label>
+
+                        <input type="checkbox" id="healthTrainer" class="requirementLicenses" value="4">
+                        <label for="healthTrainer">헬스 트레이너 자격증</label>
+                    </div>
+                    <input type="hidden" name="requirementLicense" value="0">
+                </div>
+
+                <!-- Break -->
+                <div class="col-6">
+                    <label>트레이너 요구사항</label>
+                    <div>
+                        <input type="radio" id="noneRequirementEtc" name="isRequirementEtc" checked="checked">
+                        <label for="noneRequirementEtc">없음</label>
+                    </div>
+
+                    <div>
+                        <input type="radio" id="availableRequirementsEtc" name="isRequirementEtc">
+                        <label for="availableRequirementsEtc">있음</label>
+                    </div>
+
+                    <input type="text" name="requirementEtc" value="" style="display:none">
+                </div>
+
+                <!-- Break -->
+                <div class="col-12">
+                    <label>pt받을 주소</label>
+                    <ul class="actions">
+                        <li>
+                            <input type="text" id="sample4_postcode" name="postcode" placeholder="우편번호"
+                                   readonly="readonly">
+                            <span class="errorMessage" id="valid_postcode"></span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-6">
+                    <input type="text" id="sample4_roadAddress" name="roadAddress" placeholder="도로명주소">
+                    <input type="text" id="sample4_jibunAddress" name="jibunAddress" placeholder="지번주소">
+                    <span id="guide" style="color: #999; display: none"></span>
+                </div>
+
+                <div class="col-6">
+                    <input type="text" id="sample4_detailAddress" name="detailAddress" placeholder="상세주소">
+                    <input type="text" id="sample4_extraAddress" name="extraAddress" placeholder="참고항목">
+                </div>
+
+                <div class="col-6">
+                    <label for="startDate">시작 날짜 선택:</label>
+                    <input type="datetime-local" id="startDate" name="startDate">
+
+                </div>
+
+                <div class="col-6">
+                    <label for="endDate">종료 날짜 선택:</label>
+                    <input type="datetime-local" id="endDate" name="endDate">
+                </div>
+
+                <div class="col-12">
+                </div>
+
+                <!-- Break -->
+                <div class="col-12">
+                    <ul class="actions" style="justify-content: center;">
+                        <li><input type="button" name="applicantBtn" value="applicant" class="primary"
+                                   onclick="getSupportAmount()" style="display:none"></li>
+                        <li><input type="button" onclick="location.href='/'" value="back"></li>
+                    </ul>
+                </div>
+
+            </div>
+        </form>
+    </section>
+</th:block>
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+	   		let id = /*[[ ${id} ]]*/
+	    /*]]*/
+
+	    $(document).ready(function() {
+	      let authToken = getCookie("authToken");
+		  if (authToken !== null) {
+            let role = getCookie("role").replaceAll(";", "").trim(" ");
+            if (role === "trainer") {
+              $("input[name=applicantBtn]").show();
+            }
+		  }
+
+	      $('input[type != button]').prop('readonly', true);
+	      $('input[type != button]').prop('disabled', true);
+	      getDetailInfoAjax();
+	    });
+
+	    function applicantAjax(supportAmount) {
+	        $.ajax({
+				url : "/api/trainer/applicant/,
+				type : "post",
+				data : {
+				    jobPostingId : id,
+				    supportAmount : supportAmount
+				}
+				success : function(res) {
+					if (res.code === 200) {
+					    defaultSuccessAlert(res.message, "성공").then(function (){
+							window.location.reload();
+						});
+					}
+				},
+				error : function(res) {
+					if (res.responseJSON.code === 400) {
+						errorMessage(res.responseJSON.data);
+					}
+				}
+			});
+	    }
+
+	    function getSupportAmount() {
+            Swal.fire({
+              title: '지원금액을 입력하세요.',
+              input: 'text',
+              showCancelButton: true,
+              confirmButtonText: '확인',
+              cancelButtonText: '취소',
+            }).then((result) => {
+              if (result.value) {
+                applicantAjax(result.value);
+              }
+            });
+	    }
+
+        function getDetailInfoAjax() {
+            $.ajax({
+				url : "/api/job/" + id,
+				type : "get",
+				success : function(res) {
+					if (res.code === 200) {
+						setDetailInfo(res.data);
+					}
+				},
+				error : function(res) {
+					if (res.responseJSON.code === 400) {
+						errorMessage(res.responseJSON.data);
+					}
+				}
+			});
+        }
+
+        function setDetailInfo(data) {
+
+          $.each(data, function(index, value) {
+            if (index === "requirementLicense") {
+              if (value === 0) {
+                $("input[id=noneRequirementLicense]").prop("checked", true);
+              } else {
+                $("input[id=availableRequirementLicense]").prop("checked", true);
+                $("div[name=availableRequirementLicense]").show();
+                getSelectLicense(value);
+              }
+
+            } else if(index === "requirementEtc") {
+              if (value === 0) {
+                $("input[id=noneRequirementEtc]").prop("checked", true);
+              } else {
+                $("input[id=availableRequirementsEtc]").prop("checked", true);
+                $("input[name=requirementEtc]").val(value);
+                $("input[name=requirementEtc]").show();
+              }
+
+            } else {
+              $("input[name=" + index + "]").val(value);
+            }
+
+          });
+        }
+
+
+    </script>
+</th:block>
+</html>

@@ -204,7 +204,7 @@
 				cache : false,
 				data :formData,
 				success : function(res) {
-					if (res.body.code === 403) {
+					if (res.code === 403) {
 				        logoutCookie(res.body.message);
 				    }
 					if (res.code === 200) {

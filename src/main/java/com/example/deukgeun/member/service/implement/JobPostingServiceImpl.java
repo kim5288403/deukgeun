@@ -1,7 +1,7 @@
 package com.example.deukgeun.member.service.implement;
 
-import com.example.deukgeun.commom.entity.JobPosting;
-import com.example.deukgeun.member.repository.MemberJobPostingRepository;
+import com.example.deukgeun.global.entity.JobPosting;
+import com.example.deukgeun.global.repository.JobPostingRepository;
 import com.example.deukgeun.member.request.SaveJobPostingRequest;
 import com.example.deukgeun.member.service.JobPostingService;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class JobPostingServiceImpl implements JobPostingService {
 
-    private final MemberJobPostingRepository jobPostingRepository;
+    private final JobPostingRepository jobPostingRepository;
 
     @Override
     public JobPosting save(SaveJobPostingRequest saveJobPostingRequest, Long memberId) {

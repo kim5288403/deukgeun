@@ -1,6 +1,6 @@
 package com.example.deukgeun.member.service.implement;
 
-import com.example.deukgeun.member.repository.MemberRepository;
+import com.example.deukgeun.global.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -1,10 +1,10 @@
 package com.example.deukgeun.member.service;
 
-import com.example.deukgeun.commom.enums.Gender;
-import com.example.deukgeun.commom.exception.PasswordMismatchException;
-import com.example.deukgeun.commom.request.LoginRequest;
-import com.example.deukgeun.member.entity.Member;
-import com.example.deukgeun.member.repository.MemberRepository;
+import com.example.deukgeun.global.enums.Gender;
+import com.example.deukgeun.global.exception.PasswordMismatchException;
+import com.example.deukgeun.main.request.LoginRequest;
+import com.example.deukgeun.global.entity.Member;
+import com.example.deukgeun.global.repository.MemberRepository;
 import com.example.deukgeun.member.request.JoinRequest;
 import com.example.deukgeun.member.service.implement.MemberServiceImpl;
 import org.junit.jupiter.api.Test;

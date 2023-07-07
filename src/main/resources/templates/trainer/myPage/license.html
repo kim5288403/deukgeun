@@ -99,7 +99,7 @@
 			    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);
 			    },
 				success : function(res) {
-					if (res.body.code === 403) {
+					if (res.code === 403) {
 				       logoutCookie(res.body.message);
 				    }
 					if (res.code === 200) {
@@ -129,7 +129,7 @@
 					"no" : no,
 				},
 				success : function(res) {
-					if (res.body.code === 403) {
+					if (res.code === 403) {
 				       logoutCookie(res.body.message);
 				    }
 					if (res.code === 200) {

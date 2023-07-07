@@ -121,7 +121,7 @@
 				url : "/api/trainer/post/" + id,
 				type : "get",
 				success : function(res, status, request) {
-					if (res.body.code === 403) {
+					if (res.code === 403) {
 				        logoutCookie(res.body.message);
 				    }
 					if (res.code === 200) {

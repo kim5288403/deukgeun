@@ -1,6 +1,6 @@
 package com.example.deukgeun.trainer.service.implement;
 
-import com.example.deukgeun.trainer.repository.TrainerRepository;
+import com.example.deukgeun.global.repository.TrainerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

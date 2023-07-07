@@ -1,8 +1,8 @@
 package com.example.deukgeun.trainer.service.implement;
 
-import com.example.deukgeun.trainer.entity.Profile;
-import com.example.deukgeun.trainer.entity.Trainer;
-import com.example.deukgeun.trainer.repository.ProfileRepository;
+import com.example.deukgeun.global.entity.Profile;
+import com.example.deukgeun.global.entity.Trainer;
+import com.example.deukgeun.global.repository.ProfileRepository;
 import com.example.deukgeun.trainer.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

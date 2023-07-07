@@ -1,7 +1,7 @@
 package com.example.deukgeun.trainer.controller;
 
-import com.example.deukgeun.commom.service.implement.TokenServiceImpl;
-import com.example.deukgeun.commom.util.RestResponseUtil;
+import com.example.deukgeun.main.service.implement.TokenServiceImpl;
+import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.trainer.request.RemoveLicenseRequest;
 import com.example.deukgeun.trainer.request.SaveLicenseRequest;
 import com.example.deukgeun.trainer.response.LicenseListResponse;

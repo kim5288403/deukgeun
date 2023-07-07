@@ -1,7 +1,7 @@
 package com.example.deukgeun.trainer.service;
 
-import com.example.deukgeun.trainer.entity.License;
-import com.example.deukgeun.trainer.repository.LicenseRepository;
+import com.example.deukgeun.global.entity.License;
+import com.example.deukgeun.global.repository.LicenseRepository;
 import com.example.deukgeun.trainer.request.SaveLicenseRequest;
 import com.example.deukgeun.trainer.response.LicenseListResponse;
 import com.example.deukgeun.trainer.response.LicenseResultResponse;

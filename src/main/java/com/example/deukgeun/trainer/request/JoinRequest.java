@@ -1,11 +1,11 @@
 package com.example.deukgeun.trainer.request;
 
-import com.example.deukgeun.commom.enums.Gender;
-import com.example.deukgeun.commom.validator.ValidAccessEmail;
-import com.example.deukgeun.commom.validator.ValidDuplicateEmail;
-import com.example.deukgeun.commom.validator.ValidEnum;
-import com.example.deukgeun.commom.validator.ValidPasswordConfirm;
-import com.example.deukgeun.trainer.entity.GroupStatus;
+import com.example.deukgeun.global.enums.Gender;
+import com.example.deukgeun.global.validator.ValidAccessEmail;
+import com.example.deukgeun.global.validator.ValidDuplicateEmail;
+import com.example.deukgeun.global.validator.ValidEnum;
+import com.example.deukgeun.global.validator.ValidPasswordConfirm;
+import com.example.deukgeun.global.entity.GroupStatus;
 import com.example.deukgeun.trainer.validator.ValidFileType;
 import com.example.deukgeun.trainer.validator.ValidGroupName;
 import lombok.Data;

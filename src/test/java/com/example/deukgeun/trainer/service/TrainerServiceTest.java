@@ -1,10 +1,10 @@
 package com.example.deukgeun.trainer.service;
 
-import com.example.deukgeun.commom.exception.PasswordMismatchException;
-import com.example.deukgeun.commom.request.LoginRequest;
-import com.example.deukgeun.commom.service.implement.TokenServiceImpl;
-import com.example.deukgeun.trainer.entity.Trainer;
-import com.example.deukgeun.trainer.repository.TrainerRepository;
+import com.example.deukgeun.global.exception.PasswordMismatchException;
+import com.example.deukgeun.main.request.LoginRequest;
+import com.example.deukgeun.main.service.implement.TokenServiceImpl;
+import com.example.deukgeun.global.entity.Trainer;
+import com.example.deukgeun.global.repository.TrainerRepository;
 import com.example.deukgeun.trainer.request.JoinRequest;
 import com.example.deukgeun.trainer.request.UpdateInfoRequest;
 import com.example.deukgeun.trainer.request.UpdatePasswordRequest;

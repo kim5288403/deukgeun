@@ -1,8 +1,8 @@
 package com.example.deukgeun.member.service.implement;
 
-import com.example.deukgeun.commom.exception.PasswordMismatchException;
-import com.example.deukgeun.member.entity.Member;
-import com.example.deukgeun.member.repository.MemberRepository;
+import com.example.deukgeun.global.exception.PasswordMismatchException;
+import com.example.deukgeun.global.entity.Member;
+import com.example.deukgeun.global.repository.MemberRepository;
 import com.example.deukgeun.member.request.JoinRequest;
 import com.example.deukgeun.member.service.MemberService;
 import lombok.RequiredArgsConstructor;

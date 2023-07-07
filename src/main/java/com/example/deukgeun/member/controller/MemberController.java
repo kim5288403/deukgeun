@@ -1,10 +1,10 @@
 package com.example.deukgeun.member.controller;
 
-import com.example.deukgeun.commom.request.LoginRequest;
-import com.example.deukgeun.commom.response.LoginResponse;
-import com.example.deukgeun.commom.service.implement.TokenServiceImpl;
-import com.example.deukgeun.commom.util.RestResponseUtil;
-import com.example.deukgeun.member.entity.Member;
+import com.example.deukgeun.main.request.LoginRequest;
+import com.example.deukgeun.main.response.LoginResponse;
+import com.example.deukgeun.main.service.implement.TokenServiceImpl;
+import com.example.deukgeun.global.util.RestResponseUtil;
+import com.example.deukgeun.global.entity.Member;
 import com.example.deukgeun.member.request.JoinRequest;
 import com.example.deukgeun.member.service.implement.MemberServiceImpl;
 import lombok.RequiredArgsConstructor;

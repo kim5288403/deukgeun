@@ -1,9 +1,9 @@
 package com.example.deukgeun.trainer.controller;
 
-import com.example.deukgeun.commom.response.RestResponse;
-import com.example.deukgeun.commom.service.implement.TokenServiceImpl;
-import com.example.deukgeun.commom.util.RestResponseUtil;
-import com.example.deukgeun.trainer.entity.Post;
+import com.example.deukgeun.main.response.RestResponse;
+import com.example.deukgeun.main.service.implement.TokenServiceImpl;
+import com.example.deukgeun.global.util.RestResponseUtil;
+import com.example.deukgeun.global.entity.Post;
 import com.example.deukgeun.trainer.request.PostRequest;
 import com.example.deukgeun.trainer.response.PostResponse;
 import com.example.deukgeun.trainer.service.implement.TrainerServiceImpl;

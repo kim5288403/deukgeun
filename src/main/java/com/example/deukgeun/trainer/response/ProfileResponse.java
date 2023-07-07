@@ -1,7 +1,7 @@
 package com.example.deukgeun.trainer.response;
 
-import com.example.deukgeun.commom.enums.Gender;
-import com.example.deukgeun.trainer.entity.Profile;
+import com.example.deukgeun.global.enums.Gender;
+import com.example.deukgeun.global.entity.Profile;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

@@ -1,9 +1,9 @@
 package com.example.deukgeun.trainer.service;
 
 import com.example.deukgeun.DeukgeunApplication;
-import com.example.deukgeun.trainer.entity.Profile;
-import com.example.deukgeun.trainer.entity.Trainer;
-import com.example.deukgeun.trainer.repository.ProfileRepository;
+import com.example.deukgeun.global.entity.Profile;
+import com.example.deukgeun.global.entity.Trainer;
+import com.example.deukgeun.global.repository.ProfileRepository;
 import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
 import com.example.deukgeun.trainer.service.implement.TrainerServiceImpl;
 import org.junit.jupiter.api.Test;

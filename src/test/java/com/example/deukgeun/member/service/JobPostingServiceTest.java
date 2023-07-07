@@ -1,8 +1,8 @@
 package com.example.deukgeun.member.service;
 
-import com.example.deukgeun.commom.entity.JobPosting;
+import com.example.deukgeun.global.entity.JobPosting;
+import com.example.deukgeun.global.repository.JobPostingRepository;
 import com.example.deukgeun.member.request.SaveJobPostingRequest;
-import com.example.deukgeun.member.repository.MemberJobPostingRepository;
 import com.example.deukgeun.member.service.implement.JobPostingServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,11 +24,11 @@ public class JobPostingServiceTest {
     private JobPostingServiceImpl jobPostingService;
 
     @Mock
-    private MemberJobPostingRepository jobPostingRepository;
+    private JobPostingRepository jobPostingRepository;
 
     @Test
     void givenSaveJobPostingRequest_whenSave_thenIsSaved() {
-        // Givne
+        // Given
         Long memberId = 123L;
         SaveJobPostingRequest saveJobPostingRequest = new SaveJobPostingRequest();
         saveJobPostingRequest.setTitle("test");

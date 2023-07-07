@@ -1,7 +1,7 @@
 package com.example.deukgeun.global.filter;
 
-import com.example.deukgeun.commom.service.implement.TokenServiceImpl;
-import com.example.deukgeun.commom.util.RestResponseUtil;
+import com.example.deukgeun.main.service.implement.TokenServiceImpl;
+import com.example.deukgeun.global.util.RestResponseUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;

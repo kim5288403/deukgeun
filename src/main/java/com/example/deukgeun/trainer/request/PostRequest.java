@@ -1,6 +1,6 @@
 package com.example.deukgeun.trainer.request;
 
-import com.example.deukgeun.trainer.entity.Post;
+import com.example.deukgeun.global.entity.Post;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;

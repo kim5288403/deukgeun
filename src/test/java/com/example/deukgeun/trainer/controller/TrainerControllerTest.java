@@ -1,13 +1,13 @@
 package com.example.deukgeun.trainer.controller;
 
-import com.example.deukgeun.commom.enums.Gender;
-import com.example.deukgeun.commom.request.LoginRequest;
-import com.example.deukgeun.commom.response.LoginResponse;
-import com.example.deukgeun.commom.response.RestResponse;
-import com.example.deukgeun.commom.service.implement.TokenServiceImpl;
-import com.example.deukgeun.commom.util.RestResponseUtil;
-import com.example.deukgeun.trainer.entity.Profile;
-import com.example.deukgeun.trainer.entity.Trainer;
+import com.example.deukgeun.global.enums.Gender;
+import com.example.deukgeun.main.request.LoginRequest;
+import com.example.deukgeun.main.response.LoginResponse;
+import com.example.deukgeun.main.response.RestResponse;
+import com.example.deukgeun.main.service.implement.TokenServiceImpl;
+import com.example.deukgeun.global.util.RestResponseUtil;
+import com.example.deukgeun.global.entity.Profile;
+import com.example.deukgeun.global.entity.Trainer;
 import com.example.deukgeun.trainer.request.JoinRequest;
 import com.example.deukgeun.trainer.request.UpdateInfoRequest;
 import com.example.deukgeun.trainer.request.UpdatePasswordRequest;

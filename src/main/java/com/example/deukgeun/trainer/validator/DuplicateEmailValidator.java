@@ -1,6 +1,6 @@
 package com.example.deukgeun.trainer.validator;
 
-import com.example.deukgeun.commom.validator.ValidDuplicateEmail;
+import com.example.deukgeun.global.validator.ValidDuplicateEmail;
 import com.example.deukgeun.trainer.service.implement.TrainerServiceImpl;
 import lombok.RequiredArgsConstructor;
 

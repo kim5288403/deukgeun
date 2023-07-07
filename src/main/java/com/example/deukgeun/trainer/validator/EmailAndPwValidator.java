@@ -1,7 +1,7 @@
 package com.example.deukgeun.trainer.validator;
 
-import com.example.deukgeun.commom.service.implement.ValidateServiceImpl;
-import com.example.deukgeun.trainer.entity.Trainer;
+import com.example.deukgeun.main.service.implement.ValidateServiceImpl;
+import com.example.deukgeun.global.entity.Trainer;
 import com.example.deukgeun.trainer.service.implement.TrainerServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;

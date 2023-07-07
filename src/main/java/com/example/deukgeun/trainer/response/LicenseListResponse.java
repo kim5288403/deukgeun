@@ -1,7 +1,7 @@
 package com.example.deukgeun.trainer.response;
 
 import java.time.LocalDateTime;
-import com.example.deukgeun.trainer.entity.License;
+import com.example.deukgeun.global.entity.License;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
