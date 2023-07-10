@@ -47,6 +47,10 @@
 							xhr.setRequestHeader("Authorization","Bearer " + authToken);
 						},
 						success : function(res) {
+							if (res.statusCodeValue === 403) {
+								logoutCookie(res.message);
+							}
+
 							if (res.code === 200) {
 								logoutCookie(res.message);
 							}

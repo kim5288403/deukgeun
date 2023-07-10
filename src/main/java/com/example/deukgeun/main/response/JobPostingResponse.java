@@ -16,6 +16,8 @@ public class JobPostingResponse {
     public static class ListResponse {
         private Long id;
 
+        private Long memberId;
+
         private String title;
 
         private String startDate;
@@ -27,6 +29,7 @@ public class JobPostingResponse {
         public ListResponse(JobPosting jobPosting) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             this.id = jobPosting.getId();
+            this.memberId = jobPosting.getMemberId();
             this.title = jobPosting.getTitle();
             this.startDate = jobPosting.getStartDate().format(formatter);
             this.endDate = jobPosting.getEndDate().format(formatter);

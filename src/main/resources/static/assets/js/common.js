@@ -186,3 +186,38 @@ function getSelectLicense(data) {
         }
     });
 }
+
+function setList(list) {
+	$("table[name=list]").find("tbody").find("tr").remove();
+
+	let html = "";
+	if (list.length === 0) {
+		html += "<tr><td colspan=5 style='text-align: center;'> 조회된 결과가 없습니다. <td><tr>";
+	} else {
+		$.each(list, function(key, data) {
+			html += "<tr>";
+			html += "<td>" + data.title + "</td>";
+			html += "<td>" + data.startDate + "</td>";
+			html += "<td>" + data.endDate + "</td>";
+			html += "<td>" + data.address + "</td>";
+			html += "<td>";
+			html += "<a href='/jobPosting/" + data.id + "' class='button small'>상세보기</a>";
+			html += "</td>";
+			html += "</tr>";
+		});
+	}
+
+    $("table[name=list]").find("tbody").append(html);
+}
+
+function setPage(currentPage, totalPages) {
+	$(".page").find(".p").remove();
+	let appendHtml = "";
+
+	for(let i = 0; i < totalPages; i++) {
+		appendHtml += "<p class='p' id='" + i + "' onclick='getList(" + i + ")'>" + (i + 1) + "</p>";
+	}
+
+	$(".page").append(appendHtml);
+	$("p[id=" + currentPage + "]").css("font-weight","600");
+}

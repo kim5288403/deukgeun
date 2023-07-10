@@ -11,7 +11,12 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import javax.persistence.EntityExistsException;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -25,15 +30,31 @@ public class ApplicantServiceTest {
     private ApplicantRepository applicantRepository;
 
     @Test
-    void givenSaveApplicantRequest_whenSave_thenIsSaved() {
+    void givenSaveApplicantRequestAndTrainerId_whenSave_thenIsSaved() {
         // Given
+        Long trainerId = 123L;
         SaveApplicantRequest saveApplicantRequest = new SaveApplicantRequest();
 
         // When
-        applicantService.save(saveApplicantRequest);
+        applicantService.save(saveApplicantRequest, trainerId);
 
         // Then
         verify(applicantRepository, times(1)).save(any(Applicant.class));
+    }
 
+    @Test
+    public void givenSaveApplicantRequestAndTrainerId_whenAlreadyExists_thenThrowEntityExistsException() {
+        // Given
+        SaveApplicantRequest saveApplicantRequest = new SaveApplicantRequest();
+        saveApplicantRequest.setJobPostingId(1L);
+        saveApplicantRequest.setSupportAmount(1000);
+
+        Long trainerId = 1L;
+
+        given(applicantRepository.existsByJobPostingIdAndTrainerId(anyLong(), anyLong()))
+                .willReturn(true);
+
+        // When, Then
+        assertThrows(EntityExistsException.class, () -> applicantService.save(saveApplicantRequest, trainerId));
     }
 }

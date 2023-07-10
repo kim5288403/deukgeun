@@ -4,5 +4,5 @@ import com.example.deukgeun.global.entity.Applicant;
 import com.example.deukgeun.trainer.request.SaveApplicantRequest;
 
 public interface ApplicantService {
-    Applicant save(SaveApplicantRequest saveApplicantRequest);
+    Applicant save(SaveApplicantRequest saveApplicantRequest, Long trainerId);
 }

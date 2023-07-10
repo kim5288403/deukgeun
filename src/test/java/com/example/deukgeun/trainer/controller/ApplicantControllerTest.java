@@ -2,8 +2,10 @@ package com.example.deukgeun.trainer.controller;
 
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.main.response.RestResponse;
+import com.example.deukgeun.main.service.implement.TokenServiceImpl;
 import com.example.deukgeun.trainer.request.SaveApplicantRequest;
 import com.example.deukgeun.trainer.service.ApplicantService;
+import com.example.deukgeun.trainer.service.implement.TrainerServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,6 +19,7 @@ import org.springframework.validation.BindingResult;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -28,6 +31,10 @@ public class ApplicantControllerTest {
     @Mock
     private ApplicantService applicantService;
     @Mock
+    private TokenServiceImpl tokenService;
+    @Mock
+    private TrainerServiceImpl trainerService;
+    @Mock
     private BindingResult bindingResult;
     @Mock
     private HttpServletRequest request;
@@ -35,17 +42,22 @@ public class ApplicantControllerTest {
     @Test
     public void givenApplicantService_whenSave_thenReturnResponseEntity() {
         // Given
+        Long trainerId = 123L;
+        String authToken = "testAuthToken";
         SaveApplicantRequest saveApplicantRequest = new SaveApplicantRequest();
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("지원 성공했습니다.", null);
 
+        given(tokenService.resolveAuthToken(request)).willReturn(authToken);
+        given(trainerService.getTrainerId(authToken)).willReturn(trainerId);
+
         // When
-        ResponseEntity<?> responseEntity = applicantController.save(saveApplicantRequest, bindingResult);
+        ResponseEntity<?> responseEntity = applicantController.save(request, saveApplicantRequest, bindingResult);
 
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
 
-        verify(applicantService, times(1)).save(saveApplicantRequest);
+        verify(applicantService, times(1)).save(saveApplicantRequest, trainerId);
     }
 
 }

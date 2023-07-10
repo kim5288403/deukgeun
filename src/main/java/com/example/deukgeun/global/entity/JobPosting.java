@@ -84,4 +84,9 @@ public class JobPosting extends BaseEntity {
         this.endDate = endDate;
     }
 
+    public void updateIsActive(int isActive) {
+        this.isActive = isActive;
+    }
+
+
 }

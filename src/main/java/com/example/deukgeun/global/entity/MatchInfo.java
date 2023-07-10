@@ -4,15 +4,14 @@ import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Table(name = "matching_information")
-public class MatchingInformation {
+@Table(name = "match_info")
+public class MatchInfo extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "matching_information_id")
+    @Column(name = "match_info_id")
     private Long id;
 
     @Column(length = 50, nullable = false)
@@ -24,21 +23,16 @@ public class MatchingInformation {
     @Column(length = 50, nullable = false)
     private Integer status;
 
-    @Column(updatable = false)
-    private LocalDateTime matchDate;
-
     @Builder
-    public MatchingInformation(
+    public MatchInfo(
             Long id,
             Long jobPostingId,
             Long applicantId,
-            Integer status,
-            LocalDateTime matchDate
+            Integer status
     ) {
         this.id = id;
         this.applicantId = applicantId;
         this.jobPostingId = jobPostingId;
         this.status = status;
-        this.matchDate = matchDate;
     }
 }

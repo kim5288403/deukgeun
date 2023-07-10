@@ -1,5 +1,6 @@
 package com.example.deukgeun.member.controller;
 
+import com.example.deukgeun.main.response.JobPostingResponse;
 import com.example.deukgeun.member.request.SaveJobPostingRequest;
 import com.example.deukgeun.main.service.implement.TokenServiceImpl;
 import com.example.deukgeun.global.util.RestResponseUtil;
@@ -7,6 +8,7 @@ import com.example.deukgeun.global.entity.Member;
 import com.example.deukgeun.member.service.JobPostingService;
 import com.example.deukgeun.member.service.implement.MemberServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,4 +36,15 @@ public class JobPostingController {
 
         return RestResponseUtil.ok("등록 성공했습니다.", null);
     }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/")
+    public ResponseEntity<?> list(HttpServletRequest request, int currentPage) {
+        String token = tokenService.resolveAuthToken(request);
+        String userPk = tokenService.getUserPk(token);
+        Member member = memberService.getByEmail(userPk);
+        Page<JobPostingResponse.ListResponse> list = jobPostingService.getByMemberId(member.getId(), currentPage);
+
+        return RestResponseUtil.ok("조회 성공했습니다.", list);
+    }
+
 }

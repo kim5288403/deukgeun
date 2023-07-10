@@ -109,8 +109,15 @@
                 <!-- Break -->
                 <div class="col-12">
                     <ul class="actions" style="justify-content: center;">
-                        <li><input type="button" name="applicantBtn" value="applicant" class="primary"
-                                   onclick="getSupportAmount()" style="display:none"></li>
+                        <li>
+                            <input type="button" name="applicantBtn" value="applicant" class="primary"
+                                   onclick="getSupportAmount()" style="display:none">
+                        </li>
+
+                        <li name="applicantListBtn" style="display:none">
+                            <a href="../member/applicant/" id="applicantListBtn" class="button">applicantList</a>
+                        </li>
+
                         <li><input type="button" onclick="location.href='/'" value="back"></li>
                     </ul>
                 </div>
@@ -128,11 +135,16 @@
 
 	    $(document).ready(function() {
 	      let authToken = getCookie("authToken");
+
 		  if (authToken !== null) {
             let role = getCookie("role").replaceAll(";", "").trim(" ");
+
             if (role === "trainer") {
               $("input[name=applicantBtn]").show();
+            } else if (role === "member") {
+              $("li[name=applicantListBtn]").show();
             }
+
 		  }
 
 	      $('input[type != button]').prop('readonly', true);
@@ -141,13 +153,18 @@
 	    });
 
 	    function applicantAjax(supportAmount) {
+	        let authToken = getCookie("authToken");
+
 	        $.ajax({
-				url : "/api/trainer/applicant/,
+				url : "/api/trainer/applicant/",
 				type : "post",
 				data : {
 				    jobPostingId : id,
 				    supportAmount : supportAmount
-				}
+				},
+				beforeSend : function (xhr) {
+							xhr.setRequestHeader("Authorization","Bearer " + authToken);
+				},
 				success : function(res) {
 					if (res.code === 200) {
 					    defaultSuccessAlert(res.message, "성공").then(function (){
@@ -157,7 +174,7 @@
 				},
 				error : function(res) {
 					if (res.responseJSON.code === 400) {
-						errorMessage(res.responseJSON.data);
+					    defaultErrorAlert(res.responseJSON.message);
 					}
 				}
 			});
@@ -167,6 +184,9 @@
             Swal.fire({
               title: '지원금액을 입력하세요.',
               input: 'text',
+              inputAttributes: {
+                style: 'width: 90%; !important'
+              },
               showCancelButton: true,
               confirmButtonText: '확인',
               cancelButtonText: '취소',
@@ -221,6 +241,12 @@
 
           });
         }
+
+        $("a[id=applicantListBtn]").on("click", function(e) {
+           e.preventDefault();
+           let href = $(this).attr("href");
+           window.location.href = href + id;
+        });
 
 
     </script>

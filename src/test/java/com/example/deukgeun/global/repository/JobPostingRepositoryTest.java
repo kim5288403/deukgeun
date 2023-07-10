@@ -1,7 +1,6 @@
 package com.example.deukgeun.global.repository;
 
 import com.example.deukgeun.global.entity.JobPosting;
-import com.example.deukgeun.global.repository.JobPostingRepository;
 import com.example.deukgeun.main.response.JobPostingResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,6 +86,40 @@ public class JobPostingRepositoryTest {
         // Then
         assertNotNull(foundJobPosting);
         assertEquals(saveJobPosting.getTitle(), foundJobPosting.getTitle());
+    }
+
+    @Test
+    void givenJobPosting_whenFindByMemberId_thenReturnValid() {
+        // Given
+        Long memberId = 123L;
+        JobPosting jobPosting1 = JobPosting
+                .builder()
+                .memberId(memberId)
+                .title("test1")
+                .postcode("123")
+                .startDate(LocalDateTime.now())
+                .endDate(LocalDateTime.now())
+                .build();
+        JobPosting jobPosting2 = JobPosting
+                .builder()
+                .memberId(memberId)
+                .title("test2")
+                .postcode("123")
+                .startDate(LocalDateTime.now())
+                .endDate(LocalDateTime.now())
+                .build();
+
+        jobPostingRepository.save(jobPosting1);
+        jobPostingRepository.save(jobPosting2);
+
+        PageRequest pageable = PageRequest.of(0, 10);
+
+        // When
+        Page<JobPostingResponse.ListResponse> result = jobPostingRepository.findByMemberId(memberId, pageable);
+
+        // Then
+        assertEquals(memberId, result.getContent().get(0).getMemberId());
+        assertEquals(memberId, result.getContent().get(1).getMemberId());
     }
     @Test
     void givenJobPosting_whenSaved_thenReturnValid() {

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{web/layout/layout}">
+<th:block layout:fragment="css">
+	<style>
+		.page {
+			display:flex;
+			justify-content: center;
+		}
+		.p {
+			padding: 0.30rem;
+			cursor: pointer;
+		}
+	</style>
+</th:block>
+<th:block layout:fragment="content">
+
+	<!-- Posts -->
+	<section class="post">
+		<h3>지원자 목록</h3>
+		<div class="table-wrapper">
+			<table name="list">
+				<thead>
+				<tr>
+					<th>공고 번호</th>
+					<th>트레이너 ID</th>
+					<th>지원 금액</th>
+					<th>비고</th>
+				</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="page">
+
+		</div>
+	</section>
+
+</th:block>
+<th:block layout:fragment="script">
+	<script th:inline="javascript">
+        /*<![CDATA[*/
+	   		let id = /*[[ ${id} ]]*/
+	    /*]]*/
+
+		$(document).ready(function () {
+ 			getList();
+		})
+		
+		function getList(currentPage = 0) {
+			let authToken = getCookie("authToken");
+
+			$.ajax({
+				url : "/api/member/applicant/",
+				method : "get",
+				data : {
+					"jobPostingId" : id,
+					"currentPage" : currentPage,
+				},
+				beforeSend : function (xhr) {
+					xhr.setRequestHeader("Authorization","Bearer " + authToken);
+				},
+				success : function(res) {
+					setList(res.data.content);
+					setPage(res.data.currentPage, res.data.totalPages);
+				}
+			});
+		}
+
+		function setList(list) {
+			$("table[name=list]").find("tbody").find("tr").remove();
+
+			let html = "";
+			if (list.length === 0) {
+				html += "<tr><td colspan=5 style='text-align: center;'> 조회된 결과가 없습니다. <td><tr>";
+			} else {
+				$.each(list, function(key, data) {
+					html += "<tr>";
+					html += "<td>" + data.jobPostingId + "</td>";
+					html += "<td>" + data.TrainerId + "</td>";
+					html += "<td>" + data.supportAmount + "</td>";
+					html += "<td>";
+					html += "<a href='#' onclick='select(" + data.id + ")' class='button small'>선택하기</a>";
+					html += "</td>";
+					html += "</tr>";
+				});
+			}
+
+			$("table[name=list]").find("tbody").append(html);
+		}
+
+		function select(applicantId) {
+			$.ajax({
+				url : "/api/member/matchInfo/",
+				method : "post",
+				data : {
+					"jobPostingId" : id,
+					"applicantId" : applicantId,
+				},
+				success : function(res) {
+					if (res.code === 200) {
+						defaultSuccessAlert(res.message, "성공").then(function (){
+							window.location.reload();
+						});
+					}
+				},
+				error : function(res) {
+					if (res.responseJSON.code === 400) {
+						defaultErrorAlert(res.responseJSON.data.message, "실패");
+					}
+				}
+			});
+		}
+
+	</script>
+</th:block>
+</html>

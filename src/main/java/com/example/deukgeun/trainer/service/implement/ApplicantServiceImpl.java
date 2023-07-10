@@ -7,6 +7,8 @@ import com.example.deukgeun.trainer.service.ApplicantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityExistsException;
+
 @Service
 @RequiredArgsConstructor
 public class ApplicantServiceImpl implements ApplicantService {
@@ -14,11 +16,15 @@ public class ApplicantServiceImpl implements ApplicantService {
     private final ApplicantRepository applicantRepository;
 
     @Override
-    public Applicant save(SaveApplicantRequest saveApplicantRequest) {
+    public Applicant save(SaveApplicantRequest saveApplicantRequest, Long trainerId) {
+        if (applicantRepository.existsByJobPostingIdAndTrainerId(saveApplicantRequest.getJobPostingId(), trainerId)) {
+            throw new EntityExistsException("이미 지원한 공고 입니다.");
+        }
+
         Applicant applicant = Applicant
                 .builder()
                 .jobPostingId(saveApplicantRequest.getJobPostingId())
-                .trainerId(saveApplicantRequest.getTrainerId())
+                .trainerId(trainerId)
                 .supportAmount(saveApplicantRequest.getSupportAmount())
                 .build();
 

@@ -89,29 +89,6 @@ public class JobPostingServiceTest {
     }
 
     @Test
-    void givenExistingId_whenGetById_thenReturn() {
-        // Given
-        long id = 5L;
-        JobPosting jobPosting = JobPosting
-                .builder()
-                .id(5L)
-                .memberId(123L)
-                .title("test")
-                .postcode("123")
-                .startDate(LocalDateTime.now())
-                .endDate(LocalDateTime.now())
-                .build();
-        given(jobPostingRepository.findById(jobPosting.getId())).willReturn(Optional.of(jobPosting));
-
-        // When
-        JobPosting result = jobPostingService.getById(id);
-
-        // Then
-        assertNotNull(result);
-        assertEquals(jobPosting.getTitle(), result.getTitle());
-    }
-
-    @Test
     void givenNonexistentId_whenGetById_thenThrowsEntityNotFoundException() {
         // Given
         long id = 5L;

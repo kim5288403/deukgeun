@@ -2,12 +2,14 @@ package com.example.deukgeun.global.entity;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
 @Table(name = "applicant")
+@NoArgsConstructor
 public class Applicant extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

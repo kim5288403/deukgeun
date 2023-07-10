@@ -45,11 +45,11 @@
 			<i class="fa fa-trash fa-3" aria-hidden="true"></i>
 			<h2>회원 탈퇴</h2>
 		</div>
-		<div class="mypage" id="jobPosting">
+		<div class="mypage" id="job/create">
 			<i class="fa fa-clipboard fa-3" aria-hidden="true"></i>
 			<h2>공고 등록</h2>
 		</div>
-		<div class="mypage" id="post">
+		<div class="mypage" id="job">
 			<i class="fa fa-clipboard fa-3" aria-hidden="true"></i>
 			<h2>공고</h2>
 		</div>
@@ -61,7 +61,7 @@
 	<script type="text/javascript">
 		$("div[class=mypage]").on("click", function () {
 			let url = $(this).attr("id");
-			window.location.href = "/member/my-page/" + url;
+			window.location.href = "/member/" + url;
 		});
 	</script>
 </th:block>

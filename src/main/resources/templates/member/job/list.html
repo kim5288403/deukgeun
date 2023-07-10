@@ -15,24 +15,10 @@
 	</style>
 </th:block>
 <th:block layout:fragment="content">
-	<article class="post featured" style="padding: 8rem 8rem 1rem 8rem;">
-		<form method="get" action="#">
-			<div class="fields search">
-				<div class="field keyword" id="field-keyword">
-					<label for="keyword">검색창</label> 
-					<input type="text" name="keyword" id="keyword" placeholder="제목, 지역명을 입력해주세요." />
-				</div>
-
-				<div class="field" id="field-button">
-					<input type="submit" value="Send Message" />
-				</div>
-			</div>
-		</form>
-	</article>
 
 	<!-- Posts -->
-	<section class="post" style="padding: 2rem 8rem 6rem 8rem;">
-		<h3>검색 결과</h3>
+	<section class="post">
+		<h3>공고 목록</h3>
 		<div class="table-wrapper">
 			<table name="list">
 				<thead>
@@ -48,11 +34,13 @@
 				</tbody>
 			</table>
 		</div>
+
+		<div class="page">
+
+		</div>
 	</section>
 
-	<section class="page">
 
-	</section>
 
 </th:block>
 <th:block layout:fragment="script">
@@ -63,14 +51,16 @@
 		})
 		
 		function getList(currentPage = 0) {
-			let keyword = getUrlParam("keyword");
+			let authToken = getCookie("authToken");
 
 			$.ajax({
-				url : "/api/job/",
+				url : "/api/member/job/",
 				method : "get",
 				data : {
-					"keyword" : keyword,
 					"currentPage" : currentPage,
+				},
+				beforeSend : function (xhr) {
+					xhr.setRequestHeader("Authorization","Bearer " + authToken);
 				},
 				success : function(res) {
 					setList(res.data.content);
@@ -78,13 +68,6 @@
 				}
 			});
 		}
-
-		function getUrlParam(key) {
-			let url = new URL(window.location.href);
-			let urlParams = url.searchParams;
-			return urlParams.get(key);
-		}
-
 	</script>
 </th:block>
 </html>

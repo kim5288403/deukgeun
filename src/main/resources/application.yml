@@ -68,6 +68,8 @@ deukgeun:
   role:
     trainer: trainer
     member: member
+  status:
+    paymentWaiting: 1
 
 jwt:
   secretKey: deuckgeunproject
