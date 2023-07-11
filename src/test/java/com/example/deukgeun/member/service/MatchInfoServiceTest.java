@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -28,10 +29,24 @@ public class MatchInfoServiceTest {
         saveMatchInfoRequest.setApplicantId(123L);
         saveMatchInfoRequest.setJobPostingId(123L);
 
+        given(matchInfoRepository.existsByJobPostingId(saveMatchInfoRequest.getJobPostingId())).willReturn(false);
+
         // When
         matchInfoService.save(saveMatchInfoRequest);
 
         // Then
         verify(matchInfoRepository, times(1)).save(any(MatchInfo.class));
+    }
+
+    @Test
+    void givenExistingApplicantId_whenDeleteByApplicantId_thenIsDeleted() {
+        // Given
+        Long applicantId = 123L;
+
+        // When
+        matchInfoService.deleteByApplicantId(applicantId);
+
+        // Then
+        verify(matchInfoRepository, times(1)).deleteByApplicantId(applicantId);
     }
 }

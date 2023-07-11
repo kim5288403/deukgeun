@@ -15,4 +15,6 @@ public interface JobPostingRepository extends JpaRepository<JobPosting, Long> {
     Page<JobPostingResponse.ListResponse> findByLikeKeyword(@Param(value = "keyword")String keyword, Pageable pageable);
 
     Page<JobPostingResponse.ListResponse> findByMemberId(Long memberId, Pageable pageable);
+
+    boolean existsByIdAndMemberId(Long id, Long memberId);
 }

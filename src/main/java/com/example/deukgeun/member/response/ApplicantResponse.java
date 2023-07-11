@@ -20,11 +20,14 @@ public class ApplicantResponse {
 
         private Integer supportAmount;
 
+        private Integer isSelected;
+
         public ListResponse(Applicant applicant) {
             this.id = applicant.getId();
             this.trainerId = applicant.getTrainerId();
             this.jobPostingId = applicant.getJobPostingId();
             this.supportAmount = applicant.getSupportAmount();
+            this.isSelected = applicant.getIsSelected();
         }
     }
 }

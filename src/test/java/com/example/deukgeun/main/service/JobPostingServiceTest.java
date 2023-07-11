@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -101,5 +102,36 @@ public class JobPostingServiceTest {
         verify(jobPostingRepository, times(1)).findById(id);
     }
 
+    @Test
+    void givenCheckJobPostingOwnershipRequest_whenExistsByIdAndMemberId_thenTure() {
+        // Given
+        Long id = 1L;
+        Long memberId = 1L;
+
+        given(jobPostingRepository.existsByIdAndMemberId(anyLong(), anyLong())).willReturn(true);
+
+        // When
+        boolean result = jobPostingService.existsByIdAndMemberId(id, memberId);
+
+        // Then
+        verify(jobPostingRepository, times(1)).existsByIdAndMemberId(id, memberId);
+        assertTrue(result);
+    }
+
+    @Test
+    void givenIdAndMemberId_whenExistsByIdAndMemberId_thenFalse() {
+        // Given
+        Long id = 1L;
+        Long memberId = 1L;
+
+        given(jobPostingRepository.existsByIdAndMemberId(anyLong(), anyLong())).willReturn(false);
+
+        // When
+        boolean result = jobPostingService.existsByIdAndMemberId(id, memberId);
+
+        // Then
+        verify(jobPostingRepository, times(1)).existsByIdAndMemberId(id, memberId);
+        assertFalse(result);
+    }
 
 }

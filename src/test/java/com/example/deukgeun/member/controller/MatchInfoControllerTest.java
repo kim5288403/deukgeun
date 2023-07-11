@@ -5,6 +5,7 @@ import com.example.deukgeun.global.entity.MatchInfo;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.main.response.RestResponse;
 import com.example.deukgeun.member.request.SaveMatchInfoRequest;
+import com.example.deukgeun.member.service.ApplicantService;
 import com.example.deukgeun.member.service.JobPostingService;
 import com.example.deukgeun.member.service.MatchInfoService;
 import org.junit.jupiter.api.Test;
@@ -31,10 +32,12 @@ public class MatchInfoControllerTest {
     @Mock
     private JobPostingService jobPostingService;
     @Mock
+    private ApplicantService applicantService;
+    @Mock
     private BindingResult bindingResult;
 
     @Test
-    public void givenMatchInfoService_whenSave_thenReturnResponseEntity() {
+    public void givenMatchInfoService_whenSelect_thenReturnResponseEntity() {
         // Given
         MatchInfo matchInfo = mock(MatchInfo.class);
         JobPosting jobPosting = mock(JobPosting.class);
@@ -45,7 +48,7 @@ public class MatchInfoControllerTest {
         given(jobPostingService.updateIsActiveByJobPostingId(2, saveMatchInfoRequest.getJobPostingId())).willReturn(jobPosting);
 
         // When
-        ResponseEntity<?> responseEntity = matchInfoController.save(saveMatchInfoRequest, bindingResult);
+        ResponseEntity<?> responseEntity = matchInfoController.select(saveMatchInfoRequest, bindingResult);
 
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -55,4 +58,20 @@ public class MatchInfoControllerTest {
         verify(jobPostingService, times(1)).updateIsActiveByJobPostingId(2, saveMatchInfoRequest.getJobPostingId());
     }
 
+    @Test
+    public void givenMatchInfoService_whenCancel_thenReturnResponseEntity() {
+        // Given
+        Long applicantId = 123L;
+        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("취소 성공했습니다.", null);
+
+        // When
+        ResponseEntity<?> responseEntity = matchInfoController.cancel(applicantId);
+
+        // Then
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(expectedResponse.getBody(), responseEntity.getBody());
+
+        verify(matchInfoService, times(1)).deleteByApplicantId(applicantId);
+        verify(applicantService, times(1)).updateIsSelectedByApplicantId(applicantId, 0);
+    }
 }

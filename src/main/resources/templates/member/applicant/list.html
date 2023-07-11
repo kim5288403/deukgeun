@@ -45,14 +45,38 @@
         /*<![CDATA[*/
 	   		let id = /*[[ ${id} ]]*/
 	    /*]]*/
+		var authToken = getCookie("authToken");
 
 		$(document).ready(function () {
- 			getList();
+ 			checkJobPostingOwnershipAjax();
 		})
+
+		function checkJobPostingOwnershipAjax() {
+	        $.ajax({
+				url : "/api/job/check",
+				type : "get",
+				data : {
+				    id : id,
+				},
+				beforeSend : function (xhr) {
+					xhr.setRequestHeader("Authorization","Bearer " + authToken);
+				},
+				success : function(res) {
+				    if (res.data) {
+				    	getList();
+				    } else {
+				    	defaultErrorAlert("본인이 등록한 공고만 확인 가능합니다.");
+				    }
+				},
+				error : function(res) {
+					if (res.responseJSON.code === 400) {
+					    defaultErrorAlert(res.responseJSON.message);
+					}
+				}
+			});
+	    }
 		
 		function getList(currentPage = 0) {
-			let authToken = getCookie("authToken");
-
 			$.ajax({
 				url : "/api/member/applicant/",
 				method : "get",
@@ -80,10 +104,16 @@
 				$.each(list, function(key, data) {
 					html += "<tr>";
 					html += "<td>" + data.jobPostingId + "</td>";
-					html += "<td>" + data.TrainerId + "</td>";
+					html += "<td>" + data.trainerId + "</td>";
 					html += "<td>" + data.supportAmount + "</td>";
 					html += "<td>";
-					html += "<a href='#' onclick='select(" + data.id + ")' class='button small'>선택하기</a>";
+
+					if(data.isSelected === 0) {
+						html += "<a href='#' onclick='select(" + data.id + ")' class='button small'>선택하기</a>";
+					} else {
+						html += "<a href='#' onclick='cancel(" + data.id + ")' class='button small'>취소하기</a>";
+					}
+
 					html += "</td>";
 					html += "</tr>";
 				});
@@ -109,7 +139,29 @@
 				},
 				error : function(res) {
 					if (res.responseJSON.code === 400) {
-						defaultErrorAlert(res.responseJSON.data.message, "실패");
+						defaultErrorAlert(res.responseJSON.message, "실패");
+					}
+				}
+			});
+		}
+
+		function cancel(applicantId) {
+			$.ajax({
+				url : "/api/member/matchInfo/",
+				method : "delete",
+				data : {
+					"applicantId" : applicantId,
+				},
+				success : function(res) {
+					if (res.code === 200) {
+						defaultSuccessAlert(res.message, "성공").then(function (){
+							window.location.reload();
+						});
+					}
+				},
+				error : function(res) {
+					if (res.responseJSON.code === 400) {
+						defaultErrorAlert(res.responseJSON.message, "실패");
 					}
 				}
 			});

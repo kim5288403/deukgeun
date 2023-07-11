@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityExistsException;
+
 @Service("member.service.MatchInfo")
 @RequiredArgsConstructor
 public class MatchInfoServiceImpl implements MatchInfoService {
@@ -18,13 +20,23 @@ public class MatchInfoServiceImpl implements MatchInfoService {
 
     @Override
     public MatchInfo save(SaveMatchInfoRequest saveMatchInfoRequest) {
+        if (matchInfoRepository.existsByJobPostingId(saveMatchInfoRequest.getJobPostingId())) {
+            throw new EntityExistsException("이미 선택한 지원자가 있습니다.");
+        }
+
         MatchInfo matchInfo = MatchInfo
                 .builder()
                 .applicantId(saveMatchInfoRequest.getApplicantId())
                 .jobPostingId(saveMatchInfoRequest.getJobPostingId())
-                .status(PAYMENT_WAITING)
+                .status(this.PAYMENT_WAITING)
                 .build();
 
         return matchInfoRepository.save(matchInfo);
     }
+
+    @Override
+    public void deleteByApplicantId(Long applicantId) {
+        matchInfoRepository.deleteByApplicantId(applicantId);
+    }
+
 }

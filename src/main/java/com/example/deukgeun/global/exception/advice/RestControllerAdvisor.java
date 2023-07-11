@@ -1,20 +1,21 @@
 package com.example.deukgeun.global.exception.advice;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import javax.mail.MessagingException;
-import javax.persistence.EntityNotFoundException;
-import javax.validation.ValidationException;
-
 import com.example.deukgeun.global.exception.PasswordMismatchException;
 import com.example.deukgeun.global.exception.RequestValidException;
+import com.example.deukgeun.global.util.RestResponseUtil;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import com.example.deukgeun.global.util.RestResponseUtil;
-import io.jsonwebtoken.ExpiredJwtException;
+
+import javax.mail.MessagingException;
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
+import javax.validation.ValidationException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 @RestControllerAdvice
 public class RestControllerAdvisor {
@@ -23,6 +24,12 @@ public class RestControllerAdvisor {
   public ResponseEntity<?> exceptionHandler(Exception e) {
     return RestResponseUtil
         .bad(e.getMessage(), null);
+  }
+
+  @ExceptionHandler(EntityExistsException.class)
+  public ResponseEntity<?> entityExistsExceptionHandler(EntityExistsException e) {
+    return RestResponseUtil
+            .bad(e.getMessage(), null);
   }
 
   @ExceptionHandler(PasswordMismatchException.class)

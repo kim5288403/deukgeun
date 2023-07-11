@@ -19,8 +19,8 @@ public class Profile extends BaseEntity {
   
   @Column(name = "trainer_id")
   private Long trainerId;
-  
-  @OneToOne()
+
+  @OneToOne
   @JoinColumn(name = "trainer_id", insertable = false, updatable = false, nullable = false)
   private Trainer trainer;
 

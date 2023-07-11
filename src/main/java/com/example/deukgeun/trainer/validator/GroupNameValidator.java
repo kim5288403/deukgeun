@@ -19,7 +19,6 @@ public class GroupNameValidator implements ConstraintValidator<ValidGroupName, O
     if (groupStatus == null) {
       return false;
     }
-
     String groupName = validateService.getFieldValue(object, "groupName");
 
     return trainerService.isEmptyGroupName(groupName, groupStatus);

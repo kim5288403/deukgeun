@@ -28,7 +28,7 @@ public class Post extends BaseEntity{
   @Column(nullable = false)
   private String html;
   
-  @OneToOne()
+  @OneToOne
   @JoinColumn(name = "trainer_id", insertable = false, updatable = false, nullable = false)
   private Trainer trainer;
   

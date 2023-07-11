@@ -47,7 +47,7 @@ public class ApplicantRepositoryTest {
     }
 
     @Test
-    void givenApplicant_whenFindByMemberId_thenReturnValid() {
+    void givenApplicant_whenFindByJobPostingId_thenReturnValid() {
         // Given
         Long jobPostingId = 123L;
         Applicant applicant1 = Applicant

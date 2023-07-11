@@ -1,5 +1,6 @@
 package com.example.deukgeun.member.service;
 
+import com.example.deukgeun.global.entity.Applicant;
 import com.example.deukgeun.global.repository.ApplicantRepository;
 import com.example.deukgeun.member.response.ApplicantResponse;
 import com.example.deukgeun.member.service.implement.ApplicantServiceImpl;
@@ -13,9 +14,11 @@ import org.springframework.data.domain.PageRequest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -50,11 +53,28 @@ public class ApplicantServiceTest {
         // When
         Page<ApplicantResponse.ListResponse> result = applicantService.getByJobPostingId(jobPostingId, currentPage);
 
-
         // Then
         assertNotNull(result);
         assertEquals(list.size(), result.getContent().size());
         verify(applicantRepository, times(1)).findByJobPostingId(jobPostingId, pageable);
+    }
 
+    @Test
+    public void givenApplicantExists_whenUpdateIsSelectedByApplicantId_thenIsSelectedUpdated() {
+        // Given
+        Long applicantId = 1L;
+        Applicant applicant = Applicant
+                .builder()
+                .id(applicantId)
+                .build();
+
+        given(applicantRepository.findById(anyLong())).willReturn(Optional.of(applicant));
+
+        // When
+        applicantService.updateIsSelectedByApplicantId(applicantId, 1);
+
+        // Then
+        verify(applicantRepository, times(1)).findById(applicantId);
+        verify(applicantRepository, times(1)).save(applicant);
     }
 }

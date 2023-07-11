@@ -7,4 +7,6 @@ import org.springframework.data.domain.Page;
 public interface JobPostingService {
     Page<JobPostingResponse.ListResponse> getList(String keyword, int currentPage);
     JobPosting getById(Long id);
+
+    boolean existsByIdAndMemberId(Long id, Long memberId);
 }

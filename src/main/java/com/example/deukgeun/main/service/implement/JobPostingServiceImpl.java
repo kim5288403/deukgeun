@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 
-@Service("common.jobPosting.service")
+@Service("main.jobPosting.service")
 @RequiredArgsConstructor
 public class JobPostingServiceImpl implements JobPostingService {
     private final JobPostingRepository jobPostingRepository;
@@ -28,5 +28,10 @@ public class JobPostingServiceImpl implements JobPostingService {
     public JobPosting getById(Long id) {
         return jobPostingRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("없는 공고 정보 입니다."));
+    }
+
+    @Override
+    public boolean existsByIdAndMemberId(Long id, Long memberId) {
+        return jobPostingRepository.existsByIdAndMemberId(id, memberId);
     }
 }

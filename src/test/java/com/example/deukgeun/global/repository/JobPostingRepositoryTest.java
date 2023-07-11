@@ -13,8 +13,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -142,6 +141,41 @@ public class JobPostingRepositoryTest {
         JobPosting foundJobPosting = jobPostingRepository.findById(saveJobPosting.getId()).orElse(null);
         assertNotNull(foundJobPosting);
         assertEquals(saveJobPosting.getTitle(), foundJobPosting.getTitle());
+    }
+
+    @Test
+    public void givenIdAndMemberId_whenExistsByIdAndMemberId_thenTrue() {
+        // Given
+        JobPosting jobPosting = JobPosting
+                .builder()
+                .title("test")
+                .memberId(123L)
+                .postcode("12-2")
+                .isActive(1)
+                .startDate(LocalDateTime.now())
+                .endDate(LocalDateTime.now().plusDays(5))
+                .build();
+
+        JobPosting saveJobPosting = jobPostingRepository.save(jobPosting);
+
+        // When
+        boolean result = jobPostingRepository.existsByIdAndMemberId(saveJobPosting.getId(), saveJobPosting.getMemberId());
+
+        // Then
+        assertTrue(result);
+    }
+
+    @Test
+    public void givenIdAndMemberId_whenExistsByIdAndMemberId_thenFalse() {
+        // Given
+        Long id = 1L;
+        Long memberId = 123L;
+
+        // When
+        boolean result = jobPostingRepository.existsByIdAndMemberId(id, memberId);
+
+        // Then
+        assertFalse(result);
     }
 
 }

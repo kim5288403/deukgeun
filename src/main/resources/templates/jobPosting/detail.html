@@ -20,8 +20,8 @@
         <form id="job" method="post" action="">
             <div class="row gtr-uniform">
                 <div class="col-6">
-                    <label>제목</label>
-                    <input type="text" name="title" value="" placeholder="제목">
+                    <label for="title">제목</label>
+                    <input type="text" id="title" name="title" value="" placeholder="제목">
                 </div>
 
                 <div class="col-6">
@@ -66,12 +66,14 @@
                         <label for="availableRequirementsEtc">있음</label>
                     </div>
 
-                    <input type="text" name="requirementEtc" value="" style="display:none">
+                    <label>
+                        <input type="text" name="requirementEtc" value="" style="display:none">
+                    </label>
                 </div>
 
                 <!-- Break -->
                 <div class="col-12">
-                    <label>pt받을 주소</label>
+                    <label for="sample4_postcode">pt받을 주소</label>
                     <ul class="actions">
                         <li>
                             <input type="text" id="sample4_postcode" name="postcode" placeholder="우편번호"
@@ -82,13 +84,17 @@
                 </div>
 
                 <div class="col-6">
+                    <label for="sample4_roadAddress">도로명 주소</label>
                     <input type="text" id="sample4_roadAddress" name="roadAddress" placeholder="도로명주소">
+                    <label for="sample4_jibunAddress">지번 주소</label>
                     <input type="text" id="sample4_jibunAddress" name="jibunAddress" placeholder="지번주소">
                     <span id="guide" style="color: #999; display: none"></span>
                 </div>
 
                 <div class="col-6">
+                    <label for="sample4_detailAddress">상세주소</label>
                     <input type="text" id="sample4_detailAddress" name="detailAddress" placeholder="상세주소">
+                    <label for="sample4_extraAddress">참고항목</label>
                     <input type="text" id="sample4_extraAddress" name="extraAddress" placeholder="참고항목">
                 </div>
 
@@ -132,9 +138,9 @@
         /*<![CDATA[*/
 	   		let id = /*[[ ${id} ]]*/
 	    /*]]*/
+	    var authToken = getCookie("authToken");
 
 	    $(document).ready(function() {
-	      let authToken = getCookie("authToken");
 
 		  if (authToken !== null) {
             let role = getCookie("role").replaceAll(";", "").trim(" ");
@@ -142,7 +148,7 @@
             if (role === "trainer") {
               $("input[name=applicantBtn]").show();
             } else if (role === "member") {
-              $("li[name=applicantListBtn]").show();
+              checkJobPostingOwnershipAjax();
             }
 
 		  }
@@ -152,9 +158,30 @@
 	      getDetailInfoAjax();
 	    });
 
-	    function applicantAjax(supportAmount) {
-	        let authToken = getCookie("authToken");
+	    function checkJobPostingOwnershipAjax() {
+	        $.ajax({
+				url : "/api/job/check",
+				type : "get",
+				data : {
+				    id : id,
+				},
+				beforeSend : function (xhr) {
+					xhr.setRequestHeader("Authorization","Bearer " + authToken);
+				},
+				success : function(res) {
+				    if (res.data) {
+                        $("li[name=applicantListBtn]").show();
+				    }
+				},
+				error : function(res) {
+					if (res.responseJSON.code === 400) {
+					    defaultErrorAlert(res.responseJSON.message);
+					}
+				}
+			});
+	    }
 
+	    function applicantAjax(supportAmount) {
 	        $.ajax({
 				url : "/api/trainer/applicant/",
 				type : "post",
