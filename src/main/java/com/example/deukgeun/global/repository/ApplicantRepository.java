@@ -10,4 +10,5 @@ public interface ApplicantRepository extends JpaRepository<Applicant, Long> {
     Page<ApplicantResponse.ListResponse> findByJobPostingId(Long jobPostingId, PageRequest pageRequest);
 
     boolean existsByJobPostingIdAndTrainerId(Long jobPostingId, Long trainerId);
+
 }

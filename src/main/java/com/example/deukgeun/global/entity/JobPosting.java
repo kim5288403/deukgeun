@@ -53,6 +53,10 @@ public class JobPosting extends BaseEntity {
     @Column(updatable = false)
     private LocalDateTime endDate;
 
+    @OneToOne
+    @JoinColumn(name = "memberId", insertable = false, updatable = false, nullable = false)
+    private Member member;
+
     @Builder
     public JobPosting(
             Long id,

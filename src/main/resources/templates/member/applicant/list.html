@@ -41,6 +41,7 @@
 
 </th:block>
 <th:block layout:fragment="script">
+	<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.8.js"></script>
 	<script th:inline="javascript">
         /*<![CDATA[*/
 	   		let id = /*[[ ${id} ]]*/
@@ -123,6 +124,95 @@
 		}
 
 		function select(applicantId) {
+			getUserPaymentInfoAjax(applicantId);
+		}
+
+		function getUserPaymentInfoAjax(applicantId) {
+			$.ajax({
+				url : "/api/member/applicant/" + applicantId,
+				method : "get",
+				success : function(res) {
+					if (res.code === 200) {
+						kakaoPay(res.data, applicantId);
+					}
+				},
+				error : function(res) {
+					if (res.responseJSON.code === 400) {
+						defaultErrorAlert(res.responseJSON.message, "실패");
+					}
+				}
+			});
+		}
+
+		function kakaoPay(data, applicantId){
+			var IMP = window.IMP;
+			IMP.init('imp53640605');
+
+			IMP.request_pay({
+				pg : 'kakaopay.CID',
+				pay_method : 'card',
+				merchant_uid : 'merchant_' + new Date().getTime(),   //주문번호
+				name : '득근득근 상품결제 : ' + data.title,             //상품명
+				amount : data.amount,                    			 //가격
+				buyer_email : data.email,             				 //구매자 이메일
+				buyer_name : data.name,                              //구매자 이름
+				buyer_tel : 'hp',                                    //전화번호
+				buyer_addr : data.roadAddress,	                     //주소
+				buyer_postcode : data.postcode                       //우편번호
+			},function(res){
+				if(res.success){
+					checkImpUidAjax(res.imp_uid, res.paid_amount, applicantId);
+				}else{
+					defaultErrorAlert(res.error_msg, "실패");
+				}
+			});
+		}
+
+		function checkImpUidAjax(impUid, amount, applicantId) {
+			$.ajax({
+					url : "/api/payment/" + impUid,
+					method : "post",
+					success : function(res) {
+						if (res.response.amount === amount) {
+							savePaymentInfoAjax(res.response, applicantId)
+						}
+					},
+					error : function(res) {
+						if (res.responseJSON.code === 400) {
+							defaultErrorAlert(res.responseJSON.message, "실패");
+						}
+					}
+			});
+		}
+
+		function savePaymentInfoAjax(data, applicantId) {
+			console.log(data);
+			$.ajax({
+					url : "/api/payment/",
+					method : "post",
+					data : {
+						applicantId : applicantId,
+						impUid : data.impUid,
+						pgProvider : data.pgProvider,
+						pgTid : data.pgTid,
+						channel : data.channel,
+						amount : data.amount,
+						paidAt : data.paidAt
+					},
+					success : function(res) {
+						if (res.code === 200) {
+							console.log(res);
+						}
+					},
+					error : function(res) {
+						if (res.responseJSON.code === 400) {
+							defaultErrorAlert(res.responseJSON.message, "실패");
+						}
+					}
+			});
+		}
+
+		function selectAjax(applicantId) {
 			$.ajax({
 				url : "/api/member/matchInfo/",
 				method : "post",

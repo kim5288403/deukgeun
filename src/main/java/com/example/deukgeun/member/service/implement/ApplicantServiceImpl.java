@@ -30,4 +30,13 @@ public class ApplicantServiceImpl implements ApplicantService {
         applicant.updateIsSelect(isSelected);
         applicantRepository.save(applicant);
     }
+
+    @Override
+    public ApplicantResponse.PaymentInfo getById(Long id) {
+        Applicant applicant = applicantRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("없는 지원 정보입니다.")
+        );
+
+        return new ApplicantResponse.PaymentInfo(applicant);
+    }
 }

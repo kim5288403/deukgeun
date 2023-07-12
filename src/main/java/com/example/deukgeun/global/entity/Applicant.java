@@ -28,6 +28,10 @@ public class Applicant extends BaseEntity {
     @Column(length = 50)
     private Integer isSelected = 0;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "jobPostingId", insertable = false, updatable = false, nullable = false)
+    private JobPosting jobPosting;
+
     @Builder
     public Applicant(
             Long id,

@@ -6,4 +6,6 @@ import org.springframework.data.domain.Page;
 public interface ApplicantService {
     Page<ApplicantResponse.ListResponse> getByJobPostingId(Long jobPostingId, int currentPage);
     void updateIsSelectedByApplicantId(Long applicantId, int isSelected);
+
+    ApplicantResponse.PaymentInfo getById(Long id);
 }

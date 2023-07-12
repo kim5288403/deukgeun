@@ -6,6 +6,7 @@ import com.example.deukgeun.member.service.ApplicantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,5 +21,12 @@ public class ApplicantController {
         Page<ApplicantResponse.ListResponse> list = applicantService.getByJobPostingId(jobPostingId, currentPage);
 
         return RestResponseUtil.ok("조회 성공했습니다.", list);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/{id}")
+    public ResponseEntity<?> getUserPaymentInfo(@PathVariable Long id) {
+        ApplicantResponse.PaymentInfo result = applicantService.getById(id);
+
+        return RestResponseUtil.ok("조회 성공했습니다.", result);
     }
 }
