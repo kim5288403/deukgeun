@@ -90,7 +90,7 @@
 			},
 			error : function(res) {
 				if (res.responseJSON.code === 400) {
-					errorMessage(res.responseJSON.data);
+					defaultErrorAlert(res.responseJSON.data.message, "실패");
 				}
 			}
 		});

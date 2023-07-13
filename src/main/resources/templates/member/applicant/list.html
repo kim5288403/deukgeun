@@ -123,17 +123,19 @@
 			$("table[name=list]").find("tbody").append(html);
 		}
 
+		let selectApplicantId = "";
 		function select(applicantId) {
-			getUserPaymentInfoAjax(applicantId);
+			selectApplicantId = applicantId;
+			isAnnouncementMatchedAjax();
 		}
 
-		function getUserPaymentInfoAjax(applicantId) {
+		function isAnnouncementMatchedAjax() {
 			$.ajax({
-				url : "/api/member/applicant/" + applicantId,
+				url : "/api/member/match/check/" + id,
 				method : "get",
 				success : function(res) {
 					if (res.code === 200) {
-						kakaoPay(res.data, applicantId);
+						getApplicantInfoAjax();
 					}
 				},
 				error : function(res) {
@@ -144,7 +146,24 @@
 			});
 		}
 
-		function kakaoPay(data, applicantId){
+		function getApplicantInfoAjax() {
+			$.ajax({
+				url : "/api/member/applicant/" + selectApplicantId,
+				method : "get",
+				success : function(res) {
+					if (res.code === 200) {
+						kakaoPay(res.data);
+					}
+				},
+				error : function(res) {
+					if (res.responseJSON.code === 400) {
+						defaultErrorAlert(res.responseJSON.message, "실패");
+					}
+				}
+			});
+		}
+
+		function kakaoPay(data){
 			var IMP = window.IMP;
 			IMP.init('imp53640605');
 
@@ -161,20 +180,20 @@
 				buyer_postcode : data.postcode                       //우편번호
 			},function(res){
 				if(res.success){
-					checkImpUidAjax(res.imp_uid, res.paid_amount, applicantId);
+					checkImpUidAjax(res.imp_uid, res.paid_amount);
 				}else{
 					defaultErrorAlert(res.error_msg, "실패");
 				}
 			});
 		}
 
-		function checkImpUidAjax(impUid, amount, applicantId) {
+		function checkImpUidAjax(impUid, amount) {
 			$.ajax({
 					url : "/api/payment/" + impUid,
 					method : "post",
 					success : function(res) {
 						if (res.response.amount === amount) {
-							savePaymentInfoAjax(res.response, applicantId)
+							savePaymentInfoAjax(res.response)
 						}
 					},
 					error : function(res) {
@@ -185,13 +204,12 @@
 			});
 		}
 
-		function savePaymentInfoAjax(data, applicantId) {
-			console.log(data);
+		function savePaymentInfoAjax(data) {
 			$.ajax({
 					url : "/api/payment/",
 					method : "post",
 					data : {
-						applicantId : applicantId,
+						applicantId : selectApplicantId,
 						impUid : data.impUid,
 						pgProvider : data.pgProvider,
 						pgTid : data.pgTid,
@@ -201,7 +219,7 @@
 					},
 					success : function(res) {
 						if (res.code === 200) {
-							console.log(res);
+							selectAjax();
 						}
 					},
 					error : function(res) {
@@ -212,13 +230,13 @@
 			});
 		}
 
-		function selectAjax(applicantId) {
+		function selectAjax() {
 			$.ajax({
-				url : "/api/member/matchInfo/",
+				url : "/api/member/match/",
 				method : "post",
 				data : {
 					"jobPostingId" : id,
-					"applicantId" : applicantId,
+					"applicantId" : selectApplicantId,
 				},
 				success : function(res) {
 					if (res.code === 200) {
@@ -235,9 +253,72 @@
 			});
 		}
 
+		let cancelApplicantId = "";
 		function cancel(applicantId) {
+			cancelApplicantId = applicantId;
+			getPaymentInfoAjax();
+		}
+
+		function getPaymentInfoAjax() {
 			$.ajax({
-				url : "/api/member/matchInfo/",
+				url : "/api/payment/" + cancelApplicantId,
+				method : "get",
+				success : function(res) {
+					if (res.code === 200) {
+						getIamPortTokenAjax(res.data);
+					}
+				},
+				error : function(res) {
+					if (res.responseJSON.code === 400) {
+						defaultErrorAlert(res.responseJSON.message, "실패");
+					}
+				}
+			});
+		}
+
+		function getIamPortTokenAjax(paymentInfo) {
+			$.ajax({
+				url: "/api/payment/token",
+				method: "get",
+				headers: { "Content-Type": "application/json" },
+				success : function(res) {
+					if (res.code === 200) {
+						cancelPaymentAjax(paymentInfo, res.data);
+					}
+				},
+				error : function(res) {
+					if (res.responseJSON.code === 400) {
+						defaultErrorAlert(res.responseJSON.message, "실패");
+					}
+				}
+			});
+		}
+
+		function cancelPaymentAjax(paymentInfo, accessToken) {
+			$.ajax({
+				url : "/api/payment/cancel",
+				method : "post",
+				data : {
+					impUid : paymentInfo.impUid,
+					accessToken  : accessToken,
+					amount   : paymentInfo.amount,
+				},
+				success : function(res) {
+					if (res.code === 200) {
+						console.log(res);
+					}
+				},
+				error : function(res) {
+					if (res.responseJSON.code === 400) {
+						defaultErrorAlert(res.responseJSON.message, "실패");
+					}
+				}
+			});
+		}
+
+		function cancelMatchingAjax(applicantId) {
+			$.ajax({
+				url : "/api/member/match/",
 				method : "delete",
 				data : {
 					"applicantId" : applicantId,

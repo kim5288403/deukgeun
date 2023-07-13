@@ -24,8 +24,8 @@ public class ApplicantController {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/{id}")
-    public ResponseEntity<?> getUserPaymentInfo(@PathVariable Long id) {
-        ApplicantResponse.PaymentInfo result = applicantService.getById(id);
+    public ResponseEntity<?> getApplicantInfo(@PathVariable Long id) {
+        ApplicantResponse.ApplicantInfo result = applicantService.getById(id);
 
         return RestResponseUtil.ok("조회 성공했습니다.", result);
     }

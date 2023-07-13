@@ -1,7 +1,11 @@
 package com.example.deukgeun.member.service;
 
 import com.example.deukgeun.global.entity.Applicant;
+import com.example.deukgeun.global.entity.JobPosting;
+import com.example.deukgeun.global.entity.Member;
 import com.example.deukgeun.global.repository.ApplicantRepository;
+import com.example.deukgeun.global.repository.JobPostingRepository;
+import com.example.deukgeun.global.repository.MemberRepository;
 import com.example.deukgeun.member.response.ApplicantResponse;
 import com.example.deukgeun.member.service.implement.ApplicantServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -12,16 +16,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
+import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class ApplicantServiceTest {
@@ -30,6 +34,10 @@ public class ApplicantServiceTest {
 
     @Mock
     private ApplicantRepository applicantRepository;
+    @Mock
+    private MemberRepository memberRepository;
+    @Mock
+    private JobPostingRepository jobPostingRepository;
 
     @Test
     void givenExistingJobPostingId_whenGetByJobPostingId_thenReturnsMatching() {
@@ -76,5 +84,44 @@ public class ApplicantServiceTest {
         // Then
         verify(applicantRepository, times(1)).findById(applicantId);
         verify(applicantRepository, times(1)).save(applicant);
+    }
+
+    @Test
+    public void givenExistingApplicantId_whenGetById_thenShouldReturnApplicantInfo() {
+        // Given
+        Member member = mock(Member.class);
+
+        JobPosting jobPosting = mock(JobPosting.class);
+
+        Long applicantId = 12345L;
+        Applicant applicant = mock(Applicant.class);
+
+        given(applicant.getJobPosting()).willReturn(jobPosting);
+        given(applicant.getJobPosting().getMember()).willReturn(member);
+        given(applicant.getJobPosting().getStartDate()).willReturn(LocalDateTime.now());
+        given(applicant.getJobPosting().getEndDate()).willReturn(LocalDateTime.now());
+        given(applicantRepository.findById(applicantId)).willReturn(Optional.of(applicant));
+
+        // When
+        ApplicantResponse.ApplicantInfo result = applicantService.getById(applicantId);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(applicant.getId(), result.getId());
+        verify(applicantRepository, times(1)).findById(applicantId);
+    }
+
+    @Test
+    public void givenNonExistingApplicantId_whenGetById_thenShouldThrowEntityNotFoundException() {
+        // Given
+        Long applicantId = 99999L;
+        given(applicantRepository.findById(applicantId)).willReturn(Optional.empty());
+
+        // When and Then
+        assertThrows(EntityNotFoundException.class, () -> {
+            applicantService.getById(applicantId);
+        });
+
+        verify(applicantRepository, times(1)).findById(applicantId);
     }
 }

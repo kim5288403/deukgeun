@@ -7,7 +7,7 @@ import com.example.deukgeun.main.response.RestResponse;
 import com.example.deukgeun.member.request.SaveMatchInfoRequest;
 import com.example.deukgeun.member.service.ApplicantService;
 import com.example.deukgeun.member.service.JobPostingService;
-import com.example.deukgeun.member.service.MatchInfoService;
+import com.example.deukgeun.member.service.MatchService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,11 +24,11 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class MatchInfoControllerTest {
+public class MatchControllerTest {
     @InjectMocks
-    private MatchInfoController matchInfoController;
+    private MatchController matchController;
     @Mock
-    private MatchInfoService matchInfoService;
+    private MatchService matchService;
     @Mock
     private JobPostingService jobPostingService;
     @Mock
@@ -44,17 +44,17 @@ public class MatchInfoControllerTest {
         SaveMatchInfoRequest saveMatchInfoRequest = mock(SaveMatchInfoRequest.class);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("매칭 성공했습니다.", null);
 
-        given(matchInfoService.save(saveMatchInfoRequest)).willReturn(matchInfo);
+        given(matchService.save(saveMatchInfoRequest)).willReturn(matchInfo);
         given(jobPostingService.updateIsActiveByJobPostingId(2, saveMatchInfoRequest.getJobPostingId())).willReturn(jobPosting);
 
         // When
-        ResponseEntity<?> responseEntity = matchInfoController.select(saveMatchInfoRequest, bindingResult);
+        ResponseEntity<?> responseEntity = matchController.select(saveMatchInfoRequest, bindingResult);
 
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
 
-        verify(matchInfoService, times(1)).save(saveMatchInfoRequest);
+        verify(matchService, times(1)).save(saveMatchInfoRequest);
         verify(jobPostingService, times(1)).updateIsActiveByJobPostingId(2, saveMatchInfoRequest.getJobPostingId());
     }
 
@@ -65,13 +65,29 @@ public class MatchInfoControllerTest {
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("취소 성공했습니다.", null);
 
         // When
-        ResponseEntity<?> responseEntity = matchInfoController.cancel(applicantId);
+        ResponseEntity<?> responseEntity = matchController.cancel(applicantId);
 
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
 
-        verify(matchInfoService, times(1)).deleteByApplicantId(applicantId);
+        verify(matchService, times(1)).deleteByApplicantId(applicantId);
         verify(applicantService, times(1)).updateIsSelectedByApplicantId(applicantId, 0);
+    }
+
+    @Test
+    public void givenMatchInfoService_whenIsAnnouncementMatched_thenReturnResponseEntity() {
+        // Given
+        Long jobPostingId = 123L;
+        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("검사 성공했습니다.", null);
+
+        // When
+        ResponseEntity<?> responseEntity = matchController.isAnnouncementMatched(jobPostingId);
+
+        // Then
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(expectedResponse.getBody(), responseEntity.getBody());
+
+        verify(matchService, times(1)).isAnnouncementMatchedByJobPostingId(jobPostingId);
     }
 }

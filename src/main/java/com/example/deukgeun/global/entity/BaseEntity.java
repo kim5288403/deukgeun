@@ -22,4 +22,6 @@ public class BaseEntity {
   @Column(updatable = false)
   private LocalDateTime updatedDate;
 
+  @Column
+  private LocalDateTime deleteDate;
 }

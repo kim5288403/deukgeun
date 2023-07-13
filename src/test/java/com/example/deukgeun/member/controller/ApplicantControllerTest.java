@@ -40,6 +40,22 @@ public class ApplicantControllerTest {
         verify(applicantService, times(1)).getByJobPostingId(jobPostingId, currentPage);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
+    }
 
+    @Test
+    public void givenApplicantService_whenGetApplicantInfoAjax_thenReturnResponseEntity() {
+        // Given
+        Long id = 123L;
+        ApplicantResponse.ApplicantInfo applicantInfo = mock(ApplicantResponse.ApplicantInfo.class);
+        given(applicantService.getById(id)).willReturn(applicantInfo);
+        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공했습니다.", applicantInfo);
+
+        // When
+        ResponseEntity<?> responseEntity = applicantController.getApplicantInfo(id);
+
+        // Then
+        verify(applicantService, times(1)).getById(id);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(expectedResponse.getBody(), responseEntity.getBody());
     }
 }

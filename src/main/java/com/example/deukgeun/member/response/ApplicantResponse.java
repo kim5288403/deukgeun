@@ -36,7 +36,7 @@ public class ApplicantResponse {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class PaymentInfo {
+    public static class ApplicantInfo {
         private Long id;
 
         private Long trainerId;
@@ -57,7 +57,7 @@ public class ApplicantResponse {
 
         private Integer amount;
 
-        public PaymentInfo(Applicant applicant) {
+        public ApplicantInfo(Applicant applicant) {
             this.id = applicant.getId();
             this.trainerId = applicant.getTrainerId();
             this.jobPostingId = applicant.getJobPostingId();

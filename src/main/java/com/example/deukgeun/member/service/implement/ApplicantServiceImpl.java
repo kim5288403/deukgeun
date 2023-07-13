@@ -32,11 +32,11 @@ public class ApplicantServiceImpl implements ApplicantService {
     }
 
     @Override
-    public ApplicantResponse.PaymentInfo getById(Long id) {
+    public ApplicantResponse.ApplicantInfo getById(Long id) {
         Applicant applicant = applicantRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("없는 지원 정보입니다.")
         );
 
-        return new ApplicantResponse.PaymentInfo(applicant);
+        return new ApplicantResponse.ApplicantInfo(applicant);
     }
 }
