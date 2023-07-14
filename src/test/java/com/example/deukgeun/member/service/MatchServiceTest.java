@@ -1,5 +1,6 @@
 package com.example.deukgeun.member.service;
 
+import com.example.deukgeun.global.entity.Applicant;
 import com.example.deukgeun.global.entity.MatchInfo;
 import com.example.deukgeun.global.repository.MatchInfoRepository;
 import com.example.deukgeun.member.request.SaveMatchInfoRequest;
@@ -8,15 +9,18 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
 import javax.persistence.EntityExistsException;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class MatchServiceTest {
@@ -44,12 +48,15 @@ public class MatchServiceTest {
     void givenExistingApplicantId_whenDeleteByApplicantId_thenIsDeleted() {
         // Given
         Long applicantId = 123L;
+        MatchInfo matchInfo = mock(MatchInfo.class);
+        given(matchInfoRepository.findByApplicantId(anyLong())).willReturn(Optional.ofNullable(matchInfo));
 
         // When
         matchService.deleteByApplicantId(applicantId);
 
         // Then
-        verify(matchInfoRepository, times(1)).deleteByApplicantId(applicantId);
+        assert matchInfo != null;
+        verify(matchInfoRepository, times(1)).save(matchInfo);
     }
 
 
@@ -57,27 +64,27 @@ public class MatchServiceTest {
     public void givenExistingJobPostingId_whenIsAnnouncementMatchedByJobPostingId_thenShouldThrowEntityExistsException() {
         // Given
         Long jobPostingId = 12345L;
-        given(matchInfoRepository.existsByJobPostingId(jobPostingId)).willReturn(true);
+        given(matchInfoRepository.existsByJobPostingIdAndDeleteDateIsNull(jobPostingId)).willReturn(true);
 
         // When and Then
         assertThrows(EntityExistsException.class, () -> {
             matchService.isAnnouncementMatchedByJobPostingId(jobPostingId);
         });
 
-        verify(matchInfoRepository, times(1)).existsByJobPostingId(jobPostingId);
+        verify(matchInfoRepository, times(1)).existsByJobPostingIdAndDeleteDateIsNull(jobPostingId);
     }
 
     @Test
     public void givenNotExistingJobPostingId_whenIsAnnouncementMatchedByJobPostingId_thenShouldNotThrowEntityExistsException() {
         // Given
         Long jobPostingId = 12345L;
-        given(matchInfoRepository.existsByJobPostingId(jobPostingId)).willReturn(false);
+        given(matchInfoRepository.existsByJobPostingIdAndDeleteDateIsNull(jobPostingId)).willReturn(false);
 
         // When and Then
         assertDoesNotThrow(() -> {
             matchService.isAnnouncementMatchedByJobPostingId(jobPostingId);
         });
 
-        verify(matchInfoRepository, times(1)).existsByJobPostingId(jobPostingId);
+        verify(matchInfoRepository, times(1)).existsByJobPostingIdAndDeleteDateIsNull(jobPostingId);
     }
 }

@@ -21,6 +21,6 @@ public class IamPortCancelResponse {
         private String imp_uid;
         private String channel;
         private String cancel_reason;
-        private String cancel_amount;
+        private Integer cancel_amount;
     }
 }

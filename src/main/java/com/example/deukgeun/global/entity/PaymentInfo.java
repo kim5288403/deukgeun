@@ -55,4 +55,6 @@ public class PaymentInfo extends BaseEntity {
         this.amount = amount;
         this.paidAt = paidAt;
     }
+
+
 }

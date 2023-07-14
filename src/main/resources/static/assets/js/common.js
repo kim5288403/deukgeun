@@ -14,6 +14,17 @@ function defaultSuccessAlert(text, title) {
 		});
 }
 
+function defaultQuestionAlert(text, title) {
+	return Swal.fire({
+		title : title ? title : "success",
+		text : text,
+		icon : "question",
+		showCancelButton: true,
+		confirmButtonText: "확인",
+		cancelButtonText: "취소"
+		});
+}
+
 function defaultErrorAlert(text, title) {
 	return Swal.fire({
 		title : title ? title : "Error",

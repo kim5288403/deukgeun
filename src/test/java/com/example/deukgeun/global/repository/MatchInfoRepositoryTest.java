@@ -96,4 +96,31 @@ public class MatchInfoRepositoryTest {
         assertNotNull(foundMatchInfo);
         assertEquals(jobPostingId, foundMatchInfo.getJobPostingId());
     }
+
+    @Test
+    @Sql({"/insert_member.sql", "/insert_jobPosting.sql", "/insert_applicant.sql", "/insert_match_info.sql"})
+    void givenExistingJobPostingId_whenExistsByJobPostingIdAndDeleteDateIsNull_thenShouldReturnTrue() {
+        // Given
+        List<JobPosting> jobPosting = jobPostingRepository.findAll();
+        Long jobPostingId = jobPosting.get(0).getId();
+
+        // When
+        boolean exists = matchInfoRepository.existsByJobPostingIdAndDeleteDateIsNull(jobPostingId);
+
+        // Then
+        assertTrue(exists);
+    }
+
+    @Test
+    void givenNotExistingJobPostingId_whenExistsByJobPostingIdAndDeleteDateIsNull_thenShouldReturnFalse() {
+        // Given
+        Long jobPostingId = 123L;
+
+        // When
+        boolean exists = matchInfoRepository.existsByJobPostingIdAndDeleteDateIsNull(jobPostingId);
+
+        // Then
+        assertFalse(exists);
+    }
+
 }

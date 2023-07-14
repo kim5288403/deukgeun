@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
 
 @Service("member.service.MatchInfo")
 @RequiredArgsConstructor
@@ -32,12 +33,15 @@ public class MatchServiceImpl implements MatchService {
 
     @Override
     public void deleteByApplicantId(Long applicantId) {
-        matchInfoRepository.deleteByApplicantId(applicantId);
+        MatchInfo matchInfo = matchInfoRepository.findByApplicantId(applicantId)
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 매칭 정보 입니다."));
+        matchInfo.delete();
+        matchInfoRepository.save(matchInfo);
     }
 
     @Override
     public void isAnnouncementMatchedByJobPostingId(Long jobPostingId) {
-        if (matchInfoRepository.existsByJobPostingId(jobPostingId)) {
+        if (matchInfoRepository.existsByJobPostingIdAndDeleteDateIsNull(jobPostingId)) {
             throw new EntityExistsException("이미 선택한 지원자가 있습니다.");
         }
     }
