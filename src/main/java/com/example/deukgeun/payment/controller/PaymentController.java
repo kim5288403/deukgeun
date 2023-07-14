@@ -28,12 +28,12 @@ import java.io.IOException;
 public class PaymentController {
     private final IamportClient iamportClient;
     @Autowired
-    private PaymentService paymentService;
-
+    private final PaymentService paymentService;
     private final String iamPortApiKey;
     private final String iamPortApiSecret;
 
-    public PaymentController(@Value("${iamPort.api.key}") String apiKey , @Value("${iamPort.api.secret}") String secretKey) {
+    public PaymentController(PaymentService paymentService, @Value("${iamPort.api.key}") String apiKey , @Value("${iamPort.api.secret}") String secretKey) {
+        this.paymentService = paymentService;
         this.iamPortApiKey = apiKey;
         this.iamPortApiSecret = secretKey;
 

@@ -1,0 +1,21 @@
+INSERT INTO member(
+created_date,
+updated_date,
+age,
+email,
+gender,
+name,
+password,
+delete_date
+)
+values
+(
+null,
+null,
+23,
+'test',
+'M',
+'test',
+'test',
+null
+ );

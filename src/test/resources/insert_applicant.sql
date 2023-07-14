@@ -9,7 +9,7 @@ values
 (
 null,
  null,
-123,
+(select job_posting_id from job_posting ORDER BY job_posting_id DESC LIMIT 1),
 1,
 30000
  );

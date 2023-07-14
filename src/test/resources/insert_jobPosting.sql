@@ -1,0 +1,35 @@
+INSERT INTO job_posting(
+created_date,
+updated_date,
+member_id,
+start_date,
+end_date,
+title,
+requirement_license,
+requirement_etc,
+postcode,
+extra_address,
+detail_address,
+jibun_address,
+road_address,
+is_active,
+delete_date
+)
+values
+(
+null,
+null,
+(select member_id from member ORDER BY member_id DESC LIMIT 1),
+NOW(),
+NOW(),
+'test',
+1,
+'test',
+'test',
+'test',
+'test',
+'test',
+'test',
+1,
+null
+ );

@@ -41,7 +41,7 @@ public class PaymentControllerTest {
     private HttpSession session;
 
     @Test
-    public void givenImpUid_whenPayment_thenShouldReturnIamportResponse() throws IamportResponseException, IOException {
+    public void givenImpUid_whenPayment_thenShouldReturnIamPortResponse() throws IamportResponseException, IOException {
         // Given
         String impUid = "imp12345";
         ReflectionTestUtils.setField(paymentController, "iamportClient", iamportClient);
@@ -61,7 +61,6 @@ public class PaymentControllerTest {
     public void givenPaymentService_whenSave_thenReturnResponseEntity() {
         // Given
         PaymentInfoRequest request = mock(PaymentInfoRequest.class);
-
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("저장 성공했습니다.", null);
 
         // When

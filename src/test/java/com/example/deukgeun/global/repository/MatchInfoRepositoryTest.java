@@ -1,6 +1,7 @@
 package com.example.deukgeun.global.repository;
 
 import com.example.deukgeun.global.entity.Applicant;
+import com.example.deukgeun.global.entity.JobPosting;
 import com.example.deukgeun.global.entity.MatchInfo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,20 +25,26 @@ public class MatchInfoRepositoryTest {
     private MatchInfoRepository matchInfoRepository;
     @Autowired
     private ApplicantRepository applicantRepository;
+    @Autowired
+    private JobPostingRepository jobPostingRepository;
 
     @Test
     void shouldNotNullRepository() {
         assertNotNull(matchInfoRepository);
         assertNotNull(applicantRepository);
+        assertNotNull(jobPostingRepository);
     }
 
     @Test
+    @Sql({"/insert_member.sql", "/insert_jobPosting.sql", "/insert_applicant.sql", "/insert_match_info.sql"})
     void givenMatchingInformation_whenSave_thenReturnValid() {
         // Given
+        List<JobPosting> jobPosting = jobPostingRepository.findAll();
+        Long jobPostingId = jobPosting.get(0).getId();
         Applicant applicant = Applicant
                 .builder()
                 .trainerId(123L)
-                .jobPostingId(123L)
+                .jobPostingId(jobPostingId)
                 .isSelected(0)
                 .supportAmount(3000)
                 .build();
@@ -43,7 +52,7 @@ public class MatchInfoRepositoryTest {
 
         MatchInfo matchingInformation = MatchInfo
                 .builder()
-                .jobPostingId(123L)
+                .jobPostingId(jobPostingId)
                 .applicantId(saveApplicant.getId())
                 .status(1)
                 .build();
@@ -58,24 +67,27 @@ public class MatchInfoRepositoryTest {
     }
 
     @Test
-    @Sql({"/insert_applicant.sql", "/insert_match_info.sql"})
+    @Sql({"/insert_member.sql", "/insert_jobPosting.sql", "/insert_applicant.sql", "/insert_match_info.sql"})
     void givenExistingApplicantId_whenDeleteByApplicantId_thenReturnValid() {
         // Given
-        MatchInfo matchingInformation = matchInfoRepository.findByJobPostingId(123L);
+        List<JobPosting> jobPosting = jobPostingRepository.findAll();
+        Long jobPostingId = jobPosting.get(0).getId();
+        MatchInfo matchInformation = matchInfoRepository.findByJobPostingId(jobPostingId);
 
         // When
-        matchInfoRepository.deleteByApplicantId(matchingInformation.getApplicantId());
+        matchInfoRepository.deleteByApplicantId(matchInformation.getApplicantId());
 
         // Then
-        MatchInfo foundMatchInfo = matchInfoRepository.findById(matchingInformation.getId()).orElse(null);
+        MatchInfo foundMatchInfo = matchInfoRepository.findById(matchInformation.getId()).orElse(null);
         assertNull(foundMatchInfo);
     }
 
     @Test
-    @Sql({"/insert_applicant.sql", "/insert_match_info.sql"})
+    @Sql({"/insert_member.sql", "/insert_jobPosting.sql", "/insert_applicant.sql", "/insert_match_info.sql"})
     void givenMatchingInformation_whenFindByJobPostingId_thenReturnValid() {
         // Given
-        Long jobPostingId = 123L;
+        List<JobPosting> jobPosting = jobPostingRepository.findAll();
+        Long jobPostingId = jobPosting.get(0).getId();
 
         // When
         MatchInfo foundMatchInfo = matchInfoRepository.findByJobPostingId(jobPostingId);
