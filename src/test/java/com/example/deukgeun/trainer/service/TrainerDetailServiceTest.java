@@ -1,8 +1,8 @@
 package com.example.deukgeun.trainer.service;
 
-import com.example.deukgeun.global.entity.Trainer;
-import com.example.deukgeun.global.repository.TrainerRepository;
-import com.example.deukgeun.trainer.service.implement.TrainerDetailServiceImpl;
+import com.example.deukgeun.trainer.domain.entity.Trainer;
+import com.example.deukgeun.trainer.domain.repository.TrainerRepository;
+import com.example.deukgeun.trainer.infrastructure.persistence.TrainerDetailServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

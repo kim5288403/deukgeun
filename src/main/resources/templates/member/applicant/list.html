@@ -79,7 +79,7 @@
 		
 		function getList(currentPage = 0) {
 			$.ajax({
-				url : "/api/member/applicant/",
+				url : "/api/applicant/",
 				method : "get",
 				data : {
 					"jobPostingId" : id,
@@ -136,7 +136,7 @@
 
 		function isAnnouncementMatchedAjax() {
 			$.ajax({
-				url : "/api/member/match/check/" + id,
+				url : "/api/match/check/" + id,
 				method : "get",
 				success : function(res) {
 					if (res.code === 200) {
@@ -153,7 +153,7 @@
 
 		function getApplicantInfoAjax() {
 			$.ajax({
-				url : "/api/member/applicant/" + selectApplicantId,
+				url : "/api/applicant/" + selectApplicantId,
 				method : "get",
 				success : function(res) {
 					if (res.code === 200) {
@@ -237,7 +237,7 @@
 
 		function selectAjax() {
 			$.ajax({
-				url : "/api/member/match/",
+				url : "/api/match/",
 				method : "post",
 				data : {
 					"jobPostingId" : id,
@@ -327,7 +327,7 @@
 
 		function cancelMatchingAjax() {
 			$.ajax({
-				url : "/api/member/match/",
+				url : "/api/match/",
 				method : "delete",
 				data : {
 					"applicantId" : cancelApplicantId,

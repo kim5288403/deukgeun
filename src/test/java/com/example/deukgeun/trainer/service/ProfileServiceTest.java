@@ -1,11 +1,11 @@
 package com.example.deukgeun.trainer.service;
 
 import com.example.deukgeun.DeukgeunApplication;
-import com.example.deukgeun.global.entity.Profile;
-import com.example.deukgeun.global.entity.Trainer;
-import com.example.deukgeun.global.repository.ProfileRepository;
-import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
-import com.example.deukgeun.trainer.service.implement.TrainerServiceImpl;
+import com.example.deukgeun.trainer.domain.entity.Profile;
+import com.example.deukgeun.trainer.domain.entity.Trainer;
+import com.example.deukgeun.trainer.domain.repository.ProfileRepository;
+import com.example.deukgeun.trainer.infrastructure.persistence.ProfileServiceImpl;
+import com.example.deukgeun.trainer.infrastructure.persistence.TrainerServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

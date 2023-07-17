@@ -1,9 +1,9 @@
 package com.example.deukgeun.payment.service;
 
-import com.example.deukgeun.global.entity.PaymentCancelInfo;
-import com.example.deukgeun.global.repository.PaymentCancelInfoRepository;
-import com.example.deukgeun.payment.response.IamPortCancelResponse;
-import com.example.deukgeun.payment.service.implement.PaymentCancelInfoServiceImpl;
+import com.example.deukgeun.payment.domain.entity.PaymentCancelInfo;
+import com.example.deukgeun.payment.domain.repository.PaymentCancelInfoRepository;
+import com.example.deukgeun.payment.application.dto.response.IamPortCancelResponse;
+import com.example.deukgeun.payment.infrastructure.persistence.PaymentCancelInfoServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

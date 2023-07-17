@@ -1,14 +1,12 @@
 package com.example.deukgeun.trainer.service;
 
-import com.example.deukgeun.global.exception.PasswordMismatchException;
-import com.example.deukgeun.main.request.LoginRequest;
-import com.example.deukgeun.main.service.implement.TokenServiceImpl;
-import com.example.deukgeun.global.entity.Trainer;
-import com.example.deukgeun.global.repository.TrainerRepository;
-import com.example.deukgeun.trainer.request.JoinRequest;
-import com.example.deukgeun.trainer.request.UpdateInfoRequest;
-import com.example.deukgeun.trainer.request.UpdatePasswordRequest;
-import com.example.deukgeun.trainer.service.implement.TrainerServiceImpl;
+import com.example.deukgeun.auth.application.service.implement.TokenServiceImpl;
+import com.example.deukgeun.trainer.domain.entity.Trainer;
+import com.example.deukgeun.trainer.domain.repository.TrainerRepository;
+import com.example.deukgeun.trainer.application.dto.request.JoinRequest;
+import com.example.deukgeun.trainer.application.dto.request.UpdateInfoRequest;
+import com.example.deukgeun.trainer.application.dto.request.UpdatePasswordRequest;
+import com.example.deukgeun.trainer.infrastructure.persistence.TrainerServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -33,52 +31,6 @@ class TrainerServiceTest {
     private TokenServiceImpl tokenService;
     @InjectMocks
     private TrainerServiceImpl trainerService;
-
-    @Test
-    void givenMatchingPassword_whenIsPasswordMatches_thenNoExceptionThrown() throws EntityNotFoundException {
-        // Given
-        String email = "example@example.com";
-        String password = "password123";
-        String encodedPassword = "encodedPassword123";
-
-        LoginRequest request = new LoginRequest(email, password);
-        Trainer trainer = Trainer
-                .builder()
-                .email(email)
-                .password(encodedPassword)
-                .build();
-
-        given(passwordEncoder.matches(password, encodedPassword)).willReturn(true);
-
-        // When & Then
-        assertDoesNotThrow(() -> trainerService.isPasswordMatches(request.getPassword(), trainer));
-
-        // Verify
-        verify(passwordEncoder, times(1)).matches(password, encodedPassword);
-    }
-
-    @Test
-    void givenMismatchingPassword_whenIsPasswordMatches_thenPasswordMismatchExceptionThrown() throws EntityNotFoundException {
-        // Given
-        String email = "example@example.com";
-        String password = "password123";
-        String encodedPassword = "encodedPassword123";
-
-        LoginRequest request = new LoginRequest(email, password);
-        Trainer trainer = Trainer
-                .builder()
-                .email(email)
-                .password(encodedPassword)
-                .build();
-
-        given(passwordEncoder.matches(password, encodedPassword)).willReturn(false);
-
-        // When & Then
-        assertThrows(PasswordMismatchException.class, () -> trainerService.isPasswordMatches(request.getPassword(), trainer));
-
-        // Verify
-        verify(passwordEncoder, times(1)).matches(password, encodedPassword);
-    }
 
     @Test
     void givenJoinRequest_whenSave_thenTrainerIsSavedAndReturned() {

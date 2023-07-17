@@ -1,14 +1,15 @@
 package com.example.deukgeun.trainer.controller;
 
-import com.example.deukgeun.main.response.RestResponse;
-import com.example.deukgeun.main.service.implement.TokenServiceImpl;
+import com.example.deukgeun.auth.application.dto.response.RestResponse;
+import com.example.deukgeun.auth.application.service.implement.TokenServiceImpl;
 import com.example.deukgeun.global.util.RestResponseUtil;
-import com.example.deukgeun.trainer.request.RemoveLicenseRequest;
-import com.example.deukgeun.trainer.request.SaveLicenseRequest;
-import com.example.deukgeun.trainer.response.LicenseListResponse;
-import com.example.deukgeun.trainer.response.LicenseResultResponse;
-import com.example.deukgeun.trainer.service.implement.LicenseServiceImpl;
-import com.example.deukgeun.trainer.service.implement.TrainerServiceImpl;
+import com.example.deukgeun.trainer.application.controller.LicenseController;
+import com.example.deukgeun.trainer.application.dto.request.RemoveLicenseRequest;
+import com.example.deukgeun.trainer.application.dto.request.SaveLicenseRequest;
+import com.example.deukgeun.trainer.application.dto.response.LicenseListResponse;
+import com.example.deukgeun.trainer.application.dto.response.LicenseResultResponse;
+import com.example.deukgeun.trainer.infrastructure.persistence.LicenseServiceImpl;
+import com.example.deukgeun.trainer.infrastructure.persistence.TrainerServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

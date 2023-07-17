@@ -1,11 +1,11 @@
 package com.example.deukgeun.trainer.service;
 
-import com.example.deukgeun.global.entity.Post;
-import com.example.deukgeun.global.entity.Trainer;
-import com.example.deukgeun.global.repository.PostRepository;
-import com.example.deukgeun.trainer.request.PostRequest;
-import com.example.deukgeun.trainer.service.implement.PostServiceImpl;
-import com.example.deukgeun.trainer.service.implement.TrainerServiceImpl;
+import com.example.deukgeun.trainer.domain.entity.Post;
+import com.example.deukgeun.trainer.domain.entity.Trainer;
+import com.example.deukgeun.trainer.domain.repository.PostRepository;
+import com.example.deukgeun.trainer.application.dto.request.PostRequest;
+import com.example.deukgeun.trainer.infrastructure.persistence.PostServiceImpl;
+import com.example.deukgeun.trainer.infrastructure.persistence.TrainerServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

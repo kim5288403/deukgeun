@@ -68,16 +68,16 @@
 		errorMessageReset();
 
 		let loginType = $("input[name=loginType]:checked").val();
-		let url = "/api/" + loginType + "/login";
 		let email = $("input[name=email]").val();
 		let password = $("input[name=password]").val();
 	
 		$.ajax({
-			url : url,
+			url : "/token/login",
 			type : "post",
 			data : {
 				"email" : email,
-				"password" : password
+				"password" : password,
+				"loginType" : loginType,
 			},
 			success : function(res) {
 				if (res.code === 200) {

@@ -1,6 +1,6 @@
 package com.example.deukgeun.global.filter;
 
-import com.example.deukgeun.main.service.implement.TokenServiceImpl;
+import com.example.deukgeun.auth.application.service.implement.TokenServiceImpl;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

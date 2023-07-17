@@ -1,9 +1,9 @@
 package com.example.deukgeun.payment.service;
 
-import com.example.deukgeun.global.entity.PaymentInfo;
-import com.example.deukgeun.global.repository.PaymentInfoRepository;
-import com.example.deukgeun.payment.request.PaymentInfoRequest;
-import com.example.deukgeun.payment.service.implement.PaymentInfoServiceImpl;
+import com.example.deukgeun.payment.domain.entity.PaymentInfo;
+import com.example.deukgeun.payment.domain.repository.PaymentInfoRepository;
+import com.example.deukgeun.payment.application.dto.request.PaymentInfoRequest;
+import com.example.deukgeun.payment.infrastructure.persistence.PaymentInfoServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -57,7 +57,7 @@ public class PaymentInfoServiceTest {
                 .builder()
                 .applicantId(applicantId)
                 .build();
-        given(paymentInfoRepository.findByApplicantId(applicantId)).willReturn(Optional.of(expectedPaymentInfo));
+        given(paymentInfoRepository.findByApplicantIdAndDeleteDateIsNull(applicantId)).willReturn(Optional.of(expectedPaymentInfo));
 
         // When
         PaymentInfo actualPaymentInfo = paymentInfoService.getPaymentInfoByApplicantId(applicantId);
@@ -65,14 +65,14 @@ public class PaymentInfoServiceTest {
         // Then
         assertNotNull(actualPaymentInfo);
         assertEquals(expectedPaymentInfo.getApplicantId(), actualPaymentInfo.getApplicantId());
-        verify(paymentInfoRepository, times(1)).findByApplicantId(applicantId);
+        verify(paymentInfoRepository, times(1)).findByApplicantIdAndDeleteDateIsNull(applicantId);
     }
 
     @Test
     public void givenNonExistingApplicantId_whenGetPaymentInfoByApplicantId_thenThrowEntityNotFoundException() {
         // Given
         Long applicantId = 2L;
-        given(paymentInfoRepository.findByApplicantId(applicantId)).willReturn(Optional.empty());
+        given(paymentInfoRepository.findByApplicantIdAndDeleteDateIsNull(applicantId)).willReturn(Optional.empty());
 
         // When, Then
         assertThrows(EntityNotFoundException.class, () -> paymentInfoService.getPaymentInfoByApplicantId(applicantId));

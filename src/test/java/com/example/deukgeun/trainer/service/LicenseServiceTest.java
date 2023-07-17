@@ -1,11 +1,11 @@
 package com.example.deukgeun.trainer.service;
 
-import com.example.deukgeun.global.entity.License;
-import com.example.deukgeun.global.repository.LicenseRepository;
-import com.example.deukgeun.trainer.request.SaveLicenseRequest;
-import com.example.deukgeun.trainer.response.LicenseListResponse;
-import com.example.deukgeun.trainer.response.LicenseResultResponse;
-import com.example.deukgeun.trainer.service.implement.LicenseServiceImpl;
+import com.example.deukgeun.trainer.domain.entity.License;
+import com.example.deukgeun.trainer.domain.repository.LicenseRepository;
+import com.example.deukgeun.trainer.application.dto.request.SaveLicenseRequest;
+import com.example.deukgeun.trainer.application.dto.response.LicenseListResponse;
+import com.example.deukgeun.trainer.application.dto.response.LicenseResultResponse;
+import com.example.deukgeun.trainer.infrastructure.persistence.LicenseServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

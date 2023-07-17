@@ -1,20 +1,19 @@
 package com.example.deukgeun.trainer.controller;
 
+import com.example.deukgeun.auth.application.service.implement.TokenServiceImpl;
+import com.example.deukgeun.trainer.domain.entity.Profile;
+import com.example.deukgeun.trainer.domain.entity.Trainer;
 import com.example.deukgeun.global.enums.Gender;
-import com.example.deukgeun.main.request.LoginRequest;
-import com.example.deukgeun.main.response.LoginResponse;
-import com.example.deukgeun.main.response.RestResponse;
-import com.example.deukgeun.main.service.implement.TokenServiceImpl;
 import com.example.deukgeun.global.util.RestResponseUtil;
-import com.example.deukgeun.global.entity.Profile;
-import com.example.deukgeun.global.entity.Trainer;
-import com.example.deukgeun.trainer.request.JoinRequest;
-import com.example.deukgeun.trainer.request.UpdateInfoRequest;
-import com.example.deukgeun.trainer.request.UpdatePasswordRequest;
-import com.example.deukgeun.trainer.request.WithdrawalUserRequest;
-import com.example.deukgeun.trainer.response.TrainerResponse;
-import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
-import com.example.deukgeun.trainer.service.implement.TrainerServiceImpl;
+import com.example.deukgeun.auth.application.dto.response.RestResponse;
+import com.example.deukgeun.trainer.application.controller.TrainerController;
+import com.example.deukgeun.trainer.application.dto.request.JoinRequest;
+import com.example.deukgeun.trainer.application.dto.request.UpdateInfoRequest;
+import com.example.deukgeun.trainer.application.dto.request.UpdatePasswordRequest;
+import com.example.deukgeun.trainer.application.dto.request.WithdrawalUserRequest;
+import com.example.deukgeun.trainer.application.dto.response.TrainerResponse;
+import com.example.deukgeun.trainer.infrastructure.persistence.ProfileServiceImpl;
+import com.example.deukgeun.trainer.infrastructure.persistence.TrainerServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -174,42 +173,5 @@ public class TrainerControllerTest {
         verify(trainerService, times(1)).withdrawal(trainer.getId());
         verify(tokenService, times(1)).resolveAuthToken(request);
         verify(tokenService, times(1)).deleteToken(anyString());
-    }
-
-    @Test
-    void givenValidLoginRequest_whenLogin_thenReturnSuccessResponse() {
-        // Given
-        String authToken = "validAuthToken";
-        String role = "trainer";
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setEmail("test");
-        loginRequest.setPassword("test");
-
-        LoginResponse loginResponse = LoginResponse
-                .builder()
-                .authToken(authToken)
-                .role(role)
-                .build();
-
-        Trainer trainer = Trainer
-                .builder()
-                .id(123L)
-                .password("encodePassword")
-                .build();
-
-        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("로그인 성공 했습니다.", loginResponse);
-
-        given(tokenService.setToken(loginRequest.getEmail(), response, role)).willReturn(authToken);
-        given(trainerService.getByEmail(loginRequest.getEmail())).willReturn(trainer);
-        given(passwordEncoder.matches(anyString(), anyString())).willReturn(true);
-
-        // When
-        ResponseEntity<?> responseEntity = trainerController.login(loginRequest, bindingResult, response);
-
-        // Then
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(expectedResponse.getBody(), responseEntity.getBody());
-        verify(trainerService, times(1)).isPasswordMatches(anyString(), any(Trainer.class));
-        verify(tokenService, times(1)).setToken(loginRequest.getEmail(), response, role);
     }
 }

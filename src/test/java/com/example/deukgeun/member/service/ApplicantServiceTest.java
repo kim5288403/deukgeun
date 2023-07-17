@@ -1,13 +1,13 @@
 package com.example.deukgeun.member.service;
 
-import com.example.deukgeun.global.entity.Applicant;
-import com.example.deukgeun.global.entity.JobPosting;
-import com.example.deukgeun.global.entity.Member;
-import com.example.deukgeun.global.repository.ApplicantRepository;
-import com.example.deukgeun.global.repository.JobPostingRepository;
-import com.example.deukgeun.global.repository.MemberRepository;
-import com.example.deukgeun.member.response.ApplicantResponse;
-import com.example.deukgeun.member.service.implement.ApplicantServiceImpl;
+import com.example.deukgeun.job.domain.entity.Applicant;
+import com.example.deukgeun.job.domain.entity.JobPosting;
+import com.example.deukgeun.member.domain.entity.Member;
+import com.example.deukgeun.job.domain.repository.ApplicantRepository;
+import com.example.deukgeun.job.domain.repository.JobPostingRepository;
+import com.example.deukgeun.member.domain.repository.MemberRepository;
+import com.example.deukgeun.job.application.dto.response.ApplicantResponse;
+import com.example.deukgeun.job.infrastructure.persistence.ApplicantServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

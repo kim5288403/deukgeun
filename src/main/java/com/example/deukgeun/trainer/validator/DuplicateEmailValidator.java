@@ -1,7 +1,7 @@
 package com.example.deukgeun.trainer.validator;
 
 import com.example.deukgeun.global.validator.ValidDuplicateEmail;
-import com.example.deukgeun.trainer.service.implement.TrainerServiceImpl;
+import com.example.deukgeun.trainer.infrastructure.persistence.TrainerServiceImpl;
 import lombok.RequiredArgsConstructor;
 
 import javax.validation.ConstraintValidator;
@@ -17,6 +17,6 @@ public class DuplicateEmailValidator implements ConstraintValidator<ValidDuplica
     if (value.isEmpty()) {
       return false;
     }
-    return ! trainerService.isDuplicateEmail(value);
+    return !trainerService.isDuplicateEmail(value);
   }
 }

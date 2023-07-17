@@ -1,14 +1,15 @@
 package com.example.deukgeun.payment.controller;
 
-import com.example.deukgeun.global.entity.PaymentInfo;
+import com.example.deukgeun.payment.domain.entity.PaymentInfo;
 import com.example.deukgeun.global.util.RestResponseUtil;
-import com.example.deukgeun.main.response.RestResponse;
-import com.example.deukgeun.payment.request.CancelRequest;
-import com.example.deukgeun.payment.request.PaymentInfoRequest;
-import com.example.deukgeun.payment.response.IamPortCancelResponse;
-import com.example.deukgeun.payment.service.IamPortService;
-import com.example.deukgeun.payment.service.PaymentCancelInfoService;
-import com.example.deukgeun.payment.service.PaymentInfoService;
+import com.example.deukgeun.auth.application.dto.response.RestResponse;
+import com.example.deukgeun.payment.application.controller.PaymentController;
+import com.example.deukgeun.payment.application.dto.request.CancelRequest;
+import com.example.deukgeun.payment.application.dto.request.PaymentInfoRequest;
+import com.example.deukgeun.payment.application.dto.response.IamPortCancelResponse;
+import com.example.deukgeun.payment.domain.service.IamPortService;
+import com.example.deukgeun.payment.domain.service.PaymentCancelInfoService;
+import com.example.deukgeun.payment.domain.service.PaymentInfoService;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.response.IamportResponse;

@@ -1,12 +1,10 @@
 package com.example.deukgeun.member.service;
 
 import com.example.deukgeun.global.enums.Gender;
-import com.example.deukgeun.global.exception.PasswordMismatchException;
-import com.example.deukgeun.main.request.LoginRequest;
-import com.example.deukgeun.global.entity.Member;
-import com.example.deukgeun.global.repository.MemberRepository;
-import com.example.deukgeun.member.request.JoinRequest;
-import com.example.deukgeun.member.service.implement.MemberServiceImpl;
+import com.example.deukgeun.member.domain.entity.Member;
+import com.example.deukgeun.member.domain.repository.MemberRepository;
+import com.example.deukgeun.member.application.dto.request.JoinRequest;
+import com.example.deukgeun.member.infrastructure.persistence.MemberServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -70,54 +68,6 @@ public class MemberServiceTest {
 
         // Verify
         verify(memberRepository, times(1)).save(any(Member.class));
-    }
-
-    @Test
-    void givenMatchingPassword_whenIsPasswordMatches_thenNoExceptionThrown() throws EntityNotFoundException {
-        // Given
-        String email = "example@example.com";
-        String password = "password123";
-        String encodedPassword = "encodedPassword123";
-
-        LoginRequest request = new LoginRequest(email, password);
-        Member member = Member
-                .builder()
-                .id(123L)
-                .email(request.getEmail())
-                .password(encodedPassword)
-                .build();
-
-        given(passwordEncoder.matches(password, member.getPassword())).willReturn(true);
-
-        // When & Then
-        assertDoesNotThrow(() -> memberService.isPasswordMatches(request.getPassword(), member));
-
-        // Verify
-        verify(passwordEncoder, times(1)).matches(password, encodedPassword);
-    }
-
-    @Test
-    void givenMismatchingPassword_whenIsPasswordMatches_thenPasswordMismatchExceptionThrown() throws EntityNotFoundException {
-        // Given
-        String email = "example@example.com";
-        String password = "password123";
-        String encodedPassword = "encodedPassword123";
-
-        LoginRequest request = new LoginRequest(email, password);
-        Member member = Member
-                .builder()
-                .id(123L)
-                .email(request.getEmail())
-                .password(encodedPassword)
-                .build();
-
-        given(passwordEncoder.matches(password, member.getPassword())).willReturn(false);
-
-        // When & Then
-        assertThrows(PasswordMismatchException.class, () -> memberService.isPasswordMatches(request.getPassword(), member));
-
-        // Verify
-        verify(passwordEncoder, times(1)).matches(password, encodedPassword);
     }
 
     @Test

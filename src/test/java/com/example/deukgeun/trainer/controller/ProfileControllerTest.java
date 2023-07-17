@@ -1,15 +1,16 @@
 package com.example.deukgeun.trainer.controller;
 
 import com.example.deukgeun.global.enums.Gender;
-import com.example.deukgeun.main.response.RestResponse;
-import com.example.deukgeun.main.service.implement.TokenServiceImpl;
+import com.example.deukgeun.auth.application.dto.response.RestResponse;
+import com.example.deukgeun.auth.application.service.implement.TokenServiceImpl;
 import com.example.deukgeun.global.util.RestResponseUtil;
-import com.example.deukgeun.global.entity.Trainer;
-import com.example.deukgeun.global.entity.Profile;
-import com.example.deukgeun.trainer.request.UpdateProfileRequest;
-import com.example.deukgeun.trainer.response.ProfileResponse;
-import com.example.deukgeun.trainer.service.implement.TrainerServiceImpl;
-import com.example.deukgeun.trainer.service.implement.ProfileServiceImpl;
+import com.example.deukgeun.trainer.domain.entity.Trainer;
+import com.example.deukgeun.trainer.domain.entity.Profile;
+import com.example.deukgeun.trainer.application.controller.ProfileController;
+import com.example.deukgeun.trainer.application.dto.request.UpdateProfileRequest;
+import com.example.deukgeun.trainer.application.dto.response.ProfileResponse;
+import com.example.deukgeun.trainer.infrastructure.persistence.TrainerServiceImpl;
+import com.example.deukgeun.trainer.infrastructure.persistence.ProfileServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
