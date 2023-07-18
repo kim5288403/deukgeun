@@ -1,13 +1,13 @@
 package com.example.deukgeun.auth.application.controller;
 
 import com.example.deukgeun.auth.application.dto.request.LoginRequest;
-import com.example.deukgeun.auth.application.service.PasswordEncoderService;
-import com.example.deukgeun.auth.application.service.implement.TokenServiceImpl;
-import com.example.deukgeun.member.domain.entity.Member;
-import com.example.deukgeun.trainer.domain.entity.Trainer;
-import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.auth.application.dto.response.LoginResponse;
+import com.example.deukgeun.auth.application.service.implement.TokenServiceImpl;
+import com.example.deukgeun.global.util.PasswordEncoderUtil;
+import com.example.deukgeun.global.util.RestResponseUtil;
+import com.example.deukgeun.member.domain.entity.Member;
 import com.example.deukgeun.member.infrastructure.persistence.MemberServiceImpl;
+import com.example.deukgeun.trainer.domain.entity.Trainer;
 import com.example.deukgeun.trainer.infrastructure.persistence.TrainerServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +27,6 @@ import javax.validation.Valid;
 public class TokenController {
   
   private final TokenServiceImpl tokenService;
-  private final PasswordEncoderService passwordEncoderService;
   private final TrainerServiceImpl trainerService;
   private final MemberServiceImpl memberService;
 
@@ -61,7 +60,7 @@ public class TokenController {
       role = memberRole;
     }
 
-    passwordEncoderService.isPasswordMatches(request.getPassword(), matchPassword);
+    PasswordEncoderUtil.isPasswordMatches(request.getPassword(), matchPassword);
 
     // JWT 토큰 생성 및 설정
     String authToken = tokenService.setToken(request.getEmail(), response, role);

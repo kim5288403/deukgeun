@@ -2,10 +2,9 @@ package com.example.deukgeun.auth.service;
 
 import com.example.deukgeun.auth.application.dto.request.AuthMailRequest;
 import com.example.deukgeun.auth.application.service.implement.AuthMailApplicationServiceImpl;
-import com.example.deukgeun.auth.domain.entity.AuthMail;
-import com.example.deukgeun.auth.infrastructure.repository.AuthMailRepository;
+import com.example.deukgeun.auth.domain.model.entity.AuthMail;
+import com.example.deukgeun.auth.domain.model.valueobject.MailStatus;
 import com.example.deukgeun.auth.domain.service.implement.AuthMailServiceImpl;
-import com.example.deukgeun.auth.domain.valueobject.MailStatus;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +26,6 @@ import static org.mockito.Mockito.*;
 public class AuthMailServiceTest {
 
     @Mock
-    private AuthMailRepository authMailRepository;
-    @Mock
     private AuthMailServiceImpl authMailService;
     @Autowired
     private SpringTemplateEngine templateEngine;
@@ -38,7 +35,6 @@ public class AuthMailServiceTest {
     private JavaMailSender mockEmailSender;
     @Mock
     private SpringTemplateEngine mockTemplateEngine;
-
 
     @Test
     void given_whenCreateCode_thenValidCodeGenerated() {
@@ -155,11 +151,8 @@ public class AuthMailServiceTest {
     void givenAuthMail_whenIsEmailAuthenticated_thenReturnTrue() {
         // Given
         String email = "example@example.com";
-        AuthMail authMail = AuthMail
-                .builder()
-                .email(email)
-                .mailStatus(MailStatus.Y)
-                .build();
+        String code = "123456";
+        AuthMail authMail = new AuthMail(0L, email, code, MailStatus.Y);
 
         given(authMailService.findByEmail(email)).willReturn(Optional.of(authMail));
         AuthMailApplicationServiceImpl authMailApplicationService = new AuthMailApplicationServiceImpl(mockEmailSender, mockTemplateEngine, authMailService);
@@ -176,11 +169,8 @@ public class AuthMailServiceTest {
     void givenUnauthenticatedEmail_whenIsEmailAuthenticated_thenReturnFalse() {
         // Given
         String email = "example@example.com";
-        AuthMail authMail = AuthMail
-                .builder()
-                .email(email)
-                .mailStatus(MailStatus.N)
-                .build();
+        String code = "123456";
+        AuthMail authMail  = AuthMail.create(email, code);
 
         given(authMailService.findByEmail(email)).willReturn(Optional.of(authMail));
         AuthMailApplicationServiceImpl authMailApplicationService = new AuthMailApplicationServiceImpl(mockEmailSender, mockTemplateEngine, authMailService);
@@ -211,10 +201,8 @@ public class AuthMailServiceTest {
         // Given
         AuthMailRequest request = new AuthMailRequest();
         request.setEmail("example@example.com");
-        AuthMail authMail = AuthMail
-                .builder()
-                .mailStatus(MailStatus.N)
-                .build();
+        String code = "123456";
+        AuthMail authMail  = AuthMail.create(request.getEmail(), code);
         given(authMailService.findByEmail(request.getEmail())).willReturn(Optional.of(authMail));
         AuthMailApplicationServiceImpl authMailApplicationService = new AuthMailApplicationServiceImpl(mockEmailSender, mockTemplateEngine, authMailService);
 

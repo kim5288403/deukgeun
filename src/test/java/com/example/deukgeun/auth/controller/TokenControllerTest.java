@@ -2,14 +2,14 @@ package com.example.deukgeun.auth.controller;
 
 import com.example.deukgeun.auth.application.controller.TokenController;
 import com.example.deukgeun.auth.application.dto.request.LoginRequest;
-import com.example.deukgeun.auth.application.service.PasswordEncoderService;
-import com.example.deukgeun.auth.application.service.implement.TokenServiceImpl;
-import com.example.deukgeun.member.domain.entity.Member;
-import com.example.deukgeun.trainer.domain.entity.Trainer;
-import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.auth.application.dto.response.LoginResponse;
 import com.example.deukgeun.auth.application.dto.response.RestResponse;
+import com.example.deukgeun.auth.application.service.implement.TokenServiceImpl;
+import com.example.deukgeun.global.util.PasswordEncoderUtil;
+import com.example.deukgeun.global.util.RestResponseUtil;
+import com.example.deukgeun.member.domain.entity.Member;
 import com.example.deukgeun.member.infrastructure.persistence.MemberServiceImpl;
+import com.example.deukgeun.trainer.domain.entity.Trainer;
 import com.example.deukgeun.trainer.infrastructure.persistence.TrainerServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -17,7 +17,6 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.validation.BindingResult;
 
@@ -26,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -38,15 +36,11 @@ public class TokenControllerTest {
     @Mock
     private TokenServiceImpl tokenService;
     @Mock
-    private PasswordEncoderService passwordEncoderService;
-    @Mock
     private HttpServletRequest request;
     @Mock
     private TrainerServiceImpl trainerService;
     @Mock
     private MemberServiceImpl memberService;
-    @Mock
-    private PasswordEncoder passwordEncoder;
     @Mock
     private HttpServletResponse response;
     @Mock
@@ -92,10 +86,12 @@ public class TokenControllerTest {
         // Given
         String authToken = "validAuthToken";
         String role = "trainer";
+        ReflectionTestUtils.setField(tokenController, "trainerRole", role);
+
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setEmail("test");
         loginRequest.setPassword("test");
-        loginRequest.setLoginType("trainer");
+        loginRequest.setLoginType(role);
 
         LoginResponse loginResponse = LoginResponse
                 .builder()
@@ -103,18 +99,16 @@ public class TokenControllerTest {
                 .role(role)
                 .build();
 
+        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("로그인 성공 했습니다.", loginResponse);
+
         Trainer trainer = Trainer
                 .builder()
                 .id(123L)
-                .password("encodePassword")
+                .password(PasswordEncoderUtil.encode(loginRequest.getPassword()))
                 .build();
 
-        ReflectionTestUtils.setField(tokenController, "trainerRole", "trainer");
-        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("로그인 성공 했습니다.", loginResponse);
-
-        given(tokenService.setToken(loginRequest.getEmail(), response, role)).willReturn(authToken);
         given(trainerService.getByEmail(loginRequest.getEmail())).willReturn(trainer);
-        given(passwordEncoder.matches(anyString(), anyString())).willReturn(true);
+        given(tokenService.setToken(loginRequest.getEmail(), response, role)).willReturn(authToken);
 
         // When
         ResponseEntity<?> responseEntity = tokenController.login(loginRequest, bindingResult, response);
@@ -122,7 +116,6 @@ public class TokenControllerTest {
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
-        verify(passwordEncoderService, times(1)).isPasswordMatches(anyString(), anyString());
         verify(tokenService, times(1)).setToken(loginRequest.getEmail(), response, role);
     }
 
@@ -131,6 +124,8 @@ public class TokenControllerTest {
         // Given
         String authToken = "validAuthToken";
         String role = "member";
+        ReflectionTestUtils.setField(tokenController, "memberRole", role);
+
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setEmail("test");
         loginRequest.setPassword("test");
@@ -142,17 +137,16 @@ public class TokenControllerTest {
                 .role(role)
                 .build();
 
+        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("로그인 성공 했습니다.", loginResponse);
+
         Member member = Member
                 .builder()
                 .id(123L)
-                .password("encodePassword")
+                .password(PasswordEncoderUtil.encode(loginRequest.getPassword()))
                 .build();
 
-        ReflectionTestUtils.setField(tokenController, "memberRole", "member");
-        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("로그인 성공 했습니다.", loginResponse);
 
         given(memberService.getByEmail(loginRequest.getEmail())).willReturn(member);
-        given(passwordEncoder.matches(anyString(), anyString())).willReturn(true);
         given(tokenService.setToken(loginRequest.getEmail(), response, role)).willReturn(authToken);
 
         // When
@@ -161,7 +155,6 @@ public class TokenControllerTest {
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
-        verify(passwordEncoderService, times(1)).isPasswordMatches(loginRequest.getPassword(), member.getPassword());
         verify(tokenService, times(1)).setToken(loginRequest.getEmail(), response, role);
     }
 }

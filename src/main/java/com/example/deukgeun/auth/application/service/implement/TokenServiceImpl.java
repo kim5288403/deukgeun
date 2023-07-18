@@ -1,7 +1,7 @@
 package com.example.deukgeun.auth.application.service.implement;
 
-import com.example.deukgeun.auth.domain.entity.Token;
-import com.example.deukgeun.auth.infrastructure.repository.TokenRepository;
+import com.example.deukgeun.auth.infrastructure.persistence.entity.Token;
+import com.example.deukgeun.auth.infrastructure.persistence.repository.TokenRepository;
 import com.example.deukgeun.member.infrastructure.persistence.MemberDetailServiceImpl;
 import com.example.deukgeun.trainer.infrastructure.persistence.TrainerDetailServiceImpl;
 import io.jsonwebtoken.Claims;

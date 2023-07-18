@@ -1,7 +1,7 @@
 package com.example.deukgeun.auth.domain.service;
 
-import com.example.deukgeun.auth.domain.entity.AuthMail;
-import com.example.deukgeun.auth.domain.valueobject.MailStatus;
+import com.example.deukgeun.auth.domain.model.entity.AuthMail;
+import com.example.deukgeun.auth.domain.model.valueobject.MailStatus;
 
 import java.util.Optional;
 

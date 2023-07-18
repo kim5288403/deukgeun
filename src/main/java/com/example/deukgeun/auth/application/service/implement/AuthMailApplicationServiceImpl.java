@@ -2,9 +2,9 @@ package com.example.deukgeun.auth.application.service.implement;
 
 import com.example.deukgeun.auth.application.dto.request.AuthMailRequest;
 import com.example.deukgeun.auth.application.service.AuthMailApplicationService;
-import com.example.deukgeun.auth.domain.entity.AuthMail;
+import com.example.deukgeun.auth.domain.model.entity.AuthMail;
+import com.example.deukgeun.auth.domain.model.valueobject.MailStatus;
 import com.example.deukgeun.auth.domain.service.AuthMailService;
-import com.example.deukgeun.auth.domain.valueobject.MailStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -155,6 +155,7 @@ public class AuthMailApplicationServiceImpl implements AuthMailApplicationServic
     public void confirm(AuthMailRequest request) {
         AuthMail foundAuthMail = authmailService.findByEmail(request.getEmail()).orElseThrow(
                 () -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+
         authmailService.updateMailStatus(MailStatus.Y, foundAuthMail);
     }
 }

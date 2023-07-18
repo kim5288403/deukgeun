@@ -1,9 +1,9 @@
 package com.example.deukgeun.auth.domain.service.implement;
 
-import com.example.deukgeun.auth.domain.entity.AuthMail;
-import com.example.deukgeun.auth.infrastructure.repository.AuthMailRepository;
+import com.example.deukgeun.auth.domain.model.entity.AuthMail;
+import com.example.deukgeun.auth.domain.model.valueobject.MailStatus;
+import com.example.deukgeun.auth.domain.repository.AuthMailRepository;
 import com.example.deukgeun.auth.domain.service.AuthMailService;
-import com.example.deukgeun.auth.domain.valueobject.MailStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,12 +17,7 @@ public class AuthMailServiceImpl implements AuthMailService {
     private final AuthMailRepository authMailRepository;
 
     public void save(String toEmail, String authCode) {
-        AuthMail authMail = AuthMail
-                .builder()
-                .email(toEmail)
-                .code(authCode)
-                .mailStatus(MailStatus.N)
-                .build();
+        AuthMail authMail = AuthMail.create(toEmail, authCode);
 
         authMailRepository.save(authMail);
     }

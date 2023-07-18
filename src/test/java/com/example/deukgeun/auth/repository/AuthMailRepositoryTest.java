@@ -1,8 +1,9 @@
 package com.example.deukgeun.auth.repository;
 
-import com.example.deukgeun.auth.domain.entity.AuthMail;
-import com.example.deukgeun.auth.domain.valueobject.MailStatus;
-import com.example.deukgeun.auth.infrastructure.repository.AuthMailRepository;
+import com.example.deukgeun.auth.domain.model.valueobject.MailStatus;
+import com.example.deukgeun.auth.infrastructure.persistence.entity.AuthMailEntity;
+import com.example.deukgeun.auth.infrastructure.persistence.repository.AuthMailRepositoryImpl;
+import com.example.deukgeun.global.util.LongIdGeneratorUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -18,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class AuthMailRepositoryTest {
     @Autowired
-    private AuthMailRepository authMailRepository;
+    private AuthMailRepositoryImpl authMailRepository;
 
     @Test
     void shouldNotNullRepository() {
@@ -31,18 +32,19 @@ public class AuthMailRepositoryTest {
         String email = "testEmail@test.com";
         String code = "1t2e3s4t";
         MailStatus mailStatus = MailStatus.N;
-        AuthMail authMail  = AuthMail
+        AuthMailEntity authMail = AuthMailEntity
                 .builder()
+                .id(LongIdGeneratorUtil.gen())
                 .email(email)
                 .code(code)
                 .mailStatus(mailStatus)
                 .build();
 
         // When
-        AuthMail saveAuthMail = authMailRepository.save(authMail);
+        AuthMailEntity saveAuthMail = authMailRepository.save(authMail);
 
         // Then
-        AuthMail  foundAuthMail = authMailRepository.findById(saveAuthMail.getId()).orElse(null);
+        AuthMailEntity  foundAuthMail = authMailRepository.findById(saveAuthMail.getId()).orElse(null);
         assertNotNull(foundAuthMail);
         assertEquals(saveAuthMail.getEmail(), foundAuthMail.getEmail());
         assertEquals(saveAuthMail.getCode(), foundAuthMail.getCode());
@@ -54,12 +56,14 @@ public class AuthMailRepositoryTest {
         String email = "testEmail@test.com";
         String code = "1t2e3s4t";
         MailStatus mailStatus = MailStatus.N;
-        AuthMail authMail  = AuthMail
+        AuthMailEntity authMail = AuthMailEntity
                 .builder()
+                .id(LongIdGeneratorUtil.gen())
                 .email(email)
                 .code(code)
                 .mailStatus(mailStatus)
                 .build();
+
         authMailRepository.save(authMail);
 
         // When
@@ -75,12 +79,14 @@ public class AuthMailRepositoryTest {
         String email = "testEmail@test.com";
         String code = "1t2e3s4t";
         MailStatus mailStatus = MailStatus.N;
-        AuthMail authMail  = AuthMail
+        AuthMailEntity authMail = AuthMailEntity
                 .builder()
+                .id(LongIdGeneratorUtil.gen())
                 .email(email)
                 .code(code)
                 .mailStatus(mailStatus)
                 .build();
+
         authMailRepository.save(authMail);
 
         // When
@@ -96,16 +102,18 @@ public class AuthMailRepositoryTest {
         String email = "testEmail@test.com";
         String code = "1t2e3s4t";
         MailStatus mailStatus = MailStatus.N;
-        AuthMail authMail  = AuthMail
+        AuthMailEntity authMail = AuthMailEntity
                 .builder()
+                .id(LongIdGeneratorUtil.gen())
                 .email(email)
                 .code(code)
                 .mailStatus(mailStatus)
                 .build();
+
         authMailRepository.save(authMail);
 
         // When
-        AuthMail foundAuthMail = authMailRepository.findByEmail(authMail.getEmail()).orElse(null);
+        AuthMailEntity foundAuthMail = authMailRepository.findByEmail(authMail.getEmail()).orElse(null);
 
         // Then
         assertNotNull(foundAuthMail);
@@ -119,12 +127,14 @@ public class AuthMailRepositoryTest {
         String email = "testEmail@test.com";
         String code = "1t2e3s4t";
         MailStatus mailStatus = MailStatus.N;
-        AuthMail authMail  = AuthMail
+        AuthMailEntity authMail = AuthMailEntity
                 .builder()
+                .id(LongIdGeneratorUtil.gen())
                 .email(email)
                 .code(code)
                 .mailStatus(mailStatus)
                 .build();
+
         authMailRepository.save(authMail);
 
         // When
@@ -133,32 +143,5 @@ public class AuthMailRepositoryTest {
         // Then
         boolean emailExists = authMailRepository.existsByEmail(email);
         assertFalse(emailExists);
-    }
-
-    @Test
-    void givenAuthMail_whenUpdateMailStatus_thenIsUpdated() {
-        // Given
-        String email = "testEmail@test.com";
-        String code = "1t2e3s4t";
-        MailStatus mailStatus = MailStatus.N;
-        AuthMail authMail  = AuthMail
-                .builder()
-                .email(email)
-                .code(code)
-                .mailStatus(mailStatus)
-                .build();
-        authMailRepository.save(authMail);
-        AuthMail foundAuthMail = authMailRepository.findByEmail(email).orElse(null);
-
-        // When
-        assert foundAuthMail != null;
-        foundAuthMail.updateMailStatus(MailStatus.Y);
-        authMailRepository.save(foundAuthMail);
-
-        // Then
-        AuthMail resultAuthMail = authMailRepository.findById(foundAuthMail.getId()).orElse(null);
-        assertNotNull(resultAuthMail);
-        assertEquals(foundAuthMail.getId(), resultAuthMail.getId());
-        assertNotEquals(mailStatus, resultAuthMail.getMailStatus());
     }
 }

@@ -1,4 +1,4 @@
-package com.example.deukgeun.auth.domain.entity;
+package com.example.deukgeun.auth.infrastructure.persistence.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

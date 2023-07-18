@@ -1,6 +1,6 @@
-package com.example.deukgeun.auth.infrastructure.repository;
+package com.example.deukgeun.auth.infrastructure.persistence.repository;
 
-import com.example.deukgeun.auth.domain.entity.Token;
+import com.example.deukgeun.auth.infrastructure.persistence.entity.Token;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.transaction.Transactional;

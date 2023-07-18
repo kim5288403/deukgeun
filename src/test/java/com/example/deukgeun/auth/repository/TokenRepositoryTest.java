@@ -1,7 +1,7 @@
 package com.example.deukgeun.auth.repository;
 
-import com.example.deukgeun.auth.domain.entity.Token;
-import com.example.deukgeun.auth.infrastructure.repository.TokenRepository;
+import com.example.deukgeun.auth.infrastructure.persistence.entity.Token;
+import com.example.deukgeun.auth.infrastructure.persistence.repository.TokenRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
