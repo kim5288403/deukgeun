@@ -5,15 +5,17 @@ import com.example.deukgeun.auth.domain.model.entity.AuthMail;
 import java.util.Optional;
 
 public interface AuthMailRepository {
-    boolean existsByEmailAndCode(String email, String code);
+    void deleteByEmail(String email);
 
     boolean existsByEmail(String email);
 
-    Optional<AuthMail> findByEmail(String email);
-
-    void deleteByEmail(String email);
-
-    AuthMail save(AuthMail authMail);
+    boolean existsByEmailAndCode(String email, String code);
 
     Optional<AuthMail> findById(Long id);
+
+    Optional<AuthMail> findByEmail(String email);
+
+    Optional<AuthMail> findByEmailAndCode(String email, String code);
+
+    AuthMail save(AuthMail authMail);
 }

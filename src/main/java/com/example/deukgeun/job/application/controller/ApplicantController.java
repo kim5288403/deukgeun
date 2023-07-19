@@ -1,10 +1,10 @@
 package com.example.deukgeun.job.application.controller;
 
-import com.example.deukgeun.auth.application.service.implement.TokenServiceImpl;
+import com.example.deukgeun.auth.application.service.implement.AuthTokenApplicationServiceImpl;
 import com.example.deukgeun.global.util.RestResponseUtil;
+import com.example.deukgeun.job.application.dto.request.SaveApplicantRequest;
 import com.example.deukgeun.job.application.dto.response.ApplicantResponse;
 import com.example.deukgeun.job.domain.service.ApplicantService;
-import com.example.deukgeun.job.application.dto.request.SaveApplicantRequest;
 import com.example.deukgeun.trainer.infrastructure.persistence.TrainerServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,7 +24,7 @@ import javax.validation.Valid;
 public class ApplicantController {
 
     private final ApplicantService applicantService;
-    private final TokenServiceImpl tokenService;
+    private final AuthTokenApplicationServiceImpl authTokenApplicationService;
     private final TrainerServiceImpl trainerService;
 
     @RequestMapping(method = RequestMethod.GET, path = "/")
@@ -36,7 +36,7 @@ public class ApplicantController {
 
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> save(HttpServletRequest request, @Valid SaveApplicantRequest saveApplicantRequest, BindingResult bindingResult) {
-        String authToken = tokenService.resolveAuthToken(request);
+        String authToken = authTokenApplicationService.resolveAuthToken(request);
         Long trainerId = trainerService.getTrainerId(authToken);
         applicantService.save(saveApplicantRequest, trainerId);
 

@@ -2,11 +2,11 @@ package com.example.deukgeun.auth.application.controller;
 
 import com.example.deukgeun.auth.application.dto.request.LoginRequest;
 import com.example.deukgeun.auth.application.dto.response.LoginResponse;
-import com.example.deukgeun.auth.application.service.implement.TokenServiceImpl;
+import com.example.deukgeun.auth.application.service.implement.AuthTokenApplicationServiceImpl;
 import com.example.deukgeun.global.util.PasswordEncoderUtil;
 import com.example.deukgeun.global.util.RestResponseUtil;
+import com.example.deukgeun.member.application.service.implement.MemberApplicationServiceImpl;
 import com.example.deukgeun.member.domain.entity.Member;
-import com.example.deukgeun.member.infrastructure.persistence.MemberServiceImpl;
 import com.example.deukgeun.trainer.domain.entity.Trainer;
 import com.example.deukgeun.trainer.infrastructure.persistence.TrainerServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -24,11 +24,11 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/token")
 @RequiredArgsConstructor
-public class TokenController {
+public class AuthTokenController {
   
-  private final TokenServiceImpl tokenService;
+  private final AuthTokenApplicationServiceImpl authTokenApplicationService;
   private final TrainerServiceImpl trainerService;
-  private final MemberServiceImpl memberService;
+  private final MemberApplicationServiceImpl memberApplicationService;
 
   @Value("${deukgeun.role.trainer}")
   private String trainerRole;
@@ -54,8 +54,9 @@ public class TokenController {
       Trainer trainer = trainerService.getByEmail(request.getEmail());
       matchPassword = trainer.getPassword();
       role = trainerRole;
+
     } else if (request.getLoginType().equals("member")) {
-      Member member = memberService.getByEmail(request.getEmail());
+      Member member = memberApplicationService.findByEmail(request.getEmail());
       matchPassword = member.getPassword();
       role = memberRole;
     }
@@ -63,7 +64,7 @@ public class TokenController {
     PasswordEncoderUtil.isPasswordMatches(request.getPassword(), matchPassword);
 
     // JWT 토큰 생성 및 설정
-    String authToken = tokenService.setToken(request.getEmail(), response, role);
+    String authToken = authTokenApplicationService.setToken(request.getEmail(), response, role);
 
     // 로그인 응답 객체 생성
     LoginResponse loginResponse = LoginResponse
@@ -83,9 +84,9 @@ public class TokenController {
    */
   @RequestMapping(method = RequestMethod.GET, path = "/logout")
   public ResponseEntity<?> logout(HttpServletRequest request) {
-    String authToken = tokenService.resolveAuthToken(request);
-    tokenService.deleteToken(authToken);
-    
+    String authToken = authTokenApplicationService.resolveAuthToken(request);
+    authTokenApplicationService.deleteByAuthToken(authToken);
+
     return RestResponseUtil
         .ok("로그아웃 성공 했습니다.", null);
   }
@@ -98,8 +99,8 @@ public class TokenController {
    */
   @RequestMapping(method = RequestMethod.GET, path = "/pk")
   public ResponseEntity<?> getUserPK(HttpServletRequest request) {
-    String authToken = tokenService.resolveAuthToken(request);
-    String email = tokenService.getUserPk(authToken);
+    String authToken = authTokenApplicationService.resolveAuthToken(request);
+    String email = authTokenApplicationService.getUserPk(authToken);
 
     return RestResponseUtil.ok("이메일 조회 성공했습니다.", email);
   }

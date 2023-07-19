@@ -30,15 +30,13 @@ public class MemberRepositoryTest {
     @Test
     void givenMember_whenSaved_thenReturnValid() {
         // Given
-        Member member = Member
-                .builder()
-                .id(123L)
-                .email("test")
-                .password("1234")
-                .name("test")
-                .age(123)
-                .gender(Gender.M)
-                .build();
+        Member member = Member.create(
+                "test",
+                "test",
+                "test",
+                23,
+                Gender.M
+        );
 
         // When
         Member saveMember = memberRepository.save(member);
@@ -53,15 +51,14 @@ public class MemberRepositoryTest {
     void givenTrainer_whenFindByEmail_thenReturnValid() {
         // Given
         String email = "test";
-        Member member = Member
-                .builder()
-                .id(123L)
-                .email(email)
-                .password("1234")
-                .name("test")
-                .age(123)
-                .gender(Gender.M)
-                .build();
+        Member member = Member.create(
+                "test",
+                "test",
+                "test",
+                23,
+                Gender.M
+        );
+
         memberRepository.save(member);
 
         // When

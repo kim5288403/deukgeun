@@ -1,10 +1,10 @@
-package com.example.deukgeun.job.infrastructure.persistence;
+package com.example.deukgeun.job.application.service.implement;
 
+import com.example.deukgeun.auth.application.dto.response.JobPostingResponse;
+import com.example.deukgeun.job.application.dto.request.SaveJobPostingRequest;
 import com.example.deukgeun.job.domain.entity.JobPosting;
 import com.example.deukgeun.job.domain.repository.JobPostingRepository;
-import com.example.deukgeun.auth.application.dto.response.JobPostingResponse;
 import com.example.deukgeun.job.domain.service.JobPostingService;
-import com.example.deukgeun.job.application.dto.request.SaveJobPostingRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

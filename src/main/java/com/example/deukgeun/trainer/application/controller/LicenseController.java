@@ -1,6 +1,6 @@
 package com.example.deukgeun.trainer.application.controller;
 
-import com.example.deukgeun.auth.application.service.implement.TokenServiceImpl;
+import com.example.deukgeun.auth.application.service.implement.AuthTokenApplicationServiceImpl;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.trainer.application.dto.request.RemoveLicenseRequest;
 import com.example.deukgeun.trainer.application.dto.request.SaveLicenseRequest;
@@ -26,7 +26,7 @@ import java.util.List;
 public class LicenseController {
     private final LicenseServiceImpl licenseService;
     private final TrainerServiceImpl trainerService;
-    private final TokenServiceImpl tokenService;
+    private final AuthTokenApplicationServiceImpl authTokenApplicationService;
 
     /**
      * ID를 기반으로 자격증 목록을 조회합니다.
@@ -51,7 +51,7 @@ public class LicenseController {
     @RequestMapping(method = RequestMethod.GET, path = "/")
     public ResponseEntity<?> getListByAuthToken(HttpServletRequest request) {
         // 인증 토큰을 사용하여 사용자 ID 조회
-        String authToken = tokenService.resolveAuthToken(request);
+        String authToken = authTokenApplicationService.resolveAuthToken(request);
         Long trainerId = trainerService.getTrainerId(authToken);
 
         // 사용자 ID를 기반으로 자격증 목록 조회
@@ -77,7 +77,7 @@ public class LicenseController {
         licenseService.checkLicense(licenseResult);
 
         // 인증 토큰에서 사용자 ID 추출
-        String authToken = tokenService.resolveAuthToken(request);
+        String authToken = authTokenApplicationService.resolveAuthToken(request);
         Long trainerid = trainerService.getTrainerId(authToken);
 
         // 자격증 저장

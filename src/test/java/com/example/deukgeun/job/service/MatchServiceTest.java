@@ -3,7 +3,7 @@ package com.example.deukgeun.job.service;
 import com.example.deukgeun.job.domain.entity.MatchInfo;
 import com.example.deukgeun.job.domain.repository.MatchInfoRepository;
 import com.example.deukgeun.job.application.dto.request.SaveMatchInfoRequest;
-import com.example.deukgeun.job.infrastructure.persistence.MatchServiceImpl;
+import com.example.deukgeun.job.domain.service.implement.MatchServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

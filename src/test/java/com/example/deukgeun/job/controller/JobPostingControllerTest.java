@@ -2,14 +2,14 @@ package com.example.deukgeun.job.controller;
 
 import com.example.deukgeun.auth.application.dto.response.JobPostingResponse;
 import com.example.deukgeun.auth.application.dto.response.RestResponse;
-import com.example.deukgeun.auth.application.service.implement.TokenServiceImpl;
-import com.example.deukgeun.job.domain.entity.JobPosting;
-import com.example.deukgeun.member.domain.entity.Member;
+import com.example.deukgeun.auth.application.service.implement.AuthTokenApplicationServiceImpl;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.job.application.controller.JobPostingController;
-import com.example.deukgeun.job.domain.service.JobPostingService;
 import com.example.deukgeun.job.application.dto.request.SaveJobPostingRequest;
-import com.example.deukgeun.member.infrastructure.persistence.MemberServiceImpl;
+import com.example.deukgeun.job.domain.entity.JobPosting;
+import com.example.deukgeun.job.domain.service.JobPostingService;
+import com.example.deukgeun.member.domain.entity.Member;
+import com.example.deukgeun.member.application.service.implement.MemberServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -36,7 +36,7 @@ public class JobPostingControllerTest {
     @Mock
     private JobPostingService jobPostingService;
     @Mock
-    private TokenServiceImpl tokenService;
+    private AuthTokenApplicationServiceImpl authTokenApplicationService;
     @Mock
     private MemberServiceImpl memberService;
     @Mock
@@ -93,8 +93,8 @@ public class JobPostingControllerTest {
                 .build();
 
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("체크 성공했습니다.", true);
-        given(tokenService.resolveAuthToken(request)).willReturn(authToken);
-        given(tokenService.getUserPk(authToken)).willReturn(email);
+        given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
+        given(authTokenApplicationService.getUserPk(authToken)).willReturn(email);
         given(memberService.getByEmail(email)).willReturn(member);
         given(jobPostingService.existsByIdAndMemberId(id, member.getId())).willReturn(true);
 
@@ -120,8 +120,8 @@ public class JobPostingControllerTest {
         SaveJobPostingRequest saveJobPostingRequest = mock(SaveJobPostingRequest.class);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("등록 성공했습니다.", null);
 
-        given(tokenService.resolveAuthToken(request)).willReturn(authToken);
-        given(tokenService.getUserPk(authToken)).willReturn(userPk);
+        given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
+        given(authTokenApplicationService.getUserPk(authToken)).willReturn(userPk);
         given(memberService.getByEmail(userPk)).willReturn(member);
         given(jobPostingService.save(saveJobPostingRequest, member.getId())).willReturn(jobPosting);
 
@@ -132,8 +132,8 @@ public class JobPostingControllerTest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
 
-        verify(tokenService, times(1)).resolveAuthToken(request);
-        verify(tokenService, times(1)).getUserPk(authToken);
+        verify(authTokenApplicationService, times(1)).resolveAuthToken(request);
+        verify(authTokenApplicationService, times(1)).getUserPk(authToken);
         verify(memberService, times(1)).getByEmail(userPk);
         verify(jobPostingService, times(1)).save(saveJobPostingRequest, member.getId());
     }
@@ -152,8 +152,8 @@ public class JobPostingControllerTest {
         Page<JobPostingResponse.ListResponse> page = mock(Page.class);
 
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공했습니다.", page);
-        given(tokenService.resolveAuthToken(request)).willReturn(authToken);
-        given(tokenService.getUserPk(authToken)).willReturn(email);
+        given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
+        given(authTokenApplicationService.getUserPk(authToken)).willReturn(email);
         given(memberService.getByEmail(email)).willReturn(member);
         given(jobPostingService.getByMemberId(memberId, currentPage)).willReturn(page);
 

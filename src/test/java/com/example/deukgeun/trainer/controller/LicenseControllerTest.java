@@ -1,7 +1,7 @@
 package com.example.deukgeun.trainer.controller;
 
 import com.example.deukgeun.auth.application.dto.response.RestResponse;
-import com.example.deukgeun.auth.application.service.implement.TokenServiceImpl;
+import com.example.deukgeun.auth.application.service.implement.AuthTokenApplicationServiceImpl;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.trainer.application.controller.LicenseController;
 import com.example.deukgeun.trainer.application.dto.request.RemoveLicenseRequest;
@@ -37,7 +37,7 @@ public class LicenseControllerTest {
     @Mock
     private LicenseServiceImpl licenseService;
     @Mock
-    private TokenServiceImpl tokenService;
+    private AuthTokenApplicationServiceImpl authTokenApplicationService;
     @Mock
     private HttpServletRequest request;
     @Mock
@@ -67,7 +67,7 @@ public class LicenseControllerTest {
         Long trainerId = 123L;
         List<LicenseListResponse> mockResponse = new ArrayList<>();
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("자격증 조회 성공했습니다.", mockResponse);
-        given(tokenService.resolveAuthToken(request)).willReturn(authToken);
+        given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
         given(trainerService.getTrainerId(authToken)).willReturn(trainerId);
         given(licenseService.findByTrainerId(trainerId)).willReturn(mockResponse);
 
@@ -75,7 +75,7 @@ public class LicenseControllerTest {
         ResponseEntity<?> responseEntity = licenseController.getListByAuthToken(request);
 
         // Then
-        verify(tokenService, times(1)).resolveAuthToken(request);
+        verify(authTokenApplicationService, times(1)).resolveAuthToken(request);
         verify(trainerService, times(1)).getTrainerId(authToken);
         verify(licenseService, times(1)).findByTrainerId(trainerId);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -92,7 +92,7 @@ public class LicenseControllerTest {
         String authToken = "exampleAuthToken";
         Long trainerId = 123L;
 
-        given(tokenService.resolveAuthToken(request)).willReturn(authToken);
+        given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
         given(trainerService.getTrainerId(authToken)).willReturn(trainerId);
         given(licenseService.getLicenseVerificationResult(saveLicenseRequest)).willReturn(licenseResult);
 
@@ -102,7 +102,7 @@ public class LicenseControllerTest {
         // Then
         verify(licenseService, times(1)).getLicenseVerificationResult(saveLicenseRequest);
         verify(licenseService, times(1)).checkLicense(licenseResult);
-        verify(tokenService, times(1)).resolveAuthToken(request);
+        verify(authTokenApplicationService, times(1)).resolveAuthToken(request);
         verify(trainerService, times(1)).getTrainerId(authToken);
         verify(licenseService, times(1)).save(licenseResult, trainerId);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());

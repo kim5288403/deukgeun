@@ -1,7 +1,7 @@
 package com.example.deukgeun.trainer.application.controller;
 
 
-import com.example.deukgeun.auth.application.service.implement.TokenServiceImpl;
+import com.example.deukgeun.auth.application.service.implement.AuthTokenApplicationServiceImpl;
 import com.example.deukgeun.trainer.domain.entity.Profile;
 import com.example.deukgeun.trainer.domain.entity.Trainer;
 import com.example.deukgeun.global.util.RestResponseUtil;
@@ -32,7 +32,7 @@ import java.io.IOException;
 public class TrainerController {
 
     private final TrainerServiceImpl trainerService;
-    private final TokenServiceImpl tokenService;
+    private final AuthTokenApplicationServiceImpl authTokenApplicationService;
     private final ProfileServiceImpl profileService;
 
     @Value("${deukgeun.role.trainer}")
@@ -47,7 +47,7 @@ public class TrainerController {
     @RequestMapping(method = RequestMethod.GET, path = "/detail")
     public ResponseEntity<?> getDetail(HttpServletRequest request) {
         // 인증 토큰에서 사용자의 인증 정보를 추출
-        String authToken = tokenService.resolveAuthToken(request);
+        String authToken = authTokenApplicationService.resolveAuthToken(request);
         Trainer trainer = trainerService.getByAuthToken(authToken);
 
         // 사용자 정보를 응답 객체로 변환
@@ -139,8 +139,8 @@ public class TrainerController {
         trainerService.withdrawal(trainer.getId());
 
         //토큰 삭제
-        String authToken = tokenService.resolveAuthToken(request);
-        tokenService.deleteToken(authToken);
+        String authToken = authTokenApplicationService.resolveAuthToken(request);
+        authTokenApplicationService.deleteByAuthToken(authToken);
 
         return RestResponseUtil
                 .ok("회원 탈퇴 성공했습니다.", null);

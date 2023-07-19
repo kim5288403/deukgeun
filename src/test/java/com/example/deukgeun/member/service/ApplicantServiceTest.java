@@ -7,7 +7,7 @@ import com.example.deukgeun.job.domain.repository.ApplicantRepository;
 import com.example.deukgeun.job.domain.repository.JobPostingRepository;
 import com.example.deukgeun.member.domain.repository.MemberRepository;
 import com.example.deukgeun.job.application.dto.response.ApplicantResponse;
-import com.example.deukgeun.job.infrastructure.persistence.ApplicantServiceImpl;
+import com.example.deukgeun.job.domain.service.implement.ApplicantServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

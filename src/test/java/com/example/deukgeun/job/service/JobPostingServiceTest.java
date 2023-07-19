@@ -3,7 +3,7 @@ package com.example.deukgeun.job.service;
 import com.example.deukgeun.job.domain.entity.JobPosting;
 import com.example.deukgeun.job.domain.repository.JobPostingRepository;
 import com.example.deukgeun.auth.application.dto.response.JobPostingResponse;
-import com.example.deukgeun.job.infrastructure.persistence.JobPostingServiceImpl;
+import com.example.deukgeun.job.domain.service.implement.JobPostingServiceImpl;
 import com.example.deukgeun.job.application.dto.request.SaveJobPostingRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

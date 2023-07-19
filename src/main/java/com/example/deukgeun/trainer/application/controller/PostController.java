@@ -1,6 +1,6 @@
 package com.example.deukgeun.trainer.application.controller;
 
-import com.example.deukgeun.auth.application.service.implement.TokenServiceImpl;
+import com.example.deukgeun.auth.application.service.implement.AuthTokenApplicationServiceImpl;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.trainer.domain.entity.Post;
 import com.example.deukgeun.trainer.application.dto.request.PostRequest;
@@ -27,7 +27,7 @@ public class PostController {
 
     private final PostServiceImpl postService;
     private final TrainerServiceImpl trainerService;
-    private final TokenServiceImpl tokenService;
+    private final AuthTokenApplicationServiceImpl authTokenApplicationService;
 
     /**
      * 사용자 ID에 해당하는 게시물 상세 정보를 가져옵니다.
@@ -52,7 +52,7 @@ public class PostController {
      */
     @RequestMapping(method = RequestMethod.GET, path = "/")
     public ResponseEntity<?> getDetailByAuthToken(HttpServletRequest request) {
-        String authToken = tokenService.resolveAuthToken(request);
+        String authToken = authTokenApplicationService.resolveAuthToken(request);
         Long trainerId = trainerService.getTrainerId(authToken);
         Post post = postService.findByTrainerId(trainerId);
 
@@ -73,7 +73,7 @@ public class PostController {
      */
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> upload(HttpServletRequest request, @Valid PostRequest postRequest, BindingResult bindingResult) throws Exception {
-        String authToken = tokenService.resolveAuthToken(request);
+        String authToken = authTokenApplicationService.resolveAuthToken(request);
         postService.upload(postRequest, authToken);
 
         return RestResponseUtil.ok("게시글 저장 성공했습니다.", null);

@@ -1,14 +1,15 @@
 package com.example.deukgeun.auth.controller;
 
-import com.example.deukgeun.auth.application.controller.TokenController;
+import com.example.deukgeun.auth.application.controller.AuthTokenController;
 import com.example.deukgeun.auth.application.dto.request.LoginRequest;
 import com.example.deukgeun.auth.application.dto.response.LoginResponse;
 import com.example.deukgeun.auth.application.dto.response.RestResponse;
-import com.example.deukgeun.auth.application.service.implement.TokenServiceImpl;
+import com.example.deukgeun.auth.application.service.implement.AuthTokenApplicationServiceImpl;
+import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.global.util.PasswordEncoderUtil;
 import com.example.deukgeun.global.util.RestResponseUtil;
+import com.example.deukgeun.member.application.service.implement.MemberApplicationServiceImpl;
 import com.example.deukgeun.member.domain.entity.Member;
-import com.example.deukgeun.member.infrastructure.persistence.MemberServiceImpl;
 import com.example.deukgeun.trainer.domain.entity.Trainer;
 import com.example.deukgeun.trainer.infrastructure.persistence.TrainerServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -30,17 +31,17 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @SpringBootTest
-public class TokenControllerTest {
+public class AuthTokenControllerTest {
     @InjectMocks
-    private TokenController tokenController;
+    private AuthTokenController tokenController;
     @Mock
-    private TokenServiceImpl tokenService;
+    private AuthTokenApplicationServiceImpl tokenService;
     @Mock
     private HttpServletRequest request;
     @Mock
     private TrainerServiceImpl trainerService;
     @Mock
-    private MemberServiceImpl memberService;
+    private MemberApplicationServiceImpl memberApplicationService;
     @Mock
     private HttpServletResponse response;
     @Mock
@@ -57,7 +58,7 @@ public class TokenControllerTest {
         ResponseEntity<?> responseEntity = tokenController.logout(request);
 
         // Then
-        verify(tokenService).deleteToken(authToken);
+        verify(tokenService).deleteByAuthToken(authToken);
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseEntity.getBody()).isEqualTo(expectedResponse.getBody());
     }
@@ -139,14 +140,16 @@ public class TokenControllerTest {
 
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("로그인 성공 했습니다.", loginResponse);
 
-        Member member = Member
-                .builder()
-                .id(123L)
-                .password(PasswordEncoderUtil.encode(loginRequest.getPassword()))
-                .build();
+        Member member = new Member(
+                123L,
+                "Test",
+                "Test",
+                "Test",
+                23,
+                Gender.M)
+                ;
 
-
-        given(memberService.getByEmail(loginRequest.getEmail())).willReturn(member);
+        given(memberApplicationService.findByEmail(loginRequest.getEmail())).willReturn(member);
         given(tokenService.setToken(loginRequest.getEmail(), response, role)).willReturn(authToken);
 
         // When

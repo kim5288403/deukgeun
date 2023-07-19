@@ -1,10 +1,10 @@
 package com.example.deukgeun.member.service;
 
 import com.example.deukgeun.global.enums.Gender;
+import com.example.deukgeun.member.application.dto.request.JoinRequest;
+import com.example.deukgeun.member.application.service.implement.MemberApplicationServiceImpl;
 import com.example.deukgeun.member.domain.entity.Member;
 import com.example.deukgeun.member.domain.repository.MemberRepository;
-import com.example.deukgeun.member.application.dto.request.JoinRequest;
-import com.example.deukgeun.member.infrastructure.persistence.MemberServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.verify;
 public class MemberServiceTest {
 
     @InjectMocks
-    private MemberServiceImpl memberService;
+    private MemberApplicationServiceImpl memberApplicationService;
     @Mock
     private MemberRepository memberRepository;
     @Mock
@@ -43,21 +43,19 @@ public class MemberServiceTest {
         request.setPassword("test");
         request.setGender(Gender.M);
 
-        Member member = Member
-                .builder()
-                .id(123L)
-                .name(request.getName())
-                .age(request.getAge())
-                .gender(request.getGender())
-                .email(request.getEmail())
-                .password("encodePassword")
-                .build();
+        Member member = Member.create(
+                request.getEmail(),
+                "encodePassword",
+                request.getName(),
+                request.getAge(),
+                request.getGender()
+                );
 
         given(memberRepository.save(any(Member.class))).willReturn(member);
         given(passwordEncoder.encode(request.getPassword())).willReturn("encodePassword");
 
         // When
-        Member saveMember = memberService.save(request);
+        Member saveMember = memberApplicationService.save(request);
 
         // Then
         assertNotNull(saveMember);
@@ -74,15 +72,17 @@ public class MemberServiceTest {
     void givenExistingEmail_whenGetByEmail_thenReturnsMatchingTrainer() throws EntityNotFoundException {
         // Given
         String email = "johndoe@example.com";
-        Member member = Member
-                .builder()
-                .id(123L)
-                .email(email)
-                .build();
+        Member member = Member.create(
+                email,
+                "encodePassword",
+                "test",
+                23,
+                Gender.M
+        );
 
         given(memberRepository.findByEmail(email)).willReturn(Optional.of(member));
 
-        Member result = memberService.getByEmail(email);
+        Member result = memberApplicationService.findByEmail(email);
 
         // Then
         assertNotNull(result);
@@ -100,7 +100,7 @@ public class MemberServiceTest {
         given(memberRepository.findByEmail(email)).willReturn(Optional.empty());
 
         // When & Then
-        assertThrows(EntityNotFoundException.class, () -> memberService.getByEmail(email));
+        assertThrows(EntityNotFoundException.class, () -> memberApplicationService.findByEmail(email));
 
         // Verify
         verify(memberRepository, times(1)).findByEmail(email);

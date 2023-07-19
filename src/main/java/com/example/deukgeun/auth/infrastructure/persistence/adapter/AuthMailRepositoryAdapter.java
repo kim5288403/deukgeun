@@ -32,6 +32,12 @@ public class AuthMailRepositoryAdapter implements AuthMailRepository {
     }
 
     @Override
+    public Optional<AuthMail> findByEmailAndCode(String email, String code) {
+        Optional<AuthMailEntity> authMailEntity = authMailRepository.findByEmailAndCode(email, code);
+        return authMailEntity.map(this::convert);
+    }
+
+    @Override
     public void deleteByEmail(String email) {
         authMailRepository.deleteByEmail(email);
     }

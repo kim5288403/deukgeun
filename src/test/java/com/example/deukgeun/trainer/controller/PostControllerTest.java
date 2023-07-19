@@ -1,14 +1,14 @@
 package com.example.deukgeun.trainer.controller;
 
 import com.example.deukgeun.auth.application.dto.response.RestResponse;
-import com.example.deukgeun.auth.application.service.implement.TokenServiceImpl;
+import com.example.deukgeun.auth.application.service.implement.AuthTokenApplicationServiceImpl;
 import com.example.deukgeun.global.util.RestResponseUtil;
-import com.example.deukgeun.trainer.domain.entity.Post;
 import com.example.deukgeun.trainer.application.controller.PostController;
 import com.example.deukgeun.trainer.application.dto.request.PostRequest;
 import com.example.deukgeun.trainer.application.dto.response.PostResponse;
-import com.example.deukgeun.trainer.infrastructure.persistence.TrainerServiceImpl;
+import com.example.deukgeun.trainer.domain.entity.Post;
 import com.example.deukgeun.trainer.infrastructure.persistence.PostServiceImpl;
+import com.example.deukgeun.trainer.infrastructure.persistence.TrainerServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -37,7 +37,7 @@ public class PostControllerTest {
     @Mock
     private TrainerServiceImpl trainerService;
     @Mock
-    private TokenServiceImpl tokenService;
+    private AuthTokenApplicationServiceImpl authTokenApplicationService;
     @Mock
     private HttpServletRequest request;
     @Mock
@@ -82,7 +82,7 @@ public class PostControllerTest {
         PostResponse response = new PostResponse(post);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공 했습니다.", response);
 
-        given(tokenService.resolveAuthToken(request)).willReturn(authToken);
+        given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
         given(trainerService.getTrainerId(authToken)).willReturn(trainerId);
         given(postService.findByTrainerId(trainerId)).willReturn(post);
 
@@ -90,7 +90,7 @@ public class PostControllerTest {
         ResponseEntity<?> responseEntity = postController.getDetailByAuthToken(request);
 
         // Then
-        verify(tokenService, times(1)).resolveAuthToken(request);
+        verify(authTokenApplicationService, times(1)).resolveAuthToken(request);
         verify(trainerService, times(1)).getTrainerId(authToken);
         verify(postService, times(1)).findByTrainerId(trainerId);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -104,13 +104,13 @@ public class PostControllerTest {
         String authToken = "exampleAuthToken";
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("게시글 저장 성공했습니다.", null);
 
-        given(tokenService.resolveAuthToken(request)).willReturn(authToken);
+        given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
 
         // When
         ResponseEntity<?> responseEntity = postController.upload(request, postRequest, bindingResult);
 
         // Then
-        verify(tokenService, times(1)).resolveAuthToken(request);
+        verify(authTokenApplicationService, times(1)).resolveAuthToken(request);
         verify(postService, times(1)).upload(postRequest, authToken);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());

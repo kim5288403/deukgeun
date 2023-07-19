@@ -27,7 +27,7 @@ public class AuthMailRepositoryTest {
     }
 
     @Test
-    void givenAuthMail_whenSaved_thenReturnValid() {
+    void givenAuthMail_whenDeleteByEmail_thenIsDeleted() {
         // Given
         String email = "testEmail@test.com";
         String code = "1t2e3s4t";
@@ -40,14 +40,37 @@ public class AuthMailRepositoryTest {
                 .mailStatus(mailStatus)
                 .build();
 
+        authMailRepository.save(authMail);
+
         // When
-        AuthMailEntity saveAuthMail = authMailRepository.save(authMail);
+        authMailRepository.deleteByEmail(email);
 
         // Then
-        AuthMailEntity  foundAuthMail = authMailRepository.findById(saveAuthMail.getId()).orElse(null);
-        assertNotNull(foundAuthMail);
-        assertEquals(saveAuthMail.getEmail(), foundAuthMail.getEmail());
-        assertEquals(saveAuthMail.getCode(), foundAuthMail.getCode());
+        boolean emailExists = authMailRepository.existsByEmail(email);
+        assertFalse(emailExists);
+    }
+
+    @Test
+    void givenAuthMail_whenExistsByEmail_thenReturnsTrue() {
+        // Given
+        String email = "testEmail@test.com";
+        String code = "1t2e3s4t";
+        MailStatus mailStatus = MailStatus.N;
+        AuthMailEntity authMail = AuthMailEntity
+                .builder()
+                .id(LongIdGeneratorUtil.gen())
+                .email(email)
+                .code(code)
+                .mailStatus(mailStatus)
+                .build();
+
+        authMailRepository.save(authMail);
+
+        // When
+        boolean emailExists = authMailRepository.existsByEmail(email);
+
+        // Then
+        assertTrue(emailExists);
     }
 
     @Test
@@ -74,7 +97,7 @@ public class AuthMailRepositoryTest {
     }
 
     @Test
-    void givenAuthMail_whenExistsByEmail_thenReturnsTrue() {
+    void givenAuthMail_whenFindById_thenReturnValid() {
         // Given
         String email = "testEmail@test.com";
         String code = "1t2e3s4t";
@@ -87,13 +110,15 @@ public class AuthMailRepositoryTest {
                 .mailStatus(mailStatus)
                 .build();
 
-        authMailRepository.save(authMail);
+        AuthMailEntity saveAuthMailEntity = authMailRepository.save(authMail);
 
         // When
-        boolean emailExists = authMailRepository.existsByEmail(email);
+        AuthMailEntity foundAuthMail = authMailRepository.findById(saveAuthMailEntity.getId()).orElse(null);
 
         // Then
-        assertTrue(emailExists);
+        assertNotNull(foundAuthMail);
+        assertEquals(authMail.getEmail(), foundAuthMail.getEmail());
+        assertEquals(authMail.getCode(), foundAuthMail.getCode());
     }
 
     @Test
@@ -122,7 +147,7 @@ public class AuthMailRepositoryTest {
     }
 
     @Test
-    void givenAuthMail_whenDeleteByEmail_thenIsDeleted() {
+    void givenAuthMail_whenFindByEmailAndCode_thenReturnValid() {
         // Given
         String email = "testEmail@test.com";
         String code = "1t2e3s4t";
@@ -135,13 +160,38 @@ public class AuthMailRepositoryTest {
                 .mailStatus(mailStatus)
                 .build();
 
-        authMailRepository.save(authMail);
+        AuthMailEntity saveAuthMailEntity = authMailRepository.save(authMail);
 
         // When
-        authMailRepository.deleteByEmail(email);
+        AuthMailEntity foundAuthMail = authMailRepository.findByEmailAndCode(saveAuthMailEntity.getEmail(), saveAuthMailEntity.getCode()).orElse(null);
 
         // Then
-        boolean emailExists = authMailRepository.existsByEmail(email);
-        assertFalse(emailExists);
+        assertNotNull(foundAuthMail);
+        assertEquals(authMail.getEmail(), foundAuthMail.getEmail());
+        assertEquals(authMail.getCode(), foundAuthMail.getCode());
+    }
+
+    @Test
+    void givenAuthMail_whenSaved_thenReturnValid() {
+        // Given
+        String email = "testEmail@test.com";
+        String code = "1t2e3s4t";
+        MailStatus mailStatus = MailStatus.N;
+        AuthMailEntity authMail = AuthMailEntity
+                .builder()
+                .id(LongIdGeneratorUtil.gen())
+                .email(email)
+                .code(code)
+                .mailStatus(mailStatus)
+                .build();
+
+        // When
+        AuthMailEntity saveAuthMail = authMailRepository.save(authMail);
+
+        // Then
+        AuthMailEntity  foundAuthMail = authMailRepository.findById(saveAuthMail.getId()).orElse(null);
+        assertNotNull(foundAuthMail);
+        assertEquals(saveAuthMail.getEmail(), foundAuthMail.getEmail());
+        assertEquals(saveAuthMail.getCode(), foundAuthMail.getCode());
     }
 }

@@ -1,8 +1,8 @@
-package com.example.deukgeun.job.infrastructure.persistence;
+package com.example.deukgeun.job.application.service.implement;
 
+import com.example.deukgeun.job.application.dto.request.SaveMatchInfoRequest;
 import com.example.deukgeun.job.domain.entity.MatchInfo;
 import com.example.deukgeun.job.domain.repository.MatchInfoRepository;
-import com.example.deukgeun.job.application.dto.request.SaveMatchInfoRequest;
 import com.example.deukgeun.job.domain.service.MatchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

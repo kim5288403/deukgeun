@@ -7,12 +7,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 public interface AuthMailRepositoryImpl extends JpaRepository<AuthMailEntity, Long> {
-  boolean existsByEmailAndCode(String email, String code);
+  @Transactional
+  void deleteByEmail(String email);
 
   boolean existsByEmail(String email);
 
+  boolean existsByEmailAndCode(String email, String code);
+
   Optional<AuthMailEntity> findByEmail(String email);
-  
-  @Transactional
-  void deleteByEmail(String email);
+
+  Optional<AuthMailEntity> findByEmailAndCode(String email, String code);
 }

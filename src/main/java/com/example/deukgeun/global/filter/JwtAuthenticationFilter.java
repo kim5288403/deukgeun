@@ -1,6 +1,6 @@
 package com.example.deukgeun.global.filter;
 
-import com.example.deukgeun.auth.application.service.implement.TokenServiceImpl;
+import com.example.deukgeun.auth.application.service.implement.AuthTokenApplicationServiceImpl;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationFilter extends GenericFilterBean {
 
-  private final TokenServiceImpl tokenService;
+  private final AuthTokenApplicationServiceImpl authTokenApplicationService;
 
   @Override
   public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
@@ -32,10 +32,10 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     HttpServletResponse response = (HttpServletResponse) res;
 
     if (request.getHeader("Authorization") != null) {
-      String authToken = tokenService.resolveAuthToken(request);
+      String authToken = authTokenApplicationService.resolveAuthToken(request);
       // 유효한 auth token 인지 확인합니다.
-      if (tokenService.validateToken(authToken)) {
-        String role = tokenService.getUserRole(authToken);
+      if (authTokenApplicationService.validateToken(authToken)) {
+        String role = authTokenApplicationService.getUserRole(authToken);
 
         setHeader(response, role, authToken);
 
@@ -43,21 +43,21 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
       }
       // 유효하지 않은 auth token 일 경우
       else {
-          String refreshToken = tokenService.getRefreshTokenByAuthToken(authToken);
+          String refreshToken = authTokenApplicationService.getRefreshTokenByAuthToken(authToken);
 
          //유효한 refresh token 인지 확인합니다.
-         if (tokenService.validateToken(refreshToken)) {
+         if (authTokenApplicationService.validateToken(refreshToken)) {
            String newAuthToken = createAuthTokenByRefreshToken(refreshToken);
-           String role = tokenService.getUserRole(newAuthToken);
+           String role = authTokenApplicationService.getUserRole(newAuthToken);
 
-           tokenService.updateAuthToken(authToken, newAuthToken);
+           authTokenApplicationService.updateAuthToken(authToken, newAuthToken);
            setHeader(response, role, newAuthToken);
 
            setAuthentication(newAuthToken, role);
          }
          // auth token and refresh token 이 유효 하지 않은 경우
          else {
-           tokenService.deleteToken(authToken);
+           authTokenApplicationService.deleteByAuthToken(authToken);
 
            response.setContentType("application/json");
            response.setCharacterEncoding("utf-8");
@@ -72,22 +72,22 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
   }
 
   private void setHeader(HttpServletResponse response, String role, String token) {
-    tokenService.setHeaderRole(response, role);
-    tokenService.setHeaderAuthToken(response, token);
+    authTokenApplicationService.setHeaderRole(response, role);
+    authTokenApplicationService.setHeaderAuthToken(response, token);
   }
   
   // SecurityContext 에 Authentication 객체를 저장합니다.
   private void setAuthentication(String token, String role) {
       // 토큰으로부터 유저 정보를 받아옵니다.
-      Authentication authentication = tokenService.getAuthentication(token, role);
+      Authentication authentication = authTokenApplicationService.getAuthentication(token, role);
       // SecurityContext 에 Authentication 객체를 저장합니다.
       SecurityContextHolder.getContext().setAuthentication(authentication);
   }
   
   private String createAuthTokenByRefreshToken(String refreshToken) {
-    String email = tokenService.getUserPk(refreshToken);
-    String role = tokenService.getUserRole(refreshToken);
+    String email = authTokenApplicationService.getUserPk(refreshToken);
+    String role = authTokenApplicationService.getUserRole(refreshToken);
 
-    return tokenService.createAuthToken(email, role);
+    return authTokenApplicationService.createAuthToken(email, role);
   }
 }

@@ -1,11 +1,11 @@
 package com.example.deukgeun.trainer.infrastructure.persistence;
 
-import com.example.deukgeun.auth.application.service.implement.TokenServiceImpl;
-import com.example.deukgeun.trainer.domain.entity.Trainer;
-import com.example.deukgeun.trainer.domain.repository.TrainerRepository;
+import com.example.deukgeun.auth.application.service.implement.AuthTokenApplicationServiceImpl;
 import com.example.deukgeun.trainer.application.dto.request.JoinRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdateInfoRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdatePasswordRequest;
+import com.example.deukgeun.trainer.domain.entity.Trainer;
+import com.example.deukgeun.trainer.domain.repository.TrainerRepository;
 import com.example.deukgeun.trainer.domain.service.TrainerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,7 +18,7 @@ import javax.persistence.EntityNotFoundException;
 public class TrainerServiceImpl implements TrainerService {
 
   private final TrainerRepository trainerRepository;
-  private final TokenServiceImpl tokenService;
+  private final AuthTokenApplicationServiceImpl authTokenApplicationService;
   private final PasswordEncoder passwordEncoder;
 
   /**
@@ -68,7 +68,7 @@ public class TrainerServiceImpl implements TrainerService {
    * @throws EntityNotFoundException 주어진 인증 토큰에 해당하는 사용자가 없는 경우 발생하는 예외
    */
   public Trainer getByAuthToken(String authToken) throws EntityNotFoundException {
-    String email = tokenService.getUserPk(authToken);
+    String email = authTokenApplicationService.getUserPk(authToken);
     return getByEmail(email);
   }
 

@@ -1,17 +1,17 @@
 package com.example.deukgeun.trainer.controller;
 
-import com.example.deukgeun.auth.application.service.implement.TokenServiceImpl;
-import com.example.deukgeun.trainer.domain.entity.Profile;
-import com.example.deukgeun.trainer.domain.entity.Trainer;
+import com.example.deukgeun.auth.application.dto.response.RestResponse;
+import com.example.deukgeun.auth.application.service.implement.AuthTokenApplicationServiceImpl;
 import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.global.util.RestResponseUtil;
-import com.example.deukgeun.auth.application.dto.response.RestResponse;
 import com.example.deukgeun.trainer.application.controller.TrainerController;
 import com.example.deukgeun.trainer.application.dto.request.JoinRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdateInfoRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdatePasswordRequest;
 import com.example.deukgeun.trainer.application.dto.request.WithdrawalUserRequest;
 import com.example.deukgeun.trainer.application.dto.response.TrainerResponse;
+import com.example.deukgeun.trainer.domain.entity.Profile;
+import com.example.deukgeun.trainer.domain.entity.Trainer;
 import com.example.deukgeun.trainer.infrastructure.persistence.ProfileServiceImpl;
 import com.example.deukgeun.trainer.infrastructure.persistence.TrainerServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +42,7 @@ public class TrainerControllerTest {
     @Mock
     private TrainerServiceImpl trainerService;
     @Mock
-    private TokenServiceImpl tokenService;
+    private AuthTokenApplicationServiceImpl authTokenApplicationService;
     @Mock
     private HttpServletRequest request;
     @Mock
@@ -74,7 +74,7 @@ public class TrainerControllerTest {
         TrainerResponse response = new TrainerResponse(expectedTrainer);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("마이 페이지 조회 성공했습니다.", response);
 
-        given(tokenService.resolveAuthToken(request)).willReturn(authToken);
+        given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
         given(trainerService.getByAuthToken(authToken)).willReturn(expectedTrainer);
 
         // When
@@ -84,7 +84,7 @@ public class TrainerControllerTest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
 
-        verify(tokenService, times(1)).resolveAuthToken(request);
+        verify(authTokenApplicationService, times(1)).resolveAuthToken(request);
         verify(trainerService, times(1)).getByAuthToken(authToken);
     }
 
@@ -159,7 +159,7 @@ public class TrainerControllerTest {
 
         given(trainerService.getByEmail(withdrawalUserRequest.getEmail())).willReturn(trainer);
         given(profileService.getByTrainerId(trainer.getId())).willReturn(userProfile);
-        given(tokenService.resolveAuthToken(request)).willReturn(authToken);
+        given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
 
         // When
         ResponseEntity<?> responseEntity = trainerController.withdrawal(request, withdrawalUserRequest, null);
@@ -171,7 +171,7 @@ public class TrainerControllerTest {
         verify(profileService, times(1)).deleteFileToDirectory(userProfile.getPath());
         verify(profileService, times(1)).withdrawal(userProfile.getId());
         verify(trainerService, times(1)).withdrawal(trainer.getId());
-        verify(tokenService, times(1)).resolveAuthToken(request);
-        verify(tokenService, times(1)).deleteToken(anyString());
+        verify(authTokenApplicationService, times(1)).resolveAuthToken(request);
+        verify(authTokenApplicationService, times(1)).deleteByAuthToken(anyString());
     }
 }

@@ -1,10 +1,10 @@
 package com.example.deukgeun.trainer.application.controller;
 
-import com.example.deukgeun.auth.application.service.implement.TokenServiceImpl;
+import com.example.deukgeun.auth.application.service.implement.AuthTokenApplicationServiceImpl;
 import com.example.deukgeun.global.util.RestResponseUtil;
-import com.example.deukgeun.trainer.domain.entity.Profile;
 import com.example.deukgeun.trainer.application.dto.request.UpdateProfileRequest;
 import com.example.deukgeun.trainer.application.dto.response.ProfileResponse;
+import com.example.deukgeun.trainer.domain.entity.Profile;
 import com.example.deukgeun.trainer.infrastructure.persistence.ProfileServiceImpl;
 import com.example.deukgeun.trainer.infrastructure.persistence.TrainerServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ import javax.validation.Valid;
 public class ProfileController {
     private final ProfileServiceImpl profileService;
     private final TrainerServiceImpl trainerService;
-    private final TokenServiceImpl tokenService;
+    private final AuthTokenApplicationServiceImpl authTokenApplicationService;
 
     /**
      * 특정 사용자 ID에 해당하는 프로필 상세 정보를 조회합니다.
@@ -52,7 +52,7 @@ public class ProfileController {
     @RequestMapping(method = RequestMethod.GET, path = "/")
     public ResponseEntity<?> getByAuthToken(HttpServletRequest request) {
         // 요청 헤더에서 인증 토큰을 추출합니다.
-        String authToken = tokenService.resolveAuthToken(request);
+        String authToken = authTokenApplicationService.resolveAuthToken(request);
 
         // 인증 토큰을 이용하여 사용자 ID를 조회합니다.
         Long trainerId = trainerService.getTrainerId(authToken);
@@ -78,7 +78,7 @@ public class ProfileController {
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> update(HttpServletRequest request, @Valid UpdateProfileRequest updateRequest, BindingResult bindingResult) throws Exception {
         // 요청 헤더에서 인증 토큰을 추출합니다.
-        String authToken = tokenService.resolveAuthToken(request);
+        String authToken = authTokenApplicationService.resolveAuthToken(request);
 
         // 프로필 서비스를 이용하여 사용자의 프로필 정보를 업데이트합니다.
         profileService.updateProfile(updateRequest.getProfile(), authToken);

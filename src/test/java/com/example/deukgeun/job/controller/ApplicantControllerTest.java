@@ -1,11 +1,11 @@
 package com.example.deukgeun.job.controller;
 
 import com.example.deukgeun.auth.application.dto.response.RestResponse;
-import com.example.deukgeun.auth.application.service.implement.TokenServiceImpl;
+import com.example.deukgeun.auth.application.service.implement.AuthTokenApplicationServiceImpl;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.job.application.controller.ApplicantController;
-import com.example.deukgeun.job.domain.service.ApplicantService;
 import com.example.deukgeun.job.application.dto.request.SaveApplicantRequest;
+import com.example.deukgeun.job.domain.service.ApplicantService;
 import com.example.deukgeun.trainer.infrastructure.persistence.TrainerServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +32,7 @@ public class ApplicantControllerTest {
     @Mock
     private ApplicantService applicantService;
     @Mock
-    private TokenServiceImpl tokenService;
+    private AuthTokenApplicationServiceImpl authTokenApplicationService;
     @Mock
     private TrainerServiceImpl trainerService;
     @Mock
@@ -48,7 +48,7 @@ public class ApplicantControllerTest {
         SaveApplicantRequest saveApplicantRequest = new SaveApplicantRequest();
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("지원 성공했습니다.", null);
 
-        given(tokenService.resolveAuthToken(request)).willReturn(authToken);
+        given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
         given(trainerService.getTrainerId(authToken)).willReturn(trainerId);
 
         // When

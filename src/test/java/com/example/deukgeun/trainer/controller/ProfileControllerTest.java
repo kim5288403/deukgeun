@@ -1,8 +1,8 @@
 package com.example.deukgeun.trainer.controller;
 
+import com.example.deukgeun.auth.application.service.implement.AuthTokenApplicationServiceImpl;
 import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.auth.application.dto.response.RestResponse;
-import com.example.deukgeun.auth.application.service.implement.TokenServiceImpl;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.trainer.domain.entity.Trainer;
 import com.example.deukgeun.trainer.domain.entity.Profile;
@@ -37,7 +37,7 @@ public class ProfileControllerTest {
     @Mock
     private TrainerServiceImpl trainerService;
     @Mock
-    private TokenServiceImpl tokenService;
+    private AuthTokenApplicationServiceImpl authTokenApplicationService;
     @Mock
     private HttpServletRequest request;
     @Mock
@@ -106,7 +106,7 @@ public class ProfileControllerTest {
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("트레이너 상세보기 성공했습니다.", response);
 
 
-        given(tokenService.resolveAuthToken(request)).willReturn(authToken);
+        given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
         given(trainerService.getTrainerId(authToken)).willReturn(trainerId);
         given(profileService.getByTrainerId(trainerId)).willReturn(profile);
 
@@ -125,7 +125,7 @@ public class ProfileControllerTest {
         String authToken = "validAuthToken";
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("프로필 정보 수정 성공했습니다.", null);
 
-        given(tokenService.resolveAuthToken(request)).willReturn(authToken);
+        given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
 
         // When
         ResponseEntity<?> responseEntity = profileController.update(request, updateRequest, bindingResult);

@@ -1,11 +1,11 @@
 package com.example.deukgeun.trainer.service;
 
-import com.example.deukgeun.auth.application.service.implement.TokenServiceImpl;
-import com.example.deukgeun.trainer.domain.entity.Trainer;
-import com.example.deukgeun.trainer.domain.repository.TrainerRepository;
+import com.example.deukgeun.auth.application.service.implement.AuthTokenApplicationServiceImpl;
 import com.example.deukgeun.trainer.application.dto.request.JoinRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdateInfoRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdatePasswordRequest;
+import com.example.deukgeun.trainer.domain.entity.Trainer;
+import com.example.deukgeun.trainer.domain.repository.TrainerRepository;
 import com.example.deukgeun.trainer.infrastructure.persistence.TrainerServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -28,7 +28,7 @@ class TrainerServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
     @Mock
-    private TokenServiceImpl tokenService;
+    private AuthTokenApplicationServiceImpl authTokenApplicationService;
     @InjectMocks
     private TrainerServiceImpl trainerService;
 
@@ -108,7 +108,7 @@ class TrainerServiceTest {
                 .email(email)
                 .build();
 
-        given(tokenService.getUserPk(authToken)).willReturn(email);
+        given(authTokenApplicationService.getUserPk(authToken)).willReturn(email);
         given(trainerRepository.findByEmail(email)).willReturn(Optional.ofNullable(trainer));
 
         // When
@@ -120,7 +120,7 @@ class TrainerServiceTest {
         assertEquals(trainer.getEmail(), result.getEmail());
 
         // Verify
-        verify(tokenService, times(1)).getUserPk(authToken);
+        verify(authTokenApplicationService, times(1)).getUserPk(authToken);
         verify(trainerRepository, times(1)).findByEmail(email);
     }
 
@@ -129,13 +129,13 @@ class TrainerServiceTest {
         // Given
         String authToken = "invalidAuthToken";
 
-        given(tokenService.getUserPk(authToken)).willReturn(null);
+        given(authTokenApplicationService.getUserPk(authToken)).willReturn(null);
 
         // When & Then
         assertThrows(EntityNotFoundException.class, () -> trainerService.getByAuthToken(authToken));
 
         // Verify
-        verify(tokenService, times(1)).getUserPk(authToken);
+        verify(authTokenApplicationService, times(1)).getUserPk(authToken);
     }
 
     @Test
@@ -249,7 +249,7 @@ class TrainerServiceTest {
                 .email(email)
                 .build();
 
-        given(tokenService.getUserPk(authToken)).willReturn(email);
+        given(authTokenApplicationService.getUserPk(authToken)).willReturn(email);
         given(trainerRepository.findByEmail(email)).willReturn(Optional.ofNullable(trainer));
 
         // When
@@ -259,7 +259,7 @@ class TrainerServiceTest {
         assertEquals(userId, result);
 
         // Verify
-        verify(tokenService, times(1)).getUserPk(authToken);
+        verify(authTokenApplicationService, times(1)).getUserPk(authToken);
         verify(trainerRepository, times(1)).findByEmail(email);
     }
 
