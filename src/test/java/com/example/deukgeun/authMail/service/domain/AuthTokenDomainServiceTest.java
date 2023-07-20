@@ -1,4 +1,4 @@
-package com.example.deukgeun.authToken.service.domain;
+package com.example.deukgeun.authMail.service.domain;
 
 import com.example.deukgeun.authToken.domain.model.entity.AuthToken;
 import com.example.deukgeun.authToken.domain.repository.AuthTokenRepository;

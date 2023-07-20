@@ -1,8 +1,9 @@
-package com.example.deukgeun.authToken.service.application;
+package com.example.deukgeun.authMail.service.application;
 
 import com.example.deukgeun.authMail.application.dto.request.AuthMailRequest;
+import com.example.deukgeun.authMail.application.service.AuthMailApplicationService;
 import com.example.deukgeun.authMail.application.service.implement.AuthMailApplicationServiceImpl;
-import com.example.deukgeun.authToken.domain.service.implement.AuthMailDomainServiceImpl;
+import com.example.deukgeun.authMail.domain.service.AuthMailDomainService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -23,7 +24,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 public class AuthMailApplicationServiceTest {
     @Mock
-    private AuthMailDomainServiceImpl authMailDomainService;
+    private AuthMailDomainService authMailDomainService;
     @InjectMocks
     private AuthMailApplicationServiceImpl mockAuthMailApplicationService;
     @Autowired

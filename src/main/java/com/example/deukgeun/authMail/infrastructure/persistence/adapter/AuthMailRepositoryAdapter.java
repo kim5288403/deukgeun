@@ -1,9 +1,9 @@
-package com.example.deukgeun.authMail.persistence.adapter;
+package com.example.deukgeun.authMail.infrastructure.persistence.adapter;
 
-import com.example.deukgeun.authMail.persistence.entity.AuthMailEntity;
-import com.example.deukgeun.authMail.persistence.repository.AuthMailRepositoryImpl;
-import com.example.deukgeun.authToken.domain.model.entity.AuthMail;
-import com.example.deukgeun.authToken.domain.repository.AuthMailRepository;
+import com.example.deukgeun.authMail.domain.model.entity.AuthMail;
+import com.example.deukgeun.authMail.domain.repository.AuthMailRepository;
+import com.example.deukgeun.authMail.infrastructure.persistence.entity.AuthMailEntity;
+import com.example.deukgeun.authMail.infrastructure.persistence.repository.AuthMailRepositoryImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

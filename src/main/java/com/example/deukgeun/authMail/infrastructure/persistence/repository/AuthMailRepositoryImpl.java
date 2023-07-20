@@ -1,6 +1,6 @@
-package com.example.deukgeun.authMail.persistence.repository;
+package com.example.deukgeun.authMail.infrastructure.persistence.repository;
 
-import com.example.deukgeun.authMail.persistence.entity.AuthMailEntity;
+import com.example.deukgeun.authMail.infrastructure.persistence.entity.AuthMailEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 

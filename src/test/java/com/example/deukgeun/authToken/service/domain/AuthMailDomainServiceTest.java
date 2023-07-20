@@ -1,10 +1,11 @@
 package com.example.deukgeun.authToken.service.domain;
 
 import com.example.deukgeun.authMail.application.dto.request.AuthMailRequest;
+import com.example.deukgeun.authMail.domain.model.entity.AuthMail;
 import com.example.deukgeun.authMail.domain.model.valueobject.MailStatus;
-import com.example.deukgeun.authToken.domain.model.entity.AuthMail;
-import com.example.deukgeun.authToken.domain.repository.AuthMailRepository;
-import com.example.deukgeun.authToken.domain.service.implement.AuthMailDomainServiceImpl;
+import com.example.deukgeun.authMail.domain.repository.AuthMailRepository;
+import com.example.deukgeun.authMail.domain.service.AuthMailDomainService;
+import com.example.deukgeun.authMail.domain.service.implement.AuthMailDomainServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

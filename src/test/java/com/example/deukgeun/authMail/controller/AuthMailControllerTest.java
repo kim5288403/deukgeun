@@ -1,4 +1,4 @@
-package com.example.deukgeun.authToken.controller;
+package com.example.deukgeun.authMail.controller;
 
 import com.example.deukgeun.authMail.application.controller.AuthMailController;
 import com.example.deukgeun.authMail.application.dto.request.AuthMailRequest;

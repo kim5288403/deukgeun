@@ -1,4 +1,4 @@
-package com.example.deukgeun.authMail.persistence.entity;
+package com.example.deukgeun.authMail.infrastructure.persistence.entity;
 
 import com.example.deukgeun.authMail.domain.model.valueobject.MailStatus;
 import com.example.deukgeun.global.entity.BaseEntity;
