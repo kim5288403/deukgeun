@@ -2,7 +2,7 @@ package com.example.deukgeun.payment.controller;
 
 import com.example.deukgeun.payment.domain.entity.PaymentInfo;
 import com.example.deukgeun.global.util.RestResponseUtil;
-import com.example.deukgeun.auth.application.dto.response.RestResponse;
+import com.example.deukgeun.authToken.application.dto.response.RestResponse;
 import com.example.deukgeun.payment.application.controller.PaymentController;
 import com.example.deukgeun.payment.application.dto.request.CancelRequest;
 import com.example.deukgeun.payment.application.dto.request.PaymentInfoRequest;

@@ -6,7 +6,6 @@ import com.example.deukgeun.member.domain.entity.Member;
 import com.example.deukgeun.member.domain.repository.MemberRepository;
 import com.example.deukgeun.member.domain.service.MemberDomainService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -17,6 +16,7 @@ public class MemberDomainServiceImpl implements MemberDomainService {
 
     private final MemberRepository memberRepository;
 
+    @Override
     public Member save(JoinRequest request) {
         Member member = Member
                 .create(request.getEmail(),
@@ -29,13 +29,7 @@ public class MemberDomainServiceImpl implements MemberDomainService {
         return memberRepository.save(member);
     }
 
-    /**
-     * 주어진 이메일을 기반으로 사용자를 조회합니다.
-     *
-     * @param email 사용자의 이메일
-     * @return 조회된 사용자
-     * @throws EntityNotFoundException 주어진 이메일에 해당하는 사용자가 없는 경우 발생하는 예외
-     */
+    @Override
     public Member findByEmail(String email) throws EntityNotFoundException {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));

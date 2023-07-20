@@ -1,10 +1,10 @@
 package com.example.deukgeun.job.repository;
 
+import com.example.deukgeun.job.application.dto.response.JobPostingResponse;
 import com.example.deukgeun.job.domain.entity.JobPosting;
-import com.example.deukgeun.member.domain.entity.Member;
-import com.example.deukgeun.auth.application.dto.response.JobPostingResponse;
 import com.example.deukgeun.job.domain.repository.JobPostingRepository;
-import com.example.deukgeun.member.domain.repository.MemberRepository;
+import com.example.deukgeun.member.infrastructure.persistence.entity.MemberEntity;
+import com.example.deukgeun.member.infrastructure.persistence.repository.MemberRepositoryImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -28,7 +28,7 @@ public class JobPostingRepositoryTest {
     @Autowired
     private JobPostingRepository jobPostingRepository;
     @Autowired
-    private MemberRepository memberRepository;
+    private MemberRepositoryImpl memberRepository;
 
     @Test
     void shouldNotNullRepository() {
@@ -40,7 +40,7 @@ public class JobPostingRepositoryTest {
     @Sql("/insert_member.sql")
     void givenJobPostings_whenFindByLikeKeyword_thenReturnValid() {
         // Given
-        List<Member> member = memberRepository.findAll();
+        List<MemberEntity> member = memberRepository.findAll();
         Long memberId = member.get(0).getId();
         JobPosting jobPosting1 = JobPosting
                 .builder()
@@ -79,7 +79,7 @@ public class JobPostingRepositoryTest {
     @Sql("/insert_member.sql")
     void givenJobPosting_whenFindById_thenReturnValid() {
         // Given
-        List<Member> member = memberRepository.findAll();
+        List<MemberEntity> member = memberRepository.findAll();
         Long memberId = member.get(0).getId();
         JobPosting jobPosting = JobPosting
                 .builder()
@@ -105,7 +105,7 @@ public class JobPostingRepositoryTest {
     @Sql("/insert_member.sql")
     void givenJobPosting_whenFindByMemberId_thenReturnValid() {
         // Given
-        List<Member> member = memberRepository.findAll();
+        List<MemberEntity> member = memberRepository.findAll();
         Long memberId = member.get(0).getId();
         JobPosting jobPosting1 = JobPosting
                 .builder()
@@ -140,7 +140,7 @@ public class JobPostingRepositoryTest {
     @Sql("/insert_member.sql")
     void givenJobPosting_whenSaved_thenReturnValid() {
         // Given
-        List<Member> member = memberRepository.findAll();
+        List<MemberEntity> member = memberRepository.findAll();
         Long memberId = member.get(0).getId();
         String title = "test";
         JobPosting jobPosting = JobPosting
@@ -166,7 +166,7 @@ public class JobPostingRepositoryTest {
     @Sql("/insert_member.sql")
     public void givenIdAndMemberId_whenExistsByIdAndMemberId_thenTrue() {
         // Given
-        List<Member> member = memberRepository.findAll();
+        List<MemberEntity> member = memberRepository.findAll();
         Long memberId = member.get(0).getId();
         JobPosting jobPosting = JobPosting
                 .builder()

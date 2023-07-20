@@ -1,16 +1,15 @@
 package com.example.deukgeun.job.service;
 
+import com.example.deukgeun.job.application.dto.request.SaveMatchInfoRequest;
+import com.example.deukgeun.job.application.service.implement.MatchServiceImpl;
 import com.example.deukgeun.job.domain.entity.MatchInfo;
 import com.example.deukgeun.job.domain.repository.MatchInfoRepository;
-import com.example.deukgeun.job.application.dto.request.SaveMatchInfoRequest;
-import com.example.deukgeun.job.domain.service.implement.MatchServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.persistence.EntityExistsException;
-
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;

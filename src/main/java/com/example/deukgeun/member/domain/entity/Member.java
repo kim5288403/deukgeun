@@ -1,16 +1,8 @@
 package com.example.deukgeun.member.domain.entity;
 
-import com.example.deukgeun.global.entity.BaseEntity;
 import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.global.util.LongIdGeneratorUtil;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import javax.persistence.*;
-import java.util.Collection;
 
 @Getter
 public class Member {

@@ -4,7 +4,7 @@ import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.member.application.dto.request.JoinRequest;
 import com.example.deukgeun.member.application.service.implement.MemberApplicationServiceImpl;
 import com.example.deukgeun.member.domain.entity.Member;
-import com.example.deukgeun.member.domain.repository.MemberRepository;
+import com.example.deukgeun.member.domain.service.implement.MemberDomainServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,10 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -29,7 +27,7 @@ public class MemberServiceTest {
     @InjectMocks
     private MemberApplicationServiceImpl memberApplicationService;
     @Mock
-    private MemberRepository memberRepository;
+    private MemberDomainServiceImpl memberDomainService;
     @Mock
     private PasswordEncoder passwordEncoder;
 
@@ -51,7 +49,7 @@ public class MemberServiceTest {
                 request.getGender()
                 );
 
-        given(memberRepository.save(any(Member.class))).willReturn(member);
+        given(memberDomainService.save(request)).willReturn(member);
         given(passwordEncoder.encode(request.getPassword())).willReturn("encodePassword");
 
         // When
@@ -65,7 +63,7 @@ public class MemberServiceTest {
         assertEquals(member.getPassword(), "encodePassword");
 
         // Verify
-        verify(memberRepository, times(1)).save(any(Member.class));
+        verify(memberDomainService, times(1)).save(request);
     }
 
     @Test
@@ -80,7 +78,7 @@ public class MemberServiceTest {
                 Gender.M
         );
 
-        given(memberRepository.findByEmail(email)).willReturn(Optional.of(member));
+        given(memberDomainService.findByEmail(email)).willReturn(member);
 
         Member result = memberApplicationService.findByEmail(email);
 
@@ -89,7 +87,7 @@ public class MemberServiceTest {
         assertEquals(member.getEmail(), result.getEmail());
 
         // Verify
-        verify(memberRepository, times(1)).findByEmail(email);
+        verify(memberDomainService, times(1)).findByEmail(email);
     }
 
     @Test
@@ -97,13 +95,13 @@ public class MemberServiceTest {
         // Given
         String email = "nonexistent@example.com";
 
-        given(memberRepository.findByEmail(email)).willReturn(Optional.empty());
+        given(memberDomainService.findByEmail(email)).willThrow(new EntityNotFoundException());
 
         // When & Then
         assertThrows(EntityNotFoundException.class, () -> memberApplicationService.findByEmail(email));
 
         // Verify
-        verify(memberRepository, times(1)).findByEmail(email);
+        verify(memberDomainService, times(1)).findByEmail(email);
     }
 
 }

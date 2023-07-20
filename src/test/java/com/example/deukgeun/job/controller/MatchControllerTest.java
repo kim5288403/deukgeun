@@ -1,14 +1,14 @@
 package com.example.deukgeun.job.controller;
 
+import com.example.deukgeun.job.application.service.ApplicantService;
+import com.example.deukgeun.job.application.service.JobPostingService;
+import com.example.deukgeun.job.application.service.MatchService;
 import com.example.deukgeun.job.domain.entity.JobPosting;
 import com.example.deukgeun.job.domain.entity.MatchInfo;
 import com.example.deukgeun.global.util.RestResponseUtil;
-import com.example.deukgeun.auth.application.dto.response.RestResponse;
+import com.example.deukgeun.authToken.application.dto.response.RestResponse;
 import com.example.deukgeun.job.application.controller.MatchController;
-import com.example.deukgeun.job.domain.service.JobPostingService;
 import com.example.deukgeun.job.application.dto.request.SaveMatchInfoRequest;
-import com.example.deukgeun.job.domain.service.ApplicantService;
-import com.example.deukgeun.job.domain.service.MatchService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

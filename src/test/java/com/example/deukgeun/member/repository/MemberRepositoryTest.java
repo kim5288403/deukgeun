@@ -1,8 +1,8 @@
 package com.example.deukgeun.member.repository;
 
 import com.example.deukgeun.global.enums.Gender;
-import com.example.deukgeun.member.domain.entity.Member;
-import com.example.deukgeun.member.domain.repository.MemberRepository;
+import com.example.deukgeun.member.infrastructure.persistence.entity.MemberEntity;
+import com.example.deukgeun.member.infrastructure.persistence.repository.MemberRepositoryImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class MemberRepositoryTest {
     @Autowired
-    private MemberRepository memberRepository;
+    private MemberRepositoryImpl memberRepository;
 
     @Test
     void shouldNotNullRepository() {
@@ -30,42 +30,46 @@ public class MemberRepositoryTest {
     @Test
     void givenMember_whenSaved_thenReturnValid() {
         // Given
-        Member member = Member.create(
-                "test",
-                "test",
-                "test",
-                23,
-                Gender.M
-        );
+        MemberEntity memberEntity = MemberEntity
+                .builder()
+                .id(123L)
+                .age(23)
+                .gender(Gender.M)
+                .name("test")
+                .email("Test")
+                .password("test")
+                .build();
 
         // When
-        Member saveMember = memberRepository.save(member);
+        MemberEntity saveMemberEntity = memberRepository.save(memberEntity);
 
         // Then
-        Member foundMember = memberRepository.findById(saveMember.getId()).orElse(null);
-        assertNotNull(foundMember);
-        assertEquals(saveMember.getEmail(), foundMember.getEmail());
-        assertEquals(saveMember.getName(), foundMember.getName());
+        MemberEntity foundMemberEntity = memberRepository.findById(saveMemberEntity.getId()).orElse(null);
+        assertNotNull(foundMemberEntity);
+        assertEquals(saveMemberEntity.getEmail(), foundMemberEntity.getEmail());
+        assertEquals(saveMemberEntity.getName(), foundMemberEntity.getName());
     }
     @Test
     void givenTrainer_whenFindByEmail_thenReturnValid() {
         // Given
         String email = "test";
-        Member member = Member.create(
-                "test",
-                "test",
-                "test",
-                23,
-                Gender.M
-        );
+        MemberEntity memberEntity = MemberEntity
+                .builder()
+                .id(123L)
+                .age(23)
+                .gender(Gender.M)
+                .name("test")
+                .email("test")
+                .password("test")
+                .build();
 
-        memberRepository.save(member);
+        memberRepository.save(memberEntity);
 
         // When
-        Optional<Member> foundMember = memberRepository.findByEmail(email);
+        Optional<MemberEntity> foundMemberEntity = memberRepository.findByEmail(email);
 
         // Then
-        assertTrue(foundMember.isPresent());
-        assertEquals(email, foundMember.get().getEmail());
+        assertTrue(foundMemberEntity.isPresent());
+        assertEquals(email, foundMemberEntity.get().getEmail());
     }
 }

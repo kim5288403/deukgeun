@@ -1,11 +1,11 @@
 package com.example.deukgeun.job.application.controller;
 
-import com.example.deukgeun.auth.application.dto.response.JobPostingResponse;
-import com.example.deukgeun.auth.application.service.implement.AuthTokenApplicationServiceImpl;
+import com.example.deukgeun.authToken.application.service.implement.AuthTokenApplicationServiceImpl;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.job.application.dto.request.SaveJobPostingRequest;
+import com.example.deukgeun.job.application.dto.response.JobPostingResponse;
+import com.example.deukgeun.job.application.service.JobPostingService;
 import com.example.deukgeun.job.domain.entity.JobPosting;
-import com.example.deukgeun.job.domain.service.JobPostingService;
 import com.example.deukgeun.member.application.service.implement.MemberApplicationServiceImpl;
 import com.example.deukgeun.member.domain.entity.Member;
 import lombok.RequiredArgsConstructor;

@@ -1,15 +1,16 @@
 package com.example.deukgeun.job.controller;
 
-import com.example.deukgeun.auth.application.dto.response.JobPostingResponse;
-import com.example.deukgeun.auth.application.dto.response.RestResponse;
-import com.example.deukgeun.auth.application.service.implement.AuthTokenApplicationServiceImpl;
+import com.example.deukgeun.authToken.application.dto.response.RestResponse;
+import com.example.deukgeun.authToken.application.service.implement.AuthTokenApplicationServiceImpl;
+import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.job.application.controller.JobPostingController;
 import com.example.deukgeun.job.application.dto.request.SaveJobPostingRequest;
+import com.example.deukgeun.job.application.dto.response.JobPostingResponse;
+import com.example.deukgeun.job.application.service.JobPostingService;
 import com.example.deukgeun.job.domain.entity.JobPosting;
-import com.example.deukgeun.job.domain.service.JobPostingService;
+import com.example.deukgeun.member.application.service.implement.MemberApplicationServiceImpl;
 import com.example.deukgeun.member.domain.entity.Member;
-import com.example.deukgeun.member.application.service.implement.MemberServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -38,7 +39,7 @@ public class JobPostingControllerTest {
     @Mock
     private AuthTokenApplicationServiceImpl authTokenApplicationService;
     @Mock
-    private MemberServiceImpl memberService;
+    private MemberApplicationServiceImpl memberApplicationService;
     @Mock
     private BindingResult bindingResult;
     @Mock
@@ -87,15 +88,19 @@ public class JobPostingControllerTest {
         Long memberId = 1L;
         String authToken = "testAuthToken";
         String email = "testEmail";
-        Member member = Member
-                .builder()
-                .id(memberId)
-                .build();
+        Member member = new Member(
+                memberId,
+                email,
+                "test",
+                "test",
+                23,
+                Gender.M
+        );
 
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("체크 성공했습니다.", true);
         given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
         given(authTokenApplicationService.getUserPk(authToken)).willReturn(email);
-        given(memberService.getByEmail(email)).willReturn(member);
+        given(memberApplicationService.findByEmail(email)).willReturn(member);
         given(jobPostingService.existsByIdAndMemberId(id, member.getId())).willReturn(true);
 
         // When
@@ -113,16 +118,20 @@ public class JobPostingControllerTest {
         String authToken = "testAuthToken";
         String userPk = "testUserPk";
         JobPosting jobPosting = mock(JobPosting.class);
-        Member member = Member
-                .builder()
-                .id(123L)
-                .build();
+        Member member = new Member(
+                123L,
+                userPk,
+                "test",
+                "test",
+                23,
+                Gender.M
+        );
         SaveJobPostingRequest saveJobPostingRequest = mock(SaveJobPostingRequest.class);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("등록 성공했습니다.", null);
 
         given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
         given(authTokenApplicationService.getUserPk(authToken)).willReturn(userPk);
-        given(memberService.getByEmail(userPk)).willReturn(member);
+        given(memberApplicationService.findByEmail(userPk)).willReturn(member);
         given(jobPostingService.save(saveJobPostingRequest, member.getId())).willReturn(jobPosting);
 
         // When
@@ -134,7 +143,7 @@ public class JobPostingControllerTest {
 
         verify(authTokenApplicationService, times(1)).resolveAuthToken(request);
         verify(authTokenApplicationService, times(1)).getUserPk(authToken);
-        verify(memberService, times(1)).getByEmail(userPk);
+        verify(memberApplicationService, times(1)).findByEmail(userPk);
         verify(jobPostingService, times(1)).save(saveJobPostingRequest, member.getId());
     }
 
@@ -145,16 +154,20 @@ public class JobPostingControllerTest {
         int currentPage = 0;
         String authToken = "testAuthToken";
         String email = "testEmail";
-        Member member = Member
-                .builder()
-                .id(memberId)
-                .build();
+        Member member = new Member(
+                123L,
+                email,
+                "test",
+                "test",
+                23,
+                Gender.M
+        );
         Page<JobPostingResponse.ListResponse> page = mock(Page.class);
 
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공했습니다.", page);
         given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
         given(authTokenApplicationService.getUserPk(authToken)).willReturn(email);
-        given(memberService.getByEmail(email)).willReturn(member);
+        given(memberApplicationService.findByEmail(email)).willReturn(member);
         given(jobPostingService.getByMemberId(memberId, currentPage)).willReturn(page);
 
         // When

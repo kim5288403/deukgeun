@@ -1,11 +1,11 @@
 package com.example.deukgeun.job.controller;
 
-import com.example.deukgeun.auth.application.dto.response.RestResponse;
-import com.example.deukgeun.auth.application.service.implement.AuthTokenApplicationServiceImpl;
+import com.example.deukgeun.authToken.application.dto.response.RestResponse;
+import com.example.deukgeun.authToken.application.service.implement.AuthTokenApplicationServiceImpl;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.job.application.controller.ApplicantController;
 import com.example.deukgeun.job.application.dto.request.SaveApplicantRequest;
-import com.example.deukgeun.job.domain.service.ApplicantService;
+import com.example.deukgeun.job.application.service.ApplicantService;
 import com.example.deukgeun.trainer.infrastructure.persistence.TrainerServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

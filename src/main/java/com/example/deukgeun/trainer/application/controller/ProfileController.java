@@ -1,6 +1,6 @@
 package com.example.deukgeun.trainer.application.controller;
 
-import com.example.deukgeun.auth.application.service.implement.AuthTokenApplicationServiceImpl;
+import com.example.deukgeun.authToken.application.service.implement.AuthTokenApplicationServiceImpl;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.trainer.application.dto.request.UpdateProfileRequest;
 import com.example.deukgeun.trainer.application.dto.response.ProfileResponse;

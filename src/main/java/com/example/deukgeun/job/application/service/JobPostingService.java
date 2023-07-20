@@ -1,7 +1,7 @@
 package com.example.deukgeun.job.application.service;
 
-import com.example.deukgeun.auth.application.dto.response.JobPostingResponse;
 import com.example.deukgeun.job.application.dto.request.SaveJobPostingRequest;
+import com.example.deukgeun.job.application.dto.response.JobPostingResponse;
 import com.example.deukgeun.job.domain.entity.JobPosting;
 import org.springframework.data.domain.Page;
 

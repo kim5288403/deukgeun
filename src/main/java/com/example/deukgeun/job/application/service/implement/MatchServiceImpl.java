@@ -1,9 +1,9 @@
 package com.example.deukgeun.job.application.service.implement;
 
 import com.example.deukgeun.job.application.dto.request.SaveMatchInfoRequest;
+import com.example.deukgeun.job.application.service.MatchService;
 import com.example.deukgeun.job.domain.entity.MatchInfo;
 import com.example.deukgeun.job.domain.repository.MatchInfoRepository;
-import com.example.deukgeun.job.domain.service.MatchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

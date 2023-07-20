@@ -1,7 +1,7 @@
 package com.example.deukgeun.global.util;
 
 import com.example.deukgeun.global.enums.StatusEnum;
-import com.example.deukgeun.auth.application.dto.response.RestResponse;
+import com.example.deukgeun.authToken.application.dto.response.RestResponse;
 import org.springframework.http.ResponseEntity;
 
 public class RestResponseUtil {

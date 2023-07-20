@@ -2,9 +2,9 @@ package com.example.deukgeun.job.application.service.implement;
 
 import com.example.deukgeun.job.application.dto.request.SaveApplicantRequest;
 import com.example.deukgeun.job.application.dto.response.ApplicantResponse;
+import com.example.deukgeun.job.application.service.ApplicantService;
 import com.example.deukgeun.job.domain.entity.Applicant;
 import com.example.deukgeun.job.domain.repository.ApplicantRepository;
-import com.example.deukgeun.job.domain.service.ApplicantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 
-@Service("member.service.applicant")
+@Service
 @RequiredArgsConstructor
 public class ApplicantServiceImpl implements ApplicantService {
     private final ApplicantRepository applicantRepository;

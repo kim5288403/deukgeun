@@ -1,7 +1,7 @@
 package com.example.deukgeun.job.domain.entity;
 
 import com.example.deukgeun.global.entity.BaseEntity;
-import com.example.deukgeun.member.domain.entity.Member;
+import com.example.deukgeun.member.infrastructure.persistence.entity.MemberEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -57,7 +57,7 @@ public class JobPosting extends BaseEntity {
 
     @OneToOne
     @JoinColumn(name = "memberId", insertable = false, updatable = false, nullable = false)
-    private Member member;
+    private MemberEntity member;
 
     @Builder
     public JobPosting(

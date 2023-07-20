@@ -1,10 +1,10 @@
 package com.example.deukgeun.job.application.controller;
 
-import com.example.deukgeun.auth.application.service.implement.AuthTokenApplicationServiceImpl;
+import com.example.deukgeun.authToken.application.service.implement.AuthTokenApplicationServiceImpl;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.job.application.dto.request.SaveApplicantRequest;
 import com.example.deukgeun.job.application.dto.response.ApplicantResponse;
-import com.example.deukgeun.job.domain.service.ApplicantService;
+import com.example.deukgeun.job.application.service.ApplicantService;
 import com.example.deukgeun.trainer.infrastructure.persistence.TrainerServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

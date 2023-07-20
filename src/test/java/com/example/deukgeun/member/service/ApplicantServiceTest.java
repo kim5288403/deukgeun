@@ -1,13 +1,13 @@
 package com.example.deukgeun.member.service;
 
+import com.example.deukgeun.job.application.dto.response.ApplicantResponse;
+import com.example.deukgeun.job.application.service.implement.ApplicantServiceImpl;
 import com.example.deukgeun.job.domain.entity.Applicant;
 import com.example.deukgeun.job.domain.entity.JobPosting;
-import com.example.deukgeun.member.domain.entity.Member;
 import com.example.deukgeun.job.domain.repository.ApplicantRepository;
 import com.example.deukgeun.job.domain.repository.JobPostingRepository;
 import com.example.deukgeun.member.domain.repository.MemberRepository;
-import com.example.deukgeun.job.application.dto.response.ApplicantResponse;
-import com.example.deukgeun.job.domain.service.implement.ApplicantServiceImpl;
+import com.example.deukgeun.member.infrastructure.persistence.entity.MemberEntity;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -89,7 +89,7 @@ public class ApplicantServiceTest {
     @Test
     public void givenExistingApplicantId_whenGetById_thenShouldReturnApplicantInfo() {
         // Given
-        Member member = mock(Member.class);
+        MemberEntity member = mock(MemberEntity.class);
 
         JobPosting jobPosting = mock(JobPosting.class);
 

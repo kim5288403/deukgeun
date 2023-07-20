@@ -1,8 +1,8 @@
 package com.example.deukgeun.job.domain.repository;
 
 
+import com.example.deukgeun.job.application.dto.response.JobPostingResponse;
 import com.example.deukgeun.job.domain.entity.JobPosting;
-import com.example.deukgeun.auth.application.dto.response.JobPostingResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

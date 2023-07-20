@@ -1,6 +1,7 @@
 INSERT INTO member(
 created_date,
 updated_date,
+member_id,
 age,
 email,
 gender,
@@ -12,6 +13,7 @@ values
 (
 null,
 null,
+123L,
 23,
 'test',
 'M',

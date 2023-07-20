@@ -5,14 +5,24 @@ import com.example.deukgeun.member.domain.repository.MemberRepository;
 import com.example.deukgeun.member.infrastructure.persistence.entity.MemberEntity;
 import com.example.deukgeun.member.infrastructure.persistence.repository.MemberRepositoryImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 public class MemberRepositoryAdapter implements MemberRepository {
     private final MemberRepositoryImpl memberRepository;
+
+    @Override
+    public List<Member> findAll() {
+        List<MemberEntity> memberEntityList = memberRepository.findAll();
+        return memberEntityList.stream().map(this::covert).collect(Collectors.toList());
+    }
 
     @Override
     public Optional<Member> findById(Long id) {
@@ -24,6 +34,12 @@ public class MemberRepositoryAdapter implements MemberRepository {
     public Optional<Member> findByEmail(String email) {
         Optional<MemberEntity> memberEntity = memberRepository.findByEmail(email);
         return memberEntity.map(this::covert);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return memberRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
     }
 
     @Override

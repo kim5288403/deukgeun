@@ -1,9 +1,9 @@
 package com.example.deukgeun.job.service;
 
+import com.example.deukgeun.job.application.dto.request.SaveApplicantRequest;
+import com.example.deukgeun.job.application.service.implement.ApplicantServiceImpl;
 import com.example.deukgeun.job.domain.entity.Applicant;
 import com.example.deukgeun.job.domain.repository.ApplicantRepository;
-import com.example.deukgeun.job.domain.service.implement.ApplicantServiceImpl;
-import com.example.deukgeun.job.application.dto.request.SaveApplicantRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
