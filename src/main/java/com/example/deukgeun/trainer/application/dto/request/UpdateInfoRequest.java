@@ -2,8 +2,8 @@ package com.example.deukgeun.trainer.application.dto.request;
 
 import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.global.validator.ValidEnum;
-import com.example.deukgeun.trainer.domain.valueobjcet.GroupStatus;
-import com.example.deukgeun.trainer.validator.ValidGroupName;
+import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
+import com.example.deukgeun.trainer.application.dto.request.validator.ValidGroupName;
 import lombok.Data;
 
 import javax.validation.constraints.Email;

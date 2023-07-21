@@ -5,7 +5,7 @@ import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.job.application.dto.request.SaveApplicantRequest;
 import com.example.deukgeun.job.application.dto.response.ApplicantResponse;
 import com.example.deukgeun.job.application.service.ApplicantService;
-import com.example.deukgeun.trainer.infrastructure.persistence.TrainerServiceImpl;
+import com.example.deukgeun.trainer.application.service.implement.TrainerApplicationServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ public class ApplicantController {
 
     private final ApplicantService applicantService;
     private final AuthTokenApplicationServiceImpl authTokenApplicationService;
-    private final TrainerServiceImpl trainerService;
+    private final TrainerApplicationServiceImpl trainerService;
 
     @RequestMapping(method = RequestMethod.GET, path = "/")
     public ResponseEntity<?> list(Long jobPostingId, int currentPage) {
@@ -37,7 +37,9 @@ public class ApplicantController {
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> save(HttpServletRequest request, @Valid SaveApplicantRequest saveApplicantRequest, BindingResult bindingResult) {
         String authToken = authTokenApplicationService.resolveAuthToken(request);
-        Long trainerId = trainerService.getTrainerId(authToken);
+        String email = authTokenApplicationService.getUserPk(authToken);
+        Long trainerId = trainerService.findByEmail(email).getId();
+
         applicantService.save(saveApplicantRequest, trainerId);
 
         return RestResponseUtil.ok("지원 성공했습니다.", null);

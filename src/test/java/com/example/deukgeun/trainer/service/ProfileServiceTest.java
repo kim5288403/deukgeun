@@ -1,11 +1,13 @@
 package com.example.deukgeun.trainer.service;
 
 import com.example.deukgeun.DeukgeunApplication;
-import com.example.deukgeun.trainer.domain.entity.Profile;
-import com.example.deukgeun.trainer.domain.entity.Trainer;
-import com.example.deukgeun.trainer.domain.repository.ProfileRepository;
-import com.example.deukgeun.trainer.infrastructure.persistence.ProfileServiceImpl;
-import com.example.deukgeun.trainer.infrastructure.persistence.TrainerServiceImpl;
+import com.example.deukgeun.global.enums.Gender;
+import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
+import com.example.deukgeun.trainer.application.service.implement.ProfileServiceImpl;
+import com.example.deukgeun.trainer.domain.model.entity.Trainer;
+import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
+import com.example.deukgeun.trainer.infrastructure.persistence.entity.Profile;
+import com.example.deukgeun.trainer.infrastructure.persistence.repository.ProfileRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -38,7 +40,7 @@ class ProfileServiceTest {
     @Mock
     private ProfileRepository profileRepository;
     @Mock
-    private TrainerServiceImpl trainerService;
+    private TrainerApplicationService trainerApplicationService;
 
     @Test
     void givenExistingProfileId_whenGetProfile_thenReturnProfile() {
@@ -67,33 +69,6 @@ class ProfileServiceTest {
         // When, Then
         assertThrows(EntityNotFoundException.class, () -> profileService.getProfile(profileId),
                 "게시글을 찾을 수 없습니다.");
-    }
-
-    @Test
-    void givenValidAuthToken_whenGetProfileId_thenReturnProfileId() {
-        // Given
-        String authToken = "validAuthToken";
-        Trainer trainer = Trainer
-                .builder()
-                .id(1L)
-                .name("John Doe")
-                .build();
-
-        Profile profile = Profile
-                .builder()
-                .id(1L)
-                .trainerId(1L)
-                .path("John Doe")
-                .build();
-
-        given(trainerService.getByAuthToken(authToken)).willReturn(trainer);
-        given(profileRepository.findByTrainerId(trainer.getId())).willReturn(Optional.ofNullable(profile));
-
-        // When
-        Long result = profileService.getProfileId(authToken);
-
-        // Then
-        assertEquals(profile.getId(), result);
     }
 
     @Test
@@ -208,11 +183,22 @@ class ProfileServiceTest {
         Path tempDir = Files.createTempDirectory("test");
         ReflectionTestUtils.setField(profileService, "FILE_PATH", tempDir.toString());
 
-        Trainer trainer = Trainer
-                .builder()
-                .id(123L)
-                .email("johndoe@example.com")
-                .build();
+        Trainer trainer = new Trainer (
+                123L,
+                "test",
+                "test",
+                "test",
+                GroupStatus.N,
+                "test",
+                "test",
+                "test",
+                "test",
+                "test",
+                "test",
+                Gender.M,
+                3000,
+                "test"
+        );
 
         Profile profile = Profile
                 .builder()
@@ -221,12 +207,11 @@ class ProfileServiceTest {
                 .path(fileName)
                 .build();
 
-        given(trainerService.getByAuthToken(authToken)).willReturn(trainer);
         given(profileRepository.findByTrainerId(trainer.getId())).willReturn(Optional.ofNullable(profile));
         given(profileRepository.findById(profileId)).willReturn(Optional.ofNullable(profile));
 
         // When
-        profileService.updateProfile(file, authToken);
+        profileService.updateProfile(file, profileId);
 
         // Then
         verify(profileRepository, times(1)).findById(anyLong());

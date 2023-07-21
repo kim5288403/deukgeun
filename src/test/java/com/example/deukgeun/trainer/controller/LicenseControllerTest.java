@@ -2,14 +2,17 @@ package com.example.deukgeun.trainer.controller;
 
 import com.example.deukgeun.authToken.application.dto.response.RestResponse;
 import com.example.deukgeun.authToken.application.service.implement.AuthTokenApplicationServiceImpl;
+import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.trainer.application.controller.LicenseController;
 import com.example.deukgeun.trainer.application.dto.request.RemoveLicenseRequest;
 import com.example.deukgeun.trainer.application.dto.request.SaveLicenseRequest;
 import com.example.deukgeun.trainer.application.dto.response.LicenseListResponse;
 import com.example.deukgeun.trainer.application.dto.response.LicenseResultResponse;
-import com.example.deukgeun.trainer.infrastructure.persistence.LicenseServiceImpl;
-import com.example.deukgeun.trainer.infrastructure.persistence.TrainerServiceImpl;
+import com.example.deukgeun.trainer.application.service.implement.LicenseServiceImpl;
+import com.example.deukgeun.trainer.application.service.implement.TrainerApplicationServiceImpl;
+import com.example.deukgeun.trainer.domain.model.entity.Trainer;
+import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -25,15 +28,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class LicenseControllerTest {
     @InjectMocks
     private LicenseController licenseController;
     @Mock
-    private TrainerServiceImpl trainerService;
+    private TrainerApplicationServiceImpl trainerService;
     @Mock
     private LicenseServiceImpl licenseService;
     @Mock
@@ -64,11 +66,29 @@ public class LicenseControllerTest {
     public void givenTokenServiceAndTrainerService_whenGetListByAuthToken_thenReturnResponseEntityWithLicenseList() {
         // Given
         String authToken = "exampleAuthToken";
+        String email = "email";
         Long trainerId = 123L;
+        Trainer trainer = new Trainer(
+                trainerId,
+                "test",
+                email,
+                "test",
+                GroupStatus.N,
+                "test",
+                "test",
+                "test",
+                "test",
+                "test",
+                "test",
+                Gender.M,
+                3000,
+                "test"
+        );
         List<LicenseListResponse> mockResponse = new ArrayList<>();
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("자격증 조회 성공했습니다.", mockResponse);
         given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
-        given(trainerService.getTrainerId(authToken)).willReturn(trainerId);
+        given(authTokenApplicationService.getUserPk(authToken)).willReturn(email);
+        given(trainerService.findByEmail(email)).willReturn(trainer);
         given(licenseService.findByTrainerId(trainerId)).willReturn(mockResponse);
 
         // When
@@ -76,7 +96,8 @@ public class LicenseControllerTest {
 
         // Then
         verify(authTokenApplicationService, times(1)).resolveAuthToken(request);
-        verify(trainerService, times(1)).getTrainerId(authToken);
+        verify(authTokenApplicationService, times(1)).getUserPk(authToken);
+        verify(trainerService, times(1)).findByEmail(email);
         verify(licenseService, times(1)).findByTrainerId(trainerId);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
@@ -88,12 +109,30 @@ public class LicenseControllerTest {
         SaveLicenseRequest saveLicenseRequest = new SaveLicenseRequest();
         LicenseResultResponse licenseResult = new LicenseResultResponse();
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("자격증 등록 성공했습니다.", null);
-
-        String authToken = "exampleAuthToken";
+        String email = "email";
         Long trainerId = 123L;
+        Trainer trainer = new Trainer(
+                trainerId,
+                "test",
+                email,
+                "test",
+                GroupStatus.N,
+                "test",
+                "test",
+                "test",
+                "test",
+                "test",
+                "test",
+                Gender.M,
+                3000,
+                "test"
+        );
+        String authToken = "exampleAuthToken";
+
 
         given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
-        given(trainerService.getTrainerId(authToken)).willReturn(trainerId);
+        given(authTokenApplicationService.getUserPk(authToken)).willReturn(email);
+        given(trainerService.findByEmail(email)).willReturn(trainer);
         given(licenseService.getLicenseVerificationResult(saveLicenseRequest)).willReturn(licenseResult);
 
         // When
@@ -103,7 +142,8 @@ public class LicenseControllerTest {
         verify(licenseService, times(1)).getLicenseVerificationResult(saveLicenseRequest);
         verify(licenseService, times(1)).checkLicense(licenseResult);
         verify(authTokenApplicationService, times(1)).resolveAuthToken(request);
-        verify(trainerService, times(1)).getTrainerId(authToken);
+        verify(authTokenApplicationService, times(1)).getUserPk(authToken);
+        verify(trainerService, times(1)).findByEmail(email);
         verify(licenseService, times(1)).save(licenseResult, trainerId);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());

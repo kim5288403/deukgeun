@@ -5,12 +5,7 @@ import com.example.deukgeun.authToken.application.dto.response.LoginResponse;
 import com.example.deukgeun.authToken.application.service.AuthTokenApplicationService;
 import com.example.deukgeun.global.util.PasswordEncoderUtil;
 import com.example.deukgeun.global.util.RestResponseUtil;
-import com.example.deukgeun.member.application.service.implement.MemberApplicationServiceImpl;
-import com.example.deukgeun.member.domain.entity.Member;
-import com.example.deukgeun.trainer.domain.entity.Trainer;
-import com.example.deukgeun.trainer.infrastructure.persistence.TrainerServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/token")
@@ -27,14 +23,6 @@ import javax.validation.Valid;
 public class AuthTokenController {
   
   private final AuthTokenApplicationService authTokenApplicationService;
-  private final TrainerServiceImpl trainerService;
-  private final MemberApplicationServiceImpl memberApplicationService;
-
-  @Value("${deukgeun.role.trainer}")
-  private String trainerRole;
-
-  @Value("${deukgeun.role.member}")
-  private String memberRole;
 
   /**
    * 로그인을 처리합니다.
@@ -47,29 +35,17 @@ public class AuthTokenController {
   @RequestMapping(method = RequestMethod.POST, path = "/login")
   public ResponseEntity<?> login(@Valid LoginRequest request, BindingResult bindingResult, HttpServletResponse response) {
     // 사용자 로그인 처리
-    String role = null;
-    String matchPassword = null;
-    if (request.getLoginType().equals("trainer")) {
-      Trainer trainer = trainerService.getByEmail(request.getEmail());
-      matchPassword = trainer.getPassword();
-      role = trainerRole;
-
-    } else if (request.getLoginType().equals("member")) {
-      Member member = memberApplicationService.findByEmail(request.getEmail());
-      matchPassword = member.getPassword();
-      role = memberRole;
-    }
-
-    PasswordEncoderUtil.isPasswordMatches(request.getPassword(), matchPassword);
+    HashMap<String, String> loginData =  authTokenApplicationService.getLoginData(request.getLoginType(), request.getEmail());
+    PasswordEncoderUtil.isPasswordMatches(request.getPassword(), loginData.get("matchPassword"));
 
     // JWT 토큰 생성 및 설정
-    String authToken = authTokenApplicationService.setToken(request.getEmail(), response, role);
+    String authToken = authTokenApplicationService.setToken(request.getEmail(), response, loginData.get("role"));
 
     // 로그인 응답 객체 생성
     LoginResponse loginResponse = LoginResponse
             .builder()
             .authToken(authToken)
-            .role(role)
+            .role(loginData.get("role"))
             .build();
 
     return RestResponseUtil.ok("로그인 성공 했습니다.", loginResponse);

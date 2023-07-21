@@ -1,11 +1,11 @@
 package com.example.deukgeun.trainer.repository;
 
 import com.example.deukgeun.global.enums.Gender;
-import com.example.deukgeun.trainer.domain.valueobjcet.GroupStatus;
-import com.example.deukgeun.trainer.domain.entity.Profile;
-import com.example.deukgeun.trainer.domain.entity.Trainer;
-import com.example.deukgeun.trainer.domain.repository.ProfileRepository;
-import com.example.deukgeun.trainer.domain.repository.TrainerRepository;
+import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
+import com.example.deukgeun.trainer.infrastructure.persistence.entity.Profile;
+import com.example.deukgeun.trainer.infrastructure.persistence.entity.TrainerEntity;
+import com.example.deukgeun.trainer.infrastructure.persistence.repository.ProfileRepository;
+import com.example.deukgeun.trainer.infrastructure.persistence.repository.TrainerRepositoryImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +26,15 @@ public class ProfileRepositoryTest {
     @Autowired
     private ProfileRepository profileRepository;
     @Autowired
-    private TrainerRepository trainerRepository;
+    private TrainerRepositoryImpl trainerRepositoryImpl;
 
     private long trainerId;
 
     @BeforeEach
     void setUp() {
-        Trainer trainer = Trainer
+        TrainerEntity trainer = TrainerEntity
                 .builder()
+                .id(123L)
                 .name("테스트")
                 .email("testEmail@test.com")
                 .password("test1234!")
@@ -49,7 +50,7 @@ public class ProfileRepositoryTest {
                 .price(3000)
                 .build();
 
-        Trainer saveTrainer = trainerRepository.save(trainer);
+        TrainerEntity saveTrainer = trainerRepositoryImpl.save(trainer);
         trainerId = saveTrainer.getId();
     }
 

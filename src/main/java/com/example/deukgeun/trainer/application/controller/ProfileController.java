@@ -4,9 +4,10 @@ import com.example.deukgeun.authToken.application.service.implement.AuthTokenApp
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.trainer.application.dto.request.UpdateProfileRequest;
 import com.example.deukgeun.trainer.application.dto.response.ProfileResponse;
-import com.example.deukgeun.trainer.domain.entity.Profile;
-import com.example.deukgeun.trainer.infrastructure.persistence.ProfileServiceImpl;
-import com.example.deukgeun.trainer.infrastructure.persistence.TrainerServiceImpl;
+import com.example.deukgeun.trainer.application.service.implement.ProfileServiceImpl;
+import com.example.deukgeun.trainer.application.service.implement.TrainerApplicationServiceImpl;
+import com.example.deukgeun.trainer.domain.model.entity.Trainer;
+import com.example.deukgeun.trainer.infrastructure.persistence.entity.Profile;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -23,7 +24,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class ProfileController {
     private final ProfileServiceImpl profileService;
-    private final TrainerServiceImpl trainerService;
+    private final TrainerApplicationServiceImpl trainerService;
     private final AuthTokenApplicationServiceImpl authTokenApplicationService;
 
     /**
@@ -53,9 +54,8 @@ public class ProfileController {
     public ResponseEntity<?> getByAuthToken(HttpServletRequest request) {
         // 요청 헤더에서 인증 토큰을 추출합니다.
         String authToken = authTokenApplicationService.resolveAuthToken(request);
-
-        // 인증 토큰을 이용하여 사용자 ID를 조회합니다.
-        Long trainerId = trainerService.getTrainerId(authToken);
+        String email = authTokenApplicationService.getUserPk(authToken);
+        Long trainerId = trainerService.findByEmail(email).getId();
 
         // 사용자 ID에 해당하는 프로필 정보를 조회합니다.
         Profile profile = profileService.getByTrainerId(trainerId);
@@ -79,9 +79,13 @@ public class ProfileController {
     public ResponseEntity<?> update(HttpServletRequest request, @Valid UpdateProfileRequest updateRequest, BindingResult bindingResult) throws Exception {
         // 요청 헤더에서 인증 토큰을 추출합니다.
         String authToken = authTokenApplicationService.resolveAuthToken(request);
+        String email = authTokenApplicationService.getUserPk(authToken);
+        Trainer trainer = trainerService.findByEmail(email);
+
 
         // 프로필 서비스를 이용하여 사용자의 프로필 정보를 업데이트합니다.
-        profileService.updateProfile(updateRequest.getProfile(), authToken);
+        Long profileId = profileService.getByTrainerId(trainer.getId()).getId();
+        profileService.updateProfile(updateRequest.getProfile(), profileId);
 
         return RestResponseUtil.ok("프로필 정보 수정 성공했습니다.", null);
     }

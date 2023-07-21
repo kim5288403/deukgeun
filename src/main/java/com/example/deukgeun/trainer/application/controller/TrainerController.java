@@ -1,17 +1,17 @@
 package com.example.deukgeun.trainer.application.controller;
 
 
-import com.example.deukgeun.authToken.application.service.implement.AuthTokenApplicationServiceImpl;
-import com.example.deukgeun.trainer.domain.entity.Profile;
-import com.example.deukgeun.trainer.domain.entity.Trainer;
+import com.example.deukgeun.authToken.application.service.AuthTokenApplicationService;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.trainer.application.dto.request.JoinRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdateInfoRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdatePasswordRequest;
 import com.example.deukgeun.trainer.application.dto.request.WithdrawalUserRequest;
 import com.example.deukgeun.trainer.application.dto.response.TrainerResponse;
-import com.example.deukgeun.trainer.infrastructure.persistence.ProfileServiceImpl;
-import com.example.deukgeun.trainer.infrastructure.persistence.TrainerServiceImpl;
+import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
+import com.example.deukgeun.trainer.application.service.implement.ProfileServiceImpl;
+import com.example.deukgeun.trainer.domain.model.entity.Trainer;
+import com.example.deukgeun.trainer.infrastructure.persistence.entity.Profile;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -31,8 +31,8 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class TrainerController {
 
-    private final TrainerServiceImpl trainerService;
-    private final AuthTokenApplicationServiceImpl authTokenApplicationService;
+    private final TrainerApplicationService trainerApplicationService;
+    private final AuthTokenApplicationService authTokenApplicationService;
     private final ProfileServiceImpl profileService;
 
     @Value("${deukgeun.role.trainer}")
@@ -48,7 +48,8 @@ public class TrainerController {
     public ResponseEntity<?> getDetail(HttpServletRequest request) {
         // 인증 토큰에서 사용자의 인증 정보를 추출
         String authToken = authTokenApplicationService.resolveAuthToken(request);
-        Trainer trainer = trainerService.getByAuthToken(authToken);
+        String email = authTokenApplicationService.getUserPk(authToken);
+        Trainer trainer = trainerApplicationService.findByEmail(email);
 
         // 사용자 정보를 응답 객체로 변환
         TrainerResponse response = new TrainerResponse(trainer);
@@ -68,7 +69,7 @@ public class TrainerController {
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> save(@Valid JoinRequest request, BindingResult bindingResult) throws IOException {
         // 사용자 저장
-        Trainer saveTrainer = trainerService.save(request);
+        Trainer saveTrainer = trainerApplicationService.save(request);
 
         // 프로필 저장
         profileService.save(request.getProfile(), saveTrainer.getId());
@@ -86,7 +87,7 @@ public class TrainerController {
     @RequestMapping(method = RequestMethod.PUT, path = "/")
     public ResponseEntity<?> update(@Valid UpdateInfoRequest request, BindingResult bindingResult) {
         // 정보 업데이트
-        trainerService.updateInfo(request);
+        trainerApplicationService.updateInfo(request);
 
         return RestResponseUtil.ok("내 정보 수정 성공했습니다.", null);
     }
@@ -103,7 +104,7 @@ public class TrainerController {
             @Valid UpdatePasswordRequest request,
             BindingResult bindingResult) {
         // 비밀번호 업데이트
-        trainerService.updatePassword(request);
+        trainerApplicationService.updatePassword(request);
 
         return RestResponseUtil.ok("비밀번호 변경 성공했습니다.", null);
     }
@@ -124,7 +125,7 @@ public class TrainerController {
     ) throws IOException {
 
         // 이메일을 기반으로 사용자 조회
-        Trainer trainer = trainerService.getByEmail(withdrawalRequest.getEmail());
+        Trainer trainer = trainerApplicationService.findByEmail(withdrawalRequest.getEmail());
 
         // 프로필 조회
         Profile userProfile = profileService.getByTrainerId(trainer.getId());
@@ -136,7 +137,7 @@ public class TrainerController {
         profileService.withdrawal(userProfile.getId());
 
         //사용자 삭제
-        trainerService.withdrawal(trainer.getId());
+        trainerApplicationService.deleteById(trainer.getId());
 
         //토큰 삭제
         String authToken = authTokenApplicationService.resolveAuthToken(request);

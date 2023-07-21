@@ -4,25 +4,20 @@ import com.example.deukgeun.authToken.application.controller.AuthTokenController
 import com.example.deukgeun.authToken.application.dto.request.LoginRequest;
 import com.example.deukgeun.authToken.application.dto.response.LoginResponse;
 import com.example.deukgeun.authToken.application.dto.response.RestResponse;
-import com.example.deukgeun.authToken.application.service.implement.AuthTokenApplicationServiceImpl;
-import com.example.deukgeun.global.enums.Gender;
+import com.example.deukgeun.authToken.application.service.AuthTokenApplicationService;
 import com.example.deukgeun.global.util.PasswordEncoderUtil;
 import com.example.deukgeun.global.util.RestResponseUtil;
-import com.example.deukgeun.member.application.service.implement.MemberApplicationServiceImpl;
-import com.example.deukgeun.member.domain.entity.Member;
-import com.example.deukgeun.trainer.domain.entity.Trainer;
-import com.example.deukgeun.trainer.infrastructure.persistence.TrainerServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.validation.BindingResult;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,13 +30,9 @@ public class AuthTokenControllerTest {
     @InjectMocks
     private AuthTokenController tokenController;
     @Mock
-    private AuthTokenApplicationServiceImpl tokenService;
+    private AuthTokenApplicationService tokenApplicationService;
     @Mock
     private HttpServletRequest request;
-    @Mock
-    private TrainerServiceImpl trainerService;
-    @Mock
-    private MemberApplicationServiceImpl memberApplicationService;
     @Mock
     private HttpServletResponse response;
     @Mock
@@ -52,13 +43,13 @@ public class AuthTokenControllerTest {
         // Given
         String authToken = "dummyAuthToken";
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("로그아웃 성공 했습니다.", null);
-        given(tokenService.resolveAuthToken(request)).willReturn(authToken);
+        given(tokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
 
         // When
         ResponseEntity<?> responseEntity = tokenController.logout(request);
 
         // Then
-        verify(tokenService).deleteByAuthToken(authToken);
+        verify(tokenApplicationService).deleteByAuthToken(authToken);
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseEntity.getBody()).isEqualTo(expectedResponse.getBody());
     }
@@ -69,15 +60,15 @@ public class AuthTokenControllerTest {
         String authToken = "dummyAuthToken";
         String userPK = "dummyUserPK";
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("이메일 조회 성공했습니다.", userPK);
-        given(tokenService.resolveAuthToken(request)).willReturn(authToken);
-        given(tokenService.getUserPk(authToken)).willReturn(userPK);
+        given(tokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
+        given(tokenApplicationService.getUserPk(authToken)).willReturn(userPK);
 
         // When
         ResponseEntity<?> responseEntity = tokenController.getUserPK(request);
 
         // Then
-        verify(tokenService).resolveAuthToken(request);
-        verify(tokenService).getUserPk(authToken);
+        verify(tokenApplicationService).resolveAuthToken(request);
+        verify(tokenApplicationService).getUserPk(authToken);
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseEntity.getBody()).isEqualTo(expectedResponse.getBody());
     }
@@ -87,12 +78,15 @@ public class AuthTokenControllerTest {
         // Given
         String authToken = "validAuthToken";
         String role = "trainer";
-        ReflectionTestUtils.setField(tokenController, "trainerRole", role);
 
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setEmail("test");
         loginRequest.setPassword("test");
         loginRequest.setLoginType(role);
+
+        HashMap<String, String> loginData = new HashMap<>();
+        loginData.put("matchPassword", PasswordEncoderUtil.encode(loginRequest.getPassword()));
+        loginData.put("role", role);
 
         LoginResponse loginResponse = LoginResponse
                 .builder()
@@ -102,14 +96,8 @@ public class AuthTokenControllerTest {
 
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("로그인 성공 했습니다.", loginResponse);
 
-        Trainer trainer = Trainer
-                .builder()
-                .id(123L)
-                .password(PasswordEncoderUtil.encode(loginRequest.getPassword()))
-                .build();
-
-        given(trainerService.getByEmail(loginRequest.getEmail())).willReturn(trainer);
-        given(tokenService.setToken(loginRequest.getEmail(), response, role)).willReturn(authToken);
+        given(tokenApplicationService.getLoginData(loginRequest.getLoginType(), loginRequest.getEmail())).willReturn(loginData);
+        given(tokenApplicationService.setToken(loginRequest.getEmail(), response, role)).willReturn(authToken);
 
         // When
         ResponseEntity<?> responseEntity = tokenController.login(loginRequest, bindingResult, response);
@@ -117,7 +105,7 @@ public class AuthTokenControllerTest {
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
-        verify(tokenService, times(1)).setToken(loginRequest.getEmail(), response, role);
+        verify(tokenApplicationService, times(1)).setToken(loginRequest.getEmail(), response, role);
     }
 
     @Test
@@ -125,12 +113,15 @@ public class AuthTokenControllerTest {
         // Given
         String authToken = "validAuthToken";
         String role = "member";
-        ReflectionTestUtils.setField(tokenController, "memberRole", role);
 
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setEmail("test");
         loginRequest.setPassword("test");
         loginRequest.setLoginType("member");
+
+        HashMap<String, String> loginData = new HashMap<>();
+        loginData.put("matchPassword", PasswordEncoderUtil.encode(loginRequest.getPassword()));
+        loginData.put("role", role);
 
         LoginResponse loginResponse = LoginResponse
                 .builder()
@@ -140,17 +131,8 @@ public class AuthTokenControllerTest {
 
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("로그인 성공 했습니다.", loginResponse);
 
-        Member member = new Member(
-                123L,
-                "test",
-                PasswordEncoderUtil.encode("test"),
-                "test",
-                23,
-                Gender.M)
-                ;
-
-        given(memberApplicationService.findByEmail(loginRequest.getEmail())).willReturn(member);
-        given(tokenService.setToken(loginRequest.getEmail(), response, role)).willReturn(authToken);
+        given(tokenApplicationService.getLoginData(loginRequest.getLoginType(), loginRequest.getEmail())).willReturn(loginData);
+        given(tokenApplicationService.setToken(loginRequest.getEmail(), response, role)).willReturn(authToken);
 
         // When
         ResponseEntity<?> responseEntity = tokenController.login(loginRequest, bindingResult, response);
@@ -158,6 +140,6 @@ public class AuthTokenControllerTest {
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
-        verify(tokenService, times(1)).setToken(loginRequest.getEmail(), response, role);
+        verify(tokenApplicationService, times(1)).setToken(loginRequest.getEmail(), response, role);
     }
 }

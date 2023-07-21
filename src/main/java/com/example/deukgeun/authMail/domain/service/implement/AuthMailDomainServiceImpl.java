@@ -52,7 +52,7 @@ public class AuthMailDomainServiceImpl implements AuthMailDomainService {
     public boolean isEmailAuthenticated(String email) {
         AuthMail authMail = this.findByEmail(email);
 
-        return MailStatus.Y == authMail.getMailStatus();
+        return authMail.isEmailAuthenticated();
     }
 
     public void save(String toEmail, String authCode) {

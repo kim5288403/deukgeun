@@ -1,6 +1,6 @@
 package com.example.deukgeun.global.validator;
 
-import com.example.deukgeun.trainer.validator.DuplicateEmailValidator;
+import com.example.deukgeun.trainer.application.dto.request.validator.DuplicateEmailValidator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

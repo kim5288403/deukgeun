@@ -1,8 +1,8 @@
 package com.example.deukgeun.trainer.application.dto.response;
 
 import com.example.deukgeun.global.enums.Gender;
-import com.example.deukgeun.trainer.domain.valueobjcet.GroupStatus;
-import com.example.deukgeun.trainer.domain.entity.Trainer;
+import com.example.deukgeun.trainer.domain.model.entity.Trainer;
+import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

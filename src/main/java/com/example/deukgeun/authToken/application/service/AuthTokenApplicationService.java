@@ -5,6 +5,7 @@ import org.springframework.security.core.Authentication;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 
 public interface AuthTokenApplicationService {
     void createToken(String authToken, String refreshToken);
@@ -14,6 +15,7 @@ public interface AuthTokenApplicationService {
     AuthToken findByAuthToken(String authToken);
     String getUserPk(String token);
     String getUserRole(String token);
+    HashMap<String, String> getLoginData(String loginType, String email);
     Authentication getAuthentication(String token, String role);
     String getRefreshTokenByAuthToken(String authToken);
     String resolveAuthToken(HttpServletRequest request);

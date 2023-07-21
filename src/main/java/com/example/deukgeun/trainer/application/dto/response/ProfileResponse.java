@@ -1,7 +1,7 @@
 package com.example.deukgeun.trainer.application.dto.response;
 
 import com.example.deukgeun.global.enums.Gender;
-import com.example.deukgeun.trainer.domain.entity.Profile;
+import com.example.deukgeun.trainer.infrastructure.persistence.entity.Profile;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

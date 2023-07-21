@@ -1,12 +1,12 @@
 package com.example.deukgeun.trainer.repository;
 
 import com.example.deukgeun.global.enums.Gender;
-import com.example.deukgeun.trainer.domain.valueobjcet.GroupStatus;
-import com.example.deukgeun.trainer.domain.entity.License;
-import com.example.deukgeun.trainer.domain.entity.Trainer;
+import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
+import com.example.deukgeun.trainer.infrastructure.persistence.entity.License;
+import com.example.deukgeun.trainer.infrastructure.persistence.entity.TrainerEntity;
 import com.example.deukgeun.trainer.application.dto.response.LicenseListResponse;
-import com.example.deukgeun.trainer.domain.repository.LicenseRepository;
-import com.example.deukgeun.trainer.domain.repository.TrainerRepository;
+import com.example.deukgeun.trainer.infrastructure.persistence.repository.LicenseRepository;
+import com.example.deukgeun.trainer.infrastructure.persistence.repository.TrainerRepositoryImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +28,15 @@ public class LicenseRepositoryTest {
     @Autowired
     private LicenseRepository licenseRepository;
     @Autowired
-    private TrainerRepository trainerRepository;
+    private TrainerRepositoryImpl trainerRepositoryImpl;
 
-    private long trainerId;
+    private Long trainerId;
 
     @BeforeEach
     void setUp() {
-        Trainer trainer = Trainer
+        TrainerEntity trainer = TrainerEntity
                 .builder()
+                .id(123L)
                 .name("테스트")
                 .email("testEmail@test.com")
                 .password("test1234!")
@@ -51,7 +52,7 @@ public class LicenseRepositoryTest {
                 .price(3000)
                 .build();
 
-        Trainer saveTrainer = trainerRepository.save(trainer);
+        TrainerEntity saveTrainer = trainerRepositoryImpl.save(trainer);
         trainerId = saveTrainer.getId();
     }
 
@@ -63,6 +64,7 @@ public class LicenseRepositoryTest {
     @Test
     void givenLicense_whenSaved_thenReturnValid() {
         // Given
+        System.out.println(trainerId);
         License license = License.builder()
                 .trainerId(trainerId)
                 .certificateName("testCertificateName")
@@ -73,7 +75,7 @@ public class LicenseRepositoryTest {
         License saveLicense = licenseRepository.save(license);
 
         // Then
-        License foundLicense = licenseRepository.findById(trainerId).orElse(null);
+        License foundLicense = licenseRepository.findById(saveLicense.getId()).orElse(null);
         assertNotNull(foundLicense);
         assertEquals(saveLicense.getCertificateName(), foundLicense.getCertificateName());
         assertEquals(saveLicense.getLicenseNumber(), foundLicense.getLicenseNumber());

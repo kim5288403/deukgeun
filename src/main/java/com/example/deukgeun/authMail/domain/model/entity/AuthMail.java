@@ -30,4 +30,8 @@ public class AuthMail {
         this.mailStatus = mailStatus;
     }
 
+    public boolean isEmailAuthenticated() {
+        return this.mailStatus == MailStatus.Y;
+    }
+
 }

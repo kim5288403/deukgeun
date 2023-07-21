@@ -1,11 +1,13 @@
 package com.example.deukgeun.trainer.service;
 
-import com.example.deukgeun.trainer.domain.entity.Post;
-import com.example.deukgeun.trainer.domain.entity.Trainer;
-import com.example.deukgeun.trainer.domain.repository.PostRepository;
+import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.trainer.application.dto.request.PostRequest;
-import com.example.deukgeun.trainer.infrastructure.persistence.PostServiceImpl;
-import com.example.deukgeun.trainer.infrastructure.persistence.TrainerServiceImpl;
+import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
+import com.example.deukgeun.trainer.application.service.implement.PostServiceImpl;
+import com.example.deukgeun.trainer.domain.model.entity.Trainer;
+import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
+import com.example.deukgeun.trainer.infrastructure.persistence.entity.Post;
+import com.example.deukgeun.trainer.infrastructure.persistence.repository.PostRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -37,7 +39,7 @@ public class PostServiceTest {
     @Mock
     private PostRepository postRepository;
     @Mock
-    private TrainerServiceImpl trainerService;
+    private TrainerApplicationService trainerApplicationService;
     @Mock
     private HttpServletRequest request;
 
@@ -53,22 +55,30 @@ public class PostServiceTest {
         // Given
         PostRequest request = new PostRequest();
         request.setContent("Sample content");
+        Long trainerId = 123L;
+        Trainer trainer = new Trainer (
+                trainerId,
+                "test",
+                "test",
+                "test",
+                GroupStatus.N,
+                "test",
+                "test",
+                "test",
+                "test",
+                "test",
+                "test",
+                Gender.M,
+                3000,
+                "test"
+        );
 
-        String authToken = "validAuthToken";
-        Trainer trainer = Trainer
-                .builder()
-                .id(123L)
-                .email("johndoe@example.com")
-                .build();
-
-        given(trainerService.getByAuthToken(anyString())).willReturn(trainer);
         given(postRepository.existsByTrainerId(trainer.getId())).willReturn(false);
 
         // When
-        postService.upload(request, authToken);
+        postService.upload(request, trainerId);
 
         // Verify
-        verify(trainerService, times(1)).getByAuthToken(authToken);
         verify(postRepository, times(1)).existsByTrainerId(trainer.getId());
         verify(postRepository, times(1)).save(any(Post.class));
     }
@@ -78,25 +88,33 @@ public class PostServiceTest {
         // Given
         PostRequest request = new PostRequest();
         request.setContent("Sample content");
-
-        String authToken = "validAuthToken";
-        Trainer trainer = Trainer
-                .builder()
-                .id(123L)
-                .email("johndoe@example.com")
-                .build();
+        Long trainerId = 123L;
+        Trainer trainer = new Trainer (
+                trainerId,
+                "test",
+                "test",
+                "test",
+                GroupStatus.N,
+                "test",
+                "test",
+                "test",
+                "test",
+                "test",
+                "test",
+                Gender.M,
+                3000,
+                "test"
+        );
 
         Post existingPost = new Post();
 
-        given(trainerService.getByAuthToken(authToken)).willReturn(trainer);
-        given(postRepository.existsByTrainerId(trainer.getId())).willReturn(true);
-        given(postRepository.findByTrainerId(trainer.getId())).willReturn(Optional.of(existingPost));
+        given(postRepository.existsByTrainerId(trainerId)).willReturn(true);
+        given(postRepository.findByTrainerId(trainerId)).willReturn(Optional.of(existingPost));
 
         // When
-        postService.upload(request, authToken);
+        postService.upload(request, trainerId);
 
         // Verify
-        verify(trainerService, times(1)).getByAuthToken(authToken);
         verify(postRepository, times(1)).existsByTrainerId(trainer.getId());
         verify(postRepository, times(1)).findByTrainerId(trainer.getId());
         verify(postRepository, times(1)).save(existingPost);

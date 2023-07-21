@@ -44,8 +44,6 @@ public class RestControllerAdvisor {
             .bad(e.getMessage(), null);
   }
 
-
-
   @ExceptionHandler(SignatureException.class)
   public ResponseEntity<?> signatureExceptionHandler(SignatureException e) {
     return RestResponseUtil

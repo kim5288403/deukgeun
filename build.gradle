@@ -39,7 +39,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-cache'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'commons-io:commons-io:2.11.0'
-	implementation "com.github.iamport:iamport-rest-client-java:0.2.23"
+	implementation 'com.github.iamport:iamport-rest-client-java:0.2.23'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.mysql:mysql-connector-j'

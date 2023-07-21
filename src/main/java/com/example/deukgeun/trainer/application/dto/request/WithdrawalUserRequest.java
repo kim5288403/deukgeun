@@ -2,7 +2,7 @@ package com.example.deukgeun.trainer.application.dto.request;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import com.example.deukgeun.trainer.validator.ValidEmailAndPw;
+import com.example.deukgeun.trainer.application.dto.request.validator.ValidEmailAndPw;
 import lombok.Data;
 
 @Data

@@ -1,13 +1,16 @@
 package com.example.deukgeun.trainer.domain.repository;
 
-
-import com.example.deukgeun.trainer.domain.entity.Trainer;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.example.deukgeun.trainer.domain.model.entity.Trainer;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Optional;
 
-public interface TrainerRepository extends JpaRepository<Trainer, Long> {
-  Optional<Trainer> findByEmail(String email);
-   
-  boolean existsByEmail(String email);
+public interface TrainerRepository {
+    void deleteById(Long id);
+    boolean existsByEmail(String email);
+    Optional<Trainer> findByEmail(String email);
+    UserDetails loadUserByUsername(String email) throws UsernameNotFoundException;
+    Trainer save(Trainer trainer);
+
 }

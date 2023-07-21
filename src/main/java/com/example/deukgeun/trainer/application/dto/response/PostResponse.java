@@ -1,6 +1,6 @@
 package com.example.deukgeun.trainer.application.dto.response;
 
-import com.example.deukgeun.trainer.domain.entity.Post;
+import com.example.deukgeun.trainer.infrastructure.persistence.entity.Post;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.util.HtmlUtils;

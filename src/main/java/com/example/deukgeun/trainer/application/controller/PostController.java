@@ -2,11 +2,12 @@ package com.example.deukgeun.trainer.application.controller;
 
 import com.example.deukgeun.authToken.application.service.implement.AuthTokenApplicationServiceImpl;
 import com.example.deukgeun.global.util.RestResponseUtil;
-import com.example.deukgeun.trainer.domain.entity.Post;
 import com.example.deukgeun.trainer.application.dto.request.PostRequest;
 import com.example.deukgeun.trainer.application.dto.response.PostResponse;
-import com.example.deukgeun.trainer.infrastructure.persistence.PostServiceImpl;
-import com.example.deukgeun.trainer.infrastructure.persistence.TrainerServiceImpl;
+import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
+import com.example.deukgeun.trainer.application.service.implement.PostServiceImpl;
+import com.example.deukgeun.trainer.domain.model.entity.Trainer;
+import com.example.deukgeun.trainer.infrastructure.persistence.entity.Post;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ import java.util.Map;
 public class PostController {
 
     private final PostServiceImpl postService;
-    private final TrainerServiceImpl trainerService;
+    private final TrainerApplicationService trainerApplicationService;
     private final AuthTokenApplicationServiceImpl authTokenApplicationService;
 
     /**
@@ -53,7 +54,8 @@ public class PostController {
     @RequestMapping(method = RequestMethod.GET, path = "/")
     public ResponseEntity<?> getDetailByAuthToken(HttpServletRequest request) {
         String authToken = authTokenApplicationService.resolveAuthToken(request);
-        Long trainerId = trainerService.getTrainerId(authToken);
+        String email = authTokenApplicationService.getUserPk(authToken);
+        Long trainerId = trainerApplicationService.findByEmail(email).getId();
         Post post = postService.findByTrainerId(trainerId);
 
         PostResponse response = new PostResponse(post);
@@ -74,7 +76,10 @@ public class PostController {
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> upload(HttpServletRequest request, @Valid PostRequest postRequest, BindingResult bindingResult) throws Exception {
         String authToken = authTokenApplicationService.resolveAuthToken(request);
-        postService.upload(postRequest, authToken);
+        String email = authTokenApplicationService.getUserPk(authToken);
+        Trainer trainer = trainerApplicationService.findByEmail(email);
+        Long trainerId = trainer.getId();
+        postService.upload(postRequest, trainerId);
 
         return RestResponseUtil.ok("게시글 저장 성공했습니다.", null);
     }

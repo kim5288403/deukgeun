@@ -1,7 +1,7 @@
 package com.example.deukgeun.trainer.application.dto.response;
 
 import java.time.LocalDateTime;
-import com.example.deukgeun.trainer.domain.entity.License;
+import com.example.deukgeun.trainer.infrastructure.persistence.entity.License;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

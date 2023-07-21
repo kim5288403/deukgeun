@@ -3,7 +3,7 @@ package com.example.deukgeun.authToken.service.application;
 import com.example.deukgeun.authToken.application.service.implement.AuthTokenApplicationServiceImpl;
 import com.example.deukgeun.authToken.domain.model.entity.AuthToken;
 import com.example.deukgeun.authToken.domain.service.implement.AuthTokenDomainServiceImpl;
-import com.example.deukgeun.trainer.infrastructure.persistence.TrainerDetailServiceImpl;
+import com.example.deukgeun.trainer.application.service.implement.TrainerDetailServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -228,7 +228,7 @@ class AuthTokenApplicationServiceTest {
     void givenValidToken_whenGetAuthentication_thenReturnAuthentication() {
         // Given
         String userPk = "user123";
-        String roles = "testRole";
+        String roles = "trainer";
 
         Claims claims = Jwts.claims().setSubject(userPk);
         claims.put("roles", roles);
@@ -242,14 +242,14 @@ class AuthTokenApplicationServiceTest {
                 .compact();
 
         UserDetails userDetails = mock(UserDetails.class);
-        given(trainerDetailService.loadUserByUsername(anyString())).willReturn(userDetails);
         ReflectionTestUtils.setField(authTokenApplicationService, "trainerRole", roles);
+        given(authTokenDomainService.loadUserByTrainerUsername(anyString())).willReturn(userDetails);
 
         // When
         Authentication authentication = authTokenApplicationService.getAuthentication(token, roles);
 
         // Then
-        verify(trainerDetailService, times(1)).loadUserByUsername(userPk);
+        verify(authTokenDomainService, times(1)).loadUserByTrainerUsername(userPk);
         assertEquals(userDetails, authentication.getPrincipal());
         assertEquals("", authentication.getCredentials());
         assertEquals(userDetails.getAuthorities(), authentication.getAuthorities());

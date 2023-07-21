@@ -6,8 +6,8 @@ import com.example.deukgeun.trainer.application.dto.request.RemoveLicenseRequest
 import com.example.deukgeun.trainer.application.dto.request.SaveLicenseRequest;
 import com.example.deukgeun.trainer.application.dto.response.LicenseListResponse;
 import com.example.deukgeun.trainer.application.dto.response.LicenseResultResponse;
-import com.example.deukgeun.trainer.infrastructure.persistence.LicenseServiceImpl;
-import com.example.deukgeun.trainer.infrastructure.persistence.TrainerServiceImpl;
+import com.example.deukgeun.trainer.application.service.implement.LicenseServiceImpl;
+import com.example.deukgeun.trainer.application.service.implement.TrainerApplicationServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -25,7 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LicenseController {
     private final LicenseServiceImpl licenseService;
-    private final TrainerServiceImpl trainerService;
+    private final TrainerApplicationServiceImpl trainerService;
     private final AuthTokenApplicationServiceImpl authTokenApplicationService;
 
     /**
@@ -52,7 +52,8 @@ public class LicenseController {
     public ResponseEntity<?> getListByAuthToken(HttpServletRequest request) {
         // 인증 토큰을 사용하여 사용자 ID 조회
         String authToken = authTokenApplicationService.resolveAuthToken(request);
-        Long trainerId = trainerService.getTrainerId(authToken);
+        String email = authTokenApplicationService.getUserPk(authToken);
+        Long trainerId = trainerService.findByEmail(email).getId();
 
         // 사용자 ID를 기반으로 자격증 목록 조회
         List<LicenseListResponse> response = licenseService.findByTrainerId(trainerId);
@@ -78,11 +79,12 @@ public class LicenseController {
 
         // 인증 토큰에서 사용자 ID 추출
         String authToken = authTokenApplicationService.resolveAuthToken(request);
-        Long trainerid = trainerService.getTrainerId(authToken);
+        String email = authTokenApplicationService.getUserPk(authToken);
+        Long trainerId = trainerService.findByEmail(email).getId();
 
         // 자격증 저장
         licenseResult.setNo(saveLicenseRequest.getNo());
-        licenseService.save(licenseResult, trainerid);
+        licenseService.save(licenseResult, trainerId);
 
         return RestResponseUtil
                 .ok("자격증 등록 성공했습니다.", null);
