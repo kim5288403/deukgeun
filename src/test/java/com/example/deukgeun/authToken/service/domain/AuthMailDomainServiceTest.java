@@ -4,7 +4,6 @@ import com.example.deukgeun.authMail.application.dto.request.AuthMailRequest;
 import com.example.deukgeun.authMail.domain.model.entity.AuthMail;
 import com.example.deukgeun.authMail.domain.model.valueobject.MailStatus;
 import com.example.deukgeun.authMail.domain.repository.AuthMailRepository;
-import com.example.deukgeun.authMail.domain.service.AuthMailDomainService;
 import com.example.deukgeun.authMail.domain.service.implement.AuthMailDomainServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -121,7 +120,6 @@ public class AuthMailDomainServiceTest {
     public void givenExistingEmail_whenFindByEmail_thenThrowEntityNotFoundException() {
         // Given
         String email = "test@example.com";
-        AuthMail authMail = new AuthMail(123L, email, "123456", MailStatus.N);
         given(authMailRepository.findByEmail(email)).willReturn(Optional.empty());
 
         // When, Then
@@ -149,7 +147,6 @@ public class AuthMailDomainServiceTest {
         // Given
         String email = "test@example.com";
         String code = "123456";
-        AuthMail authMail = new AuthMail(123L, email, code, MailStatus.N);
         given(authMailRepository.findByEmailAndCode(email, code)).willReturn(Optional.empty());
 
         // When, Then
