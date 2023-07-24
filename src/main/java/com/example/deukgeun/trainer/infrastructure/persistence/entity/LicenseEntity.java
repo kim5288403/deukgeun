@@ -11,9 +11,10 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Table(name = "trainer_license")
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class License extends BaseEntity {
+public class LicenseEntity extends BaseEntity {
   
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,11 +33,4 @@ public class License extends BaseEntity {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "trainer_id", insertable = false, updatable = false, nullable = false)
   private TrainerEntity trainer;
-  
-  @Builder
-  public License(String certificateName, String licenseNumber, Long trainerId) {
-    this.certificateName = certificateName;
-    this.trainerId = trainerId;
-    this.licenseNumber = licenseNumber;
-  }
 }

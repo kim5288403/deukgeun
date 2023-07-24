@@ -2,7 +2,6 @@ package com.example.deukgeun.trainer.service;
 
 import com.example.deukgeun.DeukgeunApplication;
 import com.example.deukgeun.global.enums.Gender;
-import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
 import com.example.deukgeun.trainer.application.service.implement.ProfileServiceImpl;
 import com.example.deukgeun.trainer.domain.model.entity.Trainer;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
@@ -39,8 +38,6 @@ class ProfileServiceTest {
     private ProfileServiceImpl profileService;
     @Mock
     private ProfileRepository profileRepository;
-    @Mock
-    private TrainerApplicationService trainerApplicationService;
 
     @Test
     void givenExistingProfileId_whenGetProfile_thenReturnProfile() {
@@ -176,7 +173,6 @@ class ProfileServiceTest {
     @Test
     void givenProfileAndAuthToken_whenUpdateProfile_thenFileIsSavedAndProfileIsUpdated() throws Exception {
         // Given
-        String authToken = "testToken";
         Long profileId = 1L;
         String fileName = "image.png";
         MultipartFile file = new MockMultipartFile("file", fileName, "image/png", new byte[0]);
@@ -215,7 +211,6 @@ class ProfileServiceTest {
 
         // Then
         verify(profileRepository, times(1)).findById(anyLong());
-        verify(profileRepository, times(1)).findByTrainerId(anyLong());
         verify(profileRepository, times(1)).save(any(Profile.class));
     }
 

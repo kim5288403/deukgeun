@@ -93,7 +93,4 @@ public class RestControllerAdvisor {
     return RestResponseUtil
         .bad(e.getMessage(), null);
   }
-  
-  
-  
 }

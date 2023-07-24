@@ -2,10 +2,9 @@ package com.example.deukgeun.trainer.repository;
 
 import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
-import com.example.deukgeun.trainer.infrastructure.persistence.entity.License;
+import com.example.deukgeun.trainer.infrastructure.persistence.entity.LicenseEntity;
 import com.example.deukgeun.trainer.infrastructure.persistence.entity.TrainerEntity;
-import com.example.deukgeun.trainer.application.dto.response.LicenseListResponse;
-import com.example.deukgeun.trainer.infrastructure.persistence.repository.LicenseRepository;
+import com.example.deukgeun.trainer.infrastructure.persistence.repository.LicenseRepositoryImpl;
 import com.example.deukgeun.trainer.infrastructure.persistence.repository.TrainerRepositoryImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,9 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(locations = "classpath:application-test.yml")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class LicenseRepositoryTest {
-
     @Autowired
-    private LicenseRepository licenseRepository;
+    private LicenseRepositoryImpl licenseRepositoryImpl;
     @Autowired
     private TrainerRepositoryImpl trainerRepositoryImpl;
 
@@ -58,75 +56,72 @@ public class LicenseRepositoryTest {
 
     @Test
     void shouldNotNullRepository() {
-        assertNotNull(licenseRepository);
+        assertNotNull(licenseRepositoryImpl);
     }
-
     @Test
-    void givenLicense_whenSaved_thenReturnValid() {
-        // Given
-        System.out.println(trainerId);
-        License license = License.builder()
+    void givenLicense_whenDeleteById_thenIsDeleted() {
+        LicenseEntity license = LicenseEntity.builder()
                 .trainerId(trainerId)
                 .certificateName("testCertificateName")
                 .licenseNumber("testLicenseNumber")
                 .build();
+        LicenseEntity saveLicense = licenseRepositoryImpl.save(license);
 
         // When
-        License saveLicense = licenseRepository.save(license);
+        licenseRepositoryImpl.deleteById(saveLicense.getId());
 
         // Then
-        License foundLicense = licenseRepository.findById(saveLicense.getId()).orElse(null);
-        assertNotNull(foundLicense);
-        assertEquals(saveLicense.getCertificateName(), foundLicense.getCertificateName());
-        assertEquals(saveLicense.getLicenseNumber(), foundLicense.getLicenseNumber());
+        LicenseEntity deletedLicense = licenseRepositoryImpl.findById(saveLicense.getId()).orElse(null);
+        assertNull(deletedLicense);
     }
 
     @Test
     void givenLicenses_whenFindByTrainerId_thenReturnValid() {
         // Given
-        License license1 = License.builder()
+        LicenseEntity license1 = LicenseEntity.builder()
                 .trainerId(trainerId)
                 .certificateName("testCertificateName1")
                 .licenseNumber("testLicenseNumber1")
                 .build();
 
-        License license2 = License.builder()
+        LicenseEntity license2 = LicenseEntity.builder()
                 .trainerId(trainerId)
                 .certificateName("testCertificateName2")
                 .licenseNumber("testLicenseNumber2")
                 .build();
 
-        licenseRepository.save(license1);
-        licenseRepository.save(license2);
+        licenseRepositoryImpl.save(license1);
+        licenseRepositoryImpl.save(license2);
 
         // When
-        List<LicenseListResponse> licenseList = licenseRepository.findByTrainerId(trainerId);
+        List<LicenseEntity>  licenseList = licenseRepositoryImpl.findByTrainerId(trainerId);
 
         // Then
         assertEquals(2, licenseList.size());
 
-        LicenseListResponse licenseResponse1 = licenseList.get(0);
+        LicenseEntity licenseResponse1 = licenseList.get(0);
         assertEquals(license1.getLicenseNumber(), licenseResponse1.getLicenseNumber());
 
-        LicenseListResponse licenseResponse2 = licenseList.get(1);
+        LicenseEntity licenseResponse2 = licenseList.get(1);
         assertEquals(license2.getLicenseNumber(), licenseResponse2.getLicenseNumber());
     }
 
     @Test
-    void givenLicense_whenDeleteById_thenIsDeleted() {
-        License license = License.builder()
+    void givenLicense_whenSave_thenReturnValid() {
+        // Given
+        LicenseEntity license = LicenseEntity.builder()
                 .trainerId(trainerId)
                 .certificateName("testCertificateName")
                 .licenseNumber("testLicenseNumber")
                 .build();
-        License saveLicense = licenseRepository.save(license);
 
         // When
-        licenseRepository.deleteById(saveLicense.getId());
+        LicenseEntity saveLicense = licenseRepositoryImpl.save(license);
 
         // Then
-        License deletedLicense = licenseRepository.findById(saveLicense.getId()).orElse(null);
-        assertNull(deletedLicense);
+        LicenseEntity foundLicense = licenseRepositoryImpl.findById(saveLicense.getId()).orElse(null);
+        assertNotNull(foundLicense);
+        assertEquals(saveLicense.getCertificateName(), foundLicense.getCertificateName());
+        assertEquals(saveLicense.getLicenseNumber(), foundLicense.getLicenseNumber());
     }
-
 }

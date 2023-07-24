@@ -8,10 +8,10 @@ import com.example.deukgeun.trainer.application.controller.PostController;
 import com.example.deukgeun.trainer.application.dto.request.PostRequest;
 import com.example.deukgeun.trainer.application.dto.response.PostResponse;
 import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
-import com.example.deukgeun.trainer.application.service.implement.PostServiceImpl;
+import com.example.deukgeun.trainer.application.service.implement.PostApplicationServiceImpl;
+import com.example.deukgeun.trainer.domain.model.entity.Post;
 import com.example.deukgeun.trainer.domain.model.entity.Trainer;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
-import com.example.deukgeun.trainer.infrastructure.persistence.entity.Post;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -36,7 +36,7 @@ public class PostControllerTest {
     @InjectMocks
     private PostController postController;
     @Mock
-    private PostServiceImpl postService;
+    private PostApplicationServiceImpl postApplicationService;
     @Mock
     private TrainerApplicationService trainerApplicationService;
     @Mock
@@ -49,19 +49,47 @@ public class PostControllerTest {
     private HttpServletResponse response;
 
     @Test
+    public void givenPostService_whenDeletePost_thenDeletePostAndReturnSuccessResponse() {
+        // Given
+        Long postId = 123L;
+        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("게시글 삭제 성공했습니다.", null);
+
+        // When
+        ResponseEntity<?> responseEntity = postController.delete(postId);
+
+        // Then
+        verify(postApplicationService).deleteById(postId);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(expectedResponse.getBody(), responseEntity.getBody());
+    }
+
+    @Test
+    public void givenPostService_whenDeleteServerImage_thenDeleteFile() {
+        // Given
+        String src = "example/src/image.jpg";
+        String filePath = "/path/to/image.jpg";
+        File file = new File(filePath);
+
+        given(postApplicationService.getFilePathFromUrl(src)).willReturn(filePath);
+
+        // When
+        postController.deleteServerImage(src);
+
+        // Then
+        verify(postApplicationService, times(1)).getFilePathFromUrl(src);
+        verify(postApplicationService, times(1)).deleteFileToDirectory(file);
+    }
+
+    @Test
     public void givenPostService_whenGetDetailByUserId_thenReturnResponseEntityWithPostResponse() {
         // Given
         Long trainerId = 123L;
-        Post post = Post
-                .builder()
-                .id(123L)
-                .trainerId(trainerId)
-                .html("test")
-                .build();
+        Post post = new Post(123L, "test", trainerId);
+
         PostResponse response = new PostResponse(post);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공 했습니다.", response);
 
-        given(postService.findByTrainerId(trainerId)).willReturn(post);
+        given(postApplicationService.findByTrainerId(trainerId)).willReturn(post);
 
         // When
         ResponseEntity<?> responseEntity = postController.getDetailByUserId(trainerId);
@@ -93,19 +121,15 @@ public class PostControllerTest {
                 3000,
                 "test"
         );
-        Post post = Post
-                .builder()
-                .id(123L)
-                .trainerId(trainerId)
-                .html("test")
-                .build();
+        Post post = new Post(123L, "test", trainerId);
+
         PostResponse response = new PostResponse(post);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공 했습니다.", response);
 
         given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
         given(authTokenApplicationService.getUserPk(authToken)).willReturn(email);
         given(trainerApplicationService.findByEmail(email)).willReturn(trainer);
-        given(postService.findByTrainerId(trainerId)).willReturn(post);
+        given(postApplicationService.findByTrainerId(trainerId)).willReturn(post);
 
         // When
         ResponseEntity<?> responseEntity = postController.getDetailByAuthToken(request);
@@ -114,7 +138,7 @@ public class PostControllerTest {
         verify(authTokenApplicationService, times(1)).resolveAuthToken(request);
         verify(authTokenApplicationService, times(1)).getUserPk(authToken);
         verify(trainerApplicationService, times(1)).findByEmail(email);
-        verify(postService, times(1)).findByTrainerId(trainerId);
+        verify(postApplicationService, times(1)).findByTrainerId(trainerId);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
     }
@@ -153,7 +177,7 @@ public class PostControllerTest {
 
         // Then
         verify(authTokenApplicationService, times(1)).resolveAuthToken(request);
-        verify(postService, times(1)).upload(postRequest, trainerId);
+        verify(postApplicationService, times(1)).upload(postRequest, trainerId);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
     }
@@ -167,48 +191,17 @@ public class PostControllerTest {
         responseData.put("key1", "value1");
         responseData.put("key2", "value2");
 
-        given(postService.saveImage(request, response)).willReturn(responseData);
+        given(postApplicationService.saveImage(request, response)).willReturn(responseData);
         given(response.getWriter()).willReturn(writer);
 
         // When
         postController.uploadServerImage(request, response);
 
         // Then
-        verify(postService, times(1)).saveImage(request, response);
+        verify(postApplicationService, times(1)).saveImage(request, response);
         verify(response, times(1)).setContentType("application/json");
         verify(response, times(1)).setCharacterEncoding("UTF-8");
         verify(writer).write("{\"key1\":\"value1\",\"key2\":\"value2\"}");
     }
 
-    @Test
-    public void givenPostService_whenDeleteServerImage_thenDeleteFile() {
-        // Given
-        String src = "example/src/image.jpg";
-        String filePath = "/path/to/image.jpg";
-        File file = new File(filePath);
-
-        given(postService.getFilePathFromUrl(src)).willReturn(filePath);
-
-        // When
-        postController.deleteServerImage(src);
-
-        // Then
-        verify(postService, times(1)).getFilePathFromUrl(src);
-        verify(postService, times(1)).deleteFileToDirectory(file);
-    }
-
-    @Test
-    public void givenPostService_whenDeletePost_thenDeletePostAndReturnSuccessResponse() {
-        // Given
-        Long postId = 123L;
-        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("게시글 삭제 성공했습니다.", null);
-
-        // When
-        ResponseEntity<?> responseEntity = postController.delete(postId);
-
-        // Then
-        verify(postService).deletePost(postId);
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(expectedResponse.getBody(), responseEntity.getBody());
-    }
 }

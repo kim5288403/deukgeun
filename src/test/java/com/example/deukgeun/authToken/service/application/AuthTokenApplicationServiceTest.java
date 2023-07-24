@@ -3,7 +3,6 @@ package com.example.deukgeun.authToken.service.application;
 import com.example.deukgeun.authToken.application.service.implement.AuthTokenApplicationServiceImpl;
 import com.example.deukgeun.authToken.domain.model.entity.AuthToken;
 import com.example.deukgeun.authToken.domain.service.implement.AuthTokenDomainServiceImpl;
-import com.example.deukgeun.trainer.application.service.implement.TrainerDetailServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -31,8 +30,6 @@ import static org.mockito.Mockito.*;
 class AuthTokenApplicationServiceTest {
     @Mock
     private HttpServletResponse response;
-    @Mock
-    private TrainerDetailServiceImpl trainerDetailService;
     @Mock
     private AuthTokenDomainServiceImpl authTokenDomainService;
     @InjectMocks

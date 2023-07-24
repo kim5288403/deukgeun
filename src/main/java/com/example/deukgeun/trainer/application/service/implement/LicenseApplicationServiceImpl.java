@@ -1,11 +1,11 @@
 package com.example.deukgeun.trainer.application.service.implement;
 
-import com.example.deukgeun.trainer.infrastructure.persistence.entity.License;
-import com.example.deukgeun.trainer.infrastructure.persistence.repository.LicenseRepository;
 import com.example.deukgeun.trainer.application.dto.request.SaveLicenseRequest;
 import com.example.deukgeun.trainer.application.dto.response.LicenseListResponse;
 import com.example.deukgeun.trainer.application.dto.response.LicenseResultResponse;
-import com.example.deukgeun.trainer.domain.service.LicenseService;
+import com.example.deukgeun.trainer.application.service.LicenseApplicationService;
+import com.example.deukgeun.trainer.domain.model.entity.License;
+import com.example.deukgeun.trainer.domain.service.LicenseDomainService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
@@ -19,61 +19,29 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class LicenseServiceImpl implements LicenseService {
+public class LicenseApplicationServiceImpl implements LicenseApplicationService {
 
-    private final LicenseRepository licenseRepository;
+    private final LicenseDomainService licenseDomainService;
 
     @Value("${trainer.license.api.key}")
     private String licenseApiKey;
     @Value("${trainer.license.api.uri}")
     private String licenseApiUri;
 
-    /**
-     * 사용자 ID에 해당하는 라이선스 목록을 조회합니다.
-     *
-     * @param trainerId 사용자 ID
-     * @return 라이선스 목록
-     */
     @Cacheable(value = "license", key = "#userId", cacheManager = "projectCacheManager")
     public List<LicenseListResponse> findByTrainerId(Long trainerId) {
-        return licenseRepository.findByTrainerId(trainerId);
+        return licenseDomainService.findByTrainerId(trainerId);
     }
 
-    /**
-     * 라이선스를 저장합니다.
-     *
-     * @param licenseResult 라이선스 진위여부 결과 응답 객체
-     * @param trainerId      사용자 ID
-     * @return 저장된 라이선스 객체
-     * @throws Exception 저장 중 발생한 예외
-     */
     public License save(LicenseResultResponse licenseResult, Long trainerId) throws Exception {
-        License license = License.builder()
-                .certificateName(licenseResult.getCertificatename())
-                .trainerId(trainerId)
-                .licenseNumber(licenseResult.getNo())
-                .build();
-
-        licenseRepository.save(license);
-        return license;
+        return licenseDomainService.save(licenseResult, trainerId);
     }
 
-    /**
-     * ID를 사용하여 라이선스를 삭제합니다.
-     *
-     * @param id 삭제할 라이선스의 ID
-     */
     @CacheEvict(value = "license", key = "#id", cacheManager = "projectCacheManager")
-    public void delete(Long id) {
-        licenseRepository.deleteById(id);
+    public void deleteById(Long id) {
+        licenseDomainService.deleteById(id);
     }
 
-    /**
-     * 자격증 검증 결과를 가져오는 메소드입니다.
-     *
-     * @param request 자격증 요청 정보
-     * @return 자격증 검증 결과
-     */
     public LicenseResultResponse getLicenseVerificationResult(SaveLicenseRequest request) {
         // 라이선스 API와 통신하기 위한 WebClient 생성
         WebClient webClient = WebClient.builder()
@@ -96,13 +64,6 @@ public class LicenseServiceImpl implements LicenseService {
                 .block();
     }
 
-
-    /**
-     * 자격증 검증 결과를 확인하는 메소드입니다.
-     *
-     * @param result 자격증 검증 결과
-     * @throws IllegalArgumentException 자격증 정보가 존재하지 않거나 유효하지 않을 경우 발생하는 예외
-     */
     public void checkLicense(LicenseResultResponse result) {
         if (result == null || !result.getResult()) {
             throw new IllegalArgumentException("존재하지않는 자격증 정보 입니다.");

@@ -2,9 +2,9 @@ package com.example.deukgeun.trainer.repository;
 
 import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
+import com.example.deukgeun.trainer.infrastructure.persistence.entity.PostEntity;
 import com.example.deukgeun.trainer.infrastructure.persistence.entity.TrainerEntity;
-import com.example.deukgeun.trainer.infrastructure.persistence.entity.Post;
-import com.example.deukgeun.trainer.infrastructure.persistence.repository.PostRepository;
+import com.example.deukgeun.trainer.infrastructure.persistence.repository.PostRepositoryImpl;
 import com.example.deukgeun.trainer.infrastructure.persistence.repository.TrainerRepositoryImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class PostRepositoryTest {
 
     @Autowired
-    private PostRepository postRepository;
+    private PostRepositoryImpl postRepository;
     @Autowired
     private TrainerRepositoryImpl trainerRepositoryImpl;
 
@@ -59,19 +59,72 @@ public class PostRepositoryTest {
     }
 
     @Test
+    public void givenExistingPostId_whenDeleteById_thenPostIsDeleted() {
+        // Given
+        Long existingPostId = 123L;
+        PostEntity post = PostEntity
+                .builder()
+                .id(existingPostId)
+                .html("test")
+                .trainerId(trainerId)
+                .build();
+
+        postRepository.save(post);
+
+        // When
+        postRepository.deleteById(existingPostId);
+        PostEntity result = postRepository.findById(existingPostId).orElse(null);
+
+        // Then
+        assertNull(result);
+    }
+
+    @Test
+    public void givenExistingTrainerId_whenExistsByTrainerId_thenReturnTrue() {
+        // Given
+        PostEntity post = PostEntity
+                .builder()
+                .id(123L)
+                .html("test")
+                .trainerId(trainerId)
+                .build();
+
+        postRepository.save(post);
+
+        // When
+        boolean result = postRepository.existsByTrainerId(trainerId);
+
+        // Then
+        assertTrue(result);
+    }
+
+    @Test
+    public void givenNonExistingTrainerId_whenExistsByTrainerId_thenReturnFalse() {
+        // Given
+        Long nonExistingTrainerId = 456L;
+
+        // When
+        boolean result = postRepository.existsByTrainerId(nonExistingTrainerId);
+
+        // Then
+        assertFalse(result);
+    }
+
+    @Test
     void givenPost_whenSaved_thenReturnValid() {
         // Given
-        Post post = Post
+        PostEntity post = PostEntity
                 .builder()
+                .id(123L)
                 .html("test")
                 .trainerId(trainerId)
                 .build();
 
         // When
-        Post savePost = postRepository.save(post);
+        PostEntity savePost = postRepository.save(post);
 
         // Then
-        Post foundPost = postRepository.findById(savePost.getId()).orElse(null);
+        PostEntity foundPost = postRepository.findById(savePost.getId()).orElse(null);
         assertNotNull(foundPost);
         assertEquals(savePost.getHtml(), foundPost.getHtml());
     }
@@ -79,45 +132,20 @@ public class PostRepositoryTest {
     @Test
     void givenPost_whenFindByTrainerId_thenReturnValid() {
         // Given
-        Post post = Post
+        PostEntity post = PostEntity
                 .builder()
+                .id(123L)
                 .html("test")
                 .trainerId(trainerId)
                 .build();
         postRepository.save(post);
 
         // When
-        Post foundPost = postRepository.findByTrainerId(trainerId).orElse(null);
+        PostEntity foundPost = postRepository.findByTrainerId(trainerId).orElse(null);
 
         // Then
         assertNotNull(foundPost);
         assertEquals(post.getHtml(), foundPost.getHtml());
-    }
-
-    @Test
-    void givenPost_whenUpdateHtml_thenIsUpdated() {
-        // Given
-        String html = "html";
-        String newHtml = "newHtml";
-
-        Post post = Post
-                .builder()
-                .html(html)
-                .trainerId(trainerId)
-                .build();
-
-        postRepository.save(post);
-        Post foundPost = postRepository.findByTrainerId(trainerId).orElse(null);
-
-        // When
-        assert foundPost != null;
-        foundPost.updateHtml(newHtml);
-        postRepository.save(foundPost);
-
-        // Then
-        assertNotNull(foundPost);
-        assertEquals(newHtml, foundPost.getHtml());
-        assertNotEquals(html, foundPost.getHtml());
     }
 
 }
