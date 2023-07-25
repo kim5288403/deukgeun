@@ -1,6 +1,7 @@
 package com.example.deukgeun.trainer.infrastructure.persistence.entity;
 
 import com.example.deukgeun.global.entity.BaseEntity;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,12 +11,13 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Table(name = "trainer_profile")
+@Builder
 @NoArgsConstructor
-public class Profile extends BaseEntity {
+@AllArgsConstructor
+public class ProfileEntity extends BaseEntity {
 
   @Id
   @Column(name = "profile_id")
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   
   @Column(name = "trainer_id")
@@ -27,16 +29,4 @@ public class Profile extends BaseEntity {
 
   @Column(length = 100, nullable = false)
   private String path;
-
-  @Builder
-  public Profile(Long id, String path, Long trainerId, TrainerEntity trainer) {
-    this.id = id;
-    this.trainerId = trainerId;
-    this.path = path;
-    this.trainer = trainer;
-  }
-
-  public void updatePath(String path) {
-    this.path = path;
-  }
 }

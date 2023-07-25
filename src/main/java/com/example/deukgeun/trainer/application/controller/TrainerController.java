@@ -8,12 +8,11 @@ import com.example.deukgeun.trainer.application.dto.request.UpdateInfoRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdatePasswordRequest;
 import com.example.deukgeun.trainer.application.dto.request.WithdrawalUserRequest;
 import com.example.deukgeun.trainer.application.dto.response.TrainerResponse;
+import com.example.deukgeun.trainer.application.service.ProfileApplicationService;
 import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
-import com.example.deukgeun.trainer.application.service.implement.ProfileServiceImpl;
+import com.example.deukgeun.trainer.domain.model.entity.Profile;
 import com.example.deukgeun.trainer.domain.model.entity.Trainer;
-import com.example.deukgeun.trainer.infrastructure.persistence.entity.Profile;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -33,10 +32,7 @@ public class TrainerController {
 
     private final TrainerApplicationService trainerApplicationService;
     private final AuthTokenApplicationService authTokenApplicationService;
-    private final ProfileServiceImpl profileService;
-
-    @Value("${deukgeun.role.trainer}")
-    private String role;
+    private final ProfileApplicationService profileApplicationService;
 
     /**
      * 사용자 상세 정보를 조회합니다.
@@ -72,7 +68,7 @@ public class TrainerController {
         Trainer saveTrainer = trainerApplicationService.save(request);
 
         // 프로필 저장
-        profileService.save(request.getProfile(), saveTrainer.getId());
+        profileApplicationService.save(request.getProfile(), saveTrainer.getId());
 
         return RestResponseUtil.ok("회원 가입 성공 했습니다.", null);
     }
@@ -128,13 +124,13 @@ public class TrainerController {
         Trainer trainer = trainerApplicationService.findByEmail(withdrawalRequest.getEmail());
 
         // 프로필 조회
-        Profile userProfile = profileService.getByTrainerId(trainer.getId());
+        Profile userProfile = profileApplicationService.findByTrainerId(trainer.getId());
 
         // 디렉토리 프로필 삭제
-        profileService.deleteFileToDirectory(userProfile.getPath());
+        profileApplicationService.deleteFileToDirectory(userProfile.getPath());
 
         // DB 프로필 삭제
-        profileService.withdrawal(userProfile.getId());
+        profileApplicationService.deleteById(userProfile.getId());
 
         //사용자 삭제
         trainerApplicationService.deleteById(trainer.getId());

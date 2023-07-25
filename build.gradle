@@ -56,14 +56,14 @@ dependencies {
 test {
 	useJUnitPlatform()
 	filter {
-		excludeTestsMatching "*ProfileServiceTest*"
+		excludeTestsMatching "*ProfileApplicationServiceTest*"
 	}
 }
 
-tasks.register('profileServiceTest', Test) {
+tasks.register('ProfileApplicationServiceTest', Test) {
 	useJUnitPlatform()
 	filter {
-		includeTestsMatching "*ProfileServiceTest*"
+		includeTestsMatching "*ProfileApplicationServiceTest*"
 	}
 }
 

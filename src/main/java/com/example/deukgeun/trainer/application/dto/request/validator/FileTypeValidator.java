@@ -1,6 +1,6 @@
 package com.example.deukgeun.trainer.application.dto.request.validator;
 
-import com.example.deukgeun.trainer.application.service.implement.ProfileServiceImpl;
+import com.example.deukgeun.trainer.application.service.implement.ProfileApplicationServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -10,7 +10,7 @@ import javax.validation.ConstraintValidatorContext;
 @RequiredArgsConstructor
 public class FileTypeValidator implements ConstraintValidator<ValidFileType, MultipartFile> {
 
-    private final ProfileServiceImpl profileService;
+    private final ProfileApplicationServiceImpl profileApplicationService;
 
     @Override
     public boolean isValid(MultipartFile value, ConstraintValidatorContext context) {
@@ -18,6 +18,6 @@ public class FileTypeValidator implements ConstraintValidator<ValidFileType, Mul
             return false;
         }
 
-        return profileService.isSupportedContentType(value);
+        return profileApplicationService.isSupportedContentType(value);
     }
 }

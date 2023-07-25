@@ -1,7 +1,7 @@
 package com.example.deukgeun.trainer.application.dto.response;
 
 import com.example.deukgeun.global.enums.Gender;
-import com.example.deukgeun.trainer.infrastructure.persistence.entity.Profile;
+import com.example.deukgeun.trainer.domain.model.entity.Profile;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -9,10 +9,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class ProfileResponse {
   private String path;
-  
-  public ProfileResponse (Profile profile) {
-    this.path = profile.getPath();
-  }
   
   @Data
   public static class ProfileAndUserResponse {
