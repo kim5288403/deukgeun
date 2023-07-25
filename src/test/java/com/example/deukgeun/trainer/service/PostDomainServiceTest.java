@@ -1,4 +1,4 @@
-package com.example.deukgeun.trainer.service.domain;
+package com.example.deukgeun.trainer.service;
 
 import com.example.deukgeun.trainer.domain.model.entity.Post;
 import com.example.deukgeun.trainer.domain.repository.PostRepository;

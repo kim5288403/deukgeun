@@ -1,4 +1,4 @@
-package com.example.deukgeun.trainer.service.domain;
+package com.example.deukgeun.trainer.service;
 
 import com.example.deukgeun.trainer.application.dto.response.LicenseListResponse;
 import com.example.deukgeun.trainer.application.dto.response.LicenseResultResponse;
