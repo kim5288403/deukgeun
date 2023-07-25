@@ -55,7 +55,6 @@ public class TrainerControllerTest {
 
     @BeforeEach
     void setup () {
-        ReflectionTestUtils.setField(trainerController, "role", "trainer");
     }
 
     @Test
