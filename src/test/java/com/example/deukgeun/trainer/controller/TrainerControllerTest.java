@@ -13,7 +13,7 @@ import com.example.deukgeun.trainer.application.dto.response.TrainerResponse;
 import com.example.deukgeun.trainer.application.service.ProfileApplicationService;
 import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
 import com.example.deukgeun.trainer.domain.model.entity.Profile;
-import com.example.deukgeun.trainer.domain.model.entity.Trainer;
+import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.validation.BindingResult;
 
 import javax.servlet.http.HttpServletRequest;

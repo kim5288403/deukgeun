@@ -7,7 +7,7 @@ import com.example.deukgeun.trainer.application.dto.response.PostResponse;
 import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
 import com.example.deukgeun.trainer.application.service.implement.PostApplicationServiceImpl;
 import com.example.deukgeun.trainer.domain.model.entity.Post;
-import com.example.deukgeun.trainer.domain.model.entity.Trainer;
+import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

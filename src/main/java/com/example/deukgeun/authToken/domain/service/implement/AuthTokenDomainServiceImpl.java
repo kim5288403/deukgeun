@@ -5,7 +5,7 @@ import com.example.deukgeun.authToken.domain.repository.AuthTokenRepository;
 import com.example.deukgeun.authToken.domain.service.AuthTokenDomainService;
 import com.example.deukgeun.member.domain.entity.Member;
 import com.example.deukgeun.member.domain.repository.MemberRepository;
-import com.example.deukgeun.trainer.domain.model.entity.Trainer;
+import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import com.example.deukgeun.trainer.domain.repository.TrainerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -5,7 +5,7 @@ import com.example.deukgeun.trainer.application.dto.request.JoinRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdateInfoRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdatePasswordRequest;
 import com.example.deukgeun.trainer.application.service.implement.TrainerApplicationServiceImpl;
-import com.example.deukgeun.trainer.domain.model.entity.Trainer;
+import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
 import com.example.deukgeun.trainer.domain.service.TrainerDomainService;
 import org.junit.jupiter.api.Test;

@@ -1,10 +1,15 @@
-package com.example.deukgeun.trainer.domain.model.entity;
+package com.example.deukgeun.trainer.domain.model.aggregate;
 
 import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.global.util.LongIdGeneratorUtil;
 import com.example.deukgeun.trainer.application.dto.request.UpdateInfoRequest;
+import com.example.deukgeun.trainer.domain.model.entity.License;
+import com.example.deukgeun.trainer.domain.model.entity.Post;
+import com.example.deukgeun.trainer.domain.model.entity.Profile;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
 import lombok.Getter;
+
+import java.util.List;
 
 @Getter
 public class Trainer {
@@ -36,6 +41,46 @@ public class Trainer {
   private Integer price;
 
   private String introduction;
+
+  private List<License> licenses;
+
+  private Profile profile;
+
+  private Post post;
+
+  public Trainer(
+          Long id,
+          String name,
+          String email,
+          String password,
+          GroupStatus groupStatus,
+          String groupName,
+          String postcode,
+          String jibunAddress,
+          String roadAddress,
+          String detailAddress,
+          String extraAddress,
+          Gender gender,
+          Integer price,
+          String introduction,
+          List<License> license
+  ) {
+    this.id = id;
+    this.name = name;
+    this.email = email;
+    this.password = password;
+    this.groupStatus = groupStatus;
+    this.groupName = groupName;
+    this.postcode = postcode;
+    this.jibunAddress = jibunAddress;
+    this.roadAddress = roadAddress;
+    this.detailAddress = detailAddress;
+    this.extraAddress = extraAddress;
+    this.gender = gender;
+    this.price = price;
+    this.introduction = introduction;
+    this.licenses = license;
+  }
 
   public Trainer(
           Long id,
@@ -101,7 +146,7 @@ public class Trainer {
             price,
             introduction
             );
-  };
+  }
 
   public void updateInfo(UpdateInfoRequest request) {
     this.email = request.getEmail();

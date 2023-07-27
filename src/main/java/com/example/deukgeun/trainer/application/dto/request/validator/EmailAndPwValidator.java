@@ -2,7 +2,7 @@ package com.example.deukgeun.trainer.application.dto.request.validator;
 
 import com.example.deukgeun.global.util.ValidateUtil;
 import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
-import com.example.deukgeun.trainer.domain.model.entity.Trainer;
+import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 

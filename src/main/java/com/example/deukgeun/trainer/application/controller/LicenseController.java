@@ -4,10 +4,11 @@ import com.example.deukgeun.authToken.application.service.implement.AuthTokenApp
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.trainer.application.dto.request.RemoveLicenseRequest;
 import com.example.deukgeun.trainer.application.dto.request.SaveLicenseRequest;
-import com.example.deukgeun.trainer.application.dto.response.LicenseListResponse;
 import com.example.deukgeun.trainer.application.dto.response.LicenseResultResponse;
-import com.example.deukgeun.trainer.application.service.implement.LicenseApplicationServiceImpl;
-import com.example.deukgeun.trainer.application.service.implement.TrainerApplicationServiceImpl;
+import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
+import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
+import com.example.deukgeun.trainer.domain.model.entity.License;
+import com.example.deukgeun.trainer.infrastructure.persistence.api.LicenseOpenApiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -24,55 +25,52 @@ import java.util.List;
 @RequestMapping("/api/trainer/license")
 @RequiredArgsConstructor
 public class LicenseController {
-    private final LicenseApplicationServiceImpl licenseApplicationService;
-    private final TrainerApplicationServiceImpl trainerApplicationService;
+    private final LicenseOpenApiService licenseOpenApiService;
+    private final TrainerApplicationService trainerApplicationService;
     private final AuthTokenApplicationServiceImpl authTokenApplicationService;
 
     @RequestMapping(method = RequestMethod.GET, path = "/{id}")
-    public ResponseEntity<?> getListById(@PathVariable Long id) {
-        List<LicenseListResponse> response = licenseApplicationService.findByTrainerId(id);
+    public ResponseEntity<?> getLicensesById(@PathVariable Long id) {
+        Trainer trainer = trainerApplicationService.findById(id);
+        List<License> response = trainer.getLicenses();
 
         return RestResponseUtil
                 .ok("자격증 조회 성공했습니다.", response);
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/")
-    public ResponseEntity<?> getListByAuthToken(HttpServletRequest request) {
-        // 인증 토큰을 사용하여 사용자 ID 조회
+    public ResponseEntity<?> getLicensesByAuthToken(HttpServletRequest request) {
         String authToken = authTokenApplicationService.resolveAuthToken(request);
         String email = authTokenApplicationService.getUserPk(authToken);
-        Long trainerId = trainerApplicationService.findByEmail(email).getId();
+        Trainer trainer = trainerApplicationService.findByEmail(email);
 
-        // 사용자 ID를 기반으로 자격증 목록 조회
-        List<LicenseListResponse> response = licenseApplicationService.findByTrainerId(trainerId);
-
+        List<License> response = trainer.getLicenses();
         return RestResponseUtil
                 .ok("자격증 조회 성공했습니다.", response);
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/")
-    public ResponseEntity<?> save(HttpServletRequest request, @Valid SaveLicenseRequest saveLicenseRequest, BindingResult bindingResult) throws Exception {
-        // 자격증 진위여부를 위한 외부 API 호출
-        LicenseResultResponse licenseResult = licenseApplicationService.getLicenseVerificationResult(saveLicenseRequest);
-        licenseApplicationService.checkLicense(licenseResult);
+    public ResponseEntity<?> saveLicense(HttpServletRequest request, @Valid SaveLicenseRequest saveLicenseRequest, BindingResult bindingResult) throws Exception {
+        LicenseResultResponse licenseResult = licenseOpenApiService.getLicenseVerificationResult(saveLicenseRequest);
 
-        // 인증 토큰에서 사용자 ID 추출
         String authToken = authTokenApplicationService.resolveAuthToken(request);
         String email = authTokenApplicationService.getUserPk(authToken);
-        Long trainerId = trainerApplicationService.findByEmail(email).getId();
 
-        // 자격증 저장
-        licenseResult.setNo(saveLicenseRequest.getNo());
-        licenseApplicationService.save(licenseResult, trainerId);
+        trainerApplicationService.saveLicense(email, licenseResult);
 
         return RestResponseUtil
                 .ok("자격증 등록 성공했습니다.", null);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, path = "/")
-    public ResponseEntity<?> delete(@Valid RemoveLicenseRequest request, BindingResult bindingResult) {
+    public ResponseEntity<?> deleteLicense(HttpServletRequest request, @Valid RemoveLicenseRequest removeLicenseRequest, BindingResult bindingResult) {
+        String authToken = authTokenApplicationService.resolveAuthToken(request);
+        String email = authTokenApplicationService.getUserPk(authToken);
+
         // 각 자격증 ID를 기반으로 자격증 삭제
-        request.getIds().forEach(licenseApplicationService::deleteById);
+        removeLicenseRequest
+                .getIds()
+                .forEach(licenceId -> trainerApplicationService.deleteLicenseByLicenseId(email, licenceId));
 
         return RestResponseUtil
                 .ok("자격증 삭제 성공했습니다.", null);

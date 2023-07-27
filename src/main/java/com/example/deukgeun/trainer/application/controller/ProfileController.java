@@ -7,7 +7,7 @@ import com.example.deukgeun.trainer.application.dto.response.ProfileResponse;
 import com.example.deukgeun.trainer.application.service.ProfileApplicationService;
 import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
 import com.example.deukgeun.trainer.domain.model.entity.Profile;
-import com.example.deukgeun.trainer.domain.model.entity.Trainer;
+import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;

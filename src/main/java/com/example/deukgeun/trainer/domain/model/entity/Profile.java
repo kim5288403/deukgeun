@@ -1,6 +1,7 @@
 package com.example.deukgeun.trainer.domain.model.entity;
 
 import com.example.deukgeun.global.util.LongIdGeneratorUtil;
+import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import lombok.Getter;
 
 @Getter

@@ -13,8 +13,6 @@ public class License {
 
     private Long trainerId;
 
-    private Trainer trainer;
-
     public License(
             Long id,
             String certificateName,

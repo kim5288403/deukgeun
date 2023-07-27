@@ -4,7 +4,7 @@ import com.example.deukgeun.DeukgeunApplication;
 import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.trainer.application.service.implement.ProfileApplicationServiceImpl;
 import com.example.deukgeun.trainer.domain.model.entity.Profile;
-import com.example.deukgeun.trainer.domain.model.entity.Trainer;
+import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
 import com.example.deukgeun.trainer.domain.service.ProfileDomainService;
 import org.junit.jupiter.api.Test;

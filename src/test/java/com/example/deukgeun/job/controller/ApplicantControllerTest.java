@@ -8,7 +8,7 @@ import com.example.deukgeun.job.application.controller.ApplicantController;
 import com.example.deukgeun.job.application.dto.request.SaveApplicantRequest;
 import com.example.deukgeun.job.application.service.ApplicantService;
 import com.example.deukgeun.trainer.application.service.implement.TrainerApplicationServiceImpl;
-import com.example.deukgeun.trainer.domain.model.entity.Trainer;
+import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

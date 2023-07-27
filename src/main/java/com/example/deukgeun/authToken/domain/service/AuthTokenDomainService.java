@@ -2,7 +2,7 @@ package com.example.deukgeun.authToken.domain.service;
 
 import com.example.deukgeun.authToken.domain.model.entity.AuthToken;
 import com.example.deukgeun.member.domain.entity.Member;
-import com.example.deukgeun.trainer.domain.model.entity.Trainer;
+import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 

@@ -4,7 +4,9 @@ import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.trainer.application.dto.request.JoinRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdateInfoRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdatePasswordRequest;
-import com.example.deukgeun.trainer.domain.model.entity.Trainer;
+import com.example.deukgeun.trainer.application.dto.response.LicenseResultResponse;
+import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
+import com.example.deukgeun.trainer.domain.model.entity.License;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
 import com.example.deukgeun.trainer.domain.repository.TrainerRepository;
 import com.example.deukgeun.trainer.domain.service.implement.TrainerDomainServiceImpl;
@@ -39,6 +41,43 @@ class TrainerDomainServiceTest {
 
         // Verify
         verify(trainerRepository, times(1)).deleteById(trainerId);
+    }
+
+    @Test
+    public void givenTrainerWithEmailAndLicense_whenDeleteLicenseByLicenseId_thenLicenseShouldBeRemoved() {
+        // Given
+        String email = "example@example.com";
+        Long licenseId = 123L;
+
+        // Trainer 객체와 라이선스 객체를 생성합니다.
+        Trainer trainer = new Trainer(
+                123L,
+                "test",
+                email,
+                "test",
+                GroupStatus.N,
+                "test",
+                "test",
+                "test",
+                "test",
+                "test",
+                "test",
+                Gender.M,
+                3000,
+                "test"
+        );
+
+        License license = new License(123L, "test", "test", trainer.getId());
+        trainer.getLicenses().add(license);
+
+        given(trainerRepository.findByEmail(email)).willReturn(Optional.of(trainer));
+
+        // When
+        trainerDomainService.deleteLicenseByLicenseId(email, licenseId);
+
+        // Then
+        assertTrue(trainer.getLicenses().isEmpty());
+        verify(trainerRepository, times(1)).save(any(Trainer.class));
     }
 
     @Test
@@ -170,6 +209,42 @@ class TrainerDomainServiceTest {
 
         // Verify
         verify(trainerRepository, times(1)).save(any(Trainer.class));
+    }
+
+    @Test
+    public void givenTrainerWithEmailAndLicenseResult_whenSaveLicense_thenLicenseShouldBeAddedToTrainer() {
+        // Given
+        String email = "example@example.com";
+        LicenseResultResponse licenseResult = new LicenseResultResponse(true,"CertificateName", "123456");
+
+        Trainer trainer = new Trainer (
+                123L,
+                "test",
+                email,
+                "test",
+                GroupStatus.N,
+                "test",
+                "test",
+                "test",
+                "test",
+                "test",
+                "test",
+                Gender.M,
+                3000,
+                "test"
+        );
+
+        given(trainerRepository.findByEmail(email)).willReturn(Optional.of(trainer));
+
+        // When
+        Trainer savedTrainer = trainerDomainService.saveLicense(email, licenseResult);
+
+        // Then
+        assertEquals(1, savedTrainer.getLicenses().size());
+        License savedLicense = savedTrainer.getLicenses().get(0);
+        assertEquals("CertificateName", savedLicense.getCertificateName());
+        assertEquals("123456", savedLicense.getLicenseNumber());
+        verify(trainerRepository, times(1)).save(trainer);
     }
 
     @Test

@@ -1,7 +1,9 @@
 package com.example.deukgeun.trainer.infrastructure.persistence.adapter;
 
-import com.example.deukgeun.trainer.domain.model.entity.Trainer;
+import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
+import com.example.deukgeun.trainer.domain.model.entity.License;
 import com.example.deukgeun.trainer.domain.repository.TrainerRepository;
+import com.example.deukgeun.trainer.infrastructure.persistence.entity.LicenseEntity;
 import com.example.deukgeun.trainer.infrastructure.persistence.entity.TrainerEntity;
 import com.example.deukgeun.trainer.infrastructure.persistence.repository.TrainerRepositoryImpl;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -25,6 +28,12 @@ public class TrainerRepositoryAdapter implements TrainerRepository {
     @Override
     public boolean existsByEmail(String email) {
         return trainerRepository.existsByEmail(email);
+    }
+
+    @Override
+    public Optional<Trainer> findById(Long id) {
+        Optional<TrainerEntity> trainerEntity = trainerRepository.findById(id);
+        return trainerEntity.map(this::convert);
     }
 
     @Override
@@ -81,7 +90,27 @@ public class TrainerRepositoryAdapter implements TrainerRepository {
                 trainerEntity.getExtraAddress(),
                 trainerEntity.getGender(),
                 trainerEntity.getPrice(),
-                trainerEntity.getIntroduction()
+                trainerEntity.getIntroduction(),
+                trainerEntity.getLicenseEntities().stream().map(this::convert).collect(Collectors.toList())
+        );
+    }
+
+    private LicenseEntity convert(License license) {
+        return LicenseEntity
+                .builder()
+                .id(license.getId())
+                .certificateName(license.getCertificateName())
+                .licenseNumber(license.getLicenseNumber())
+                .trainerId(license.getTrainerId())
+                .build();
+    }
+
+    private License convert(LicenseEntity licenseEntity) {
+        return new License(
+                licenseEntity.getId(),
+                licenseEntity.getCertificateName(),
+                licenseEntity.getLicenseNumber(),
+                licenseEntity.getTrainerId()
         );
     }
 }

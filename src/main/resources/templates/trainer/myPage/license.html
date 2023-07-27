@@ -152,8 +152,8 @@
 		
 		function setLicenseList(data) {
 			let appendHtml = "<tr><td colspan=4 style='text-align: center;'>조회된 자격증 목록이 없습니다.</td></tr>";
-			
-			if (data.length) {
+			console.log(data);
+			if (data) {
 				appendHtml = "";
 				$.each(data, function(key, value) {
 					key++;
