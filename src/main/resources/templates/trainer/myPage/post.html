@@ -38,14 +38,14 @@
             </div>
 
             <div class="col-6">
-                <label>이름 <span id="gender" style="color: blue;"> </span></label>
-                <input type="text" name="name" value="" disabled="disabled">
+                <label for="name">이름 <span id="gender" style="color: blue;"> </span></label>
+                <input type="text" id="name" name="name" value="" disabled="disabled">
 
-                <label>주소</label>
-                <input type="text" name="address" value="" disabled="disabled">
+                <label for="address">주소</label>
+                <input type="text" id="address" name="address" value="" disabled="disabled">
 
-                <label id="price"></label>
-                <select name="price">
+                <label for="price"></label>
+                <select id="price" name="price">
                     <option value="">- 선택 -</option>
                     <option value="10">10회</option>
                     <option value="20">20회</option>
@@ -174,10 +174,12 @@
 		}
 
 		function removeAjax(){
-		    let id = $("input[name=post_id]").val();
             $.ajax({
-				url: "/api/trainer/post/" + id,
+				url: "/api/trainer/post/",
 				type: "delete",
+				beforeSend: function (xhr) {
+					xhr.setRequestHeader("Authorization", "Bearer " + authToken);
+			    },
 			    success: function(res) {
 			        defaultSuccessAlert("성공", res.message).then(function() {
 		                window.location.reload();
