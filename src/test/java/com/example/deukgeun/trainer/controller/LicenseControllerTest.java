@@ -2,18 +2,12 @@ package com.example.deukgeun.trainer.controller;
 
 import com.example.deukgeun.authToken.application.dto.response.RestResponse;
 import com.example.deukgeun.authToken.application.service.implement.AuthTokenApplicationServiceImpl;
-import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.trainer.application.controller.LicenseController;
 import com.example.deukgeun.trainer.application.dto.request.RemoveLicenseRequest;
 import com.example.deukgeun.trainer.application.dto.request.SaveLicenseRequest;
-import com.example.deukgeun.trainer.application.dto.response.LicenseResultResponse;
+import com.example.deukgeun.trainer.application.dto.response.LicenseResponse;
 import com.example.deukgeun.trainer.application.service.implement.TrainerApplicationServiceImpl;
-import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
-import com.example.deukgeun.trainer.domain.model.entity.License;
-import com.example.deukgeun.trainer.domain.model.entity.Post;
-import com.example.deukgeun.trainer.domain.model.entity.Profile;
-import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
 import com.example.deukgeun.trainer.infrastructure.persistence.api.LicenseOpenApiService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -24,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -55,34 +50,14 @@ public class LicenseControllerTest {
         // Given
         Long id = 1L;
 
-        License license1 = new License(101L, "Certificate 1", "Test", id);
-        License license2 = new License(102L, "Certificate 2", "Test", id);
+        LicenseResponse.List license1 = new LicenseResponse.List(101L, "Certificate 1", "Test", LocalDateTime.now());
+        LicenseResponse.List license2 = new LicenseResponse.List(102L, "Certificate 2", "Test", LocalDateTime.now());
 
-        List<License> licenses = new ArrayList<>();
+        List<LicenseResponse.List> licenses = new ArrayList<>();
         licenses.add(license1);
         licenses.add(license2);
 
-        Trainer trainer = new Trainer(
-                id,
-                "test",
-                "email",
-                "test",
-                GroupStatus.N,
-                "test",
-                "test",
-                "test",
-                "test",
-                "test",
-                "test",
-                Gender.M,
-                3000,
-                "test",
-                licenses,
-                new Profile(123L, id, "test"),
-                new Post(123L, "test", id)
-        );
-
-        given(trainerApplicationService.findById(id)).willReturn(trainer);
+        given(trainerApplicationService.getLicensesById(id)).willReturn(licenses);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("자격증 조회 성공했습니다.", licenses);
 
         // When
@@ -91,7 +66,7 @@ public class LicenseControllerTest {
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
-        verify(trainerApplicationService, times(1)).findById(id);
+        verify(trainerApplicationService, times(1)).getLicensesById(id);
     }
 
     @Test
@@ -102,36 +77,16 @@ public class LicenseControllerTest {
 
         Long id = 1L;
 
-        License license1 = new License(101L, "Certificate 1", "Test", id);
-        License license2 = new License(102L, "Certificate 2", "Test", id);
+        LicenseResponse.List license1 = new LicenseResponse.List(101L, "Certificate 1", "Test", LocalDateTime.now());
+        LicenseResponse.List license2 = new LicenseResponse.List(102L, "Certificate 2", "Test", LocalDateTime.now());
 
-        List<License> licenses = new ArrayList<>();
+        List<LicenseResponse.List> licenses = new ArrayList<>();
         licenses.add(license1);
         licenses.add(license2);
 
-        Trainer trainer = new Trainer(
-                id,
-                "test",
-                "email",
-                "test",
-                GroupStatus.N,
-                "test",
-                "test",
-                "test",
-                "test",
-                "test",
-                "test",
-                Gender.M,
-                3000,
-                "test",
-                licenses,
-                new Profile(123L,id, "test"),
-                new Post(123L, "test", id)
-        );
-
         given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
         given(authTokenApplicationService.getUserPk(authToken)).willReturn(email);
-        given(trainerApplicationService.findByEmail(email)).willReturn(trainer);
+        given(trainerApplicationService.getLicensesByEmail(email)).willReturn(licenses);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("자격증 조회 성공했습니다.", licenses);
 
         // When
@@ -142,7 +97,7 @@ public class LicenseControllerTest {
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
         verify(authTokenApplicationService, times(1)).resolveAuthToken(request);
         verify(authTokenApplicationService, times(1)).getUserPk(authToken);
-        verify(trainerApplicationService, times(1)).findByEmail(email);
+        verify(trainerApplicationService, times(1)).getLicensesByEmail(email);
     }
 
     @Test
@@ -155,7 +110,7 @@ public class LicenseControllerTest {
         saveLicenseRequest.setCertificateName("CertificateName");
         saveLicenseRequest.setNo("123456");
 
-        LicenseResultResponse licenseResult = new LicenseResultResponse(true, saveLicenseRequest.getCertificateName(), saveLicenseRequest.getNo());
+        LicenseResponse.Result licenseResult = new LicenseResponse.Result(true, saveLicenseRequest.getCertificateName(), saveLicenseRequest.getNo());
 
         given(licenseOpenApiService.getLicenseVerificationResult(saveLicenseRequest)).willReturn(licenseResult);
         given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);

@@ -2,8 +2,9 @@ package com.example.deukgeun.trainer.repository;
 
 import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
-import com.example.deukgeun.trainer.infrastructure.persistence.entity.LicenseEntity;
-import com.example.deukgeun.trainer.infrastructure.persistence.entity.TrainerEntity;
+import com.example.deukgeun.trainer.infrastructure.persistence.model.entity.LicenseEntity;
+import com.example.deukgeun.trainer.infrastructure.persistence.model.entity.TrainerEntity;
+import com.example.deukgeun.trainer.infrastructure.persistence.model.valueobject.AddressEntity;
 import com.example.deukgeun.trainer.infrastructure.persistence.repository.TrainerRepositoryImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,11 +44,13 @@ public class TrainerRepositoryTest {
                 .groupStatus(GroupStatus.Y)
                 .groupName("test")
                 .introduction("test")
-                .detailAddress("test")
-                .extraAddress("test")
-                .jibunAddress("test")
-                .roadAddress("test")
-                .postcode("test")
+                .addressEntity(new AddressEntity(
+                        "test",
+                        "test",
+                        "test",
+                        "test",
+                        "test"
+                ))
                 .price(3000)
                 .build();
         TrainerEntity saveTrainer = trainerRepositoryImpl.save(trainer);
@@ -73,11 +76,13 @@ public class TrainerRepositoryTest {
                 .groupStatus(GroupStatus.Y)
                 .groupName("test")
                 .introduction("test")
-                .detailAddress("test")
-                .extraAddress("test")
-                .jibunAddress("test")
-                .roadAddress("test")
-                .postcode("test")
+                .addressEntity(new AddressEntity(
+                        "test",
+                        "test",
+                        "test",
+                        "test",
+                        "test"
+                ))
                 .price(3000)
                 .build();
         trainerRepositoryImpl.save(trainer);
@@ -103,11 +108,13 @@ public class TrainerRepositoryTest {
                 .groupStatus(GroupStatus.Y)
                 .groupName("test")
                 .introduction("test")
-                .detailAddress("test")
-                .extraAddress("test")
-                .jibunAddress("test")
-                .roadAddress("test")
-                .postcode("test")
+                .addressEntity(new AddressEntity(
+                        "test",
+                        "test",
+                        "test",
+                        "test",
+                        "test"
+                ))
                 .price(3000)
                 .build();
         trainerRepositoryImpl.save(trainer);
@@ -133,11 +140,13 @@ public class TrainerRepositoryTest {
                 .groupStatus(GroupStatus.Y)
                 .groupName("test")
                 .introduction("test")
-                .detailAddress("test")
-                .extraAddress("test")
-                .jibunAddress("test")
-                .roadAddress("test")
-                .postcode("test")
+                .addressEntity(new AddressEntity(
+                        "test",
+                        "test",
+                        "test",
+                        "test",
+                        "test"
+                ))
                 .price(3000)
                 .licenseEntities(new ArrayList<>())
                 .build();

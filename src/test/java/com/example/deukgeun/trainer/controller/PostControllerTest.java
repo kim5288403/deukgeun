@@ -10,6 +10,7 @@ import com.example.deukgeun.trainer.application.service.TrainerApplicationServic
 import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import com.example.deukgeun.trainer.domain.model.entity.Post;
 import com.example.deukgeun.trainer.domain.model.entity.Profile;
+import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -117,11 +118,13 @@ public class PostControllerTest {
                 "test",
                 GroupStatus.N,
                 "test",
-                "test",
-                "test",
-                "test",
-                "test",
-                "test",
+                new Address(
+                        "test",
+                        "test",
+                        "test",
+                        "test",
+                        "test"
+                ),
                 Gender.M,
                 3000,
                 "test",
@@ -156,11 +159,13 @@ public class PostControllerTest {
                 "test",
                 GroupStatus.N,
                 "test",
-                "test",
-                "test",
-                "test",
-                "test",
-                "test",
+                new Address(
+                        "test",
+                        "test",
+                        "test",
+                        "test",
+                        "test"
+                ),
                 Gender.M,
                 3000,
                 "test",

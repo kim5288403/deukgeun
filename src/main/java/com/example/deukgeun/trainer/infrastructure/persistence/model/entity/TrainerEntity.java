@@ -1,8 +1,9 @@
-package com.example.deukgeun.trainer.infrastructure.persistence.entity;
+package com.example.deukgeun.trainer.infrastructure.persistence.model.entity;
 
 import com.example.deukgeun.global.entity.BaseEntity;
 import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
+import com.example.deukgeun.trainer.infrastructure.persistence.model.valueobject.AddressEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -47,20 +48,8 @@ public class TrainerEntity extends BaseEntity implements UserDetails{
   @Column(length = 50, nullable = false)
   private String groupName;
 
-  @Column(length = 50, nullable = false)
-  private String postcode;
-
-  @Column(length = 50)
-  private String jibunAddress;
-
-  @Column(length = 50)
-  private String roadAddress;
-
-  @Column(length = 50, nullable = false)
-  private String detailAddress;
-
-  @Column(length = 50)
-  private String extraAddress;
+  @Embedded
+  private AddressEntity addressEntity;
 
   @Column(length = 50, nullable = false)
   private Integer price;

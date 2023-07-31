@@ -1,7 +1,7 @@
 package com.example.deukgeun.trainer.infrastructure.persistence.api;
 
 import com.example.deukgeun.trainer.application.dto.request.SaveLicenseRequest;
-import com.example.deukgeun.trainer.application.dto.response.LicenseResultResponse;
+import com.example.deukgeun.trainer.application.dto.response.LicenseResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -15,7 +15,7 @@ public class LicenseOpenApiService {
     @Value("${trainer.license.api.uri}")
     private String licenseApiUri;
 
-    public LicenseResultResponse getLicenseVerificationResult(SaveLicenseRequest request) {
+    public LicenseResponse.Result getLicenseVerificationResult(SaveLicenseRequest request) {
         // 라이선스 API와 통신하기 위한 WebClient 생성
         WebClient webClient = WebClient.builder()
                 .baseUrl(licenseApiUri)
@@ -25,7 +25,7 @@ public class LicenseOpenApiService {
                 .build();
 
         // 라이선스 확인 요청을 위한 URI 생성 및 API 호출
-        LicenseResultResponse result = webClient.get().
+        LicenseResponse.Result result = webClient.get().
                 uri(uriBuilder -> uriBuilder
                         .path("")
                         .queryParam("apiKey", licenseApiKey)
@@ -33,12 +33,12 @@ public class LicenseOpenApiService {
                         .queryParam("no", request.getNo())
                         .build())
                 .retrieve()
-                .bodyToMono(LicenseResultResponse.class)
+                .bodyToMono(LicenseResponse.Result.class)
                 .block();
 
-//        if (result == null || !result.getResult()) {
-//            throw new IllegalArgumentException("존재하지않는 자격증 정보 입니다.");
-//        }
+        if (result == null || !result.getResult()) {
+            throw new IllegalArgumentException("존재하지않는 자격증 정보 입니다.");
+        }
 
         return result;
     }

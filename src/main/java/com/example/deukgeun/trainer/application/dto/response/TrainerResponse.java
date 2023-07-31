@@ -38,11 +38,11 @@ public class TrainerResponse {
         this.name = trainer.getName();
         this.groupStatus = trainer.getGroupStatus();
         this.groupName = trainer.getGroupName();
-        this.postcode = trainer.getPostcode();
-        this.jibunAddress = trainer.getJibunAddress();
-        this.roadAddress = trainer.getRoadAddress();
-        this.detailAddress = trainer.getDetailAddress();
-        this.extraAddress = trainer.getExtraAddress();
+        this.postcode = trainer.getAddress().getPostcode();
+        this.jibunAddress = trainer.getAddress().getJibunAddress();
+        this.roadAddress = trainer.getAddress().getRoadAddress();
+        this.detailAddress = trainer.getAddress().getDetailAddress();
+        this.extraAddress = trainer.getAddress().getExtraAddress();
         this.gender = trainer.getGender();
         this.price = trainer.getPrice();
         this.introduction = trainer.getIntroduction();

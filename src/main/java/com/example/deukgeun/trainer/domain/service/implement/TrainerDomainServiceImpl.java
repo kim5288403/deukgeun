@@ -4,11 +4,12 @@ import com.example.deukgeun.global.util.PasswordEncoderUtil;
 import com.example.deukgeun.trainer.application.dto.request.JoinRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdateInfoRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdatePasswordRequest;
-import com.example.deukgeun.trainer.application.dto.response.LicenseResultResponse;
+import com.example.deukgeun.trainer.application.dto.response.LicenseResponse;
 import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import com.example.deukgeun.trainer.domain.model.entity.License;
 import com.example.deukgeun.trainer.domain.model.entity.Post;
 import com.example.deukgeun.trainer.domain.model.entity.Profile;
+import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
 import com.example.deukgeun.trainer.domain.repository.TrainerRepository;
 import com.example.deukgeun.trainer.domain.service.TrainerDomainService;
 import lombok.RequiredArgsConstructor;
@@ -76,11 +77,13 @@ public class TrainerDomainServiceImpl implements TrainerDomainService {
                 PasswordEncoderUtil.encode(request.getPassword()),
                 request.getGroupStatus(),
                 request.getGroupName(),
-                request.getPostcode(),
-                request.getJibunAddress(),
-                request.getRoadAddress(),
-                request.getDetailAddress(),
-                request.getExtraAddress(),
+                new Address(
+                        request.getPostcode(),
+                        request.getJibunAddress(),
+                        request.getRoadAddress(),
+                        request.getDetailAddress(),
+                        request.getExtraAddress()
+                ),
                 request.getGender(),
                 request.getPrice(),
                 request.getIntroduction()
@@ -94,7 +97,7 @@ public class TrainerDomainServiceImpl implements TrainerDomainService {
     }
 
     @Override
-    public Trainer saveLicense(String email, LicenseResultResponse licenseResult) {
+    public Trainer saveLicense(String email, LicenseResponse.Result licenseResult) {
         Trainer trainer = findByEmail(email);
         License license = License.create(licenseResult.getCertificatename(), licenseResult.getNo(), trainer.getId());
         trainer.getLicenses().add(license);
@@ -107,6 +110,7 @@ public class TrainerDomainServiceImpl implements TrainerDomainService {
         Trainer trainer = findByEmail(request.getEmail());
 
         trainer.updateInfo(request);
+        System.out.println(trainer.getAddress().getDetailAddress());
 
         trainerRepository.save(trainer);
     }

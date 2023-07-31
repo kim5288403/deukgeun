@@ -1,4 +1,4 @@
-package com.example.deukgeun.trainer.infrastructure.persistence.entity;
+package com.example.deukgeun.trainer.infrastructure.persistence.model.entity;
 
 import com.example.deukgeun.global.entity.BaseEntity;
 import lombok.AllArgsConstructor;

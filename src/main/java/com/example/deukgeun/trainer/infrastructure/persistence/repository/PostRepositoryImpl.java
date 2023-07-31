@@ -1,6 +1,6 @@
 package com.example.deukgeun.trainer.infrastructure.persistence.repository;
 
-import com.example.deukgeun.trainer.infrastructure.persistence.entity.PostEntity;
+import com.example.deukgeun.trainer.infrastructure.persistence.model.entity.PostEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

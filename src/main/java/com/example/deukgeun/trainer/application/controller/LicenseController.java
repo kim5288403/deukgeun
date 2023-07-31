@@ -4,10 +4,8 @@ import com.example.deukgeun.authToken.application.service.implement.AuthTokenApp
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.trainer.application.dto.request.RemoveLicenseRequest;
 import com.example.deukgeun.trainer.application.dto.request.SaveLicenseRequest;
-import com.example.deukgeun.trainer.application.dto.response.LicenseResultResponse;
+import com.example.deukgeun.trainer.application.dto.response.LicenseResponse;
 import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
-import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
-import com.example.deukgeun.trainer.domain.model.entity.License;
 import com.example.deukgeun.trainer.infrastructure.persistence.api.LicenseOpenApiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,8 +29,7 @@ public class LicenseController {
 
     @RequestMapping(method = RequestMethod.GET, path = "/{id}")
     public ResponseEntity<?> getLicensesById(@PathVariable Long id) {
-        Trainer trainer = trainerApplicationService.findById(id);
-        List<License> response = trainer.getLicenses();
+        List<LicenseResponse.List> response = trainerApplicationService.getLicensesById(id);
 
         return RestResponseUtil
                 .ok("자격증 조회 성공했습니다.", response);
@@ -42,16 +39,15 @@ public class LicenseController {
     public ResponseEntity<?> getLicensesByAuthToken(HttpServletRequest request) {
         String authToken = authTokenApplicationService.resolveAuthToken(request);
         String email = authTokenApplicationService.getUserPk(authToken);
-        Trainer trainer = trainerApplicationService.findByEmail(email);
+        List<LicenseResponse.List> response = trainerApplicationService.getLicensesByEmail(email);
 
-        List<License> response = trainer.getLicenses();
         return RestResponseUtil
                 .ok("자격증 조회 성공했습니다.", response);
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> saveLicense(HttpServletRequest request, @Valid SaveLicenseRequest saveLicenseRequest, BindingResult bindingResult) throws Exception {
-        LicenseResultResponse licenseResult = licenseOpenApiService.getLicenseVerificationResult(saveLicenseRequest);
+        LicenseResponse.Result licenseResult = licenseOpenApiService.getLicenseVerificationResult(saveLicenseRequest);
         licenseResult.setCertificatename(saveLicenseRequest.getCertificateName());
         licenseResult.setNo(saveLicenseRequest.getNo());
         String authToken = authTokenApplicationService.resolveAuthToken(request);
@@ -68,7 +64,6 @@ public class LicenseController {
         String authToken = authTokenApplicationService.resolveAuthToken(request);
         String email = authTokenApplicationService.getUserPk(authToken);
 
-        // 각 자격증 ID를 기반으로 자격증 삭제
         removeLicenseRequest
                 .getIds()
                 .forEach(licenceId -> trainerApplicationService.deleteLicenseByLicenseId(email, licenceId));

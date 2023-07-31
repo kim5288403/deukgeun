@@ -4,11 +4,12 @@ import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.trainer.application.dto.request.JoinRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdateInfoRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdatePasswordRequest;
-import com.example.deukgeun.trainer.application.dto.response.LicenseResultResponse;
+import com.example.deukgeun.trainer.application.dto.response.LicenseResponse;
 import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import com.example.deukgeun.trainer.domain.model.entity.License;
 import com.example.deukgeun.trainer.domain.model.entity.Post;
 import com.example.deukgeun.trainer.domain.model.entity.Profile;
+import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
 import com.example.deukgeun.trainer.domain.repository.TrainerRepository;
 import com.example.deukgeun.trainer.domain.service.implement.TrainerDomainServiceImpl;
@@ -60,11 +61,13 @@ class TrainerDomainServiceTest {
                 "test",
                 GroupStatus.N,
                 "test",
-                "test",
-                "test",
-                "test",
-                "test",
-                "test",
+                new Address(
+                        "test",
+                        "test",
+                        "test",
+                        "test",
+                        "test"
+                        ),
                 Gender.M,
                 3000,
                 "test"
@@ -96,11 +99,13 @@ class TrainerDomainServiceTest {
                 "test",
                 GroupStatus.N,
                 "test",
-                "test",
-                "test",
-                "test",
-                "test",
-                "test",
+                new Address(
+                        "test",
+                        "test",
+                        "test",
+                        "test",
+                        "test"
+                ),
                 Gender.M,
                 3000,
                 "test"
@@ -162,11 +167,13 @@ class TrainerDomainServiceTest {
                 "test",
                 GroupStatus.N,
                 "test",
-                "test",
-                "test",
-                "test",
-                "test",
-                "test",
+                new Address(
+                        "test",
+                        "test",
+                        "test",
+                        "test",
+                        "test"
+                ),
                 Gender.M,
                 3000,
                 "test"
@@ -223,11 +230,13 @@ class TrainerDomainServiceTest {
                 "test",
                 GroupStatus.N,
                 "test",
-                "test",
-                "test",
-                "test",
-                "test",
-                "test",
+                new Address(
+                        "test",
+                        "test",
+                        "test",
+                        "test",
+                        "test"
+                ),
                 Gender.M,
                 3000,
                 "test"
@@ -252,7 +261,7 @@ class TrainerDomainServiceTest {
     public void givenTrainerWithEmailAndLicenseResult_whenSaveLicense_thenLicenseShouldBeAddedToTrainer() {
         // Given
         String email = "example@example.com";
-        LicenseResultResponse licenseResult = new LicenseResultResponse(true,"CertificateName", "123456");
+        LicenseResponse.Result licenseResult = new LicenseResponse.Result(true,"CertificateName", "123456");
 
         Trainer trainer = new Trainer (
                 123L,
@@ -261,11 +270,13 @@ class TrainerDomainServiceTest {
                 "test",
                 GroupStatus.N,
                 "test",
-                "test",
-                "test",
-                "test",
-                "test",
-                "test",
+                new Address(
+                        "test",
+                        "test",
+                        "test",
+                        "test",
+                        "test"
+                ),
                 Gender.M,
                 3000,
                 "test"
@@ -293,11 +304,13 @@ class TrainerDomainServiceTest {
                 "test",
                 GroupStatus.N,
                 "test",
-                "test",
-                "test",
-                "test",
-                "test",
-                "test",
+                new Address(
+                        "test",
+                        "test",
+                        "test",
+                        "test",
+                        "test"
+                ),
                 Gender.M,
                 3000,
                 "test"
@@ -324,11 +337,13 @@ class TrainerDomainServiceTest {
                 "test",
                 GroupStatus.N,
                 "test",
-                "test",
-                "test",
-                "test",
-                "test",
-                "test",
+                new Address(
+                        "test",
+                        "test",
+                        "test",
+                        "test",
+                        "test"
+                ),
                 Gender.M,
                 3000,
                 "test",
@@ -361,11 +376,13 @@ class TrainerDomainServiceTest {
                 "test",
                 GroupStatus.N,
                 "test",
-                "test",
-                "test",
-                "test",
-                "test",
-                "test",
+                new Address(
+                        "test",
+                        "test",
+                        "test",
+                        "test",
+                        "test"
+                ),
                 Gender.M,
                 3000,
                 "test"
@@ -393,11 +410,13 @@ class TrainerDomainServiceTest {
                 "test",
                 GroupStatus.N,
                 "test",
-                "test",
-                "test",
-                "test",
-                "test",
-                "test",
+                new Address(
+                        "test",
+                        "test",
+                        "test",
+                        "test",
+                        "test"
+                ),
                 Gender.M,
                 3000,
                 "test"

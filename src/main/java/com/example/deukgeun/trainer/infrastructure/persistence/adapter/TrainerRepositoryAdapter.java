@@ -4,11 +4,13 @@ import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import com.example.deukgeun.trainer.domain.model.entity.License;
 import com.example.deukgeun.trainer.domain.model.entity.Post;
 import com.example.deukgeun.trainer.domain.model.entity.Profile;
+import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
 import com.example.deukgeun.trainer.domain.repository.TrainerRepository;
-import com.example.deukgeun.trainer.infrastructure.persistence.entity.LicenseEntity;
-import com.example.deukgeun.trainer.infrastructure.persistence.entity.PostEntity;
-import com.example.deukgeun.trainer.infrastructure.persistence.entity.ProfileEntity;
-import com.example.deukgeun.trainer.infrastructure.persistence.entity.TrainerEntity;
+import com.example.deukgeun.trainer.infrastructure.persistence.model.entity.LicenseEntity;
+import com.example.deukgeun.trainer.infrastructure.persistence.model.entity.PostEntity;
+import com.example.deukgeun.trainer.infrastructure.persistence.model.entity.ProfileEntity;
+import com.example.deukgeun.trainer.infrastructure.persistence.model.entity.TrainerEntity;
+import com.example.deukgeun.trainer.infrastructure.persistence.model.valueobject.AddressEntity;
 import com.example.deukgeun.trainer.infrastructure.persistence.repository.TrainerRepositoryImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -67,11 +69,7 @@ public class TrainerRepositoryAdapter implements TrainerRepository {
                 .password(trainer.getPassword())
                 .groupStatus(trainer.getGroupStatus())
                 .groupName(trainer.getGroupName())
-                .postcode(trainer.getPostcode())
-                .jibunAddress(trainer.getJibunAddress())
-                .roadAddress(trainer.getRoadAddress())
-                .detailAddress(trainer.getDetailAddress())
-                .extraAddress(trainer.getExtraAddress())
+                .addressEntity(covert(trainer.getAddress()))
                 .gender(trainer.getGender())
                 .price(trainer.getPrice())
                 .introduction(trainer.getIntroduction())
@@ -89,11 +87,7 @@ public class TrainerRepositoryAdapter implements TrainerRepository {
                 trainerEntity.getPassword(),
                 trainerEntity.getGroupStatus(),
                 trainerEntity.getGroupName(),
-                trainerEntity.getPostcode(),
-                trainerEntity.getJibunAddress(),
-                trainerEntity.getRoadAddress(),
-                trainerEntity.getDetailAddress(),
-                trainerEntity.getExtraAddress(),
+                covert(trainerEntity.getAddressEntity()),
                 trainerEntity.getGender(),
                 trainerEntity.getPrice(),
                 trainerEntity.getIntroduction(),
@@ -142,20 +136,47 @@ public class TrainerRepositoryAdapter implements TrainerRepository {
     }
 
     private Post covert(PostEntity postEntity) {
-        return new Post
-                (
-                        postEntity.getId(),
-                        postEntity.getHtml(),
-                        postEntity.getTrainerId()
-                );
+        if (postEntity != null) {
+            return new Post
+                    (
+                            postEntity.getId(),
+                            postEntity.getHtml(),
+                            postEntity.getTrainerId()
+                    );
+        }
+
+        return null;
     }
 
     private PostEntity covert(Post post) {
-        return PostEntity
-                .builder()
-                .id(post.getId())
-                .html(post.getHtml())
-                .trainerId(post.getTrainerId())
-                .build();
+        if (post != null) {
+            return PostEntity
+                    .builder()
+                    .id(post.getId())
+                    .html(post.getHtml())
+                    .trainerId(post.getTrainerId())
+                    .build();
+        }
+        return null;
+    }
+
+    private AddressEntity covert(Address address) {
+        return new AddressEntity(
+                address.getPostcode(),
+                address.getJibunAddress(),
+                address.getRoadAddress(),
+                address.getDetailAddress(),
+                address.getExtraAddress()
+        );
+    }
+
+    private Address covert(AddressEntity addressEntity) {
+        return new Address(
+                addressEntity.getPostcode(),
+                addressEntity.getJibunAddress(),
+                addressEntity.getRoadAddress(),
+                addressEntity.getDetailAddress(),
+                addressEntity.getExtraAddress()
+        );
     }
 }

@@ -6,6 +6,7 @@ import com.example.deukgeun.trainer.application.dto.request.UpdateInfoRequest;
 import com.example.deukgeun.trainer.domain.model.entity.License;
 import com.example.deukgeun.trainer.domain.model.entity.Post;
 import com.example.deukgeun.trainer.domain.model.entity.Profile;
+import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
 import lombok.Getter;
 
@@ -29,15 +30,7 @@ public class Trainer {
 
   private String groupName;
 
-  private String postcode;
-
-  private String jibunAddress;
-
-  private String roadAddress;
-
-  private String detailAddress;
-
-  private String extraAddress;
+  private Address address;
 
   private Integer price;
 
@@ -56,11 +49,7 @@ public class Trainer {
           String password,
           GroupStatus groupStatus,
           String groupName,
-          String postcode,
-          String jibunAddress,
-          String roadAddress,
-          String detailAddress,
-          String extraAddress,
+          Address address,
           Gender gender,
           Integer price,
           String introduction,
@@ -74,11 +63,7 @@ public class Trainer {
     this.password = password;
     this.groupStatus = groupStatus;
     this.groupName = groupName;
-    this.postcode = postcode;
-    this.jibunAddress = jibunAddress;
-    this.roadAddress = roadAddress;
-    this.detailAddress = detailAddress;
-    this.extraAddress = extraAddress;
+    this.address = address;
     this.gender = gender;
     this.price = price;
     this.introduction = introduction;
@@ -94,11 +79,7 @@ public class Trainer {
           String password,
           GroupStatus groupStatus,
           String groupName,
-          String postcode,
-          String jibunAddress,
-          String roadAddress,
-          String detailAddress,
-          String extraAddress,
+          Address address,
           Gender gender,
           Integer price,
           String introduction
@@ -109,11 +90,7 @@ public class Trainer {
     this.password = password;
     this.groupStatus = groupStatus;
     this.groupName = groupName;
-    this.postcode = postcode;
-    this.jibunAddress = jibunAddress;
-    this.roadAddress = roadAddress;
-    this.detailAddress = detailAddress;
-    this.extraAddress = extraAddress;
+    this.address = address;
     this.gender = gender;
     this.price = price;
     this.introduction = introduction;
@@ -125,11 +102,7 @@ public class Trainer {
           String password,
           GroupStatus groupStatus,
           String groupName,
-          String postcode,
-          String jibunAddress,
-          String roadAddress,
-          String detailAddress,
-          String extraAddress,
+          Address address,
           Gender gender,
           Integer price,
           String introduction
@@ -142,11 +115,7 @@ public class Trainer {
             password,
             groupStatus,
             groupName,
-            postcode,
-            jibunAddress,
-            roadAddress,
-            detailAddress,
-            extraAddress,
+            address,
             gender,
             price,
             introduction
@@ -158,20 +127,20 @@ public class Trainer {
   public void setProfile(Profile profile) {
     this.profile = profile;
   }
-
   public void setPost(Post post) {
     this.post = post;
   }
-
   public void updateInfo(UpdateInfoRequest request) {
     this.email = request.getEmail();
     this.name = request.getName();
     this.gender = request.getGender();
-    this.postcode = request.getPostcode();
-    this.jibunAddress = request.getJibunAddress();
-    this.roadAddress = request.getRoadAddress();
-    this.detailAddress = request.getDetailAddress();
-    this.extraAddress = request.getExtraAddress();
+    this.address = new Address(
+                    request.getPostcode(),
+                    request.getJibunAddress(),
+                    request.getRoadAddress(),
+                    request.getDetailAddress(),
+                    request.getExtraAddress()
+            );
     this.price = request.getPrice();
     this.groupStatus = request.getGroupStatus();
     this.groupName = request.getGroupName();

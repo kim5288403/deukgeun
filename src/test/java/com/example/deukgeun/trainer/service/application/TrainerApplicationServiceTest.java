@@ -6,11 +6,13 @@ import com.example.deukgeun.trainer.application.dto.request.JoinRequest;
 import com.example.deukgeun.trainer.application.dto.request.PostRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdateInfoRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdatePasswordRequest;
-import com.example.deukgeun.trainer.application.dto.response.LicenseResultResponse;
+import com.example.deukgeun.trainer.application.dto.response.LicenseResponse;
 import com.example.deukgeun.trainer.application.service.implement.TrainerApplicationServiceImpl;
 import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
+import com.example.deukgeun.trainer.domain.model.entity.License;
 import com.example.deukgeun.trainer.domain.model.entity.Post;
 import com.example.deukgeun.trainer.domain.model.entity.Profile;
+import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
 import com.example.deukgeun.trainer.domain.service.TrainerDomainService;
 import org.junit.jupiter.api.BeforeAll;
@@ -60,11 +62,13 @@ class TrainerApplicationServiceTest {
                 "test",
                 GroupStatus.N,
                 "test",
-                "test",
-                "test",
-                "test",
-                "test",
-                "test",
+                new Address(
+                        "test",
+                        "test",
+                        "test",
+                        "test",
+                        "test"
+                ),
                 Gender.M,
                 3000,
                 "test",
@@ -169,11 +173,13 @@ class TrainerApplicationServiceTest {
                 "test",
                 GroupStatus.N,
                 "test",
-                "test",
-                "test",
-                "test",
-                "test",
-                "test",
+                new Address(
+                        "test",
+                        "test",
+                        "test",
+                        "test",
+                        "test"
+                ),
                 Gender.M,
                 3000,
                 "test"
@@ -220,6 +226,90 @@ class TrainerApplicationServiceTest {
 
         // Then
         assertEquals(expectedFile, resultFile);
+    }
+
+    @Test
+    public void givenTrainerWithLicenses_whenGetLicensesById_thenReturnLicenseResponseList() {
+        // Given
+        Long id = 1L;
+
+        Trainer trainer = new Trainer (
+                123L,
+                "test",
+                "test",
+                "test",
+                GroupStatus.N,
+                "test",
+                new Address(
+                        "test",
+                        "test",
+                        "test",
+                        "test",
+                        "test"
+                ),
+                Gender.M,
+                3000,
+                "test"
+        );
+        License license1 = new License(123L, "test1", "test1", id);
+        License license2 = new License(124L, "test2", "test2", id);
+        trainer.getLicenses().add(license1);
+        trainer.getLicenses().add(license2);
+
+        given(trainerDomainService.findById(id)).willReturn(trainer);
+
+        // When
+        List<LicenseResponse.List> result = trainerApplicationService.getLicensesById(id);
+
+        // Then
+        assertEquals(2, result.size());
+        assertEquals(123L, result.get(0).getLicenseId());
+        assertEquals("test1", result.get(0).getCertificateName());
+        assertEquals(124L, result.get(1).getLicenseId());
+        assertEquals("test2", result.get(1).getCertificateName());
+        verify(trainerDomainService, times(1)).findById(id);
+    }
+
+    @Test
+    public void givenTrainerWithLicenses_whenGetLicensesByEmail_thenReturnLicenseResponseList() {
+        // Given
+        Long id = 1L;
+        String email = "email";
+        Trainer trainer = new Trainer (
+                123L,
+                "test",
+                email,
+                "test",
+                GroupStatus.N,
+                "test",
+                new Address(
+                        "test",
+                        "test",
+                        "test",
+                        "test",
+                        "test"
+                ),
+                Gender.M,
+                3000,
+                "test"
+        );
+        License license1 = new License(123L, "test1", "test1", id);
+        License license2 = new License(124L, "test2", "test2", id);
+        trainer.getLicenses().add(license1);
+        trainer.getLicenses().add(license2);
+
+        given(trainerDomainService.findByEmail(email)).willReturn(trainer);
+
+        // When
+        List<LicenseResponse.List> result = trainerApplicationService.getLicensesByEmail(email);
+
+        // Then
+        assertEquals(2, result.size());
+        assertEquals(123L, result.get(0).getLicenseId());
+        assertEquals("test1", result.get(0).getCertificateName());
+        assertEquals(124L, result.get(1).getLicenseId());
+        assertEquals("test2", result.get(1).getCertificateName());
+        verify(trainerDomainService, times(1)).findByEmail(email);
     }
 
     @Test
@@ -285,11 +375,13 @@ class TrainerApplicationServiceTest {
                 "test",
                 GroupStatus.N,
                 "test",
-                "test",
-                "test",
-                "test",
-                "test",
-                "test",
+                new Address(
+                        "test",
+                        "test",
+                        "test",
+                        "test",
+                        "test"
+                ),
                 Gender.M,
                 3000,
                 "test"
@@ -315,7 +407,7 @@ class TrainerApplicationServiceTest {
     public void givenEmailAndLicenseResult_whenSaveLicense_thenTrainerShouldBeReturned() {
         // Given
         String email = "test@example.com";
-        LicenseResultResponse licenseResult = new LicenseResultResponse();
+        LicenseResponse.Result licenseResult = new LicenseResponse.Result();
 
         Trainer trainer = new Trainer (
                 123L,
@@ -324,11 +416,13 @@ class TrainerApplicationServiceTest {
                 "test",
                 GroupStatus.N,
                 "test",
-                "test",
-                "test",
-                "test",
-                "test",
-                "test",
+                new Address(
+                        "test",
+                        "test",
+                        "test",
+                        "test",
+                        "test"
+                ),
                 Gender.M,
                 3000,
                 "test"
@@ -382,11 +476,13 @@ class TrainerApplicationServiceTest {
                 "test",
                 GroupStatus.N,
                 "test",
-                "test",
-                "test",
-                "test",
-                "test",
-                "test",
+                new Address(
+                        "test",
+                        "test",
+                        "test",
+                        "test",
+                        "test"
+                ),
                 Gender.M,
                 3000,
                 "test"

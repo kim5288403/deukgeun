@@ -5,7 +5,7 @@ import com.example.deukgeun.trainer.application.dto.request.JoinRequest;
 import com.example.deukgeun.trainer.application.dto.request.PostRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdateInfoRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdatePasswordRequest;
-import com.example.deukgeun.trainer.application.dto.response.LicenseResultResponse;
+import com.example.deukgeun.trainer.application.dto.response.LicenseResponse;
 import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
 import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import com.example.deukgeun.trainer.domain.model.entity.Profile;
@@ -22,8 +22,10 @@ import javax.servlet.http.Part;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -87,6 +89,26 @@ public class TrainerApplicationServiceImpl implements TrainerApplicationService 
     }
 
     @Override
+    public List<LicenseResponse.List> getLicensesById(Long id) {
+        Trainer trainer = findById(id);
+        return trainer
+                .getLicenses()
+                .stream()
+                .map(LicenseResponse.List::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<LicenseResponse.List> getLicensesByEmail(String email) {
+        Trainer trainer = findByEmail(email);
+        return trainer
+                .getLicenses()
+                .stream()
+                .map(LicenseResponse.List::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public boolean isEmptyGroupName(String groupName, String groupStatus) {
         return !groupStatus.equals("Y") || !groupName.isEmpty();
     }
@@ -98,7 +120,7 @@ public class TrainerApplicationServiceImpl implements TrainerApplicationService 
     }
 
     @Override
-    public Trainer saveLicense(String email, LicenseResultResponse licenseResult) {
+    public Trainer saveLicense(String email, LicenseResponse.Result licenseResult) {
         return trainerDomainService.saveLicense(email, licenseResult);
     }
 
