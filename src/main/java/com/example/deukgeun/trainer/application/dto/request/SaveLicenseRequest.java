@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 public class SaveLicenseRequest {
   
   @NotBlank(message = "이름 필수 입력 값입니다.")
-  private String name;
+  private String certificateName;
   
   @NotBlank(message = "자격증 번호는 필수 입력 값입니다.")
   private String no;

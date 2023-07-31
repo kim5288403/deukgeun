@@ -9,6 +9,7 @@ import com.example.deukgeun.trainer.domain.model.entity.Profile;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -42,7 +43,7 @@ public class Trainer {
 
   private String introduction;
 
-  private List<License> licenses;
+  private List<License> licenses = new ArrayList<>();
 
   private Profile profile;
 
@@ -63,7 +64,9 @@ public class Trainer {
           Gender gender,
           Integer price,
           String introduction,
-          List<License> license
+          List<License> license,
+          Profile profile,
+          Post post
   ) {
     this.id = id;
     this.name = name;
@@ -80,6 +83,8 @@ public class Trainer {
     this.price = price;
     this.introduction = introduction;
     this.licenses = license;
+    this.profile = profile;
+    this.post = post;
   }
 
   public Trainer(
@@ -147,6 +152,16 @@ public class Trainer {
             introduction
             );
   }
+  public boolean doesPostExist() {
+    return this.post != null;
+  }
+  public void setProfile(Profile profile) {
+    this.profile = profile;
+  }
+
+  public void setPost(Post post) {
+    this.post = post;
+  }
 
   public void updateInfo(UpdateInfoRequest request) {
     this.email = request.getEmail();
@@ -162,8 +177,8 @@ public class Trainer {
     this.groupName = request.getGroupName();
     this.introduction = request.getIntroduction();
   }
-
   public void updatePassword(String newPassword) {
     this.password = newPassword;
   }
+
 }

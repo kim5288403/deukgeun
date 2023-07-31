@@ -29,16 +29,16 @@ public class LicenseOpenApiService {
                 uri(uriBuilder -> uriBuilder
                         .path("")
                         .queryParam("apiKey", licenseApiKey)
-                        .queryParam("name", request.getName())
+                        .queryParam("name", request.getCertificateName())
                         .queryParam("no", request.getNo())
                         .build())
                 .retrieve()
                 .bodyToMono(LicenseResultResponse.class)
                 .block();
 
-        if (result == null || !result.getResult()) {
-            throw new IllegalArgumentException("존재하지않는 자격증 정보 입니다.");
-        }
+//        if (result == null || !result.getResult()) {
+//            throw new IllegalArgumentException("존재하지않는 자격증 정보 입니다.");
+//        }
 
         return result;
     }

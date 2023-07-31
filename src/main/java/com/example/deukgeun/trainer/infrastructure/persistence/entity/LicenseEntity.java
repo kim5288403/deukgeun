@@ -26,11 +26,8 @@ public class LicenseEntity extends BaseEntity {
   
   @Column(length = 50, nullable = false)
   private String licenseNumber;
-  
+
   @Column(name = "trainer_id")
   private Long trainerId;
-  
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "trainer_id", insertable = false, updatable = false, nullable = false)
-  private TrainerEntity trainer;
+
 }

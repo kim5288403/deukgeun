@@ -6,7 +6,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
 @Getter
@@ -24,8 +27,4 @@ public class PostEntity extends BaseEntity {
 
   @Column(nullable = false)
   private String html;
-
-  @OneToOne
-  @JoinColumn(name = "trainer_id", insertable = false, updatable = false, nullable = false)
-  private TrainerEntity trainer;
 }

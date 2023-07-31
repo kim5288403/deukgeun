@@ -2,6 +2,8 @@ package com.example.deukgeun.trainer.repository;
 
 import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
+import com.example.deukgeun.trainer.infrastructure.persistence.entity.LicenseEntity;
+import com.example.deukgeun.trainer.infrastructure.persistence.entity.ProfileEntity;
 import com.example.deukgeun.trainer.infrastructure.persistence.entity.TrainerEntity;
 import com.example.deukgeun.trainer.infrastructure.persistence.repository.TrainerRepositoryImpl;
 import org.junit.jupiter.api.Test;
@@ -11,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -137,7 +140,26 @@ public class TrainerRepositoryTest {
                 .roadAddress("test")
                 .postcode("test")
                 .price(3000)
+                .licenseEntities(new ArrayList<>())
                 .build();
+
+        LicenseEntity licenseEntity = LicenseEntity
+                .builder()
+                .id(123435L)
+                .trainerId(123L)
+                .licenseNumber("123145")
+                .certificateName("test")
+                .build();
+
+        ProfileEntity profileEntity = ProfileEntity
+                .builder()
+                .id(12354L)
+                .trainerId(123L)
+                .path("Tests")
+                .build();
+
+        trainer.getLicenseEntities().add(licenseEntity);
+//        trainer.getProfileEntity().
 
         // When
         TrainerEntity saveTrainer = trainerRepositoryImpl.save(trainer);

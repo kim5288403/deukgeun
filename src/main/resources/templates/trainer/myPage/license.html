@@ -59,14 +59,14 @@
 				</div>
 				
 				<div class="col-6">
-					<label>자격증 이름</label>
-					<input type="text" name="name" value="" placeholder="이름">
-					<span class="errorMessage" id="valid_name"></span>
+					<label for="certificateName">자격증 이름</label>
+					<input type="text" id="certificateName" name="certificateName" value="" placeholder="자격증 이름">
+					<span class="errorMessage" id="valid_certificateName"></span>
 				</div>
 				
 				<div class="col-6">
-					<label>자격증 번호</label>
-					<input type="text" name="no" value="" placeholder="자격증 번호">
+					<label for="no">자격증 번호</label>
+					<input type="text" id="no" name="no" value="" placeholder="자격증 번호">
 					<span class="errorMessage" id="valid_no"></span>
 				</div>
 				
@@ -115,7 +115,7 @@
 		}
 		
 		function saveLicenseAjax() {
-			let name = $("input[name=name]").val();
+			let certificateName = $("input[name=certificateName]").val();
 			let no = $("input[name=no]").val();
 
 			$.ajax({
@@ -125,7 +125,7 @@
 			    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);
 			    },
 				data : {
-					"name" : name,
+					"certificateName" : certificateName,
 					"no" : no,
 				},
 				success : function(res) {
@@ -152,7 +152,6 @@
 		
 		function setLicenseList(data) {
 			let appendHtml = "<tr><td colspan=4 style='text-align: center;'>조회된 자격증 목록이 없습니다.</td></tr>";
-			console.log(data);
 			if (data) {
 				appendHtml = "";
 				$.each(data, function(key, value) {
@@ -163,7 +162,7 @@
 						appendHtml += "<td>" + value.licenseNumber + "</td>";
 						appendHtml += "<td>" + value.createdDate + "</td>";
 						appendHtml += "<td>";
-						appendHtml += "<div><input type='checkbox' id='" + value.licenseId + "' name='" + value.licenseId + "' value='" + value.licenseId + "'><label for='" + value.licenseId + "'></label></div>";
+						appendHtml += "<div><input type='checkbox' id='" + value.id + "' name='" + value.id + "' value='" + value.id + "'><label for='" + value.id + "'></label></div>";
 						appendHtml += "</td>";
 					appendHtml += "</tr>";
 				});
@@ -185,6 +184,9 @@
 				data : {
 					"ids" : ids
 				},
+				beforeSend: function (xhr) {
+			    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);
+			    },
 				success : function(res) {
 					defaultSuccessAlert(res.message, "성공").then(function (){
 							window.location.reload();

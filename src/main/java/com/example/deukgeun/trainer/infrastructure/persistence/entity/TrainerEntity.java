@@ -3,6 +3,7 @@ package com.example.deukgeun.trainer.infrastructure.persistence.entity;
 import com.example.deukgeun.global.entity.BaseEntity;
 import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +18,9 @@ import java.util.List;
 @Entity
 @Getter
 @Table(name = "trainer")
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class TrainerEntity extends BaseEntity implements UserDetails{
 
   @Id
@@ -65,41 +68,19 @@ public class TrainerEntity extends BaseEntity implements UserDetails{
   @Column(length = 50, nullable = false)
   private String introduction;
 
-  @OneToMany(mappedBy = "trainer", cascade = CascadeType.ALL, orphanRemoval = true)
+  @Builder.Default
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "trainer_id", insertable = false, updatable = false, nullable = false)
   private List<LicenseEntity> licenseEntities = new ArrayList<>();
 
-  @Builder
-  public TrainerEntity(
-          Long id,
-          String name,
-          String email,
-          String password,
-          GroupStatus groupStatus,
-          String groupName,
-          String postcode,
-          String jibunAddress,
-          String roadAddress,
-          String detailAddress,
-          String extraAddress,
-          Gender gender,
-          Integer price,
-          String introduction
-  ) {
-    this.id = id;
-    this.name = name;
-    this.email = email;
-    this.password = password;
-    this.groupStatus = groupStatus;
-    this.groupName = groupName;
-    this.postcode = postcode;
-    this.jibunAddress = jibunAddress;
-    this.roadAddress = roadAddress;
-    this.detailAddress = detailAddress;
-    this.extraAddress = extraAddress;
-    this.gender = gender;
-    this.price = price;
-    this.introduction = introduction;
-  }
+  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "trainer_id", insertable = false, updatable = false, nullable = false)
+  private ProfileEntity profileEntity;
+
+  @OneToOne
+  @JoinColumn(name = "trainer_id", insertable = false, updatable = false, nullable = false)
+  private PostEntity postEntity;
+
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -2,8 +2,12 @@ package com.example.deukgeun.trainer.infrastructure.persistence.adapter;
 
 import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import com.example.deukgeun.trainer.domain.model.entity.License;
+import com.example.deukgeun.trainer.domain.model.entity.Post;
+import com.example.deukgeun.trainer.domain.model.entity.Profile;
 import com.example.deukgeun.trainer.domain.repository.TrainerRepository;
 import com.example.deukgeun.trainer.infrastructure.persistence.entity.LicenseEntity;
+import com.example.deukgeun.trainer.infrastructure.persistence.entity.PostEntity;
+import com.example.deukgeun.trainer.infrastructure.persistence.entity.ProfileEntity;
 import com.example.deukgeun.trainer.infrastructure.persistence.entity.TrainerEntity;
 import com.example.deukgeun.trainer.infrastructure.persistence.repository.TrainerRepositoryImpl;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +55,6 @@ public class TrainerRepositoryAdapter implements TrainerRepository {
     @Override
     public Trainer save(Trainer trainer) {
         TrainerEntity saveTrainerEntity = trainerRepository.save(convert(trainer));
-
         return convert(saveTrainerEntity);
     }
 
@@ -72,6 +75,9 @@ public class TrainerRepositoryAdapter implements TrainerRepository {
                 .gender(trainer.getGender())
                 .price(trainer.getPrice())
                 .introduction(trainer.getIntroduction())
+                .licenseEntities(trainer.getLicenses().stream().map(this::convert).collect(Collectors.toList()))
+                .profileEntity(convert(trainer.getProfile()))
+                .postEntity(covert(trainer.getPost()))
                 .build();
     }
 
@@ -91,7 +97,9 @@ public class TrainerRepositoryAdapter implements TrainerRepository {
                 trainerEntity.getGender(),
                 trainerEntity.getPrice(),
                 trainerEntity.getIntroduction(),
-                trainerEntity.getLicenseEntities().stream().map(this::convert).collect(Collectors.toList())
+                trainerEntity.getLicenseEntities().stream().map(this::convert).collect(Collectors.toList()),
+                convert(trainerEntity.getProfileEntity()),
+                covert(trainerEntity.getPostEntity())
         );
     }
 
@@ -110,7 +118,44 @@ public class TrainerRepositoryAdapter implements TrainerRepository {
                 licenseEntity.getId(),
                 licenseEntity.getCertificateName(),
                 licenseEntity.getLicenseNumber(),
-                licenseEntity.getTrainerId()
+                licenseEntity.getTrainerId(),
+                licenseEntity.getCreatedDate()
         );
+    }
+
+    private Profile convert(ProfileEntity profileEntity) {
+        return new Profile
+                (
+                        profileEntity.getId(),
+                        profileEntity.getTrainerId(),
+                        profileEntity.getPath()
+                );
+    }
+
+    private ProfileEntity convert(Profile profile) {
+        return ProfileEntity
+                .builder()
+                .id(profile.getId())
+                .path(profile.getPath())
+                .trainerId(profile.getTrainerId())
+                .build();
+    }
+
+    private Post covert(PostEntity postEntity) {
+        return new Post
+                (
+                        postEntity.getId(),
+                        postEntity.getHtml(),
+                        postEntity.getTrainerId()
+                );
+    }
+
+    private PostEntity covert(Post post) {
+        return PostEntity
+                .builder()
+                .id(post.getId())
+                .html(post.getHtml())
+                .trainerId(post.getTrainerId())
+                .build();
     }
 }

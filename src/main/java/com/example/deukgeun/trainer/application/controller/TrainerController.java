@@ -8,10 +8,8 @@ import com.example.deukgeun.trainer.application.dto.request.UpdateInfoRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdatePasswordRequest;
 import com.example.deukgeun.trainer.application.dto.request.WithdrawalUserRequest;
 import com.example.deukgeun.trainer.application.dto.response.TrainerResponse;
-import com.example.deukgeun.trainer.application.service.ProfileApplicationService;
 import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
 import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
-import com.example.deukgeun.trainer.domain.model.entity.Profile;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +30,6 @@ public class TrainerController {
 
     private final TrainerApplicationService trainerApplicationService;
     private final AuthTokenApplicationService authTokenApplicationService;
-    private final ProfileApplicationService profileApplicationService;
 
     @RequestMapping(method = RequestMethod.GET, path = "/detail")
     public ResponseEntity<?> getDetail(HttpServletRequest request) {
@@ -52,9 +49,6 @@ public class TrainerController {
     public ResponseEntity<?> save(@Valid JoinRequest request, BindingResult bindingResult) throws IOException {
         // 사용자 저장
         Trainer saveTrainer = trainerApplicationService.save(request);
-
-        // 프로필 저장
-        profileApplicationService.save(request.getProfile(), saveTrainer.getId());
 
         return RestResponseUtil.ok("회원 가입 성공 했습니다.", null);
     }
@@ -83,21 +77,8 @@ public class TrainerController {
             @Valid WithdrawalUserRequest withdrawalRequest,
             BindingResult bindingResult
     ) throws IOException {
-
-        // 이메일을 기반으로 사용자 조회
-        Trainer trainer = trainerApplicationService.findByEmail(withdrawalRequest.getEmail());
-
-        // 프로필 조회
-        Profile userProfile = profileApplicationService.findByTrainerId(trainer.getId());
-
-        // 디렉토리 프로필 삭제
-        profileApplicationService.deleteFileToDirectory(userProfile.getPath());
-
-        // DB 프로필 삭제
-        profileApplicationService.deleteById(userProfile.getId());
-
         //사용자 삭제
-        trainerApplicationService.deleteById(trainer.getId());
+        trainerApplicationService.delete(withdrawalRequest.getEmail());
 
         //토큰 삭제
         String authToken = authTokenApplicationService.resolveAuthToken(request);

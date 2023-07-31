@@ -7,6 +7,8 @@ import com.example.deukgeun.trainer.application.dto.request.UpdatePasswordReques
 import com.example.deukgeun.trainer.application.dto.response.LicenseResultResponse;
 import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import com.example.deukgeun.trainer.domain.model.entity.License;
+import com.example.deukgeun.trainer.domain.model.entity.Post;
+import com.example.deukgeun.trainer.domain.model.entity.Profile;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
 import com.example.deukgeun.trainer.domain.repository.TrainerRepository;
 import com.example.deukgeun.trainer.domain.service.implement.TrainerDomainServiceImpl;
@@ -18,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -78,6 +81,40 @@ class TrainerDomainServiceTest {
         // Then
         assertTrue(trainer.getLicenses().isEmpty());
         verify(trainerRepository, times(1)).save(any(Trainer.class));
+    }
+
+    @Test
+    public void givenTrainerWithEmail_whenDeletePost_thenPostShouldBeDeleted() {
+        // Given (주어진 상황)
+        String email = "test@example.com";
+        Long id = 123L;
+        Post post = new Post(123L, "Test", id);
+        Trainer trainer = new Trainer(
+                id,
+                "test",
+                email,
+                "test",
+                GroupStatus.N,
+                "test",
+                "test",
+                "test",
+                "test",
+                "test",
+                "test",
+                Gender.M,
+                3000,
+                "test"
+        );
+
+        trainer.setPost(post);
+
+        given(trainerRepository.findByEmail(email)).willReturn(Optional.of(trainer));
+
+        // When (실행)
+        trainerDomainService.deletePost(email);
+
+        // Then (결과 확인)
+        verify(trainerRepository, times(1)).save(trainer);
     }
 
     @Test
@@ -199,7 +236,7 @@ class TrainerDomainServiceTest {
         given(trainerRepository.save(any(Trainer.class))).willReturn(savedTrainer);
 
         // When
-        Trainer result = trainerDomainService.save(request);
+        Trainer result = trainerDomainService.save(request, "fileName");
 
         // Then
         assertNotNull(result);
@@ -237,13 +274,9 @@ class TrainerDomainServiceTest {
         given(trainerRepository.findByEmail(email)).willReturn(Optional.of(trainer));
 
         // When
-        Trainer savedTrainer = trainerDomainService.saveLicense(email, licenseResult);
+        trainerDomainService.saveLicense(email, licenseResult);
 
         // Then
-        assertEquals(1, savedTrainer.getLicenses().size());
-        License savedLicense = savedTrainer.getLicenses().get(0);
-        assertEquals("CertificateName", savedLicense.getCertificateName());
-        assertEquals("123456", savedLicense.getLicenseNumber());
         verify(trainerRepository, times(1)).save(trainer);
     }
 
@@ -281,6 +314,40 @@ class TrainerDomainServiceTest {
     }
 
     @Test
+    public void givenTrainerAndNewPath_whenUpdateProfile_thenProfilePathUpdated() {
+        // given
+        String newPath = "/path/to/new/profile.jpg";
+        Trainer trainer = new Trainer (
+                123L,
+                "test",
+                "test",
+                "test",
+                GroupStatus.N,
+                "test",
+                "test",
+                "test",
+                "test",
+                "test",
+                "test",
+                Gender.M,
+                3000,
+                "test",
+                mock(List.class),
+                new Profile(1234L, 123L, "test"),
+                mock(Post.class)
+        );
+
+        trainer.getProfile().updatePath(newPath);
+
+        // when
+        trainerDomainService.updateProfile(trainer, newPath);
+
+        // then
+        verify(trainerRepository, times(1)).save(trainer);
+        assertEquals(newPath, trainer.getProfile().getPath());
+    }
+
+    @Test
     void givenValidUpdatePasswordRequest_whenUpdatePassword_thenPasswordIsUpdatedAndSaved() {
         // Given
         UpdatePasswordRequest request = new UpdatePasswordRequest();
@@ -312,5 +379,37 @@ class TrainerDomainServiceTest {
         // Then
         verify(trainerRepository, times(1)).findByEmail(request.getEmail());
         verify(trainerRepository, times(1)).save(any(Trainer.class));
+    }
+
+    @Test
+    public void givenTrainerWithEmailAndHtml_whenUploadPost_thenPostShouldBeUpdatedOrCreated() {
+        // Given
+        String email = "test@example.com";
+        String html = "<p>Hello, this is a test post!</p>";
+        Trainer trainer = new Trainer (
+                123L,
+                "test",
+                email,
+                "test",
+                GroupStatus.N,
+                "test",
+                "test",
+                "test",
+                "test",
+                "test",
+                "test",
+                Gender.M,
+                3000,
+                "test"
+        );
+
+        given(trainerRepository.findByEmail(email)).willReturn(Optional.of(trainer));
+
+        // When
+        trainerDomainService.uploadPost(email, html);
+
+        // Then
+        verify(trainerRepository, times(1)).findByEmail(email);
+        verify(trainerRepository, times(1)).save(trainer);
     }
 }

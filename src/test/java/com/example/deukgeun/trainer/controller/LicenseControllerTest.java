@@ -11,6 +11,8 @@ import com.example.deukgeun.trainer.application.dto.response.LicenseResultRespon
 import com.example.deukgeun.trainer.application.service.implement.TrainerApplicationServiceImpl;
 import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import com.example.deukgeun.trainer.domain.model.entity.License;
+import com.example.deukgeun.trainer.domain.model.entity.Post;
+import com.example.deukgeun.trainer.domain.model.entity.Profile;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
 import com.example.deukgeun.trainer.infrastructure.persistence.api.LicenseOpenApiService;
 import org.junit.jupiter.api.Test;
@@ -75,7 +77,9 @@ public class LicenseControllerTest {
                 Gender.M,
                 3000,
                 "test",
-                licenses
+                licenses,
+                new Profile(123L, id, "test"),
+                new Post(123L, "test", id)
         );
 
         given(trainerApplicationService.findById(id)).willReturn(trainer);
@@ -120,7 +124,9 @@ public class LicenseControllerTest {
                 Gender.M,
                 3000,
                 "test",
-                licenses
+                licenses,
+                new Profile(123L,id, "test"),
+                new Post(123L, "test", id)
         );
 
         given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
@@ -146,10 +152,10 @@ public class LicenseControllerTest {
         String email = "example@example.com";
 
         SaveLicenseRequest saveLicenseRequest = new SaveLicenseRequest();
-        saveLicenseRequest.setName("CertificateName");
+        saveLicenseRequest.setCertificateName("CertificateName");
         saveLicenseRequest.setNo("123456");
 
-        LicenseResultResponse licenseResult = new LicenseResultResponse(true, saveLicenseRequest.getName(), saveLicenseRequest.getNo());
+        LicenseResultResponse licenseResult = new LicenseResultResponse(true, saveLicenseRequest.getCertificateName(), saveLicenseRequest.getNo());
 
         given(licenseOpenApiService.getLicenseVerificationResult(saveLicenseRequest)).willReturn(licenseResult);
         given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);

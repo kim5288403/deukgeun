@@ -52,7 +52,8 @@ public class LicenseController {
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> saveLicense(HttpServletRequest request, @Valid SaveLicenseRequest saveLicenseRequest, BindingResult bindingResult) throws Exception {
         LicenseResultResponse licenseResult = licenseOpenApiService.getLicenseVerificationResult(saveLicenseRequest);
-
+        licenseResult.setCertificatename(saveLicenseRequest.getCertificateName());
+        licenseResult.setNo(saveLicenseRequest.getNo());
         String authToken = authTokenApplicationService.resolveAuthToken(request);
         String email = authTokenApplicationService.getUserPk(authToken);
 

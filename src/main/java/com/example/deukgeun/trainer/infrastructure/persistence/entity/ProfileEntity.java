@@ -23,10 +23,6 @@ public class ProfileEntity extends BaseEntity {
   @Column(name = "trainer_id")
   private Long trainerId;
 
-  @OneToOne
-  @JoinColumn(name = "trainer_id", insertable = false, updatable = false, nullable = false)
-  private TrainerEntity trainer;
-
   @Column(length = 100, nullable = false)
   private String path;
 }

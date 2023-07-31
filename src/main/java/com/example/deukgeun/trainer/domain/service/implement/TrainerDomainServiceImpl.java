@@ -7,6 +7,8 @@ import com.example.deukgeun.trainer.application.dto.request.UpdatePasswordReques
 import com.example.deukgeun.trainer.application.dto.response.LicenseResultResponse;
 import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import com.example.deukgeun.trainer.domain.model.entity.License;
+import com.example.deukgeun.trainer.domain.model.entity.Post;
+import com.example.deukgeun.trainer.domain.model.entity.Profile;
 import com.example.deukgeun.trainer.domain.repository.TrainerRepository;
 import com.example.deukgeun.trainer.domain.service.TrainerDomainService;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +29,7 @@ public class TrainerDomainServiceImpl implements TrainerDomainService {
 
     @Override
     public void deleteLicenseByLicenseId(String email, Long licenseId) {
-        Trainer trainer = trainerRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+        Trainer trainer = findByEmail(email);
 
         License license = trainer.getLicenses()
                 .stream()
@@ -37,6 +38,15 @@ public class TrainerDomainServiceImpl implements TrainerDomainService {
                 .orElseThrow(() -> new EntityNotFoundException("자격증을 찾을 수 없습니다."));
 
         trainer.getLicenses().remove(license);
+
+        trainerRepository.save(trainer);
+    }
+
+    @Override
+    public void deletePost(String email) {
+        Trainer trainer = findByEmail(email);
+        Post post = trainer.getPost();
+        post.delete();
 
         trainerRepository.save(trainer);
     }
@@ -59,7 +69,7 @@ public class TrainerDomainServiceImpl implements TrainerDomainService {
     }
 
     @Override
-    public Trainer save(JoinRequest request) {
+    public Trainer save(JoinRequest request, String fileName) {
         Trainer trainer = Trainer.create(
                 request.getName(),
                 request.getEmail(),
@@ -76,6 +86,10 @@ public class TrainerDomainServiceImpl implements TrainerDomainService {
                 request.getIntroduction()
         );
 
+        Profile profile = Profile.create(trainer.getId(), fileName);
+
+        trainer.setProfile(profile);
+
         return trainerRepository.save(trainer);
     }
 
@@ -90,8 +104,7 @@ public class TrainerDomainServiceImpl implements TrainerDomainService {
 
     @Override
     public void updateInfo(UpdateInfoRequest request) {
-        Trainer trainer = trainerRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+        Trainer trainer = findByEmail(request.getEmail());
 
         trainer.updateInfo(request);
 
@@ -99,13 +112,33 @@ public class TrainerDomainServiceImpl implements TrainerDomainService {
     }
 
     @Override
+    public void updateProfile(Trainer trainer, String path) {
+        trainer.getProfile().updatePath(path);
+
+        trainerRepository.save(trainer);
+    }
+
+    @Override
     public void updatePassword(UpdatePasswordRequest request) {
         String newPassword = PasswordEncoderUtil.encode(request.getNewPassword());
-        Trainer foundTrainer = trainerRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+        Trainer foundTrainer = findByEmail(request.getEmail());
 
         foundTrainer.updatePassword(newPassword);
         trainerRepository.save(foundTrainer);
+    }
+
+    @Override
+    public Trainer uploadPost(String email, String html) {
+        Trainer trainer = findByEmail(email);
+
+        if (trainer.doesPostExist()) {
+            trainer.getPost().updateHtml(html);
+        } else {
+            Post post = Post.create(html, trainer.getId());
+            trainer.setPost(post);
+        }
+
+        return trainerRepository.save(trainer);
     }
 
 }

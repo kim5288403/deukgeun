@@ -11,11 +11,14 @@ import javax.persistence.EntityNotFoundException;
 public interface TrainerDomainService {
     void deleteById(Long id);
     void deleteLicenseByLicenseId(String email, Long licenseId);
+    void deletePost(String email);
     boolean existsByEmail(String email);
     Trainer findById(Long id) throws EntityNotFoundException;
     Trainer findByEmail(String email) throws EntityNotFoundException;
-    Trainer save(JoinRequest request);
+    Trainer save(JoinRequest request, String fileName);
     Trainer saveLicense(String email, LicenseResultResponse licenseResult);
     void updateInfo(UpdateInfoRequest request);
+    void updateProfile(Trainer trainer, String path);
     void updatePassword(UpdatePasswordRequest request);
+    Trainer uploadPost(String email, String html);
 }
