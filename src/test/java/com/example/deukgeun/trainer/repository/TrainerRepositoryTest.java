@@ -3,7 +3,6 @@ package com.example.deukgeun.trainer.repository;
 import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
 import com.example.deukgeun.trainer.infrastructure.persistence.entity.LicenseEntity;
-import com.example.deukgeun.trainer.infrastructure.persistence.entity.ProfileEntity;
 import com.example.deukgeun.trainer.infrastructure.persistence.entity.TrainerEntity;
 import com.example.deukgeun.trainer.infrastructure.persistence.repository.TrainerRepositoryImpl;
 import org.junit.jupiter.api.Test;
@@ -151,15 +150,7 @@ public class TrainerRepositoryTest {
                 .certificateName("test")
                 .build();
 
-        ProfileEntity profileEntity = ProfileEntity
-                .builder()
-                .id(12354L)
-                .trainerId(123L)
-                .path("Tests")
-                .build();
-
         trainer.getLicenseEntities().add(licenseEntity);
-//        trainer.getProfileEntity().
 
         // When
         TrainerEntity saveTrainer = trainerRepositoryImpl.save(trainer);
