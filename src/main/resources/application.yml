@@ -50,12 +50,10 @@ logging:
 
 trainer:
   post:
-    backupPath: C:\\eclipse\\deukgeun_workspace\\deukgeun\\src\\main\\resources\\static\\images\\trainer\\backup\\post
     filePath: C:\\eclipse\\deukgeun_workspace\\deukgeun\\src\\main\\resources\\static\\images\\trainer\\post
     url: http://localhost:8080/api/trainer/post/image/
   profile:
     filePath: C:\\eclipse\\deukgeun_workspace\\deukgeun\\src\\main\\resources\\static\\images\\trainer\\profile
-    backupPath: C:\\eclipse\\deukgeun_workspace\\deukgeun\\src\\main\\resources\\static\\images\\trainer\\backup\\profile
   mail:
     email: kim5288403@gmail.com
 
