@@ -47,6 +47,7 @@
 						<li>
 							<label for="sample4_postcode"></label>
 							<input type="text" id="sample4_postcode" name="postcode" placeholder="우편번호" disabled="disabled">
+							<input type="hidden" name="postcode">
 							<span class="errorMessage" id="valid_postcode"></span>
 						</li>
 						<li>
@@ -228,6 +229,7 @@
 
 							// 우편번호와 주소 정보를 해당 필드에 넣는다.
 							document.getElementById('sample4_postcode').value = data.zonecode;
+							$("input[name=postcode]").val(data.zonecode);
 							document.getElementById("sample4_roadAddress").value = roadAddr;
 							document.getElementById("sample4_jibunAddress").value = data.jibunAddress;
 
