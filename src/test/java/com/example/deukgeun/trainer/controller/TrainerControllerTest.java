@@ -12,6 +12,8 @@ import com.example.deukgeun.trainer.application.dto.request.WithdrawalUserReques
 import com.example.deukgeun.trainer.application.dto.response.TrainerResponse;
 import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
 import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
+import com.example.deukgeun.trainer.domain.model.entity.Post;
+import com.example.deukgeun.trainer.domain.model.entity.Profile;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.Group;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
@@ -27,6 +29,7 @@ import org.springframework.validation.BindingResult;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
@@ -83,6 +86,53 @@ public class TrainerControllerTest {
 
         // When
         ResponseEntity<?> responseEntity = trainerController.getInfo(request);
+
+        // Then
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(expectedResponse.getBody(), responseEntity.getBody());
+
+        verify(authTokenApplicationService, times(1)).resolveAuthToken(request);
+        verify(authTokenApplicationService, times(1)).getUserPk(authToken);
+        verify(trainerApplicationService, times(1)).findByEmail(email);
+    }
+
+    @Test
+    void givenValidAuthToken_whenGetDetail_thenReturnSuccessResponse() {
+        // Given
+        String authToken = "validAuthToken";
+        String email = "Test";
+        Trainer expectedTrainer = new Trainer(
+                123L,
+                "test",
+                email,
+                "test",
+                new Group(
+                        GroupStatus.Y,
+                        "test"
+                ),
+                new Address(
+                        "test",
+                        "test",
+                        "test",
+                        "test",
+                        "test"
+                ),
+                Gender.M,
+                3000,
+                "test",
+                mock(List.class),
+                mock(Profile.class),
+                mock(Post.class)
+        );
+        TrainerResponse.Detail response = new TrainerResponse.Detail(expectedTrainer);
+        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("마이 페이지 조회 성공했습니다.", response);
+
+        given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
+        given(authTokenApplicationService.getUserPk(authToken)).willReturn(email);
+        given(trainerApplicationService.findByEmail(email)).willReturn(expectedTrainer);
+
+        // When
+        ResponseEntity<?> responseEntity = trainerController.getDetail(request);
 
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());

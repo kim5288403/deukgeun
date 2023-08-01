@@ -2,6 +2,7 @@ package com.example.deukgeun.trainer.application.dto.response;
 
 import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
+import com.example.deukgeun.trainer.domain.model.entity.License;
 import com.example.deukgeun.trainer.domain.model.entity.Post;
 import com.example.deukgeun.trainer.domain.model.entity.Profile;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
@@ -9,6 +10,8 @@ import com.example.deukgeun.trainer.domain.model.valueobjcet.Group;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -66,6 +69,8 @@ public class TrainerResponse {
 
         private Post post;
 
+        private List<License> licenses;
+
         public Detail(Trainer trainer) {
             this.email = trainer.getEmail();
             this.name = trainer.getName();
@@ -75,6 +80,7 @@ public class TrainerResponse {
             this.group = trainer.getGroup();
             this.address = trainer.getAddress();
             this.profile = trainer.getProfile();
+            this.licenses = trainer.getLicenses();
         }
 
     }
