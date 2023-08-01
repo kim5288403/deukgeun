@@ -1,17 +1,31 @@
 	//트레이너 정보 셋팅
-	function setUserInfo(data) {
+	function setUserDetail(data) {
 				$.each(data, function(index, value) {
 					if(index === "html") {
 						$("#" + index).append(value);
-					} else if(index === "path") {
-						$("#profile").attr("src",  "/images/trainer/profile/" + value);
+
+					} else if(index === "profile") {
+						$("#profile").attr("src",  "/images/trainer/profile/" + value.path);
+
 					} else if (index === "price") {
-						$("label[id=price]").text("PT횟수 1회 당 ( " + data.price + "원 )");
+						$("label[for=price]").text("PT횟수 1회 당 ( " + value + "원 )");
+
 					} else if (index === "gender") {
 						$("#" + index).text("성별 : " + value);
-					} else if (index === "groupName") {
-						$("#" + index).text(value + " 주소");
-					} else {
+
+					} else if (index === "group") {
+						$("span[name=groupName]").text(value.groupName + " ");
+
+					} else if (index === "address") {
+					    let address = value.roadAddress
+					     + " " + value.extraAddress
+					     + " " + value.postcode;
+                     	$("input[name=address]").val(address);
+
+                    } else if (index === "licenses") {
+                        setUserLicense(value);
+
+                    } else {
 						$("input[name=" + index + "]").val(value);
 					}
 				});

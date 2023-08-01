@@ -11,6 +11,7 @@ import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import com.example.deukgeun.trainer.domain.model.entity.Post;
 import com.example.deukgeun.trainer.domain.model.entity.Profile;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
+import com.example.deukgeun.trainer.domain.model.valueobjcet.Group;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -110,14 +111,16 @@ public class PostControllerTest {
     public void givenPostService_whenGetPostById_thenReturnResponseEntityWithPostResponse() {
         // Given
         Long trainerId = 123L;
-        Post post = new Post(123L, "test", trainerId);
+        Post post = new Post(123L, "test");
         Trainer trainer = new Trainer(
                 trainerId,
                 "test",
                 "email",
                 "test",
-                GroupStatus.N,
-                "test",
+                new Group(
+                        GroupStatus.Y,
+                        "test"
+                ),
                 new Address(
                         "test",
                         "test",
@@ -141,52 +144,6 @@ public class PostControllerTest {
         ResponseEntity<?> responseEntity = postController.getPostById(trainerId);
 
         // Then
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(expectedResponse.getBody(), responseEntity.getBody());
-    }
-
-    @Test
-    public void givenTokenServiceTrainerServicePostService_whenGetPostByAuthToken_thenReturnResponseEntityWithPostResponse() {
-        // Given
-        String authToken = "exampleAuthToken";
-        Long trainerId = 123L;
-        String email = "test";
-        Post post = new Post(123L, "test", trainerId);
-        Trainer trainer = new Trainer(
-                trainerId,
-                "test",
-                "email",
-                "test",
-                GroupStatus.N,
-                "test",
-                new Address(
-                        "test",
-                        "test",
-                        "test",
-                        "test",
-                        "test"
-                ),
-                Gender.M,
-                3000,
-                "test",
-                mock(List.class),
-                mock(Profile.class),
-                post
-        );
-
-        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공 했습니다.", post);
-
-        given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
-        given(authTokenApplicationService.getUserPk(authToken)).willReturn(email);
-        given(trainerApplicationService.findByEmail(email)).willReturn(trainer);
-
-        // When
-        ResponseEntity<?> responseEntity = postController.getPostByAuthToken(request);
-
-        // Then
-        verify(authTokenApplicationService, times(1)).resolveAuthToken(request);
-        verify(authTokenApplicationService, times(1)).getUserPk(authToken);
-        verify(trainerApplicationService, times(1)).findByEmail(email);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
     }

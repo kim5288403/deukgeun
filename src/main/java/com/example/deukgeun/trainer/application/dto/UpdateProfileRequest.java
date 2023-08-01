@@ -1,4 +1,4 @@
-package com.example.deukgeun.trainer.application.dto.request;
+package com.example.deukgeun.trainer.application.dto;
 
 import com.example.deukgeun.trainer.application.dto.request.validator.ValidFileType;
 import lombok.Data;

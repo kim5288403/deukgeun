@@ -1,30 +1,24 @@
 package com.example.deukgeun.trainer.infrastructure.persistence.model.valueobject;
 
+import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 @Embeddable
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddressEntity {
-    @Column(length = 50, nullable = false)
-    private String postcode;
-
-    @Column(length = 50)
-    private String jibunAddress;
-
-    @Column(length = 50)
-    private String roadAddress;
+public class GroupVo {
+    @Column(name = "group_status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private GroupStatus groupStatus;
 
     @Column(length = 50, nullable = false)
-    private String detailAddress;
-
-    @Column(length = 50)
-    private String extraAddress;
+    private String groupName;
 }

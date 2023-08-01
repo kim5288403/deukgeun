@@ -19,9 +19,6 @@ public class ProfileEntity extends BaseEntity {
   @Id
   @Column(name = "profile_id")
   private Long id;
-  
-  @Column(name = "trainer_id")
-  private Long trainerId;
 
   @Column(length = 100, nullable = false)
   private String path;

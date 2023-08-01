@@ -2,8 +2,8 @@ package com.example.deukgeun.trainer.infrastructure.persistence.model.entity;
 
 import com.example.deukgeun.global.entity.BaseEntity;
 import com.example.deukgeun.global.enums.Gender;
-import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
-import com.example.deukgeun.trainer.infrastructure.persistence.model.valueobject.AddressEntity;
+import com.example.deukgeun.trainer.infrastructure.persistence.model.valueobject.AddressVo;
+import com.example.deukgeun.trainer.infrastructure.persistence.model.valueobject.GroupVo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,19 +37,15 @@ public class TrainerEntity extends BaseEntity implements UserDetails{
   @Column(length = 100, nullable = false)
   private String password;
 
-  @Column(name = "group_status", nullable = false)
-  @Enumerated(EnumType.STRING)
-  private GroupStatus groupStatus;
-
   @Column(name = "gender", nullable = false)
   @Enumerated(EnumType.STRING)
   private Gender gender;
 
-  @Column(length = 50, nullable = false)
-  private String groupName;
+  @Embedded
+  private GroupVo groupVo;
 
   @Embedded
-  private AddressEntity addressEntity;
+  private AddressVo addressVo;
 
   @Column(length = 50, nullable = false)
   private Integer price;
@@ -63,13 +59,16 @@ public class TrainerEntity extends BaseEntity implements UserDetails{
   private List<LicenseEntity> licenseEntities = new ArrayList<>();
 
   @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn(name = "trainer_id", insertable = false, updatable = false, nullable = false)
+  @JoinColumn(name = "profile_id", insertable = false, updatable = false, nullable = false)
   private ProfileEntity profileEntity;
 
-  @OneToOne
-  @JoinColumn(name = "trainer_id", insertable = false, updatable = false, nullable = false)
+  private Long profile_id;
+
+  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "post_id", insertable = false, updatable = false)
   private PostEntity postEntity;
 
+  private Long post_id;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {

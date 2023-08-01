@@ -2,7 +2,7 @@ package com.example.deukgeun.trainer.application.controller;
 
 import com.example.deukgeun.authToken.application.service.AuthTokenApplicationService;
 import com.example.deukgeun.global.util.RestResponseUtil;
-import com.example.deukgeun.trainer.application.dto.request.UpdateProfileRequest;
+import com.example.deukgeun.trainer.application.dto.UpdateProfileRequest;
 import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
 import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import com.example.deukgeun.trainer.domain.model.entity.Profile;

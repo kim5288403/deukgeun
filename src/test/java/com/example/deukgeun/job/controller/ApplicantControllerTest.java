@@ -10,6 +10,7 @@ import com.example.deukgeun.job.application.service.ApplicantService;
 import com.example.deukgeun.trainer.application.service.implement.TrainerApplicationServiceImpl;
 import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
+import com.example.deukgeun.trainer.domain.model.valueobjcet.Group;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -52,8 +54,10 @@ public class ApplicantControllerTest {
                 "test",
                 "test",
                 "test",
-                GroupStatus.N,
-                "test",
+                new Group(
+                        GroupStatus.N,
+                        "test"
+                ),
                 new Address(
                         "test",
                         "test",

@@ -7,7 +7,7 @@ import com.example.deukgeun.trainer.domain.model.entity.License;
 import com.example.deukgeun.trainer.domain.model.entity.Post;
 import com.example.deukgeun.trainer.domain.model.entity.Profile;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
-import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
+import com.example.deukgeun.trainer.domain.model.valueobjcet.Group;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -24,11 +24,9 @@ public class Trainer {
 
   private String password;
 
-  private GroupStatus groupStatus;
-
   private Gender gender;
 
-  private String groupName;
+  private Group group;
 
   private Address address;
 
@@ -47,8 +45,7 @@ public class Trainer {
           String name,
           String email,
           String password,
-          GroupStatus groupStatus,
-          String groupName,
+          Group group,
           Address address,
           Gender gender,
           Integer price,
@@ -61,8 +58,7 @@ public class Trainer {
     this.name = name;
     this.email = email;
     this.password = password;
-    this.groupStatus = groupStatus;
-    this.groupName = groupName;
+    this.group = group;
     this.address = address;
     this.gender = gender;
     this.price = price;
@@ -77,8 +73,7 @@ public class Trainer {
           String name,
           String email,
           String password,
-          GroupStatus groupStatus,
-          String groupName,
+          Group group,
           Address address,
           Gender gender,
           Integer price,
@@ -88,8 +83,7 @@ public class Trainer {
     this.name = name;
     this.email = email;
     this.password = password;
-    this.groupStatus = groupStatus;
-    this.groupName = groupName;
+    this.group = group;
     this.address = address;
     this.gender = gender;
     this.price = price;
@@ -100,8 +94,7 @@ public class Trainer {
           String name,
           String email,
           String password,
-          GroupStatus groupStatus,
-          String groupName,
+          Group group,
           Address address,
           Gender gender,
           Integer price,
@@ -113,8 +106,7 @@ public class Trainer {
             name,
             email,
             password,
-            groupStatus,
-            groupName,
+            group,
             address,
             gender,
             price,
@@ -123,6 +115,10 @@ public class Trainer {
   }
   public boolean doesPostExist() {
     return this.post != null;
+  }
+
+  public void deletePost() {
+      this.post = null;
   }
   public void setProfile(Profile profile) {
     this.profile = profile;
@@ -142,8 +138,10 @@ public class Trainer {
                     request.getExtraAddress()
             );
     this.price = request.getPrice();
-    this.groupStatus = request.getGroupStatus();
-    this.groupName = request.getGroupName();
+    this.group = new Group(
+            request.getGroupStatus(),
+            request.getGroupName()
+    );
     this.introduction = request.getIntroduction();
   }
   public void updatePassword(String newPassword) {

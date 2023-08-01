@@ -5,12 +5,14 @@ import com.example.deukgeun.authToken.application.service.AuthTokenApplicationSe
 import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.trainer.application.controller.ProfileController;
-import com.example.deukgeun.trainer.application.dto.request.UpdateProfileRequest;
+//import com.example.deukgeun.trainer.application.dto.UpdateProfileRequest;
+import com.example.deukgeun.trainer.application.dto.UpdateProfileRequest;
 import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
 import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import com.example.deukgeun.trainer.domain.model.entity.Post;
 import com.example.deukgeun.trainer.domain.model.entity.Profile;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
+import com.example.deukgeun.trainer.domain.model.valueobjcet.Group;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -50,8 +52,10 @@ public class ProfileControllerTest {
                 "test",
                 "test",
                 "test",
-                GroupStatus.N,
-                "test",
+                new Group(
+                        GroupStatus.Y,
+                        "test"
+                ),
                 new Address(
                         "test",
                         "test",
@@ -63,7 +67,7 @@ public class ProfileControllerTest {
                 3000,
                 "test",
                 mock(List.class),
-                new Profile(123L, trainerId, "test"),
+                new Profile(123L, "test"),
                 mock(Post.class)
         );
 
@@ -89,8 +93,10 @@ public class ProfileControllerTest {
                 "test",
                 email,
                 "test",
-                GroupStatus.N,
-                "test",
+                new Group(
+                        GroupStatus.Y,
+                        "test"
+                ),
                 new Address(
                         "test",
                         "test",
@@ -102,7 +108,7 @@ public class ProfileControllerTest {
                 3000,
                 "test",
                 mock(List.class),
-                new Profile(123L, 1L, "test"),
+                new Profile(123L, "test"),
                 mock(Post.class)
         );
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("트레이너 상세보기 성공했습니다.", trainer.getProfile());
@@ -125,27 +131,7 @@ public class ProfileControllerTest {
         UpdateProfileRequest updateRequest = mock(UpdateProfileRequest.class);
         String authToken = "validAuthToken";
         String email = "test@example.com";
-        Trainer trainer = new Trainer(
-                1L,
-                "test",
-                email,
-                "test",
-                GroupStatus.N,
-                "test",
-                new Address(
-                        "test",
-                        "test",
-                        "test",
-                        "test",
-                        "test"
-                ),
-                Gender.M,
-                3000,
-                "test",
-                mock(List.class),
-                new Profile(123L, 1L, "test"),
-                mock(Post.class)
-        );
+
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("프로필 정보 수정 성공했습니다.", null);
 
         given(authTokenApplicationService.resolveAuthToken(any(HttpServletRequest.class))).willReturn(authToken);

@@ -13,6 +13,7 @@
 		 
 
 
+
     </style>
 </th:block>
 <th:block layout:fragment="content">
@@ -41,7 +42,7 @@
                 <label for="name">이름 <span id="gender" style="color: blue;"> </span></label>
                 <input type="text" id="name" name="name" value="" disabled="disabled">
 
-                <label for="address">주소</label>
+                <label for="address"><span name="groupName"></span>주소</label>
                 <input type="text" id="address" name="address" value="" disabled="disabled">
 
                 <label for="price"></label>
@@ -136,7 +137,7 @@
                 }
 			},
 		}, function () {
-			 getPostAjax(authToken, editor);
+
 		});
  			
 			$("input[id=saveBtn]").on("click", function(){
@@ -144,26 +145,12 @@
 			    editor.save.save();
 			});
 
-			getProfileInfo(authToken);
-			getLicense(authToken);
+			getUserDetail(editor);
 		});
-		
-		function getProfileInfo(authToken){
-			$.ajax({
-				url : "/api/trainer/profile/",
-				type : "get",
-				beforeSend: function (xhr) {
-					xhr.setRequestHeader("Authorization", "Bearer " + authToken);
-			    },
-				success : function(res, status, request) {
-					setUserInfo(res.data);
-				}
-			});
-		}
 		
 		function imageDeleteAjax(src){
 			$.ajax({
-				url: "/api/trainer/post/",
+				url: "/api/trainer/post/image",
 				type: "delete",
 			    data: {
 			    	"src": src
@@ -190,36 +177,30 @@
 			    }
 			});
 		}
-		
-		function getPostAjax(authToken, editor){
+
+		function getUserDetail(editor) {
 			$.ajax({
-				url: "/api/trainer/post/",
-				type: "get",
-				beforeSend: function (xhr) {
-			    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);
-			    },
-			    success: function(res, status) {
-			        $("input[name=post_id]").val(res.data.post_id);
-			    	editor.html.set(res.data.html);
-			    },
-			    error: function(res) {
-			        let notFoundHtml = '<p class="nullPost" style="text-align: center; font-size: 16px; font-weight: 600;" >해당 게시글을 찾을 수 없습니다. 게시글을 등록해주세요.</p>';
-			        editor.html.set(notFoundHtml);
-			    }
-			});
-		}
-		
-		function getLicense(authToken){
-			$.ajax({
-				url : "/api/trainer/license/",
+				url : "/api/trainer/detail/",
 				type : "get",
 				beforeSend: function (xhr) {
 					xhr.setRequestHeader("Authorization", "Bearer " + authToken);
 			    },
 				success : function(res, status, request) {
-					setUserLicense(res.data);
+				    console.log(res);
+					setUserDetail(res.data);
+					setPost(res.data.post, editor);
 				}
 			});
+		}
+
+		function setPost (value, editor) {
+            if (value === null) {
+                let notFoundHtml = '<p class="nullPost" style="text-align: center; font-size: 16px; font-weight: 600;" >해당 게시글을 찾을 수 없습니다. 게시글을 등록해주세요.</p>';
+                editor.html.set(notFoundHtml);
+            } else {
+                $("input[name=post_id]").val(value.post_id);
+                editor.html.set(value.html);
+            }
 		}
 
     </script>

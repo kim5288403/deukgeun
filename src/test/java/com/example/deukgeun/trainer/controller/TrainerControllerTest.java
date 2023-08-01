@@ -13,6 +13,7 @@ import com.example.deukgeun.trainer.application.dto.response.TrainerResponse;
 import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
 import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
+import com.example.deukgeun.trainer.domain.model.valueobjcet.Group;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -49,7 +50,7 @@ public class TrainerControllerTest {
     private PasswordEncoder passwordEncoder;
 
     @Test
-    void givenValidAuthToken_whenGetDetail_thenReturnSuccessResponse() {
+    void givenValidAuthToken_whenGetInfo_thenReturnSuccessResponse() {
         // Given
         String authToken = "validAuthToken";
         String email = "Test";
@@ -58,8 +59,10 @@ public class TrainerControllerTest {
                 "test",
                 email,
                 "test",
-                GroupStatus.N,
-                "test",
+                new Group(
+                        GroupStatus.Y,
+                        "test"
+                ),
                 new Address(
                         "test",
                         "test",
@@ -71,7 +74,7 @@ public class TrainerControllerTest {
                 3000,
                 "test"
         );
-        TrainerResponse response = new TrainerResponse(expectedTrainer);
+        TrainerResponse.Info response = new TrainerResponse.Info(expectedTrainer);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("마이 페이지 조회 성공했습니다.", response);
 
         given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
@@ -79,7 +82,7 @@ public class TrainerControllerTest {
         given(trainerApplicationService.findByEmail(email)).willReturn(expectedTrainer);
 
         // When
-        ResponseEntity<?> responseEntity = trainerController.getDetail(request);
+        ResponseEntity<?> responseEntity = trainerController.getInfo(request);
 
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -98,8 +101,10 @@ public class TrainerControllerTest {
                 "test",
                 "test",
                 "test",
-                GroupStatus.N,
-                "test",
+                new Group(
+                        GroupStatus.Y,
+                        "test"
+                ),
                 new Address(
                         "test",
                         "test",

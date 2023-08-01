@@ -13,6 +13,7 @@ import com.example.deukgeun.trainer.domain.model.entity.License;
 import com.example.deukgeun.trainer.domain.model.entity.Post;
 import com.example.deukgeun.trainer.domain.model.entity.Profile;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
+import com.example.deukgeun.trainer.domain.model.valueobjcet.Group;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
 import com.example.deukgeun.trainer.domain.service.TrainerDomainService;
 import org.junit.jupiter.api.BeforeAll;
@@ -60,8 +61,10 @@ class TrainerApplicationServiceTest {
                 "test",
                 email,
                 "test",
-                GroupStatus.N,
-                "test",
+                new Group(
+                        GroupStatus.Y,
+                        "test"
+                ),
                 new Address(
                         "test",
                         "test",
@@ -125,7 +128,7 @@ class TrainerApplicationServiceTest {
         // When, Then
         assertDoesNotThrow(() -> {
             MultipartFileUtil.deleteFileToDirectory(src, POST_FILE_PATH);
-            });
+        });
     }
 
     @Test
@@ -166,13 +169,15 @@ class TrainerApplicationServiceTest {
     void givenExistingEmail_whenFindByEmail_thenReturnsMatchingTrainer() throws EntityNotFoundException {
         // Given
         String email = "johndoe@example.com";
-        Trainer trainer = new Trainer (
+        Trainer trainer = new Trainer(
                 123L,
                 "test",
                 "test",
                 "test",
-                GroupStatus.N,
-                "test",
+                new Group(
+                        GroupStatus.Y,
+                        "test"
+                ),
                 new Address(
                         "test",
                         "test",
@@ -233,13 +238,15 @@ class TrainerApplicationServiceTest {
         // Given
         Long id = 1L;
 
-        Trainer trainer = new Trainer (
+        Trainer trainer = new Trainer(
                 123L,
                 "test",
                 "test",
                 "test",
-                GroupStatus.N,
-                "test",
+                new Group(
+                        GroupStatus.Y,
+                        "test"
+                ),
                 new Address(
                         "test",
                         "test",
@@ -275,13 +282,15 @@ class TrainerApplicationServiceTest {
         // Given
         Long id = 1L;
         String email = "email";
-        Trainer trainer = new Trainer (
+        Trainer trainer = new Trainer(
                 123L,
                 "test",
                 email,
                 "test",
-                GroupStatus.N,
-                "test",
+                new Group(
+                        GroupStatus.Y,
+                        "test"
+                ),
                 new Address(
                         "test",
                         "test",
@@ -368,13 +377,15 @@ class TrainerApplicationServiceTest {
     void givenJoinRequest_whenSave_thenTrainerIsSavedAndReturned() throws IOException {
         // Given
         JoinRequest request = mock(JoinRequest.class);
-        Trainer savedTrainer = new Trainer (
+        Trainer savedTrainer = new Trainer(
                 123L,
                 "test",
                 "test",
                 "test",
-                GroupStatus.N,
-                "test",
+                new Group(
+                        GroupStatus.Y,
+                        "test"
+                ),
                 new Address(
                         "test",
                         "test",
@@ -409,13 +420,15 @@ class TrainerApplicationServiceTest {
         String email = "test@example.com";
         LicenseResponse.Result licenseResult = new LicenseResponse.Result();
 
-        Trainer trainer = new Trainer (
+        Trainer trainer = new Trainer(
                 123L,
                 "test",
                 "test",
                 "test",
-                GroupStatus.N,
-                "test",
+                new Group(
+                        GroupStatus.Y,
+                        "test"
+                ),
                 new Address(
                         "test",
                         "test",
@@ -469,13 +482,15 @@ class TrainerApplicationServiceTest {
         UpdateInfoRequest request = new UpdateInfoRequest();
         request.setEmail("johndoe@example.com");
 
-        Trainer trainer = new Trainer (
+        Trainer trainer = new Trainer(
                 123L,
                 "test",
                 "test",
                 "test",
-                GroupStatus.N,
-                "test",
+                new Group(
+                        GroupStatus.Y,
+                        "test"
+                ),
                 new Address(
                         "test",
                         "test",

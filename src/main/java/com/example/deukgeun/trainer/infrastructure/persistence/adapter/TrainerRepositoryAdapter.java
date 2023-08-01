@@ -5,17 +5,20 @@ import com.example.deukgeun.trainer.domain.model.entity.License;
 import com.example.deukgeun.trainer.domain.model.entity.Post;
 import com.example.deukgeun.trainer.domain.model.entity.Profile;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
+import com.example.deukgeun.trainer.domain.model.valueobjcet.Group;
 import com.example.deukgeun.trainer.domain.repository.TrainerRepository;
 import com.example.deukgeun.trainer.infrastructure.persistence.model.entity.LicenseEntity;
 import com.example.deukgeun.trainer.infrastructure.persistence.model.entity.PostEntity;
 import com.example.deukgeun.trainer.infrastructure.persistence.model.entity.ProfileEntity;
 import com.example.deukgeun.trainer.infrastructure.persistence.model.entity.TrainerEntity;
-import com.example.deukgeun.trainer.infrastructure.persistence.model.valueobject.AddressEntity;
+import com.example.deukgeun.trainer.infrastructure.persistence.model.valueobject.AddressVo;
+import com.example.deukgeun.trainer.infrastructure.persistence.model.valueobject.GroupVo;
 import com.example.deukgeun.trainer.infrastructure.persistence.repository.TrainerRepositoryImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.HtmlUtils;
 
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -67,15 +70,19 @@ public class TrainerRepositoryAdapter implements TrainerRepository {
                 .name(trainer.getName())
                 .email(trainer.getEmail())
                 .password(trainer.getPassword())
-                .groupStatus(trainer.getGroupStatus())
-                .groupName(trainer.getGroupName())
-                .addressEntity(covert(trainer.getAddress()))
+                .groupVo(new GroupVo(
+                        trainer.getGroup().getGroupStatus(),
+                        trainer.getGroup().getGroupName()
+                        ))
+                .addressVo(covert(trainer.getAddress()))
                 .gender(trainer.getGender())
                 .price(trainer.getPrice())
                 .introduction(trainer.getIntroduction())
                 .licenseEntities(trainer.getLicenses().stream().map(this::convert).collect(Collectors.toList()))
                 .profileEntity(convert(trainer.getProfile()))
+                .profile_id(trainer.getProfile().getId())
                 .postEntity(covert(trainer.getPost()))
+                .post_id(setPostId(trainer.getPost()))
                 .build();
     }
 
@@ -85,9 +92,11 @@ public class TrainerRepositoryAdapter implements TrainerRepository {
                 trainerEntity.getName(),
                 trainerEntity.getEmail(),
                 trainerEntity.getPassword(),
-                trainerEntity.getGroupStatus(),
-                trainerEntity.getGroupName(),
-                covert(trainerEntity.getAddressEntity()),
+                new Group(
+                        trainerEntity.getGroupVo().getGroupStatus(),
+                        trainerEntity.getGroupVo().getGroupName()
+                ),
+                covert(trainerEntity.getAddressVo()),
                 trainerEntity.getGender(),
                 trainerEntity.getPrice(),
                 trainerEntity.getIntroduction(),
@@ -121,7 +130,6 @@ public class TrainerRepositoryAdapter implements TrainerRepository {
         return new Profile
                 (
                         profileEntity.getId(),
-                        profileEntity.getTrainerId(),
                         profileEntity.getPath()
                 );
     }
@@ -131,37 +139,40 @@ public class TrainerRepositoryAdapter implements TrainerRepository {
                 .builder()
                 .id(profile.getId())
                 .path(profile.getPath())
-                .trainerId(profile.getTrainerId())
                 .build();
     }
 
     private Post covert(PostEntity postEntity) {
-        if (postEntity != null) {
-            return new Post
-                    (
-                            postEntity.getId(),
-                            postEntity.getHtml(),
-                            postEntity.getTrainerId()
-                    );
+        if (postEntity == null) {
+            return null;
         }
-
-        return null;
+        return new Post
+                (
+                        postEntity.getId(),
+                        HtmlUtils.htmlUnescape(postEntity.getHtml())
+                );
     }
 
     private PostEntity covert(Post post) {
-        if (post != null) {
-            return PostEntity
-                    .builder()
-                    .id(post.getId())
-                    .html(post.getHtml())
-                    .trainerId(post.getTrainerId())
-                    .build();
+        if (post == null) {
+            return null;
         }
-        return null;
+        return PostEntity
+                .builder()
+                .id(post.getId())
+                .html(post.getHtml())
+                .build();
     }
 
-    private AddressEntity covert(Address address) {
-        return new AddressEntity(
+    private Long setPostId(Post post) {
+        if (post == null) {
+            return null;
+        }
+        return post.getId();
+    }
+
+    private AddressVo covert(Address address) {
+        return new AddressVo(
                 address.getPostcode(),
                 address.getJibunAddress(),
                 address.getRoadAddress(),
@@ -170,13 +181,13 @@ public class TrainerRepositoryAdapter implements TrainerRepository {
         );
     }
 
-    private Address covert(AddressEntity addressEntity) {
+    private Address covert(AddressVo addressVo) {
         return new Address(
-                addressEntity.getPostcode(),
-                addressEntity.getJibunAddress(),
-                addressEntity.getRoadAddress(),
-                addressEntity.getDetailAddress(),
-                addressEntity.getExtraAddress()
+                addressVo.getPostcode(),
+                addressVo.getJibunAddress(),
+                addressVo.getRoadAddress(),
+                addressVo.getDetailAddress(),
+                addressVo.getExtraAddress()
         );
     }
 }

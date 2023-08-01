@@ -8,20 +8,16 @@ public class Profile {
 
     private Long id;
 
-    private Long trainerId;
-
     private String path;
 
-
-    public Profile (Long id, Long trainerId, String path) {
+    public Profile (Long id, String path) {
         this.id = id;
-        this.trainerId = trainerId;
         this.path = path;
     }
 
-    public static Profile create(Long trainerId, String path) {
+    public static Profile create(String path) {
         Long id = LongIdGeneratorUtil.gen();
-        return new Profile(id, trainerId, path);
+        return new Profile(id, path);
     }
 
     public void updatePath(String path) {

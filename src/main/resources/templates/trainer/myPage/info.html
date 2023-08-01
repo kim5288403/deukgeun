@@ -28,14 +28,14 @@
 			<div class="row gtr-uniform">
 				
 				<div class="col-6">
-					<label>이름</label>
-					<input type="text" name="name" value="" placeholder="이름">
+					<label for="name">이름</label>
+					<input type="text" id="name" name="name" value="" placeholder="이름">
 					<span class="errorMessage" id="valid_name"></span>
 				</div>
 				
 				<div class="col-6">
-					<label>이메일</label>
-					<input type="text" name="email" value="" placeholder="이메일" disabled="disabled">
+					<label for="email">이메일</label>
+					<input type="text" id="email" name="email" value="" placeholder="이메일" disabled="disabled">
 					<input type="hidden" name="email" value="" >
 					<span class="errorMessage" id="valid_email"></span>
 				</div>
@@ -45,8 +45,8 @@
 					<label>활동 주소 / 직장 주소</label>
 					<ul class="actions">
 						<li>
+							<label for="sample4_postcode"></label>
 							<input type="text" id="sample4_postcode" name="postcode" placeholder="우편번호" disabled="disabled">
-							<input type="hidden" id="sample4_postcode" name="postcode">
 							<span class="errorMessage" id="valid_postcode"></span>
 						</li>
 						<li>
@@ -56,20 +56,20 @@
 				</div>
 
 				<div class="col-6">
-					<input type="text" id="sample4_roadAddress" name="roadAddress" placeholder="도로명주소">
-					<input type="text" id="sample4_jibunAddress" name="jibunAddress" placeholder="지번주소">
+					<label for="sample4_roadAddress"></label><input type="text" id="sample4_roadAddress" name="roadAddress" placeholder="도로명주소">
+					<label for="sample4_jibunAddress"></label><input type="text" id="sample4_jibunAddress" name="jibunAddress" placeholder="지번주소">
 					<span id="guide" style="color: #999; display: none"></span>
 				</div>
 
 				<div class="col-6">
-					<input type="text" id="sample4_detailAddress" name="detailAddress" placeholder="상세주소">
-					<input type="text" id="sample4_extraAddress" name="extraAddress" placeholder="참고항목">
+					<label for="sample4_detailAddress"></label><input type="text" id="sample4_detailAddress" name="detailAddress" placeholder="상세주소">
+					<label for="sample4_extraAddress"></label><input type="text" id="sample4_extraAddress" name="extraAddress" placeholder="참고항목">
 				</div>
 
 				<!-- Break -->
 				<div class="col-6">
-					<label>PT 가격 (1회 기준)</label>
-					<input type="text" name="price" maxlength=6 oninput="checkNumber(this)" placeholder="가격">
+					<label for="price">PT 가격 (1회 기준)</label>
+					<input type="text" id="price" name="price" maxlength=6 oninput="checkNumber(this)" placeholder="가격">
 					<span class="errorMessage" id="valid_price"></span>
 				</div>
 				
@@ -106,14 +106,14 @@
 				</div>
 
 				<div class="col-6">
-					<label>소속명</label>
-					<input type="text" name="groupName" value="" placeholder="소속명">
+					<label for="groupName">소속명</label>
+					<input type="text" id="groupName" name="groupName" value="" placeholder="소속명">
 					<span class="errorMessage" id="valid_GroupName"></span>
 				</div>
 				
 				<div class="col-6">
-					<label>간단한 자기소개</label>
-					<input type="text" name="introduction" value="" placeholder="간단한 자기소개">
+					<label for="introduction">간단한 자기소개</label>
+					<input type="text" id="introduction" name="introduction" value="" placeholder="간단한 자기소개">
 					<span class="errorMessage" id="valid_introduction"></span>
 				</div>
 
@@ -133,20 +133,20 @@
 <th:block layout:fragment="script">
 	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 	<script type="text/javascript">
+		let authToken = getCookie("authToken");
 		$(document).ready(function () {
-			let authToken = getCookie("authToken");
 			$("input:disabled").css("background-color", "#eeeeee");
 			
-			getUserAjax(authToken);
+			getInfoAjax();
 			
 			$("input:radio[id=N]").on("click", function() {
 				$("input[name=groupName]").val("");
 			})
 		});
 		
-		function getUserAjax(authToken) {
+		function getInfoAjax() {
 			$.ajax({
-				url : "/api/trainer/detail",
+				url : "/api/trainer/info",
 				type : "get",
 				beforeSend: function (xhr) {
 			    	xhr.setRequestHeader("Authorization", "Bearer " + authToken);
@@ -155,8 +155,15 @@
 					$.each(res.data, function (key, value) {
 						if (key === "gender") {
 							$("input:radio[id='" + value + "']").prop("checked", true);
-						} else if (key === "groupStatus") {
-							$("input:radio[id='" + value + "']").prop("checked", true);
+						} else if (key === "address") {
+							$("input[name='detailAddress']").val(value.detailAddress);
+							$("input[name='extraAddress']").val(value.extraAddress);
+							$("input[name='jibunAddress']").val(value.jibunAddress);
+							$("input[name='postcode']").val(value.postcode);
+							$("input[name='roadAddress']").val(value.roadAddress);
+						} else if (key === "group") {
+							$("input:radio[id='" + value.groupStatus + "']").prop("checked", true);
+							$("input[name='groupName']").val(value.groupName);
 						} else {
 							$("input[name='" + key + "']").val(value);
 						}

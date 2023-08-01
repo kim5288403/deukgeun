@@ -4,7 +4,8 @@ import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
 import com.example.deukgeun.trainer.infrastructure.persistence.model.entity.LicenseEntity;
 import com.example.deukgeun.trainer.infrastructure.persistence.model.entity.TrainerEntity;
-import com.example.deukgeun.trainer.infrastructure.persistence.model.valueobject.AddressEntity;
+import com.example.deukgeun.trainer.infrastructure.persistence.model.valueobject.AddressVo;
+import com.example.deukgeun.trainer.infrastructure.persistence.model.valueobject.GroupVo;
 import com.example.deukgeun.trainer.infrastructure.persistence.repository.TrainerRepositoryImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,10 +42,14 @@ public class TrainerRepositoryTest {
                 .email(email)
                 .password("test1234!")
                 .gender(Gender.F)
-                .groupStatus(GroupStatus.Y)
-                .groupName("test")
                 .introduction("test")
-                .addressEntity(new AddressEntity(
+                .groupVo(
+                        new GroupVo(
+                                GroupStatus.Y,
+                                "test"
+                        )
+                )
+                .addressVo(new AddressVo(
                         "test",
                         "test",
                         "test",
@@ -53,6 +58,7 @@ public class TrainerRepositoryTest {
                 ))
                 .price(3000)
                 .build();
+
         TrainerEntity saveTrainer = trainerRepositoryImpl.save(trainer);
 
         // When
@@ -73,10 +79,14 @@ public class TrainerRepositoryTest {
                 .email(email)
                 .password("test1234!")
                 .gender(Gender.F)
-                .groupStatus(GroupStatus.Y)
-                .groupName("test")
                 .introduction("test")
-                .addressEntity(new AddressEntity(
+                .groupVo(
+                        new GroupVo(
+                                GroupStatus.Y,
+                                "test"
+                        )
+                )
+                .addressVo(new AddressVo(
                         "test",
                         "test",
                         "test",
@@ -105,10 +115,14 @@ public class TrainerRepositoryTest {
                 .email(email)
                 .password("test1234!")
                 .gender(Gender.F)
-                .groupStatus(GroupStatus.Y)
-                .groupName("test")
+                .groupVo(
+                        new GroupVo(
+                                GroupStatus.Y,
+                                "test"
+                        )
+                )
                 .introduction("test")
-                .addressEntity(new AddressEntity(
+                .addressVo(new AddressVo(
                         "test",
                         "test",
                         "test",
@@ -137,10 +151,14 @@ public class TrainerRepositoryTest {
                 .email("testEmail@test.com")
                 .password("test1234!")
                 .gender(Gender.F)
-                .groupStatus(GroupStatus.Y)
-                .groupName("test")
                 .introduction("test")
-                .addressEntity(new AddressEntity(
+                .groupVo(
+                        new GroupVo(
+                                GroupStatus.Y,
+                                "test"
+                        )
+                )
+                .addressVo(new AddressVo(
                         "test",
                         "test",
                         "test",

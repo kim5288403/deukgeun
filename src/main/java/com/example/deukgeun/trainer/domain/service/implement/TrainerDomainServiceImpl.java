@@ -10,6 +10,7 @@ import com.example.deukgeun.trainer.domain.model.entity.License;
 import com.example.deukgeun.trainer.domain.model.entity.Post;
 import com.example.deukgeun.trainer.domain.model.entity.Profile;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
+import com.example.deukgeun.trainer.domain.model.valueobjcet.Group;
 import com.example.deukgeun.trainer.domain.repository.TrainerRepository;
 import com.example.deukgeun.trainer.domain.service.TrainerDomainService;
 import lombok.RequiredArgsConstructor;
@@ -46,8 +47,7 @@ public class TrainerDomainServiceImpl implements TrainerDomainService {
     @Override
     public void deletePost(String email) {
         Trainer trainer = findByEmail(email);
-        Post post = trainer.getPost();
-        post.delete();
+        trainer.deletePost();
 
         trainerRepository.save(trainer);
     }
@@ -75,8 +75,10 @@ public class TrainerDomainServiceImpl implements TrainerDomainService {
                 request.getName(),
                 request.getEmail(),
                 PasswordEncoderUtil.encode(request.getPassword()),
-                request.getGroupStatus(),
-                request.getGroupName(),
+                new Group(
+                        request.getGroupStatus(),
+                        request.getGroupName()
+                ),
                 new Address(
                         request.getPostcode(),
                         request.getJibunAddress(),
@@ -89,7 +91,7 @@ public class TrainerDomainServiceImpl implements TrainerDomainService {
                 request.getIntroduction()
         );
 
-        Profile profile = Profile.create(trainer.getId(), fileName);
+        Profile profile = Profile.create(fileName);
 
         trainer.setProfile(profile);
 
@@ -110,7 +112,6 @@ public class TrainerDomainServiceImpl implements TrainerDomainService {
         Trainer trainer = findByEmail(request.getEmail());
 
         trainer.updateInfo(request);
-        System.out.println(trainer.getAddress().getDetailAddress());
 
         trainerRepository.save(trainer);
     }
@@ -134,11 +135,10 @@ public class TrainerDomainServiceImpl implements TrainerDomainService {
     @Override
     public Trainer uploadPost(String email, String html) {
         Trainer trainer = findByEmail(email);
-
         if (trainer.doesPostExist()) {
             trainer.getPost().updateHtml(html);
         } else {
-            Post post = Post.create(html, trainer.getId());
+            Post post = Post.create(html);
             trainer.setPost(post);
         }
 

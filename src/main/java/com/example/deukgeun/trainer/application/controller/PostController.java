@@ -28,7 +28,7 @@ public class PostController {
     private final TrainerApplicationService trainerApplicationService;
     private final AuthTokenApplicationServiceImpl authTokenApplicationService;
 
-    @RequestMapping(method = RequestMethod.DELETE)
+    @RequestMapping(method = RequestMethod.DELETE, path = "/")
     public ResponseEntity<?> delete(HttpServletRequest request){
         String authToken = authTokenApplicationService.resolveAuthToken(request);
         String email = authTokenApplicationService.getUserPk(authToken);
@@ -37,7 +37,7 @@ public class PostController {
         return RestResponseUtil.ok("게시글 삭제 성공했습니다.", null);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, path = "/")
+    @RequestMapping(method = RequestMethod.DELETE, path = "/image")
     public void deleteServerImage(@RequestParam("src") String src) throws IOException {
         trainerApplicationService.deleteImageToServer(src);
     }
@@ -54,17 +54,6 @@ public class PostController {
     @RequestMapping(method = RequestMethod.GET, path = "/{id}")
     public ResponseEntity<?> getPostById(@PathVariable("id") Long id) {
         Trainer trainer = trainerApplicationService.findById(id);
-        Post post = trainer.getPost();
-
-        return RestResponseUtil
-                .ok("조회 성공 했습니다.", post);
-    }
-
-    @RequestMapping(method = RequestMethod.GET, path = "/")
-    public ResponseEntity<?> getPostByAuthToken(HttpServletRequest request) {
-        String authToken = authTokenApplicationService.resolveAuthToken(request);
-        String email = authTokenApplicationService.getUserPk(authToken);
-        Trainer trainer = trainerApplicationService.findByEmail(email);
         Post post = trainer.getPost();
 
         return RestResponseUtil

@@ -10,6 +10,7 @@ import com.example.deukgeun.trainer.domain.model.entity.License;
 import com.example.deukgeun.trainer.domain.model.entity.Post;
 import com.example.deukgeun.trainer.domain.model.entity.Profile;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
+import com.example.deukgeun.trainer.domain.model.valueobjcet.Group;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
 import com.example.deukgeun.trainer.domain.repository.TrainerRepository;
 import com.example.deukgeun.trainer.domain.service.implement.TrainerDomainServiceImpl;
@@ -27,6 +28,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
+
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 class TrainerDomainServiceTest {
@@ -59,15 +61,17 @@ class TrainerDomainServiceTest {
                 "test",
                 email,
                 "test",
-                GroupStatus.N,
-                "test",
+                new Group(
+                        GroupStatus.Y,
+                        "test"
+                ),
                 new Address(
                         "test",
                         "test",
                         "test",
                         "test",
                         "test"
-                        ),
+                ),
                 Gender.M,
                 3000,
                 "test"
@@ -91,14 +95,16 @@ class TrainerDomainServiceTest {
         // Given (주어진 상황)
         String email = "test@example.com";
         Long id = 123L;
-        Post post = new Post(123L, "Test", id);
+        Post post = new Post(123L, "Test");
         Trainer trainer = new Trainer(
                 id,
                 "test",
                 email,
                 "test",
-                GroupStatus.N,
-                "test",
+                new Group(
+                        GroupStatus.Y,
+                        "test"
+                ),
                 new Address(
                         "test",
                         "test",
@@ -160,13 +166,15 @@ class TrainerDomainServiceTest {
     void givenExistingEmail_whenFindByEmail_thenReturnsMatchingTrainer() throws EntityNotFoundException {
         // Given
         String email = "johndoe@example.com";
-        Trainer trainer = new Trainer (
+        Trainer trainer = new Trainer(
                 123L,
                 "test",
                 "test",
                 "test",
-                GroupStatus.N,
-                "test",
+                new Group(
+                        GroupStatus.Y,
+                        "test"
+                ),
                 new Address(
                         "test",
                         "test",
@@ -223,13 +231,15 @@ class TrainerDomainServiceTest {
         request.setPrice(3000);
         request.setIntroduction("test");
 
-        Trainer savedTrainer = new Trainer (
+        Trainer savedTrainer = new Trainer(
                 123L,
                 "test",
                 "test",
                 "test",
-                GroupStatus.N,
-                "test",
+                new Group(
+                        GroupStatus.Y,
+                        "test"
+                ),
                 new Address(
                         "test",
                         "test",
@@ -261,15 +271,17 @@ class TrainerDomainServiceTest {
     public void givenTrainerWithEmailAndLicenseResult_whenSaveLicense_thenLicenseShouldBeAddedToTrainer() {
         // Given
         String email = "example@example.com";
-        LicenseResponse.Result licenseResult = new LicenseResponse.Result(true,"CertificateName", "123456");
+        LicenseResponse.Result licenseResult = new LicenseResponse.Result(true, "CertificateName", "123456");
 
-        Trainer trainer = new Trainer (
+        Trainer trainer = new Trainer(
                 123L,
                 "test",
                 email,
                 "test",
-                GroupStatus.N,
-                "test",
+                new Group(
+                        GroupStatus.Y,
+                        "test"
+                ),
                 new Address(
                         "test",
                         "test",
@@ -297,13 +309,15 @@ class TrainerDomainServiceTest {
         UpdateInfoRequest request = new UpdateInfoRequest();
         request.setEmail("johndoe@example.com");
 
-        Trainer trainer = new Trainer (
+        Trainer trainer = new Trainer(
                 123L,
                 "test",
                 "test",
                 "test",
-                GroupStatus.N,
-                "test",
+                new Group(
+                        GroupStatus.Y,
+                        "test"
+                ),
                 new Address(
                         "test",
                         "test",
@@ -330,13 +344,15 @@ class TrainerDomainServiceTest {
     public void givenTrainerAndNewPath_whenUpdateProfile_thenProfilePathUpdated() {
         // given
         String newPath = "/path/to/new/profile.jpg";
-        Trainer trainer = new Trainer (
+        Trainer trainer = new Trainer(
                 123L,
                 "test",
                 "test",
                 "test",
-                GroupStatus.N,
-                "test",
+                new Group(
+                        GroupStatus.Y,
+                        "test"
+                ),
                 new Address(
                         "test",
                         "test",
@@ -348,7 +364,7 @@ class TrainerDomainServiceTest {
                 3000,
                 "test",
                 mock(List.class),
-                new Profile(1234L, 123L, "test"),
+                new Profile(1234L,  "test"),
                 mock(Post.class)
         );
 
@@ -369,13 +385,15 @@ class TrainerDomainServiceTest {
         request.setEmail("johndoe@example.com");
         request.setNewPassword("newPassword123");
 
-        Trainer trainer = new Trainer (
+        Trainer trainer = new Trainer(
                 123L,
                 "test",
                 "test",
                 "test",
-                GroupStatus.N,
-                "test",
+                new Group(
+                        GroupStatus.Y,
+                        "test"
+                ),
                 new Address(
                         "test",
                         "test",
@@ -403,13 +421,15 @@ class TrainerDomainServiceTest {
         // Given
         String email = "test@example.com";
         String html = "<p>Hello, this is a test post!</p>";
-        Trainer trainer = new Trainer (
+        Trainer trainer = new Trainer(
                 123L,
                 "test",
                 email,
                 "test",
-                GroupStatus.N,
-                "test",
+                new Group(
+                        GroupStatus.Y,
+                        "test"
+                ),
                 new Address(
                         "test",
                         "test",

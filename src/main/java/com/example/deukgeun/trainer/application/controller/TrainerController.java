@@ -31,6 +31,19 @@ public class TrainerController {
     private final TrainerApplicationService trainerApplicationService;
     private final AuthTokenApplicationService authTokenApplicationService;
 
+    @RequestMapping(method = RequestMethod.GET, path = "/info")
+    public ResponseEntity<?> getInfo(HttpServletRequest request) {
+        // 인증 토큰에서 사용자의 인증 정보를 추출
+        String authToken = authTokenApplicationService.resolveAuthToken(request);
+        String email = authTokenApplicationService.getUserPk(authToken);
+        Trainer trainer = trainerApplicationService.findByEmail(email);
+
+        // 사용자 정보를 응답 객체로 변환
+        TrainerResponse.Info response = new TrainerResponse.Info(trainer);
+
+        return RestResponseUtil.ok("마이 페이지 조회 성공했습니다.", response);
+    }
+
     @RequestMapping(method = RequestMethod.GET, path = "/detail")
     public ResponseEntity<?> getDetail(HttpServletRequest request) {
         // 인증 토큰에서 사용자의 인증 정보를 추출
@@ -38,10 +51,8 @@ public class TrainerController {
         String email = authTokenApplicationService.getUserPk(authToken);
         Trainer trainer = trainerApplicationService.findByEmail(email);
 
-        // 사용자 정보를 응답 객체로 변환
-        TrainerResponse response = new TrainerResponse(trainer);
 
-        return RestResponseUtil.ok("마이 페이지 조회 성공했습니다.", response);
+        return RestResponseUtil.ok("마이 페이지 조회 성공했습니다.", trainer);
     }
 
     @Transactional

@@ -9,25 +9,18 @@ import java.time.LocalDateTime;
 public class Post {
     private Long id;
 
-    private Long trainerId;
-
     private String html;
 
     private LocalDateTime deleteDate;
 
-    public Post(Long id, String html, Long trainerId) {
+    public Post(Long id, String html) {
         this.id = id;
         this.html = html;
-        this.trainerId = trainerId;
     }
 
-    public static Post create(String html, Long trainerId) {
+    public static Post create(String html) {
         Long id = LongIdGeneratorUtil.gen();
-        return new Post(id, html, trainerId);
-    }
-
-    public void delete() {
-        this.deleteDate = LocalDateTime.now();
+        return new Post(id, html);
     }
 
     public void updateHtml(String html) {
