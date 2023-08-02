@@ -1,7 +1,7 @@
 package com.example.deukgeun.authToken.repository;
 
 import com.example.deukgeun.authToken.infrastructure.persistence.entity.AuthTokenEntity;
-import com.example.deukgeun.authToken.infrastructure.persistence.repository.AuthTokenRepositoryImpl;
+import com.example.deukgeun.authToken.infrastructure.persistence.repository.AuthTokenJpaRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class AuthTokenRepositoryTest {
     @Autowired
-    private AuthTokenRepositoryImpl authTokenRepository;
+    private AuthTokenJpaRepository authTokenRepository;
 
     @Test
     void shouldNotNullRepository() {

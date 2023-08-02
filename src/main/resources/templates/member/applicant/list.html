@@ -89,6 +89,7 @@
 					xhr.setRequestHeader("Authorization","Bearer " + authToken);
 				},
 				success : function(res) {
+					console.log(res);
 					setList(res.data.content);
 					setPage(res.data.currentPage, res.data.totalPages);
 				}
@@ -171,7 +172,7 @@
 		function kakaoPay(data){
 			var IMP = window.IMP;
 			IMP.init('imp53640605');
-
+			console.log(data);
 			IMP.request_pay({
 				pg : 'kakaopay.CID',
 				pay_method : 'card',

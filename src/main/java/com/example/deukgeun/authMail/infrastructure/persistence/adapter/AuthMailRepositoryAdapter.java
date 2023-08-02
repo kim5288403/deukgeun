@@ -3,7 +3,7 @@ package com.example.deukgeun.authMail.infrastructure.persistence.adapter;
 import com.example.deukgeun.authMail.domain.model.entity.AuthMail;
 import com.example.deukgeun.authMail.domain.repository.AuthMailRepository;
 import com.example.deukgeun.authMail.infrastructure.persistence.entity.AuthMailEntity;
-import com.example.deukgeun.authMail.infrastructure.persistence.repository.AuthMailRepositoryImpl;
+import com.example.deukgeun.authMail.infrastructure.persistence.repository.AuthMailJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +12,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Component
 public class AuthMailRepositoryAdapter implements AuthMailRepository {
-    private final AuthMailRepositoryImpl authMailRepository;
+    private final AuthMailJpaRepository authMailRepository;
 
     @Override
     public boolean existsByEmailAndCode(String email, String code) {

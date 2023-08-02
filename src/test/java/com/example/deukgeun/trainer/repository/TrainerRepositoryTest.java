@@ -6,7 +6,7 @@ import com.example.deukgeun.trainer.infrastructure.persistence.model.entity.Lice
 import com.example.deukgeun.trainer.infrastructure.persistence.model.entity.TrainerEntity;
 import com.example.deukgeun.trainer.infrastructure.persistence.model.valueobject.AddressVo;
 import com.example.deukgeun.trainer.infrastructure.persistence.model.valueobject.GroupVo;
-import com.example.deukgeun.trainer.infrastructure.persistence.repository.TrainerRepositoryImpl;
+import com.example.deukgeun.trainer.infrastructure.persistence.repository.TrainerJpaRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -25,11 +25,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class TrainerRepositoryTest {
     @Autowired
-    private TrainerRepositoryImpl trainerRepositoryImpl;
+    private TrainerJpaRepository trainerJpaRepository;
 
     @Test
     void shouldNotNullRepository() {
-        assertNotNull(trainerRepositoryImpl);
+        assertNotNull(trainerJpaRepository);
     }
 
     @Test
@@ -59,11 +59,11 @@ public class TrainerRepositoryTest {
                 .price(3000)
                 .build();
 
-        TrainerEntity saveTrainer = trainerRepositoryImpl.save(trainer);
+        TrainerEntity saveTrainer = trainerJpaRepository.save(trainer);
 
         // When
-        trainerRepositoryImpl.deleteById(saveTrainer.getId());
-        TrainerEntity result = trainerRepositoryImpl.findById(saveTrainer.getId()).orElse(null);
+        trainerJpaRepository.deleteById(saveTrainer.getId());
+        TrainerEntity result = trainerJpaRepository.findById(saveTrainer.getId()).orElse(null);
 
         // Then
         assertNull(result);
@@ -95,10 +95,10 @@ public class TrainerRepositoryTest {
                 ))
                 .price(3000)
                 .build();
-        trainerRepositoryImpl.save(trainer);
+        trainerJpaRepository.save(trainer);
 
         // When
-        boolean existsByEmail = trainerRepositoryImpl.existsByEmail(email);
+        boolean existsByEmail = trainerJpaRepository.existsByEmail(email);
 
         // Then
         assertTrue(existsByEmail);
@@ -131,10 +131,10 @@ public class TrainerRepositoryTest {
                 ))
                 .price(3000)
                 .build();
-        trainerRepositoryImpl.save(trainer);
+        trainerJpaRepository.save(trainer);
 
         // When
-        Optional<TrainerEntity> foundTrainer = trainerRepositoryImpl.findByEmail(email);
+        Optional<TrainerEntity> foundTrainer = trainerJpaRepository.findByEmail(email);
 
         // Then
         assertTrue(foundTrainer.isPresent());
@@ -180,10 +180,10 @@ public class TrainerRepositoryTest {
         trainer.getLicenseEntities().add(licenseEntity);
 
         // When
-        TrainerEntity saveTrainer = trainerRepositoryImpl.save(trainer);
+        TrainerEntity saveTrainer = trainerJpaRepository.save(trainer);
 
         // Then
-        TrainerEntity foundTrainer = trainerRepositoryImpl.findById(saveTrainer.getId()).orElse(null);
+        TrainerEntity foundTrainer = trainerJpaRepository.findById(saveTrainer.getId()).orElse(null);
         assertNotNull(foundTrainer);
         assertEquals(saveTrainer.getEmail(), foundTrainer.getEmail());
         assertEquals(saveTrainer.getName(), foundTrainer.getName());

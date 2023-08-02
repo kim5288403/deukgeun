@@ -3,7 +3,7 @@ package com.example.deukgeun.authToken.infrastructure.persistence.adapter;
 import com.example.deukgeun.authToken.domain.model.entity.AuthToken;
 import com.example.deukgeun.authToken.domain.repository.AuthTokenRepository;
 import com.example.deukgeun.authToken.infrastructure.persistence.entity.AuthTokenEntity;
-import com.example.deukgeun.authToken.infrastructure.persistence.repository.AuthTokenRepositoryImpl;
+import com.example.deukgeun.authToken.infrastructure.persistence.repository.AuthTokenJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +12,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Component
 public class AuthTokenRepositoryAdapter implements AuthTokenRepository {
-    private final AuthTokenRepositoryImpl authTokenRepository;
+    private final AuthTokenJpaRepository authTokenRepository;
 
     @Override
     public void deleteByAuthToken(String authToken) {

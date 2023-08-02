@@ -13,7 +13,7 @@ import com.example.deukgeun.trainer.infrastructure.persistence.model.entity.Prof
 import com.example.deukgeun.trainer.infrastructure.persistence.model.entity.TrainerEntity;
 import com.example.deukgeun.trainer.infrastructure.persistence.model.valueobject.AddressVo;
 import com.example.deukgeun.trainer.infrastructure.persistence.model.valueobject.GroupVo;
-import com.example.deukgeun.trainer.infrastructure.persistence.repository.TrainerRepositoryImpl;
+import com.example.deukgeun.trainer.infrastructure.persistence.repository.TrainerJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TrainerRepositoryAdapter implements TrainerRepository {
 
-    private final TrainerRepositoryImpl trainerRepository;
+    private final TrainerJpaRepository trainerRepository;
 
     @Override
     public void deleteById(Long id) {
@@ -80,9 +80,9 @@ public class TrainerRepositoryAdapter implements TrainerRepository {
                 .introduction(trainer.getIntroduction())
                 .licenseEntities(trainer.getLicenses().stream().map(this::convert).collect(Collectors.toList()))
                 .profileEntity(convert(trainer.getProfile()))
-                .profile_id(trainer.getProfile().getId())
+                .profileId(trainer.getProfile().getId())
                 .postEntity(covert(trainer.getPost()))
-                .post_id(setPostId(trainer.getPost()))
+                .postId(setPostId(trainer.getPost()))
                 .build();
     }
 

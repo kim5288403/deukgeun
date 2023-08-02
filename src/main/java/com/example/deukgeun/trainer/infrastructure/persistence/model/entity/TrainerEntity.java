@@ -59,16 +59,16 @@ public class TrainerEntity extends BaseEntity implements UserDetails{
   private List<LicenseEntity> licenseEntities = new ArrayList<>();
 
   @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn(name = "profile_id", insertable = false, updatable = false, nullable = false)
+  @JoinColumn(name = "profileId", insertable = false, updatable = false, nullable = false)
   private ProfileEntity profileEntity;
 
-  private Long profile_id;
+  private Long profileId;
 
   @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn(name = "post_id", insertable = false, updatable = false)
+  @JoinColumn(name = "postId", insertable = false, updatable = false)
   private PostEntity postEntity;
 
-  private Long post_id;
+  private Long postId;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {

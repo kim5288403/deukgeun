@@ -3,7 +3,7 @@ package com.example.deukgeun.member.infrastructure.persistence.adapter;
 import com.example.deukgeun.member.domain.entity.Member;
 import com.example.deukgeun.member.domain.repository.MemberRepository;
 import com.example.deukgeun.member.infrastructure.persistence.entity.MemberEntity;
-import com.example.deukgeun.member.infrastructure.persistence.repository.MemberRepositoryImpl;
+import com.example.deukgeun.member.infrastructure.persistence.repository.MemberJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class MemberRepositoryAdapter implements MemberRepository {
-    private final MemberRepositoryImpl memberRepository;
+    private final MemberJpaRepository memberRepository;
 
     @Override
     public List<Member> findAll() {

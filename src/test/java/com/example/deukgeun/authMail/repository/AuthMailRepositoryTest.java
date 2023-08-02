@@ -2,7 +2,7 @@ package com.example.deukgeun.authMail.repository;
 
 import com.example.deukgeun.authMail.domain.model.valueobject.MailStatus;
 import com.example.deukgeun.authMail.infrastructure.persistence.entity.AuthMailEntity;
-import com.example.deukgeun.authMail.infrastructure.persistence.repository.AuthMailRepositoryImpl;
+import com.example.deukgeun.authMail.infrastructure.persistence.repository.AuthMailJpaRepository;
 import com.example.deukgeun.global.util.LongIdGeneratorUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class AuthMailRepositoryTest {
     @Autowired
-    private AuthMailRepositoryImpl authMailRepository;
+    private AuthMailJpaRepository authMailRepository;
 
     @Test
     void shouldNotNullRepository() {

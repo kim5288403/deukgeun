@@ -4,7 +4,7 @@ import com.example.deukgeun.job.application.dto.response.JobPostingResponse;
 import com.example.deukgeun.job.domain.entity.JobPosting;
 import com.example.deukgeun.job.domain.repository.JobPostingRepository;
 import com.example.deukgeun.member.infrastructure.persistence.entity.MemberEntity;
-import com.example.deukgeun.member.infrastructure.persistence.repository.MemberRepositoryImpl;
+import com.example.deukgeun.member.infrastructure.persistence.repository.MemberJpaRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -28,7 +28,7 @@ public class JobPostingRepositoryTest {
     @Autowired
     private JobPostingRepository jobPostingRepository;
     @Autowired
-    private MemberRepositoryImpl memberRepository;
+    private MemberJpaRepository memberRepository;
 
     @Test
     void shouldNotNullRepository() {

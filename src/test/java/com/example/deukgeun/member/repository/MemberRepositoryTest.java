@@ -2,7 +2,7 @@ package com.example.deukgeun.member.repository;
 
 import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.member.infrastructure.persistence.entity.MemberEntity;
-import com.example.deukgeun.member.infrastructure.persistence.repository.MemberRepositoryImpl;
+import com.example.deukgeun.member.infrastructure.persistence.repository.MemberJpaRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class MemberRepositoryTest {
     @Autowired
-    private MemberRepositoryImpl memberRepository;
+    private MemberJpaRepository memberRepository;
 
     @Test
     void shouldNotNullRepository() {
