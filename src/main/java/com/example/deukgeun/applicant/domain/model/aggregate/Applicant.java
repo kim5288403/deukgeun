@@ -1,6 +1,7 @@
 package com.example.deukgeun.applicant.domain.model.aggregate;
 
 import com.example.deukgeun.applicant.domain.model.entity.MatchInfo;
+import com.example.deukgeun.applicant.domain.model.entity.PaymentInfo;
 import com.example.deukgeun.global.util.LongIdGeneratorUtil;
 import com.example.deukgeun.job.domain.entity.JobPosting;
 import lombok.Getter;
@@ -11,7 +12,9 @@ public class Applicant {
 
     private Long jobPostingId;
 
-    private Long matchInfoId;
+    private Long matchInfoId = null;
+
+    private Long paymentInfoId = null;
 
     private Long trainerId;
 
@@ -21,26 +24,32 @@ public class Applicant {
 
     private JobPosting jobPosting;
 
-    private MatchInfo matchInfo;
+    private MatchInfo matchInfo = null;
+
+    private PaymentInfo paymentInfo = null;
 
     public Applicant(
             Long id,
             Long jobPostingId,
             Long matchInfoId,
+            Long paymentInfoId,
             Long trainerId,
             Integer supportAmount,
             Integer isSelected,
             JobPosting jobPosting,
-            MatchInfo matchInfo
+            MatchInfo matchInfo,
+            PaymentInfo paymentInfo
     ) {
         this.id = id;
         this.jobPostingId = jobPostingId;
         this.matchInfoId = matchInfoId;
+        this.paymentInfoId = paymentInfoId;
         this.trainerId = trainerId;
         this.supportAmount = supportAmount;
         this.isSelected = isSelected;
         this.jobPosting = jobPosting;
         this.matchInfo = matchInfo;
+        this.paymentInfo = paymentInfo;
     }
 
     public Applicant(
@@ -68,10 +77,21 @@ public class Applicant {
     }
     public void deleteMatchInfo() {
         this.matchInfo = null;
+        this.matchInfoId = null;
     }
+
+    public void deletePaymentInfo() {
+        this.paymentInfo.delete();
+        this.paymentInfoId = null;
+    }
+
     public void setMatchInfo(MatchInfo matchInfo) {
-        this.matchInfoId = matchInfo.getId();
         this.matchInfo = matchInfo;
+        this.matchInfoId = matchInfo.getId();
+    }
+    public void setPaymentInfo(PaymentInfo paymentInfo) {
+        this.paymentInfo = paymentInfo;
+        this.paymentInfoId = paymentInfo.getId();
     }
 
     public void updateIsSelect(int isSelected) {
