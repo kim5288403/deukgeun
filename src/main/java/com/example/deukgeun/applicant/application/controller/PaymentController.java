@@ -1,13 +1,13 @@
 package com.example.deukgeun.applicant.application.controller;
 
-import com.example.deukgeun.applicant.domain.model.entity.PaymentInfo;
-import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.applicant.application.dto.request.CancelRequest;
 import com.example.deukgeun.applicant.application.dto.request.PaymentInfoRequest;
 import com.example.deukgeun.applicant.application.dto.response.IamPortCancelResponse;
-import com.example.deukgeun.applicant.domain.service.IamPortService;
-import com.example.deukgeun.applicant.domain.service.PaymentCancelInfoService;
-import com.example.deukgeun.applicant.domain.service.PaymentInfoService;
+import com.example.deukgeun.applicant.application.service.ApplicantApplicationService;
+import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
+import com.example.deukgeun.applicant.domain.model.entity.PaymentInfo;
+import com.example.deukgeun.applicant.infrastructure.persistence.api.IamPortApiService;
+import com.example.deukgeun.global.util.RestResponseUtil;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.response.IamportResponse;
@@ -30,63 +30,54 @@ import java.io.IOException;
 public class PaymentController {
     private final IamportClient iamportClient;
     @Autowired
-    private final PaymentInfoService paymentInfoService;
+    private final ApplicantApplicationService applicantApplicationService;
     @Autowired
-    private final PaymentCancelInfoService paymentCancelInfoService;
-    @Autowired
-    private final IamPortService iamPortService;
+    private final IamPortApiService iamPortApiService;
     private final String iamPortApiKey;
     private final String iamPortApiSecret;
 
-    public PaymentController(PaymentInfoService paymentInfoService, PaymentCancelInfoService paymentCancelInfoService, IamPortService iamPortService, @Value("${iamPort.api.key}") String apiKey , @Value("${iamPort.api.secret}") String secretKey) {
-        this.paymentInfoService = paymentInfoService;
-        this.paymentCancelInfoService = paymentCancelInfoService;
-        this.iamPortService = iamPortService;
+    public PaymentController(ApplicantApplicationService applicantApplicationService, IamPortApiService iamPortApiService, @Value("${iamPort.api.key}") String apiKey , @Value("${iamPort.api.secret}") String secretKey) {
+        this.applicantApplicationService = applicantApplicationService;
+        this.iamPortApiService = iamPortApiService;
         this.iamPortApiKey = apiKey;
         this.iamPortApiSecret = secretKey;
 
         iamportClient = new IamportClient(iamPortApiKey, iamPortApiSecret);
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "/{imp_uid}")
-    public IamportResponse<Payment> payment(HttpSession session, @PathVariable(value= "imp_uid") String imp_uid)
-            throws IamportResponseException, IOException {
-        System.out.println(imp_uid);
-        return iamportClient.paymentByImpUid(imp_uid);
-    }
+    @RequestMapping(method = RequestMethod.POST, path = "/cancel")
+    public ResponseEntity<?> cancel(@Valid CancelRequest request, BindingResult bindingResult) throws Exception {
+        IamPortCancelResponse response = iamPortApiService.cancelIamPort(request);
+        applicantApplicationService.cancel(request.getId(), response);
 
-    @RequestMapping(method = RequestMethod.POST, path = "/")
-    public ResponseEntity<?> save(@Valid PaymentInfoRequest request, BindingResult bindingResult) {
-        paymentInfoService.save(request);
-
-        return RestResponseUtil.ok("저장 성공했습니다.", null);
+        return RestResponseUtil.ok("결제 취소 성공했습니다.", response.getResponse());
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/token")
     public ResponseEntity<?> getIamPortAuthToken() {
-        String authToken = iamPortService.getIamPortAuthToken(this.iamPortApiKey, this.iamPortApiSecret);
+        String authToken = iamPortApiService.getIamPortAuthToken(this.iamPortApiKey, this.iamPortApiSecret);
 
         return RestResponseUtil.ok("조회 성공했습니다.", authToken);
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/{applicantId}")
     public ResponseEntity<?> getPaymentInfo(@PathVariable(value= "applicantId") Long applicantId) {
-        PaymentInfo paymentInfo = paymentInfoService.getPaymentInfoByApplicantId(applicantId);
+        Applicant applicant = applicantApplicationService.findById(applicantId);
+        PaymentInfo paymentInfo = applicant.getPaymentInfo();
 
         return RestResponseUtil.ok("조회 성공했습니다.", paymentInfo);
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "/cancel")
-    public ResponseEntity<?> cancel(@Valid CancelRequest request, BindingResult bindingResult) throws Exception {
-        IamPortCancelResponse response = iamPortService.cancelIamPort(request);
-        iamPortService.checkCancelResponseCode(response);
-        paymentInfoService.deleteByImpUid(request.getImpUid());
-        paymentCancelInfoService.save(response);
-
-        return RestResponseUtil.ok("결제 취소 성공했습니다.", response.getResponse());
+    @RequestMapping(method = RequestMethod.POST, path = "/{imp_uid}")
+    public IamportResponse<Payment> payment(HttpSession session, @PathVariable(value= "imp_uid") String imp_uid)
+            throws IamportResponseException, IOException {
+        return iamportClient.paymentByImpUid(imp_uid);
     }
 
+    @RequestMapping(method = RequestMethod.POST, path = "/")
+    public ResponseEntity<?> payment(@Valid PaymentInfoRequest request, BindingResult bindingResult) {
+        applicantApplicationService.payment(request);
 
-
-
+        return RestResponseUtil.ok("저장 성공했습니다.", null);
+    }
 }

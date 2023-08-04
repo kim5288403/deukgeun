@@ -15,4 +15,7 @@ public class CancelRequest {
 
     @NotBlank(message = "인증 토큰은 필수 입력 값입니다.")
     private String accessToken;
+
+    @NotNull(message = "취소 아이디 필수 입력 값입니다.")
+    private Long id;
 }

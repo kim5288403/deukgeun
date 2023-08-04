@@ -21,7 +21,7 @@ public class MatchController {
     private final JobPostingService jobPostingService;
 
     @RequestMapping(method = RequestMethod.DELETE, path = "/")
-    public ResponseEntity<?> cancel(@RequestParam @NotBlank(message = "applicantId is required")Long id) {
+    public ResponseEntity<?> cancel(@RequestParam @NotBlank(message = "id is required")Long id) {
         applicantApplicationService.deleteMatchInfoById(id);
         applicantApplicationService.updateIsSelectedById(id, 0);
 
@@ -36,7 +36,7 @@ public class MatchController {
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/")
-    public ResponseEntity<?> select(@Valid SaveMatchInfoRequest saveMatchInfoRequest, BindingResult bindingResult) {
+    public ResponseEntity<?> matching(@Valid SaveMatchInfoRequest saveMatchInfoRequest, BindingResult bindingResult) {
         applicantApplicationService.matching(saveMatchInfoRequest);
         applicantApplicationService.updateIsSelectedById(saveMatchInfoRequest.getApplicantId(), 1);
         jobPostingService.updateIsActiveByJobPostingId(2, saveMatchInfoRequest.getJobPostingId());

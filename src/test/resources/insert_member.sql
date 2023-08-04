@@ -6,8 +6,7 @@ age,
 email,
 gender,
 name,
-password,
-delete_date
+password
 )
 values
 (
@@ -18,6 +17,5 @@ null,
 'test',
 'M',
 'test',
-'test',
-null
+'test'
  );

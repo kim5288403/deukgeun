@@ -89,7 +89,6 @@
 					xhr.setRequestHeader("Authorization","Bearer " + authToken);
 				},
 				success : function(res) {
-					console.log(res);
 					setList(res.data.content);
 					setPage(res.data.currentPage, res.data.totalPages);
 				}
@@ -225,18 +224,19 @@
 					},
 					success : function(res) {
 						if (res.code === 200) {
-							selectAjax();
+							matchingAjax();
 						}
 					},
 					error : function(res) {
 						if (res.responseJSON.code === 400) {
 							defaultErrorAlert(res.responseJSON.message, "실패");
+							getIamPortTokenAjax(data);
 						}
 					}
 			});
 		}
 
-		function selectAjax() {
+		function matchingAjax() {
 			$.ajax({
 				url : "/api/match/",
 				method : "post",
@@ -254,6 +254,8 @@
 				error : function(res) {
 					if (res.responseJSON.code === 400) {
 						defaultErrorAlert(res.responseJSON.message, "실패");
+						cancelApplicantId = selectApplicantId;
+						getPaymentInfoAjax();
 					}
 				}
 			});
@@ -312,6 +314,7 @@
 					impUid : paymentInfo.impUid,
 					accessToken  : accessToken,
 					amount   : paymentInfo.amount,
+					id   : cancelApplicantId
 				},
 				success : function(res) {
 					if (res.code === 200) {
@@ -331,7 +334,7 @@
 				url : "/api/match/",
 				method : "delete",
 				data : {
-					"applicantId" : cancelApplicantId,
+					"id" : cancelApplicantId,
 				},
 				success : function(res) {
 					if (res.code === 200) {

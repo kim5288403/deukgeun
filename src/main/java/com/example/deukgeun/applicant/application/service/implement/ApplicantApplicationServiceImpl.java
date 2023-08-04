@@ -1,11 +1,13 @@
 package com.example.deukgeun.applicant.application.service.implement;
 
+import com.example.deukgeun.applicant.application.dto.request.PaymentInfoRequest;
 import com.example.deukgeun.applicant.application.dto.request.SaveApplicantRequest;
+import com.example.deukgeun.applicant.application.dto.request.SaveMatchInfoRequest;
 import com.example.deukgeun.applicant.application.dto.response.ApplicantResponse;
+import com.example.deukgeun.applicant.application.dto.response.IamPortCancelResponse;
 import com.example.deukgeun.applicant.application.service.ApplicantApplicationService;
 import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
 import com.example.deukgeun.applicant.domain.service.ApplicantDomainService;
-import com.example.deukgeun.applicant.application.dto.request.SaveMatchInfoRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -13,6 +15,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 @RequiredArgsConstructor
@@ -24,14 +28,18 @@ public class ApplicantApplicationServiceImpl implements ApplicantApplicationServ
     private Integer PAYMENT_WAITING;
 
     @Override
+    public void cancel(Long id, IamPortCancelResponse iamPortCancelResponse) {
+        applicantDomainService.cancel(id, iamPortCancelResponse);
+    }
+
+    @Override
     public void deleteMatchInfoById(Long id) {
         applicantDomainService.deleteMatchInfoById(id);
     }
 
     @Override
-    public ApplicantResponse.ApplicantInfo findById(Long id) {
-        Applicant applicant = applicantDomainService.findById(id);
-        return new ApplicantResponse.ApplicantInfo(applicant);
+    public Applicant findById(Long id) {
+        return applicantDomainService.findById(id);
     }
 
     @Override
@@ -52,6 +60,13 @@ public class ApplicantApplicationServiceImpl implements ApplicantApplicationServ
     @Override
     public Applicant matching(SaveMatchInfoRequest saveMatchInfoRequest) {
         return applicantDomainService.matching(saveMatchInfoRequest, PAYMENT_WAITING);
+    }
+
+    @Override
+    public Applicant payment(PaymentInfoRequest request) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        LocalDateTime paidAt = LocalDateTime.parse(request.getPaidAt(), formatter);
+        return applicantDomainService.payment(request, paidAt);
     }
 
     @Override

@@ -35,7 +35,7 @@ public class MatchControllerTest {
     private BindingResult bindingResult;
 
     @Test
-    public void givenMatchInfoService_whenSelect_thenReturnResponseEntity() {
+    public void givenMatchInfoService_whenMatching_thenReturnResponseEntity() {
         // Given
         Applicant applicant = mock(Applicant.class);
         JobPosting jobPosting = mock(JobPosting.class);
@@ -46,7 +46,7 @@ public class MatchControllerTest {
         given(jobPostingService.updateIsActiveByJobPostingId(2, saveMatchInfoRequest.getJobPostingId())).willReturn(jobPosting);
 
         // When
-        ResponseEntity<?> responseEntity = matchController.select(saveMatchInfoRequest, bindingResult);
+        ResponseEntity<?> responseEntity = matchController.matching(saveMatchInfoRequest, bindingResult);
 
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());

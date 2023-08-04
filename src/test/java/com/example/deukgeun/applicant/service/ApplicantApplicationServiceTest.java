@@ -1,8 +1,10 @@
 package com.example.deukgeun.applicant.service;
 
+import com.example.deukgeun.applicant.application.dto.request.PaymentInfoRequest;
 import com.example.deukgeun.applicant.application.dto.request.SaveApplicantRequest;
 import com.example.deukgeun.applicant.application.dto.request.SaveMatchInfoRequest;
 import com.example.deukgeun.applicant.application.dto.response.ApplicantResponse;
+import com.example.deukgeun.applicant.application.dto.response.IamPortCancelResponse;
 import com.example.deukgeun.applicant.application.service.implement.ApplicantApplicationServiceImpl;
 import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
 import com.example.deukgeun.applicant.domain.service.ApplicantDomainService;
@@ -35,6 +37,21 @@ public class ApplicantApplicationServiceTest {
     private ApplicantDomainService applicantDomainService;
 
     @Test
+    public void givenApplicantIdAndIamPortCancelResponse_whenCancel_thenShouldUpdatePaymentInfo() {
+        // Given
+        Long applicantId = 1L;
+        IamPortCancelResponse iamPortCancelResponse = mock(IamPortCancelResponse.class);
+        Applicant applicant = mock(Applicant.class);
+        given(applicantDomainService.findById(applicantId)).willReturn(applicant);
+
+        // When
+        applicantApplicationService.cancel(applicantId, iamPortCancelResponse);
+
+        // Then
+        verify(applicantDomainService).cancel(applicantId, iamPortCancelResponse);
+    }
+
+    @Test
     public void givenApplicantId_whenDeleteMatchInfoById_thenCallApplicantDomainService() {
         // Given
         Long applicantId = 1L;
@@ -61,7 +78,7 @@ public class ApplicantApplicationServiceTest {
         given(applicantDomainService.findById(applicantId)).willReturn(existingApplicant);
 
         // When
-        ApplicantResponse.ApplicantInfo applicantInfo = applicantApplicationService.findById(applicantId);
+        Applicant applicantInfo = applicantApplicationService.findById(applicantId);
 
         // Then
         assertNotNull(applicantInfo);
@@ -158,6 +175,19 @@ public class ApplicantApplicationServiceTest {
     }
 
     @Test
+    public void givenPaymentInfoRequest_whenPayment_thenShouldCreatePaymentInfo() {
+        // Given
+        PaymentInfoRequest paymentInfoRequest = new PaymentInfoRequest();
+        paymentInfoRequest.setPaidAt("2022-12-15T13:00:00.123+09:00");
+
+        // When
+        applicantApplicationService.payment(paymentInfoRequest);
+
+        // Then
+        verify(applicantDomainService).payment(any(PaymentInfoRequest.class), any(LocalDateTime.class));
+    }
+
+    @Test
     public void givenSaveApplicantRequestAndTrainerId_whenSave_thenReturnSavedApplicant() {
         // Given
         SaveApplicantRequest saveApplicantRequest = new SaveApplicantRequest(123L, 1000);
@@ -176,6 +206,8 @@ public class ApplicantApplicationServiceTest {
         assertEquals(expectedSavedApplicant.getTrainerId(), savedApplicant.getTrainerId());
         assertEquals(expectedSavedApplicant.getSupportAmount(), savedApplicant.getSupportAmount());
     }
+
+
 
     @Test
     public void givenApplicantIdAndIsSelected_whenUpdateIsSelectedById_thenCallApplicantDomainService() {

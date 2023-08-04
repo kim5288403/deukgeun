@@ -23,9 +23,6 @@ public class MatchInfoEntity extends BaseEntity {
     private Long jobPostingId;
 
     @Column(length = 50, nullable = false)
-    private Long applicantId;
-
-    @Column(length = 50, nullable = false)
     private Integer status;
 
 }

@@ -1,9 +1,8 @@
-package com.example.deukgeun.applicant.infrastructure.persistence;
+package com.example.deukgeun.applicant.infrastructure.persistence.api;
 
 import com.example.deukgeun.applicant.application.dto.request.CancelRequest;
 import com.example.deukgeun.applicant.application.dto.response.IamPortCancelResponse;
 import com.example.deukgeun.applicant.application.dto.response.IamPortResponse;
-import com.example.deukgeun.applicant.domain.service.IamPortService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -12,8 +11,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriBuilder;
 
 @Service
-public class IamPortServiceImpl implements IamPortService {
-    @Override
+public class IamPortApiService {
     public String getIamPortAuthToken(String iamPortApiKey, String iamPortApiSecret) {
         WebClient webClient = WebClient.builder()
                 .baseUrl("https://api.iamport.kr/users/getToken")
@@ -34,15 +32,7 @@ public class IamPortServiceImpl implements IamPortService {
         return response.getResponse().getAccess_token();
     }
 
-    @Override
-    public void checkCancelResponseCode(IamPortCancelResponse response) throws Exception {
-        if (response.getCode() == 1) {
-            throw new Exception(response.getMessage());
-        }
-    }
-
-    @Override
-    public IamPortCancelResponse cancelIamPort(CancelRequest request) {
+    public IamPortCancelResponse cancelIamPort(CancelRequest request) throws Exception {
         WebClient webClient = WebClient.builder()
                 .baseUrl("https://api.iamport.kr/payments/cancel")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -51,12 +41,18 @@ public class IamPortServiceImpl implements IamPortService {
                 .mutate()
                 .build();
 
-        return webClient
+        IamPortCancelResponse response = webClient
                 .post()
                 .uri(UriBuilder::build)
                 .body(BodyInserters.fromValue("{ \"imp_uid\": \"" + request.getImpUid() + "\", \"amount\": \"" + request.getAmount() + "\" }"))
                 .retrieve()
                 .bodyToMono(IamPortCancelResponse.class)
                 .block();
+
+        if (response.getCode() == 1) {
+            throw new Exception(response.getMessage());
+        }
+
+        return response;
     }
 }

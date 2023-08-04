@@ -21,11 +21,4 @@ public class BaseEntity {
   @LastModifiedDate
   @Column(updatable = false)
   private LocalDateTime updatedDate;
-
-  @Column
-  private LocalDateTime deleteDate;
-
-  public void delete() {
-    this.deleteDate = LocalDateTime.now();
-  }
 }

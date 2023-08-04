@@ -1,8 +1,11 @@
 package com.example.deukgeun.applicant.service.domain;
 
+import com.example.deukgeun.applicant.application.dto.request.PaymentInfoRequest;
 import com.example.deukgeun.applicant.application.dto.request.SaveApplicantRequest;
 import com.example.deukgeun.applicant.application.dto.request.SaveMatchInfoRequest;
+import com.example.deukgeun.applicant.application.dto.response.IamPortCancelResponse;
 import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
+import com.example.deukgeun.applicant.domain.model.entity.PaymentInfo;
 import com.example.deukgeun.applicant.domain.repository.ApplicantRepository;
 import com.example.deukgeun.applicant.domain.service.implement.ApplicantDomainServiceImpl;
 import com.example.deukgeun.job.domain.entity.JobPosting;
@@ -33,6 +36,29 @@ public class ApplicantDomainServiceTest {
     private ApplicantDomainServiceImpl applicantDomainService;
     @Mock
     private ApplicantRepository applicantRepository;
+
+    @Test
+    public void givenApplicantIdAndIamPortCancelResponse_whenCancel_thenShouldUpdatePaymentInfo() {
+        // Given
+        Long applicantId = 1L;
+        IamPortCancelResponse iamPortCancelResponse = new IamPortCancelResponse();
+        iamPortCancelResponse.setResponse(new IamPortCancelResponse.Response("test",
+                "test",
+                "test",
+                30000));
+        Applicant applicant = mock(Applicant.class);
+        PaymentInfo paymentInfo = mock(PaymentInfo.class);
+
+        given(applicantRepository.findById(applicantId)).willReturn(Optional.ofNullable(applicant));
+        given(applicant.getPaymentInfo()).willReturn(paymentInfo);
+
+        // When
+        applicantDomainService.cancel(applicantId, iamPortCancelResponse);
+
+        // Then
+        verify(applicantRepository).findById(applicantId);
+        verify(applicantRepository).save(applicant);
+    }
 
     @Test
     public void givenApplicantId_whenDeleteMatchInfoById_thenDeleteMatchInfoAndSave() {
@@ -143,7 +169,7 @@ public class ApplicantDomainServiceTest {
 
         // Then
         verify(applicantRepository).existsByJobPostingIdAndMatchInfoIdNotNull(jobPostingId);
-        assertFalse(isMatched); // Assert that the result is false since the mock returns false
+        assertFalse(isMatched);
     }
 
     @Test
@@ -165,6 +191,22 @@ public class ApplicantDomainServiceTest {
         verify(applicantRepository).findById(applicantId);
         verify(applicantRepository).save(applicant);
         assertEquals(applicant, savedApplicant);
+    }
+
+    @Test
+    public void givenPaymentInfoRequestAndPaidAt_whenPayment_thenShouldCreatePaymentInfo() {
+        // Given
+        LocalDateTime paidAt = LocalDateTime.now();
+        PaymentInfoRequest paymentInfoRequest = mock(PaymentInfoRequest.class);
+        Applicant applicant = mock(Applicant.class);
+        given(applicantRepository.findById(anyLong())).willReturn(Optional.ofNullable(applicant));
+
+        // When
+        applicantDomainService.payment(paymentInfoRequest, paidAt);
+
+        // Then
+        verify(applicantRepository).findById(anyLong());
+        verify(applicantRepository).save(applicant);
     }
 
     @Test

@@ -41,4 +41,11 @@ public class ApplicantEntity extends BaseEntity {
     private MatchInfoEntity matchInfoEntity;
 
     private Long matchInfoId;
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "paymentInfoId", insertable = false, updatable = false)
+    private PaymentInfoEntity paymentInfoEntity;
+
+    private Long paymentInfoId;
+
 }

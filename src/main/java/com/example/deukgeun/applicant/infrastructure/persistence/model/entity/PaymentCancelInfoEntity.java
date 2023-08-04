@@ -1,18 +1,24 @@
 package com.example.deukgeun.applicant.infrastructure.persistence.model.entity;
 
 import com.example.deukgeun.global.entity.BaseEntity;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
 @Getter
+@Builder
+@Table(name = "payment_cancel_info")
 @NoArgsConstructor
+@AllArgsConstructor
 public class PaymentCancelInfoEntity extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "payment_cancel_info_id")
     private Long id;
 
@@ -27,17 +33,4 @@ public class PaymentCancelInfoEntity extends BaseEntity {
 
     @Column(length = 100, nullable = false)
     private Integer cancel_amount;
-
-    @Builder
-    public PaymentCancelInfoEntity(Long id,
-                                   String impUid,
-                                   String channel,
-                                   String cancel_reason,
-                                   Integer cancel_amount) {
-        this.id = id;
-        this.impUid = impUid;
-        this.cancel_reason = cancel_reason;
-        this.channel = channel;
-        this.cancel_amount = cancel_amount;
-    }
 }

@@ -2,6 +2,7 @@ package com.example.deukgeun.applicant.application.controller;
 
 import com.example.deukgeun.applicant.application.dto.response.ApplicantResponse;
 import com.example.deukgeun.applicant.application.service.ApplicantApplicationService;
+import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
 import com.example.deukgeun.authToken.application.service.AuthTokenApplicationService;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.applicant.application.dto.request.SaveApplicantRequest;
@@ -47,7 +48,8 @@ public class ApplicantController {
 
     @RequestMapping(method = RequestMethod.GET, path = "/{id}")
     public ResponseEntity<?> getApplicantInfo(@PathVariable Long id) {
-        ApplicantResponse.ApplicantInfo result = applicantApplicationService.findById(id);
+        Applicant applicant = applicantApplicationService.findById(id);
+        ApplicantResponse.ApplicantInfo result = new ApplicantResponse.ApplicantInfo(applicant);
 
         return RestResponseUtil.ok("조회 성공했습니다.", result);
     }

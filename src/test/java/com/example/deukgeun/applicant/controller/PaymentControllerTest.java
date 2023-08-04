@@ -1,15 +1,15 @@
 package com.example.deukgeun.applicant.controller;
 
-import com.example.deukgeun.applicant.domain.model.entity.PaymentInfo;
-import com.example.deukgeun.global.util.RestResponseUtil;
-import com.example.deukgeun.authToken.application.dto.response.RestResponse;
 import com.example.deukgeun.applicant.application.controller.PaymentController;
 import com.example.deukgeun.applicant.application.dto.request.CancelRequest;
 import com.example.deukgeun.applicant.application.dto.request.PaymentInfoRequest;
 import com.example.deukgeun.applicant.application.dto.response.IamPortCancelResponse;
-import com.example.deukgeun.applicant.domain.service.IamPortService;
+import com.example.deukgeun.applicant.application.service.implement.ApplicantApplicationServiceImpl;
+import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
 import com.example.deukgeun.applicant.domain.service.PaymentCancelInfoService;
-import com.example.deukgeun.applicant.domain.service.PaymentInfoService;
+import com.example.deukgeun.applicant.infrastructure.persistence.api.IamPortApiService;
+import com.example.deukgeun.authToken.application.dto.response.RestResponse;
+import com.example.deukgeun.global.util.RestResponseUtil;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.response.IamportResponse;
@@ -37,11 +37,11 @@ public class PaymentControllerTest {
     @InjectMocks
     private PaymentController paymentController;
     @Mock
-    private PaymentInfoService paymentInfoService;
-    @Mock
     private PaymentCancelInfoService paymentCancelInfoService;
     @Mock
-    private IamPortService iamPortService;
+    private ApplicantApplicationServiceImpl applicantApplicationService;
+    @Mock
+    private IamPortApiService iamPortApiService;
     @Mock
     private BindingResult bindingResult;
     @Mock
@@ -67,16 +67,16 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void givenPaymentService_whenSave_thenReturnResponseEntity() {
+    public void givenPaymentService_whenPayment_thenReturnResponseEntity() {
         // Given
         PaymentInfoRequest request = mock(PaymentInfoRequest.class);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("저장 성공했습니다.", null);
 
         // When
-        ResponseEntity<?> responseEntity = paymentController.save(request, bindingResult);
+        ResponseEntity<?> responseEntity = paymentController.payment(request, bindingResult);
 
         // Then
-        verify(paymentInfoService, times(1)).save(request);
+        verify(applicantApplicationService, times(1)).payment(request);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
     }
@@ -85,15 +85,15 @@ public class PaymentControllerTest {
     public void givenPaymentService_whenGetPaymentInfo_thenReturnResponseEntity() {
         // Given
         Long applicantId =123L;
-        PaymentInfo paymentInfo = mock(PaymentInfo.class);
-        given(paymentInfoService.getPaymentInfoByApplicantId(applicantId)).willReturn(paymentInfo);
-        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공했습니다.", paymentInfo);
+        Applicant applicant = mock(Applicant.class);
+        given(applicantApplicationService.findById(applicantId)).willReturn(applicant);
+        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공했습니다.", applicant.getPaymentInfo());
 
         // When
         ResponseEntity<?> responseEntity = paymentController.getPaymentInfo(applicantId);
 
         // Then
-        verify(paymentInfoService, times(1)).getPaymentInfoByApplicantId(applicantId);
+        verify(applicantApplicationService, times(1)).findById(applicantId);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
     }
@@ -103,7 +103,7 @@ public class PaymentControllerTest {
         // Given
         CancelRequest cancelRequest = mock(CancelRequest.class);
         IamPortCancelResponse iamPortCancelResponse = mock(IamPortCancelResponse.class);
-        given(iamPortService.cancelIamPort(cancelRequest)).willReturn(iamPortCancelResponse);
+        given(iamPortApiService.cancelIamPort(cancelRequest)).willReturn(iamPortCancelResponse);
         given(iamPortCancelResponse.getCode()).willReturn(0);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("결제 취소 성공했습니다.", iamPortCancelResponse.getResponse());
 
@@ -111,10 +111,8 @@ public class PaymentControllerTest {
         ResponseEntity<?> responseEntity = paymentController.cancel(cancelRequest, bindingResult);
 
         // Then
-        verify(iamPortService, times(1)).cancelIamPort(cancelRequest);
-        verify(iamPortService, times(1)).checkCancelResponseCode(iamPortCancelResponse);
-        verify(paymentInfoService, times(1)).deleteByImpUid(cancelRequest.getImpUid());
-        verify(paymentCancelInfoService, times(1)).save(iamPortCancelResponse);
+        verify(iamPortApiService, times(1)).cancelIamPort(cancelRequest);
+        verify(applicantApplicationService, times(1)).cancel(cancelRequest.getId(), iamPortCancelResponse);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
     }

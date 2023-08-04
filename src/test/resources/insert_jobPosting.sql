@@ -12,8 +12,7 @@ extra_address,
 detail_address,
 jibun_address,
 road_address,
-is_active,
-delete_date
+is_active
 )
 values
 (
@@ -30,6 +29,5 @@ NOW(),
 'test',
 'test',
 'test',
-1,
-null
+1
  );
