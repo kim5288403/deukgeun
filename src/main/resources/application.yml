@@ -46,7 +46,10 @@ logging:
       springframework:
         security: info
         test:
-          context: INFO
+          context: info
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
 
 trainer:
   post:
