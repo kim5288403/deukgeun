@@ -156,8 +156,8 @@ public class JobPostingDomainServiceTest {
         SaveJobPostingRequest saveJobPostingRequest = new SaveJobPostingRequest();
         saveJobPostingRequest.setTitle("test");
         saveJobPostingRequest.setPostcode("12-3");
-        saveJobPostingRequest.setStartDate("2023-08-08T12:51:38");
-        saveJobPostingRequest.setEndDate("2023-08-08T12:51:38");
+        saveJobPostingRequest.setStartDate("2023-08-08T12:51");
+        saveJobPostingRequest.setEndDate("2023-08-08T12:51");
 
         // When
         jobPostingDomainService.save(saveJobPostingRequest, memberId);
