@@ -7,5 +7,6 @@ import javax.persistence.EntityNotFoundException;
 
 public interface MemberDomainService {
     Member save(JoinRequest request);
+    Member findById(Long id) throws EntityNotFoundException;
     Member findByEmail(String email) throws EntityNotFoundException;
 }

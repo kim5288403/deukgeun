@@ -30,6 +30,12 @@ public class MemberDomainServiceImpl implements MemberDomainService {
     }
 
     @Override
+    public Member findById(Long id) throws EntityNotFoundException {
+        return memberRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("없는 정보 입니다."));
+    }
+
+    @Override
     public Member findByEmail(String email) throws EntityNotFoundException {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));

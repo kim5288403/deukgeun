@@ -1,8 +1,8 @@
 package com.example.deukgeun.job.repository;
 
-import com.example.deukgeun.job.application.dto.response.JobPostingResponse;
-import com.example.deukgeun.job.domain.entity.JobPosting;
-import com.example.deukgeun.job.domain.repository.JobPostingRepository;
+import com.example.deukgeun.job.infrastructure.persistence.model.entity.JobPostingEntity;
+import com.example.deukgeun.job.infrastructure.persistence.model.valueobject.JobAddressVo;
+import com.example.deukgeun.job.infrastructure.persistence.repository.JobPostingJpaRepository;
 import com.example.deukgeun.member.infrastructure.persistence.entity.MemberEntity;
 import com.example.deukgeun.member.infrastructure.persistence.repository.MemberJpaRepository;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class JobPostingRepositoryTest {
     @Autowired
-    private JobPostingRepository jobPostingRepository;
+    private JobPostingJpaRepository jobPostingRepository;
     @Autowired
     private MemberJpaRepository memberRepository;
 
@@ -42,33 +42,42 @@ public class JobPostingRepositoryTest {
         // Given
         List<MemberEntity> member = memberRepository.findAll();
         Long memberId = member.get(0).getId();
-        JobPosting jobPosting1 = JobPosting
+        JobAddressVo jobAddressVo = new JobAddressVo(
+                "test",
+                "test",
+                "test",
+                "test",
+                "test"
+        );
+        JobPostingEntity jobPostingEntity1 = JobPostingEntity
                 .builder()
+                .id(1L)
                 .memberId(memberId)
                 .title("test")
-                .postcode("123")
+                .jobAddressVo(jobAddressVo)
                 .startDate(LocalDateTime.now())
                 .endDate(LocalDateTime.now())
                 .build();
 
-        JobPosting jobPosting2 = JobPosting
+        JobPostingEntity jobPostingEntity2 = JobPostingEntity
                 .builder()
+                .id(2L)
                 .memberId(memberId)
                 .title("test")
-                .postcode("123")
+                .jobAddressVo(jobAddressVo)
                 .startDate(LocalDateTime.now())
                 .endDate(LocalDateTime.now())
                 .build();
 
-        jobPostingRepository.save(jobPosting1);
-        jobPostingRepository.save(jobPosting2);
+        jobPostingRepository.save(jobPostingEntity1);
+        jobPostingRepository.save(jobPostingEntity2);
 
         String keyword = "test";
         String converterKeyword = "%" + keyword +"%";
         PageRequest pageable = PageRequest.of(0, 10);
 
         // When
-        Page<JobPostingResponse.ListResponse> foundJobPosting = jobPostingRepository.findByLikeKeyword(converterKeyword, pageable);
+        Page<JobPostingEntity> foundJobPosting = jobPostingRepository.findByLikeKeyword(converterKeyword, pageable);
 
         // Then
         assertEquals(keyword, foundJobPosting.getContent().get(0).getTitle());
@@ -81,24 +90,23 @@ public class JobPostingRepositoryTest {
         // Given
         List<MemberEntity> member = memberRepository.findAll();
         Long memberId = member.get(0).getId();
-        JobPosting jobPosting = JobPosting
+        JobPostingEntity jobPostingEntity = JobPostingEntity
                 .builder()
                 .id(5L)
                 .memberId(memberId)
                 .title("test")
-                .postcode("123")
                 .startDate(LocalDateTime.now())
                 .endDate(LocalDateTime.now())
                 .build();
 
-        JobPosting saveJobPosting = jobPostingRepository.save(jobPosting);
+        JobPostingEntity saveJobPostingEntity = jobPostingRepository.save(jobPostingEntity);
 
         // When
-        JobPosting foundJobPosting = jobPostingRepository.findById(saveJobPosting.getId()).orElse(null);
+        JobPostingEntity foundJobPostingEntity = jobPostingRepository.findById(saveJobPostingEntity.getId()).orElse(null);
 
         // Then
-        assertNotNull(foundJobPosting);
-        assertEquals(saveJobPosting.getTitle(), foundJobPosting.getTitle());
+        assertNotNull(foundJobPostingEntity);
+        assertEquals(saveJobPostingEntity.getTitle(), foundJobPostingEntity.getTitle());
     }
 
     @Test
@@ -107,30 +115,39 @@ public class JobPostingRepositoryTest {
         // Given
         List<MemberEntity> member = memberRepository.findAll();
         Long memberId = member.get(0).getId();
-        JobPosting jobPosting1 = JobPosting
+        JobAddressVo jobAddressVo = new JobAddressVo(
+                "test",
+                "test",
+                "test",
+                "test",
+                "test"
+        );
+        JobPostingEntity jobPostingEntity1 = JobPostingEntity
                 .builder()
+                .id(1L)
                 .memberId(memberId)
                 .title("test1")
-                .postcode("123")
+                .jobAddressVo(jobAddressVo)
                 .startDate(LocalDateTime.now())
                 .endDate(LocalDateTime.now())
                 .build();
-        JobPosting jobPosting2 = JobPosting
+        JobPostingEntity jobPostingEntity2 = JobPostingEntity
                 .builder()
+                .id(2L)
                 .memberId(memberId)
                 .title("test2")
-                .postcode("123")
+                .jobAddressVo(jobAddressVo)
                 .startDate(LocalDateTime.now())
                 .endDate(LocalDateTime.now())
                 .build();
 
-        jobPostingRepository.save(jobPosting1);
-        jobPostingRepository.save(jobPosting2);
+        jobPostingRepository.save(jobPostingEntity1);
+        jobPostingRepository.save(jobPostingEntity2);
 
         PageRequest pageable = PageRequest.of(0, 10);
 
         // When
-        Page<JobPostingResponse.ListResponse> result = jobPostingRepository.findByMemberId(memberId, pageable);
+        Page<JobPostingEntity> result = jobPostingRepository.findByMemberId(memberId, pageable);
 
         // Then
         assertEquals(memberId, result.getContent().get(0).getMemberId());
@@ -143,23 +160,23 @@ public class JobPostingRepositoryTest {
         List<MemberEntity> member = memberRepository.findAll();
         Long memberId = member.get(0).getId();
         String title = "test";
-        JobPosting jobPosting = JobPosting
+        JobPostingEntity jobPostingEntity = JobPostingEntity
                 .builder()
+                .id(1L)
                 .title(title)
                 .memberId(memberId)
-                .postcode("12-2")
                 .isActive(1)
                 .startDate(LocalDateTime.now())
                 .endDate(LocalDateTime.now().plusDays(5))
                 .build();
 
         // When
-        JobPosting saveJobPosting = jobPostingRepository.save(jobPosting);
+        JobPostingEntity saveJobPostingEntity = jobPostingRepository.save(jobPostingEntity);
 
         // Then
-        JobPosting foundJobPosting = jobPostingRepository.findById(saveJobPosting.getId()).orElse(null);
-        assertNotNull(foundJobPosting);
-        assertEquals(saveJobPosting.getTitle(), foundJobPosting.getTitle());
+        JobPostingEntity foundJobPostingEntity = jobPostingRepository.findById(saveJobPostingEntity.getId()).orElse(null);
+        assertNotNull(foundJobPostingEntity);
+        assertEquals(saveJobPostingEntity.getTitle(), foundJobPostingEntity.getTitle());
     }
 
     @Test
@@ -168,20 +185,28 @@ public class JobPostingRepositoryTest {
         // Given
         List<MemberEntity> member = memberRepository.findAll();
         Long memberId = member.get(0).getId();
-        JobPosting jobPosting = JobPosting
+        JobAddressVo jobAddressVo = new JobAddressVo(
+                "test",
+                "test",
+                "test",
+                "test",
+                "test"
+        );
+        JobPostingEntity jobPostingEntity = JobPostingEntity
                 .builder()
+                .id(1L)
                 .title("test")
                 .memberId(memberId)
-                .postcode("12-2")
                 .isActive(1)
+                .jobAddressVo(jobAddressVo)
                 .startDate(LocalDateTime.now())
                 .endDate(LocalDateTime.now().plusDays(5))
                 .build();
 
-        JobPosting saveJobPosting = jobPostingRepository.save(jobPosting);
+        JobPostingEntity saveJobPostingEntity = jobPostingRepository.save(jobPostingEntity);
 
         // When
-        boolean result = jobPostingRepository.existsByIdAndMemberId(saveJobPosting.getId(), saveJobPosting.getMemberId());
+        boolean result = jobPostingRepository.existsByIdAndMemberId(saveJobPostingEntity.getId(), saveJobPostingEntity.getMemberId());
 
         // Then
         assertTrue(result);

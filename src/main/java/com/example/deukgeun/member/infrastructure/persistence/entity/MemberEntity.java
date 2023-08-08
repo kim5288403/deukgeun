@@ -2,6 +2,7 @@ package com.example.deukgeun.member.infrastructure.persistence.entity;
 
 import com.example.deukgeun.global.entity.BaseEntity;
 import com.example.deukgeun.global.enums.Gender;
+import com.example.deukgeun.job.infrastructure.persistence.model.entity.JobPostingEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Getter
@@ -36,6 +38,10 @@ public class MemberEntity extends BaseEntity implements UserDetails {
     @Column(name = "gender", nullable = false)
     @Enumerated(EnumType.STRING)
     private Gender gender;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "memberId", insertable = false, updatable = false)
+    private List<JobPostingEntity> jobPostingEntity;
 
     @Builder
     public MemberEntity(

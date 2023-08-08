@@ -18,6 +18,11 @@ public class MemberApplicationServiceImpl implements MemberApplicationService {
     }
 
     @Override
+    public Member findById(Long id) {
+        return memberDomainService.findById(id);
+    }
+
+    @Override
     public Member findByEmail(String email) {
         return memberDomainService.findByEmail(email);
     }

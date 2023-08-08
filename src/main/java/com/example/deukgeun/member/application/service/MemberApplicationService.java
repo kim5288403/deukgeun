@@ -5,5 +5,6 @@ import com.example.deukgeun.member.domain.entity.Member;
 
 public interface MemberApplicationService {
     Member save(JoinRequest request);
+    Member findById(Long id);
     Member findByEmail(String email);
 }

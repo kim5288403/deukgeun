@@ -8,7 +8,7 @@ import com.example.deukgeun.trainer.application.dto.request.RemoveLicenseRequest
 import com.example.deukgeun.trainer.application.dto.request.SaveLicenseRequest;
 import com.example.deukgeun.trainer.application.dto.response.LicenseResponse;
 import com.example.deukgeun.trainer.application.service.implement.TrainerApplicationServiceImpl;
-import com.example.deukgeun.trainer.infrastructure.persistence.api.LicenseOpenApiService;
+import com.example.deukgeun.trainer.infrastructure.api.LicenseOpenApiService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

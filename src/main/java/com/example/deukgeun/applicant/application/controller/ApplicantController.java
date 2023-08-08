@@ -6,6 +6,8 @@ import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
 import com.example.deukgeun.authToken.application.service.AuthTokenApplicationService;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.applicant.application.dto.request.SaveApplicantRequest;
+import com.example.deukgeun.member.application.service.MemberApplicationService;
+import com.example.deukgeun.member.domain.entity.Member;
 import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,6 +29,7 @@ public class ApplicantController {
     private final ApplicantApplicationService applicantApplicationService;
     private final AuthTokenApplicationService authTokenApplicationService;
     private final TrainerApplicationService trainerApplicationService;
+    private final MemberApplicationService memberApplicationService;
 
     @RequestMapping(method = RequestMethod.GET, path = "/")
     public ResponseEntity<?> list(Long jobPostingId, int currentPage) {
@@ -49,7 +52,8 @@ public class ApplicantController {
     @RequestMapping(method = RequestMethod.GET, path = "/{id}")
     public ResponseEntity<?> getApplicantInfo(@PathVariable Long id) {
         Applicant applicant = applicantApplicationService.findById(id);
-        ApplicantResponse.ApplicantInfo result = new ApplicantResponse.ApplicantInfo(applicant);
+        Member member = memberApplicationService.findById(applicant.getJobPosting().getMemberId());
+        ApplicantResponse.ApplicantInfo result = new ApplicantResponse.ApplicantInfo(applicant, member);
 
         return RestResponseUtil.ok("조회 성공했습니다.", result);
     }

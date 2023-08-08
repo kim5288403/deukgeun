@@ -6,7 +6,7 @@ import com.example.deukgeun.trainer.application.dto.request.RemoveLicenseRequest
 import com.example.deukgeun.trainer.application.dto.request.SaveLicenseRequest;
 import com.example.deukgeun.trainer.application.dto.response.LicenseResponse;
 import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
-import com.example.deukgeun.trainer.infrastructure.persistence.api.LicenseOpenApiService;
+import com.example.deukgeun.trainer.infrastructure.api.LicenseOpenApiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;

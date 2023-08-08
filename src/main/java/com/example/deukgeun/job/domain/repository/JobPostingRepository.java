@@ -1,21 +1,15 @@
 package com.example.deukgeun.job.domain.repository;
 
-
-import com.example.deukgeun.job.application.dto.response.JobPostingResponse;
-import com.example.deukgeun.job.domain.entity.JobPosting;
+import com.example.deukgeun.job.domain.model.aggregate.JobPosting;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.domain.PageRequest;
 
-public interface JobPostingRepository extends JpaRepository<JobPosting, Long> {
+import java.util.Optional;
 
-    @Query("select j from JobPosting j where j.title like :keyword or j.jibunAddress like :keyword or j.extraAddress like :keyword or j.detailAddress like :keyword or j.roadAddress like :keyword and j.isActive = 1")
-    Page<JobPostingResponse.ListResponse> findByLikeKeyword(@Param(value = "keyword")String keyword, Pageable pageable);
-
-    Page<JobPostingResponse.ListResponse> findByMemberId(Long memberId, Pageable pageable);
-
+public interface JobPostingRepository {
     boolean existsByIdAndMemberId(Long id, Long memberId);
-
+    Optional<JobPosting> findById(Long id);
+    Page<JobPosting> findByMemberId(Long memberId, PageRequest pageRequest);
+    Page<JobPosting> findByLikeKeyword(String keyword, PageRequest pageRequest);
+    JobPosting save(JobPosting jobPosting);
 }

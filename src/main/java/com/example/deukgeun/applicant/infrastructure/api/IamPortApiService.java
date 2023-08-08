@@ -1,4 +1,4 @@
-package com.example.deukgeun.applicant.infrastructure.persistence.api;
+package com.example.deukgeun.applicant.infrastructure.api;
 
 import com.example.deukgeun.applicant.application.dto.request.CancelRequest;
 import com.example.deukgeun.applicant.application.dto.response.IamPortCancelResponse;
@@ -49,6 +49,7 @@ public class IamPortApiService {
                 .bodyToMono(IamPortCancelResponse.class)
                 .block();
 
+        assert response != null;
         if (response.getCode() == 1) {
             throw new Exception(response.getMessage());
         }

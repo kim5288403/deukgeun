@@ -1,4 +1,4 @@
-package com.example.deukgeun.trainer.infrastructure.persistence.api;
+package com.example.deukgeun.trainer.infrastructure.api;
 
 import com.example.deukgeun.trainer.application.dto.request.SaveLicenseRequest;
 import com.example.deukgeun.trainer.application.dto.response.LicenseResponse;

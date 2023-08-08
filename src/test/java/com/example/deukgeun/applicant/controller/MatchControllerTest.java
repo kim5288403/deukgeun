@@ -6,8 +6,8 @@ import com.example.deukgeun.applicant.application.service.ApplicantApplicationSe
 import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
 import com.example.deukgeun.authToken.application.dto.response.RestResponse;
 import com.example.deukgeun.global.util.RestResponseUtil;
-import com.example.deukgeun.job.application.service.JobPostingService;
-import com.example.deukgeun.job.domain.entity.JobPosting;
+import com.example.deukgeun.job.application.service.JobPostingApplicationService;
+import com.example.deukgeun.job.domain.model.aggregate.JobPosting;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,7 +28,7 @@ public class MatchControllerTest {
     @InjectMocks
     private MatchController matchController;
     @Mock
-    private JobPostingService jobPostingService;
+    private JobPostingApplicationService jobPostingApplicationService;
     @Mock
     private ApplicantApplicationService applicantApplicationService;
     @Mock
@@ -43,7 +43,6 @@ public class MatchControllerTest {
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("매칭 성공했습니다.", null);
 
         given(applicantApplicationService.matching(saveMatchInfoRequest)).willReturn(applicant);
-        given(jobPostingService.updateIsActiveByJobPostingId(2, saveMatchInfoRequest.getJobPostingId())).willReturn(jobPosting);
 
         // When
         ResponseEntity<?> responseEntity = matchController.matching(saveMatchInfoRequest, bindingResult);
@@ -53,7 +52,7 @@ public class MatchControllerTest {
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
 
         verify(applicantApplicationService, times(1)).matching(saveMatchInfoRequest);
-        verify(jobPostingService, times(1)).updateIsActiveByJobPostingId(2, saveMatchInfoRequest.getJobPostingId());
+        verify(jobPostingApplicationService, times(1)).updateIsActiveByJobPostingId(2, saveMatchInfoRequest.getJobPostingId());
     }
 
     @Test

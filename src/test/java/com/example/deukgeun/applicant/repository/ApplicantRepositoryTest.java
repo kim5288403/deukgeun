@@ -2,8 +2,8 @@ package com.example.deukgeun.applicant.repository;
 
 import com.example.deukgeun.applicant.infrastructure.persistence.model.entity.ApplicantEntity;
 import com.example.deukgeun.applicant.infrastructure.persistence.repository.ApplicantJpaRepository;
-import com.example.deukgeun.job.domain.entity.JobPosting;
-import com.example.deukgeun.job.domain.repository.JobPostingRepository;
+import com.example.deukgeun.job.infrastructure.persistence.model.entity.JobPostingEntity;
+import com.example.deukgeun.job.infrastructure.persistence.repository.JobPostingJpaRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -26,7 +26,7 @@ public class ApplicantRepositoryTest {
     @Autowired
     private ApplicantJpaRepository applicantJpaRepository;
     @Autowired
-    private JobPostingRepository jobPostingRepository;
+    private JobPostingJpaRepository jobPostingRepository;
 
 
     @Test
@@ -39,10 +39,10 @@ public class ApplicantRepositoryTest {
     @Sql({"/insert_member.sql", "/insert_jobPosting.sql"})
     void givenApplicant_whenSave_thenReturnValid() {
         // Given
-        List<JobPosting> jobPosting = jobPostingRepository.findAll();
+        List<JobPostingEntity> jobPostingEntity = jobPostingRepository.findAll();
         ApplicantEntity applicantEntity = ApplicantEntity
                 .builder()
-                .jobPostingId(jobPosting.get(0).getId())
+                .jobPostingId(jobPostingEntity.get(0).getId())
                 .trainerId(123L)
                 .supportAmount(30000)
                 .build();
@@ -60,8 +60,8 @@ public class ApplicantRepositoryTest {
     @Sql({"/insert_member.sql", "/insert_jobPosting.sql"})
     void givenApplicant_whenFindByJobPostingId_thenReturnValid() {
         // Given
-        List<JobPosting> jobPosting = jobPostingRepository.findAll();
-        Long jobPostingId = jobPosting.get(0).getId();
+        List<JobPostingEntity> jobPostingEntity = jobPostingRepository.findAll();
+        Long jobPostingId = jobPostingEntity.get(0).getId();
         ApplicantEntity applicantEntity1 = ApplicantEntity
                 .builder()
                 .jobPostingId(jobPostingId)
@@ -92,7 +92,7 @@ public class ApplicantRepositoryTest {
     @Sql({"/insert_member.sql", "/insert_jobPosting.sql"})
     public void givenJobPostingIdAndTrainerId_whenExists_thenReturnTrue() {
         // Given
-        Long jobPostingId = 1L;
+        Long jobPostingId = 123L;
         Long trainerId = 1L;
         ApplicantEntity applicant = ApplicantEntity
                 .builder()

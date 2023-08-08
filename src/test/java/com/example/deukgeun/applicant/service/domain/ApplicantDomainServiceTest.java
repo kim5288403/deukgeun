@@ -8,7 +8,7 @@ import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
 import com.example.deukgeun.applicant.domain.model.entity.PaymentInfo;
 import com.example.deukgeun.applicant.domain.repository.ApplicantRepository;
 import com.example.deukgeun.applicant.domain.service.implement.ApplicantDomainServiceImpl;
-import com.example.deukgeun.job.domain.entity.JobPosting;
+import com.example.deukgeun.job.domain.model.aggregate.JobPosting;
 import com.example.deukgeun.member.infrastructure.persistence.entity.MemberEntity;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -88,9 +88,6 @@ public class ApplicantDomainServiceTest {
         Applicant applicant = mock(Applicant.class);
 
         given(applicant.getJobPosting()).willReturn(jobPosting);
-        given(applicant.getJobPosting().getMember()).willReturn(member);
-        given(applicant.getJobPosting().getStartDate()).willReturn(LocalDateTime.now());
-        given(applicant.getJobPosting().getEndDate()).willReturn(LocalDateTime.now());
         given(applicantRepository.findById(applicantId)).willReturn(Optional.of(applicant));
 
         // When

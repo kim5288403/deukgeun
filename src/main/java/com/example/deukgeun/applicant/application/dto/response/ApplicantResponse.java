@@ -1,6 +1,7 @@
 package com.example.deukgeun.applicant.application.dto.response;
 
 import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
+import com.example.deukgeun.member.domain.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -57,16 +58,16 @@ public class ApplicantResponse {
 
         private Integer amount;
 
-        public ApplicantInfo(Applicant applicant) {
+        public ApplicantInfo(Applicant applicant, Member member) {
             this.id = applicant.getId();
             this.trainerId = applicant.getTrainerId();
             this.jobPostingId = applicant.getJobPostingId();
             this.isSelected = applicant.getIsSelected();
             this.title = applicant.getJobPosting().getTitle();
-            this.email = applicant.getJobPosting().getMember().getEmail();
-            this.name = applicant.getJobPosting().getMember().getName();
-            this.postcode = applicant.getJobPosting().getPostcode();
-            this.roadAddress = applicant.getJobPosting().getRoadAddress();
+            this.email = member.getEmail();
+            this.name = member.getName();
+            this.postcode = applicant.getJobPosting().getAddress().getPostcode();
+            this.roadAddress = applicant.getJobPosting().getAddress().getRoadAddress();
 
             LocalDateTime startDate = applicant.getJobPosting().getStartDate();
             LocalDateTime endDate = applicant.getJobPosting().getEndDate();

@@ -8,8 +8,6 @@ import com.example.deukgeun.applicant.application.dto.response.IamPortCancelResp
 import com.example.deukgeun.applicant.application.service.implement.ApplicantApplicationServiceImpl;
 import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
 import com.example.deukgeun.applicant.domain.service.ApplicantDomainService;
-import com.example.deukgeun.job.domain.entity.JobPosting;
-import com.example.deukgeun.member.infrastructure.persistence.entity.MemberEntity;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -68,13 +66,7 @@ public class ApplicantApplicationServiceTest {
         // Given
         Long applicantId = 1L;
         Applicant existingApplicant = mock(Applicant.class);
-        JobPosting jobPosting = mock(JobPosting.class);
-        MemberEntity member = mock(MemberEntity.class);
 
-        given(existingApplicant.getJobPosting()).willReturn(jobPosting);
-        given(jobPosting.getMember()).willReturn(member);
-        given(jobPosting.getStartDate()).willReturn(LocalDateTime.now());
-        given(jobPosting.getEndDate()).willReturn(LocalDateTime.now());
         given(applicantDomainService.findById(applicantId)).willReturn(existingApplicant);
 
         // When
@@ -91,14 +83,7 @@ public class ApplicantApplicationServiceTest {
     public void givenNonExistingApplicantId_whenFindById_thenEntityNotFoundException() {
         // Given
         Long applicantId = 999L;
-        Applicant existingApplicant = mock(Applicant.class);
-        JobPosting jobPosting = mock(JobPosting.class);
-        MemberEntity member = mock(MemberEntity.class);
 
-        given(existingApplicant.getJobPosting()).willReturn(jobPosting);
-        given(jobPosting.getMember()).willReturn(member);
-        given(jobPosting.getStartDate()).willReturn(LocalDateTime.now());
-        given(jobPosting.getEndDate()).willReturn(LocalDateTime.now());
         given(applicantDomainService.findById(applicantId)).willThrow(EntityNotFoundException.class);
 
         // When, Then

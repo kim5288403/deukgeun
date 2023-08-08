@@ -1,7 +1,7 @@
 package com.example.deukgeun.applicant.infrastructure.persistence.model.entity;
 
 import com.example.deukgeun.global.entity.BaseEntity;
-import com.example.deukgeun.job.domain.entity.JobPosting;
+import com.example.deukgeun.job.infrastructure.persistence.model.entity.JobPostingEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,7 +32,7 @@ public class ApplicantEntity extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "jobPostingId", insertable = false, updatable = false)
-    private JobPosting jobPosting;
+    private JobPostingEntity jobPostingEntity;
 
     private Long jobPostingId;
 

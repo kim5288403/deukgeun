@@ -8,10 +8,12 @@ import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
 import com.example.deukgeun.authToken.application.dto.response.RestResponse;
 import com.example.deukgeun.authToken.application.service.AuthTokenApplicationService;
 import com.example.deukgeun.global.util.RestResponseUtil;
-import com.example.deukgeun.job.domain.entity.JobPosting;
-import com.example.deukgeun.member.infrastructure.persistence.entity.MemberEntity;
+import com.example.deukgeun.job.domain.model.aggregate.JobPosting;
+import com.example.deukgeun.member.application.service.MemberApplicationService;
+import com.example.deukgeun.member.domain.entity.Member;
 import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
 import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
+import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -38,6 +40,8 @@ public class ApplicantControllerTest {
     private AuthTokenApplicationService authTokenApplicationService;
     @Mock
     private TrainerApplicationService trainerApplicationService;
+    @Mock
+    private MemberApplicationService memberApplicationService;
     @Mock
     private HttpServletRequest request;
     @Mock
@@ -90,12 +94,15 @@ public class ApplicantControllerTest {
         // Given
         Long id = 123L;
         Applicant applicant = mock(Applicant.class);
+        Member member = mock(Member.class);
         given(applicantApplicationService.findById(id)).willReturn(applicant);
         given(applicant.getJobPosting()).willReturn(mock(JobPosting.class));
         given(applicant.getJobPosting().getStartDate()).willReturn(LocalDateTime.now());
         given(applicant.getJobPosting().getEndDate()).willReturn(LocalDateTime.now());
-        given(applicant.getJobPosting().getMember()).willReturn(mock(MemberEntity.class));
-        ApplicantResponse.ApplicantInfo result = new ApplicantResponse.ApplicantInfo(applicant);
+        given(applicant.getJobPosting().getAddress()).willReturn(mock(Address.class));
+        given(memberApplicationService.findById(anyLong())).willReturn(member);
+
+        ApplicantResponse.ApplicantInfo result = new ApplicantResponse.ApplicantInfo(applicant, member);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공했습니다.", result);
 
         // When

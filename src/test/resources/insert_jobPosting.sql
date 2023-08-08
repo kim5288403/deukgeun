@@ -1,4 +1,5 @@
 INSERT INTO job_posting(
+job_posting_id,
 created_date,
 updated_date,
 member_id,
@@ -16,6 +17,7 @@ is_active
 )
 values
 (
+123L,
 null,
 null,
 (select member_id from member ORDER BY member_id DESC LIMIT 1),

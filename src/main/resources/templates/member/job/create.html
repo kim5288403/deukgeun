@@ -26,8 +26,8 @@
         <form id="job" method="post" action="">
             <div class="row gtr-uniform">
                 <div class="col-6">
-                    <label>제목</label>
-                    <input type="text" name="title" value="" placeholder="제목">
+                    <label for="title">제목</label>
+                    <input type="text" id="title" name="title" value="" placeholder="제목">
                     <span class="errorMessage" id="valid_title"></span>
                 </div>
 
@@ -74,7 +74,8 @@
                         <label for="availableRequirementsEtc">있음</label>
                     </div>
 
-                    <input type="text" name="requirementEtc" value="" style="display:none">
+                    <input type="text" id="requirementEtc" name="requirementEtc" value="" style="display:none">
+                    <label for="requirementEtc"></label>
                     <span class="errorMessage" id="valid_requirementEtc"></span>
                 </div>
 
@@ -83,6 +84,7 @@
                     <label>pt받을 주소</label>
                     <ul class="actions">
                         <li>
+                            <label for="sample4_postcode"></label>
                             <input type="text" id="sample4_postcode" name="postcode" placeholder="우편번호" readonly="readonly">
                             <span class="errorMessage" id="valid_postcode"></span>
                         </li>
@@ -93,13 +95,17 @@
                 </div>
 
                 <div class="col-6">
+                    <label for="sample4_roadAddress"></label>
                     <input type="text" id="sample4_roadAddress" name="roadAddress" placeholder="도로명주소">
+                    <label for="sample4_jibunAddress"></label>
                     <input type="text" id="sample4_jibunAddress" name="jibunAddress" placeholder="지번주소">
                     <span id="guide" style="color: #999; display: none"></span>
                 </div>
 
                 <div class="col-6">
+                    <label for="sample4_detailAddress"></label>
                     <input type="text" id="sample4_detailAddress" name="detailAddress" placeholder="상세주소">
+                    <label for="sample4_extraAddress"></label>
                     <input type="text" id="sample4_extraAddress" name="extraAddress" placeholder="참고항목">
                 </div>
 
@@ -122,7 +128,7 @@
                 <!-- Break -->
                 <div class="col-12">
                     <ul class="actions" style="justify-content: center;">
-                        <li><input type="button" value="Join" class="primary"
+                        <li><input type="button" value="save" class="primary"
                                    onclick="saveAjax()"></li>
                         <li><input type="reset" value="Reset"></li>
                     </ul>
@@ -177,7 +183,7 @@
 				type : "post",
 				data :formData,
 				beforeSend : function (xhr) {
-					xhr.setRequestHeader("Authorization","Bearer " + authToken + "sd");
+					xhr.setRequestHeader("Authorization","Bearer " + authToken);
 				},
 				success : function(res) {
 				    if (res.code === 403) {

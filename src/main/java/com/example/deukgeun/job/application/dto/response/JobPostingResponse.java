@@ -1,6 +1,6 @@
 package com.example.deukgeun.job.application.dto.response;
 
-import com.example.deukgeun.job.domain.entity.JobPosting;
+import com.example.deukgeun.job.domain.model.aggregate.JobPosting;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +13,7 @@ public class JobPostingResponse {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class ListResponse {
+    public static class List {
         private Long id;
 
         private Long memberId;
@@ -26,18 +26,19 @@ public class JobPostingResponse {
 
         private String address;
 
-        public ListResponse(JobPosting jobPosting) {
+        public List(JobPosting jobPosting) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             this.id = jobPosting.getId();
             this.memberId = jobPosting.getMemberId();
             this.title = jobPosting.getTitle();
             this.startDate = jobPosting.getStartDate().format(formatter);
             this.endDate = jobPosting.getEndDate().format(formatter);
-            this.address = jobPosting.getPostcode()
-                            + " " + jobPosting.getDetailAddress()
-                            + " " + jobPosting.getRoadAddress()
-                            + " " + jobPosting.getJibunAddress()
-                            + " " + jobPosting.getExtraAddress();
+            this.address = jobPosting.getAddress().getPostcode()
+                            + " " + jobPosting.getAddress().getDetailAddress()
+                            + " " + jobPosting.getAddress().getRoadAddress()
+                            + " " + jobPosting.getAddress().getJibunAddress()
+                            + " " + jobPosting.getAddress().getExtraAddress();
         }
+
     }
 }

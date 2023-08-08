@@ -10,6 +10,10 @@ import com.example.deukgeun.applicant.infrastructure.persistence.model.entity.Ma
 import com.example.deukgeun.applicant.infrastructure.persistence.model.entity.PaymentCancelInfoEntity;
 import com.example.deukgeun.applicant.infrastructure.persistence.model.entity.PaymentInfoEntity;
 import com.example.deukgeun.applicant.infrastructure.persistence.repository.ApplicantJpaRepository;
+import com.example.deukgeun.job.domain.model.aggregate.JobPosting;
+import com.example.deukgeun.job.infrastructure.persistence.model.entity.JobPostingEntity;
+import com.example.deukgeun.job.infrastructure.persistence.model.valueobject.JobAddressVo;
+import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -59,7 +63,7 @@ public class ApplicantRepositoryAdapter implements ApplicantRepository {
                 applicantEntity.getTrainerId(),
                 applicantEntity.getSupportAmount(),
                 applicantEntity.getIsSelected(),
-                applicantEntity.getJobPosting(),
+                convert(applicantEntity.getJobPostingEntity()),
                 convert(applicantEntity.getMatchInfoEntity()),
                 convert(applicantEntity.getPaymentInfoEntity())
         );
@@ -73,7 +77,7 @@ public class ApplicantRepositoryAdapter implements ApplicantRepository {
                 .trainerId(applicant.getTrainerId())
                 .supportAmount(applicant.getSupportAmount())
                 .isSelected(applicant.getIsSelected())
-                .jobPosting(applicant.getJobPosting())
+                .jobPostingEntity(convert(applicant.getJobPosting()))
                 .matchInfoEntity(convert(applicant.getMatchInfo()))
                 .matchInfoId(applicant.getMatchInfoId())
                 .paymentInfoEntity(convert(applicant.getPaymentInfo()))
@@ -163,6 +167,48 @@ public class ApplicantRepositoryAdapter implements ApplicantRepository {
                 .channel(paymentCancelInfo.getChannel())
                 .cancel_reason(paymentCancelInfo.getCancelReason())
                 .cancel_amount(paymentCancelInfo.getCancelAmount())
+                .build();
+    }
+
+    private JobPosting convert(JobPostingEntity jobPostingEntity) {
+        return new JobPosting(
+                jobPostingEntity.getId(),
+                jobPostingEntity.getMemberId(),
+                jobPostingEntity.getTitle(),
+                jobPostingEntity.getRequirementLicense(),
+                jobPostingEntity.getRequirementEtc(),
+                new Address(
+                        jobPostingEntity.getJobAddressVo().getPostcode(),
+                        jobPostingEntity.getJobAddressVo().getJibunAddress(),
+                        jobPostingEntity.getJobAddressVo().getRoadAddress(),
+                        jobPostingEntity.getJobAddressVo().getDetailAddress(),
+                        jobPostingEntity.getJobAddressVo().getExtraAddress()
+                ),
+                jobPostingEntity.getIsActive(),
+                jobPostingEntity.getStartDate(),
+                jobPostingEntity.getEndDate()
+        );
+    }
+
+    private JobPostingEntity convert(JobPosting jobPosting) {
+        return JobPostingEntity
+                .builder()
+                .id(jobPosting.getId())
+                .memberId(jobPosting.getMemberId())
+                .title(jobPosting.getTitle())
+                .requirementLicense(jobPosting.getRequirementLicense())
+                .requirementEtc(jobPosting.getRequirementEtc())
+                .jobAddressVo(new JobAddressVo(
+                        jobPosting.getAddress().getPostcode(),
+                        jobPosting.getAddress().getRoadAddress(),
+                        jobPosting.getAddress().getJibunAddress(),
+                        jobPosting.getAddress().getRoadAddress(),
+                        jobPosting.getAddress().getExtraAddress()
+                ))
+                .isActive(jobPosting.getIsActive())
+                .startDate(jobPosting.getStartDate())
+                .endDate(jobPosting.getEndDate())
+                .memberId(jobPosting.getMemberId())
                 .build();
     }
 }

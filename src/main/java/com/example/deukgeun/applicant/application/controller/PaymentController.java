@@ -6,7 +6,7 @@ import com.example.deukgeun.applicant.application.dto.response.IamPortCancelResp
 import com.example.deukgeun.applicant.application.service.ApplicantApplicationService;
 import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
 import com.example.deukgeun.applicant.domain.model.entity.PaymentInfo;
-import com.example.deukgeun.applicant.infrastructure.persistence.api.IamPortApiService;
+import com.example.deukgeun.applicant.infrastructure.api.IamPortApiService;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
