@@ -5,6 +5,7 @@ import com.example.deukgeun.trainer.application.dto.request.PostRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdateInfoRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdatePasswordRequest;
 import com.example.deukgeun.trainer.application.dto.response.LicenseResponse;
+import com.example.deukgeun.trainer.application.dto.response.ProfileResponse;
 import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,6 +25,7 @@ public interface TrainerApplicationService {
     Trainer findById(Long id);
     Trainer findByEmail(String src);
     File getServerImage(String url);
+    ProfileResponse getProfile(String email);
     List<LicenseResponse.List> getLicensesById(Long id);
     List<LicenseResponse.List> getLicensesByEmail(String email);
     boolean isEmptyGroupName(String groupName, String groupStatus);
@@ -31,7 +33,7 @@ public interface TrainerApplicationService {
     Trainer saveLicense(String email, LicenseResponse.Result licenseResult);
     Map<Object, Object> saveImageToServer(HttpServletRequest request, HttpServletResponse response) throws Exception;
     void updateInfo(UpdateInfoRequest request);
-    void updateProfile(String email, MultipartFile profile) throws IOException;
+    void updateProfile(String email, MultipartFile file) throws Exception;
     void updatePassword(UpdatePasswordRequest request);
     void uploadPost(String email, PostRequest postRequest);
 }

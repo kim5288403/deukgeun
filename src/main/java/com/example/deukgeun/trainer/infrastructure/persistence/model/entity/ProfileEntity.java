@@ -20,6 +20,6 @@ public class ProfileEntity extends BaseEntity {
   @Column(name = "profile_id")
   private Long id;
 
-  @Column(length = 100, nullable = false)
+  @Column(length = 200, nullable = false)
   private String path;
 }

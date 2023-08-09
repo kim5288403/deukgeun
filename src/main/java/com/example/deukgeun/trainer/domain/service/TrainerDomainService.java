@@ -18,7 +18,7 @@ public interface TrainerDomainService {
     Trainer save(JoinRequest request, String fileName);
     Trainer saveLicense(String email, LicenseResponse.Result licenseResult);
     void updateInfo(UpdateInfoRequest request);
-    void updateProfile(Trainer trainer, String path);
+    void updateProfile(Trainer trainer, String fileName);
     void updatePassword(UpdatePasswordRequest request);
     Trainer uploadPost(String email, String html);
 }

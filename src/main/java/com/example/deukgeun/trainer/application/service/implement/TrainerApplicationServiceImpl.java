@@ -6,10 +6,12 @@ import com.example.deukgeun.trainer.application.dto.request.PostRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdateInfoRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdatePasswordRequest;
 import com.example.deukgeun.trainer.application.dto.response.LicenseResponse;
+import com.example.deukgeun.trainer.application.dto.response.ProfileResponse;
 import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
 import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import com.example.deukgeun.trainer.domain.model.entity.Profile;
 import com.example.deukgeun.trainer.domain.service.TrainerDomainService;
+import com.example.deukgeun.trainer.infrastructure.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -24,7 +26,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,6 +34,7 @@ import java.util.stream.Collectors;
 public class TrainerApplicationServiceImpl implements TrainerApplicationService {
 
     private final TrainerDomainService trainerDomainService;
+    private final S3Service s3Service;
 
     @Value("${trainer.profile.filePath}")
     private String PROFILE_FILE_PATH;
@@ -89,6 +92,13 @@ public class TrainerApplicationServiceImpl implements TrainerApplicationService 
     }
 
     @Override
+    public ProfileResponse getProfile(String email) {
+        Trainer trainer = findByEmail(email);
+        Profile profile = trainer.getProfile();
+        return new ProfileResponse(profile.getPath());
+    }
+
+    @Override
     public List<LicenseResponse.List> getLicensesById(Long id) {
         Trainer trainer = findById(id);
         return trainer
@@ -126,28 +136,20 @@ public class TrainerApplicationServiceImpl implements TrainerApplicationService 
 
     @Override
     public Map<Object, Object> saveImageToServer(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // 이미지를 저장할 디렉토리 생성
-        File uploads = new File(POST_FILE_PATH);
         Part filePart = request.getPart("file");
         String contentType = filePart.getContentType();
 
         // 요청의 컨텐츠 타입 검증
         MultipartFileUtil.validContentType(request.getContentType());
 
-        // 파일 확장자 추출
-        String extension = MultipartFileUtil.getExtensionFromContentType(contentType);
-        String name = UUID.randomUUID() + extension;
-        String linkName = POST_URL + name;
-
         // MIME 타입 검증
-        MultipartFileUtil.validMimeType(contentType, name, POST_FILE_PATH);
-
-        File file = new File(uploads, name);
-        MultipartFileUtil.saveServerImage(filePart, response.getWriter(), file);
-
+        MultipartFileUtil.validMimeType(contentType);
+        String filePath = s3Service.upload(filePart);
+//        String filePath = "https://deukgeunbucket1.s3.ap-northeast-2.amazonaws.com/4728f4f3-a442-4c69-b13b-532d935fdb8d_crossfit-1126999_1920.jpg";
+        System.out.println(filePath);
         // 이미지 링크를 담은 맵 생성하여 반환
         Map<Object, Object> responseData = new HashMap<>();
-        responseData.put("link", linkName);
+        responseData.put("link", filePath);
 
         return responseData;
     }
@@ -158,12 +160,11 @@ public class TrainerApplicationServiceImpl implements TrainerApplicationService 
     }
 
     @Override
-    public void updateProfile(String email, MultipartFile profile) throws IOException {
-        String fileName = MultipartFileUtil.getUUIDPath(profile.getOriginalFilename());
-        MultipartFileUtil.saveFileToDirectory(profile, fileName, PROFILE_FILE_PATH);
-
+    public void updateProfile(String email, MultipartFile file) throws Exception {
+        MultipartFileUtil.validMimeType(Objects.requireNonNull(file.getContentType()));
         Trainer trainer = findByEmail(email);
-        MultipartFileUtil.deleteFileToDirectory(trainer.getProfile().getPath(), PROFILE_FILE_PATH);
+        s3Service.delete(trainer.getProfile().getPath());
+        String fileName = s3Service.upload(file);
 
         trainerDomainService.updateProfile(trainer, fileName);
     }

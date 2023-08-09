@@ -3,6 +3,7 @@ package com.example.deukgeun.trainer.application.controller;
 import com.example.deukgeun.authToken.application.service.AuthTokenApplicationService;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.trainer.application.dto.UpdateProfileRequest;
+import com.example.deukgeun.trainer.application.dto.response.ProfileResponse;
 import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
 import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import com.example.deukgeun.trainer.domain.model.entity.Profile;
@@ -36,18 +37,16 @@ public class ProfileController {
     public ResponseEntity<?> getProfileByAuthToken(HttpServletRequest request) {
         String authToken = authTokenApplicationService.resolveAuthToken(request);
         String email = authTokenApplicationService.getUserPk(authToken);
-        Trainer trainer = trainerApplicationService.findByEmail(email);
+        ProfileResponse profileResponse = trainerApplicationService.getProfile(email);
 
-        Profile profile = trainer.getProfile();
-
-        return RestResponseUtil.ok("트레이너 상세보기 성공했습니다.", profile);
+        return RestResponseUtil.ok("트레이너 상세보기 성공했습니다.", profileResponse);
     }
 
     @RequestMapping(method = RequestMethod.PUT, path = "/")
-    public ResponseEntity<?> updateProfile(HttpServletRequest request, @Valid UpdateProfileRequest updateRequest, BindingResult bindingResult) throws Exception {
+    public ResponseEntity<?> updateProfile(HttpServletRequest request, @Valid UpdateProfileRequest updateProfileRequest, BindingResult bindingResult) throws Exception {
         String authToken = authTokenApplicationService.resolveAuthToken(request);
         String email = authTokenApplicationService.getUserPk(authToken);
-        trainerApplicationService.updateProfile(email ,updateRequest.getProfile());
+        trainerApplicationService.updateProfile(email, updateProfileRequest.getProfile());
 
         return RestResponseUtil.ok("프로필 정보 수정 성공했습니다.", null);
     }

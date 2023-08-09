@@ -47,6 +47,10 @@ public class ApplicantControllerTest {
     @Mock
     private BindingResult bindingResult;
 
+    static {
+        System.setProperty("com.amazonaws.sdk.disableEc2Metadata", "true");
+    }
+
     @Test
     public void givenApplicantService_whenList_thenReturnResponseEntity() {
         // Given

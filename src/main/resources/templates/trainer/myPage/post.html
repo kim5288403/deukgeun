@@ -117,6 +117,7 @@
  			requestHeaders: {
  				Authorization: "Bearer " + authToken
  			},
+ 			saveInterval: 10000,
 			saveMethod: 'POST',
 			saveURL: '/api/trainer/post/',
 			saveParam: "content",
@@ -129,7 +130,7 @@
 			   'save.after': function (res) {
 			        	let jsonRes = JSON.parse(res);
 			        	defaultSuccessAlert("성공", jsonRes.message).then(function() {
-		                    window.location.reload();
+<!--		                    window.location.reload();-->
 	                    });
 			   },
 			   'save.error': function (error, response) {
@@ -186,7 +187,6 @@
 					xhr.setRequestHeader("Authorization", "Bearer " + authToken);
 			    },
 				success : function(res, status, request) {
-				    console.log(res);
 					setUserDetail(res.data);
 					setPost(res.data.post, editor);
 				}

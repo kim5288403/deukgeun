@@ -86,7 +86,7 @@ public class MultipartFileUtil {
         }
     }
 
-    public static void validMimeType(String mimeType, String name, String filePath) throws Exception {
+    public static void validMimeType(String mimeType) throws Exception {
         String[] allowedMimeTypes = new String[]{
                 "image/gif",
                 "image/jpeg",
@@ -96,11 +96,7 @@ public class MultipartFileUtil {
                 "image/svg+xml"
         };
 
-        boolean contains = Arrays.asList(allowedMimeTypes).contains(mimeType.toLowerCase());
-
-        if (!contains) {
-            deleteFileToDirectory(name, filePath);
-
+        if (!Arrays.asList(allowedMimeTypes).contains(mimeType.toLowerCase())) {
             throw new Exception("Image does not meet the validation.");
         }
     }

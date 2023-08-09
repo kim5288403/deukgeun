@@ -15,9 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Map;
 
 @RequestMapping("/api/trainer/post")
@@ -40,15 +38,6 @@ public class PostController {
     @RequestMapping(method = RequestMethod.DELETE, path = "/image")
     public void deleteServerImage(@RequestParam("src") String src) throws IOException {
         trainerApplicationService.deleteImageToServer(src);
-    }
-
-    @RequestMapping(method = RequestMethod.GET, path = "/image/*")
-    public void getServerImage(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        File file = trainerApplicationService.getServerImage(request.getRequestURI());
-        response.setHeader("Content-Type", request.getServletContext().getMimeType(file.getName()));
-        response.setHeader("Content-Length", String.valueOf(file.length()));
-        response.setHeader("Content-Disposition", "inline; filename=\"" + file.getName() + "\"");
-        Files.copy(file.toPath(), response.getOutputStream());
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/{id}")

@@ -5,7 +5,7 @@
 						$("#" + index).append(value);
 
 					} else if(index === "profile") {
-						$("#profile").attr("src",  "/images/trainer/profile/" + value.path);
+						$("#profile").attr("src", value.path);
 
 					} else if (index === "price") {
 						$("label[for=price]").text("PT횟수 1회 당 ( " + value + "원 )");

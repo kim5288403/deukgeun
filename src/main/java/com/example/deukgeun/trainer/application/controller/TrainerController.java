@@ -47,7 +47,6 @@ public class TrainerController {
         String authToken = authTokenApplicationService.resolveAuthToken(request);
         String email = authTokenApplicationService.getUserPk(authToken);
         Trainer trainer = trainerApplicationService.findByEmail(email);
-
         TrainerResponse.Detail response = new TrainerResponse.Detail(trainer);
 
         return RestResponseUtil.ok("마이 페이지 조회 성공했습니다.", response);

@@ -67,7 +67,7 @@
 			},
 			success : function(res, status, request) {
 				if (res.code === 200) {
-					let src = "/images/trainer/profile/" + res.data.path;
+					let src = res.data.path;
 					$("img[class=profile]").attr("src", src);
 				}
 			}

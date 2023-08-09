@@ -344,10 +344,11 @@ class TrainerDomainServiceTest {
     public void givenTrainerAndNewPath_whenUpdateProfile_thenProfilePathUpdated() {
         // given
         String newPath = "/path/to/new/profile.jpg";
+        String email = "test";
         Trainer trainer = new Trainer(
                 123L,
                 "test",
-                "test",
+                email,
                 "test",
                 new Group(
                         GroupStatus.Y,
