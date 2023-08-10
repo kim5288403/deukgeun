@@ -57,13 +57,6 @@ logging:
           context: INFO
 
 trainer:
-  post:
-    backupPath: C:\\eclipse\\deukgeun_workspace\\deukgeun\\src\\main\\resources\\static\\images\\trainer\\backup\\post
-    filePath: C:\\eclipse\\deukgeun_workspace\\deukgeun\\src\\main\\resources\\static\\images\\trainer\\post
-    url: http://localhost:8080/api/trainer/post/image/
-  profile:
-    filePath: C:\\eclipse\\deukgeun_workspace\\deukgeun\\src\\main\\resources\\static\\images\\trainer\\profile
-    backupPath: C:\\eclipse\\deukgeun_workspace\\deukgeun\\src\\main\\resources\\static\\images\\trainer\\backup\\profile
   mail:
     email: kim5288403@gmail.com
 
@@ -80,3 +73,16 @@ jwt:
   secretKey: deuckgeunproject
   authTokenTime: 1800000
   refreshTokenTime: 1080000
+
+cloud:
+  aws:
+    s3:
+      bucket: deukgeunbucket1
+    stack:
+      auto: false
+    region:
+      auto: false
+      static: ap-northeast-2
+    credentials:
+      accessKey: AKIAR62GP44ZVQBHS7GN
+      secretKey: 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

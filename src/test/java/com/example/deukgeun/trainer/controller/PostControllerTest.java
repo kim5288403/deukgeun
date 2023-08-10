@@ -2,17 +2,10 @@ package com.example.deukgeun.trainer.controller;
 
 import com.example.deukgeun.authToken.application.dto.response.RestResponse;
 import com.example.deukgeun.authToken.application.service.implement.AuthTokenApplicationServiceImpl;
-import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.trainer.application.controller.PostController;
 import com.example.deukgeun.trainer.application.dto.request.PostRequest;
 import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
-import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
-import com.example.deukgeun.trainer.domain.model.entity.Post;
-import com.example.deukgeun.trainer.domain.model.entity.Profile;
-import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
-import com.example.deukgeun.trainer.domain.model.valueobjcet.Group;
-import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -26,7 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -53,106 +45,37 @@ public class PostControllerTest {
         // Given
         String authToken = "exampleAuthToken";
         String email = "test";
+        String src = "test";
         given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
         given(authTokenApplicationService.getUserPk(authToken)).willReturn(email);
 
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("게시글 삭제 성공했습니다.", null);
 
         // When
-        ResponseEntity<?> responseEntity = postController.delete(request);
+        ResponseEntity<?> responseEntity = postController.deletePost(request, src);
 
         // Then
-        verify(trainerApplicationService).deletePost(email);
+        verify(trainerApplicationService).deletePost(email, src);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
     }
 
     @Test
-    public void givenPostService_whenDeleteServerImage_thenDeleteFile() throws IOException {
+    public void givenPostService_whenDeleteS3Image_thenDeleteFile() throws IOException {
         // Given
         String src = "example/src/image.jpg";
 
         // When
-        postController.deleteServerImage(src);
+        postController.deleteS3Image(src);
 
         // Then
-        verify(trainerApplicationService, times(1)).deleteImageToServer(src);
-    }
-
-//    @Test
-//    public void givenRequestAndResponse_whenGetServerImage_thenImageShouldBeSentInResponse() throws Exception {
-//        // Given
-//        String requestUri = "/images/image.jpg";
-//
-//        ServletContext servletContextMock = mock(ServletContext.class);
-//        File fileMock = mock(File.class);
-//        Path pathMock = mock(Path.class);
-//
-//        given(request.getRequestURI()).willReturn(requestUri);
-//        given(request.getServletContext()).willReturn(servletContextMock);
-//        given(fileMock.getName()).willReturn("image.jpg");
-//        given(fileMock.length()).willReturn(12345L);
-//        given(fileMock.toPath()).willReturn(pathMock);
-//        given(servletContextMock.getMimeType(fileMock.getName())).willReturn("image/jpeg");
-//
-//        given(trainerApplicationService.getServerImage(requestUri)).willReturn(fileMock);
-//
-//        // When
-//        postController.getServerImage(request, response);
-//
-//        // Then
-//        verify(trainerApplicationService, times(1)).getServerImage(requestUri);
-//        verify(response, times(1)).setHeader("Content-Type", "image/jpeg");
-//        verify(response, times(1)).setHeader("Content-Length", "12345");
-//        verify(response, times(1)).setHeader("Content-Disposition", "inline; filename=\"image.jpg\"");
-//    }
-
-    @Test
-    public void givenPostService_whenGetPostById_thenReturnResponseEntityWithPostResponse() {
-        // Given
-        Long trainerId = 123L;
-        Post post = new Post(123L, "test");
-        Trainer trainer = new Trainer(
-                trainerId,
-                "test",
-                "email",
-                "test",
-                new Group(
-                        GroupStatus.Y,
-                        "test"
-                ),
-                new Address(
-                        "test",
-                        "test",
-                        "test",
-                        "test",
-                        "test"
-                ),
-                Gender.M,
-                3000,
-                "test",
-                mock(List.class),
-                mock(Profile.class),
-                post
-        );
-
-        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공 했습니다.", post);
-
-        given(trainerApplicationService.findById(trainerId)).willReturn(trainer);
-
-        // When
-        ResponseEntity<?> responseEntity = postController.getPostById(trainerId);
-
-        // Then
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(expectedResponse.getBody(), responseEntity.getBody());
+        verify(trainerApplicationService, times(1)).deleteImageToS3(src);
     }
 
     @Test
     public void givenTokenServicePostService_whenUploadPost_thenReturnResponseEntity() throws Exception {
         // Given
         PostRequest postRequest = new PostRequest();
-        Long trainerId = 123L;
 
         String authToken = "exampleAuthToken";
         String email = "test";
@@ -172,7 +95,7 @@ public class PostControllerTest {
     }
 
     @Test
-    public void givenPostService_whenUploadServerImage_thenSaveImageAndWriteJsonResponse() throws Exception {
+    public void givenPostService_whenUploadS3Image_thenSaveImageAndWriteJsonResponse() throws Exception {
         // Given
         PrintWriter writer = mock(PrintWriter.class);
 
@@ -180,14 +103,14 @@ public class PostControllerTest {
         responseData.put("key1", "value1");
         responseData.put("key2", "value2");
 
-        given(trainerApplicationService.saveImageToServer(request, response)).willReturn(responseData);
+        given(trainerApplicationService.saveImageToS3(request, response)).willReturn(responseData);
         given(response.getWriter()).willReturn(writer);
 
         // When
-        postController.uploadServerImage(request, response);
+        postController.uploadS3Image(request, response);
 
         // Then
-        verify(trainerApplicationService, times(1)).saveImageToServer(request, response);
+        verify(trainerApplicationService, times(1)).saveImageToS3(request, response);
         verify(response, times(1)).setContentType("application/json");
         verify(response, times(1)).setCharacterEncoding("UTF-8");
         verify(writer).write("{\"key1\":\"value1\",\"key2\":\"value2\"}");

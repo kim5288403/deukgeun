@@ -96,7 +96,7 @@
                     <li>
                         <input type="button" id="saveBtn" value="save" class="primary">
                     </li>
-                    <li><input type="button" onclick="removeAjax()" value="remove"></li>
+                    <li><input type="button" onclick="deleteAjax()" value="delete"></li>
                     <li><input type="button" onclick="back()" value="back"></li>
                 </ul>
             </div>
@@ -161,10 +161,14 @@
 			});
 		}
 
-		function removeAjax(){
+		function deleteAjax(){
+		    let src = $("div[class=fr-wrapper]").find("img").attr("src");
             $.ajax({
 				url: "/api/trainer/post/",
 				type: "delete",
+				data: {
+				    "src": src
+				},
 				beforeSend: function (xhr) {
 					xhr.setRequestHeader("Authorization", "Bearer " + authToken);
 			    },

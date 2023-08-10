@@ -7,6 +7,7 @@ import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.trainer.application.controller.ProfileController;
 //import com.example.deukgeun.trainer.application.dto.UpdateProfileRequest;
 import com.example.deukgeun.trainer.application.dto.UpdateProfileRequest;
+import com.example.deukgeun.trainer.application.dto.response.ProfileResponse;
 import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
 import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import com.example.deukgeun.trainer.domain.model.entity.Post;
@@ -88,34 +89,13 @@ public class ProfileControllerTest {
         // given
         String authToken = "validAuthToken";
         String email = "test@example.com";
-        Trainer trainer = new Trainer(
-                1L,
-                "test",
-                email,
-                "test",
-                new Group(
-                        GroupStatus.Y,
-                        "test"
-                ),
-                new Address(
-                        "test",
-                        "test",
-                        "test",
-                        "test",
-                        "test"
-                ),
-                Gender.M,
-                3000,
-                "test",
-                mock(List.class),
-                new Profile(123L, "test"),
-                mock(Post.class)
-        );
-        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("트레이너 상세보기 성공했습니다.", trainer.getProfile());
+        ProfileResponse profileResponse = mock(ProfileResponse.class);
+
+        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("트레이너 상세보기 성공했습니다.", profileResponse);
 
         given(authTokenApplicationService.resolveAuthToken(any(HttpServletRequest.class))).willReturn(authToken);
         given(authTokenApplicationService.getUserPk(authToken)).willReturn(email);
-        given(trainerApplicationService.findByEmail(email)).willReturn(trainer);
+        given(trainerApplicationService.getProfileByEmail(email)).willReturn(profileResponse);
 
         // When
         ResponseEntity<?> responseEntity = profileController.getProfileByAuthToken(request);

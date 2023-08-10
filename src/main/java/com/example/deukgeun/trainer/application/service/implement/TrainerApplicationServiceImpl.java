@@ -13,7 +13,6 @@ import com.example.deukgeun.trainer.domain.model.entity.Profile;
 import com.example.deukgeun.trainer.domain.service.TrainerDomainService;
 import com.example.deukgeun.trainer.infrastructure.s3.S3Service;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.HtmlUtils;
@@ -21,7 +20,6 @@ import org.springframework.web.util.HtmlUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -36,22 +34,12 @@ public class TrainerApplicationServiceImpl implements TrainerApplicationService 
     private final TrainerDomainService trainerDomainService;
     private final S3Service s3Service;
 
-    @Value("${trainer.profile.filePath}")
-    private String PROFILE_FILE_PATH;
-
-    @Value("${trainer.post.filePath}")
-    private String POST_FILE_PATH;
-
-    @Value("${trainer.post.url}")
-    private String POST_URL;
-
     @Override
     public void delete(String email) throws IOException {
         Trainer trainer = findByEmail(email);
         Profile profile = trainer.getProfile();
 
-        MultipartFileUtil.deleteFileToDirectory(profile.getPath(), PROFILE_FILE_PATH);
-
+        s3Service.delete(profile.getPath());
         trainerDomainService.deleteById(trainer.getId());
     }
 
@@ -61,14 +49,14 @@ public class TrainerApplicationServiceImpl implements TrainerApplicationService 
     }
 
     @Override
-    public void deletePost(String email) {
+    public void deletePost(String email, String src) {
+        s3Service.delete(src);
         trainerDomainService.deletePost(email);
     }
 
     @Override
-    public void deleteImageToServer(String src) throws IOException {
-        String path = MultipartFileUtil.getFilePathFromUrl(src, POST_FILE_PATH);
-        MultipartFileUtil.deleteFileToDirectory(path, POST_FILE_PATH);
+    public void deleteImageToS3(String src) {
+        s3Service.delete(src);
     }
 
     @Override
@@ -87,12 +75,7 @@ public class TrainerApplicationServiceImpl implements TrainerApplicationService 
     }
 
     @Override
-    public File getServerImage(String url) {
-        return MultipartFileUtil.getServerImage(url, POST_FILE_PATH);
-    }
-
-    @Override
-    public ProfileResponse getProfile(String email) {
+    public ProfileResponse getProfileByEmail(String email) {
         Trainer trainer = findByEmail(email);
         Profile profile = trainer.getProfile();
         return new ProfileResponse(profile.getPath());
@@ -125,7 +108,7 @@ public class TrainerApplicationServiceImpl implements TrainerApplicationService 
 
     @Override
     public Trainer save(JoinRequest request) throws IOException {
-        String fileName = MultipartFileUtil.getUUIDPath(request.getProfile().getOriginalFilename());
+        String fileName = s3Service.upload(request.getProfile());
         return trainerDomainService.save(request, fileName);
     }
 
@@ -135,19 +118,15 @@ public class TrainerApplicationServiceImpl implements TrainerApplicationService 
     }
 
     @Override
-    public Map<Object, Object> saveImageToServer(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public Map<Object, Object> saveImageToS3(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Part filePart = request.getPart("file");
         String contentType = filePart.getContentType();
 
-        // 요청의 컨텐츠 타입 검증
         MultipartFileUtil.validContentType(request.getContentType());
 
-        // MIME 타입 검증
         MultipartFileUtil.validMimeType(contentType);
         String filePath = s3Service.upload(filePart);
-//        String filePath = "https://deukgeunbucket1.s3.ap-northeast-2.amazonaws.com/4728f4f3-a442-4c69-b13b-532d935fdb8d_crossfit-1126999_1920.jpg";
-        System.out.println(filePath);
-        // 이미지 링크를 담은 맵 생성하여 반환
+
         Map<Object, Object> responseData = new HashMap<>();
         responseData.put("link", filePath);
 

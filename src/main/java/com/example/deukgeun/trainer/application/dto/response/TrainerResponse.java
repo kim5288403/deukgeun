@@ -81,6 +81,7 @@ public class TrainerResponse {
             this.address = trainer.getAddress();
             this.profile = trainer.getProfile();
             this.licenses = trainer.getLicenses();
+            this.post = trainer.getPost();
         }
 
     }

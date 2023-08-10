@@ -37,7 +37,7 @@ public class ProfileController {
     public ResponseEntity<?> getProfileByAuthToken(HttpServletRequest request) {
         String authToken = authTokenApplicationService.resolveAuthToken(request);
         String email = authTokenApplicationService.getUserPk(authToken);
-        ProfileResponse profileResponse = trainerApplicationService.getProfile(email);
+        ProfileResponse profileResponse = trainerApplicationService.getProfileByEmail(email);
 
         return RestResponseUtil.ok("트레이너 상세보기 성공했습니다.", profileResponse);
     }

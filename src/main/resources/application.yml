@@ -52,11 +52,6 @@ logging:
 
 
 trainer:
-  post:
-    filePath: C:\\eclipse\\deukgeun_workspace\\deukgeun\\src\\main\\resources\\static\\images\\trainer\\post
-    url: http://localhost:8080/api/trainer/post/image/
-  profile:
-    filePath: C:\\eclipse\\deukgeun_workspace\\deukgeun\\src\\main\\resources\\static\\images\\trainer\\profile
   mail:
     email: kim5288403@gmail.com
 
@@ -81,3 +76,17 @@ iamPort:
   api:
     key: 6640244608024545
     secret: TGJK7YEsO618StWIkXp0FIUErEzyNp2J3J8bQE9LexDvajoydGIuiZF1fL8BWe1xKZyDNxmbjX2YcHmv
+
+cloud:
+  aws:
+    s3:
+      bucket: deukgeunbucket1
+      src: https://deukgeunbucket1.s3.ap-northeast-2.amazonaws.com/
+    stack:
+      auto: false
+    region:
+      auto: false
+      static: ap-northeast-2
+    credentials:
+      accessKey: AKIAR62GP44ZVQBHS7GN
+      secretKey: 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

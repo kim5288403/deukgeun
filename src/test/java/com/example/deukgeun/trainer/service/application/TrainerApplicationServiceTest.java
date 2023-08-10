@@ -7,6 +7,7 @@ import com.example.deukgeun.trainer.application.dto.request.PostRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdateInfoRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdatePasswordRequest;
 import com.example.deukgeun.trainer.application.dto.response.LicenseResponse;
+import com.example.deukgeun.trainer.application.dto.response.ProfileResponse;
 import com.example.deukgeun.trainer.application.service.implement.TrainerApplicationServiceImpl;
 import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import com.example.deukgeun.trainer.domain.model.entity.License;
@@ -16,13 +17,13 @@ import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.Group;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
 import com.example.deukgeun.trainer.domain.service.TrainerDomainService;
+import com.example.deukgeun.trainer.infrastructure.s3.S3Service;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.HtmlUtils;
 
@@ -30,7 +31,6 @@ import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +43,8 @@ import static org.mockito.Mockito.*;
 class TrainerApplicationServiceTest {
     @Mock
     private TrainerDomainService trainerDomainService;
+    @Mock
+    private S3Service s3Service;
     @InjectMocks
     private TrainerApplicationServiceImpl trainerApplicationService;
 
@@ -87,6 +89,7 @@ class TrainerApplicationServiceTest {
 
         // Verify
         verify(trainerDomainService, times(1)).deleteById(trainerId);
+        verify(s3Service, times(1)).delete(trainer.getProfile().getPath());
     }
 
     @Test
@@ -105,30 +108,27 @@ class TrainerApplicationServiceTest {
     @Test
     public void givenTrainerWithEmail_whenDeletePost_thenPostShouldBeDeleted() {
         // Given
-
         String email = "test@example.com";
+        String src = "testSrc";
 
         // When
-        trainerApplicationService.deletePost(email);
+        trainerApplicationService.deletePost(email, src);
 
         // Then
+        verify(s3Service, times(1)).delete(src);
         verify(trainerDomainService, times(1)).deletePost(email);
     }
 
     @Test
-    public void givenImageSrc_whenDeleteImageToServer_thenImageShouldBeDeleted() throws IOException {
+    public void givenImageSrc_whenDeleteImageToS3_thenImageShouldBeDeleted() throws IOException {
         // Given
         String src = "http://example.com/images/image.jpg";
-        String POST_FILE_PATH = "/path/to/post/files";
-        ReflectionTestUtils.setField(trainerApplicationService, "POST_FILE_PATH", POST_FILE_PATH);
 
-        String path = "/path/to/post/files/image.jpg";
-        given(MultipartFileUtil.getFilePathFromUrl(src, POST_FILE_PATH)).willReturn(path);
+        // When
+        trainerApplicationService.deleteImageToS3(src);
 
-        // When, Then
-        assertDoesNotThrow(() -> {
-            MultipartFileUtil.deleteFileToDirectory(src, POST_FILE_PATH);
-        });
+        // Then
+        verify(s3Service, times(1)).delete(src);
     }
 
     @Test
@@ -217,20 +217,24 @@ class TrainerApplicationServiceTest {
     }
 
     @Test
-    public void givenImageUrl_whenGetServerImage_thenReturnFileObject() {
+    public void givenEmail_whenGetProfileByEmail_thenProfileResponseWithPath() {
         // Given
-        String url = "http://example.com/images/image.jpg";
-        String POST_FILE_PATH = "/path/to/post/files";
-        ReflectionTestUtils.setField(trainerApplicationService, "POST_FILE_PATH", POST_FILE_PATH);
+        String email = "example@example.com";
+        String path = "/path/to/profile";
+        Trainer trainer = mock(Trainer.class);
+        Profile profile = mock(Profile.class);
 
-        File expectedFile = new File("/path/to/post/files/image.jpg");
-        given(MultipartFileUtil.getServerImage(url, POST_FILE_PATH)).willReturn(expectedFile);
+        given(trainerApplicationService.findByEmail(email)).willReturn(trainer);
+        given(trainer.getProfile()).willReturn(profile);
+        given(profile.getPath()).willReturn(path);
 
         // When
-        File resultFile = trainerApplicationService.getServerImage(url);
+        ProfileResponse response = trainerApplicationService.getProfileByEmail(email);
 
         // Then
-        assertEquals(expectedFile, resultFile);
+        assertNotNull(response);
+        assertEquals(path, response.getPath());
+        verify(trainerDomainService, times(1)).findByEmail(email);
     }
 
     @Test
@@ -399,8 +403,7 @@ class TrainerApplicationServiceTest {
         );
 
         given(request.getProfile()).willReturn(mock(MockMultipartFile.class));
-        given(request.getProfile().getOriginalFilename()).willReturn("Test");
-        given(MultipartFileUtil.getUUIDPath(anyString())).willReturn("Test");
+        given(s3Service.upload(any(MultipartFile.class))).willReturn("test");
         given(trainerDomainService.save(any(JoinRequest.class), anyString())).willReturn(savedTrainer);
 
         // When
@@ -450,14 +453,8 @@ class TrainerApplicationServiceTest {
     }
 
     @Test
-    public void givenValidRequestAndResponse_whenSaveImageToServer_thenReturnLinkInMap() throws Exception {
+    public void givenValidRequestAndResponse_whenSaveImageToS3_thenReturnLinkInMap() throws Exception {
         // Given
-        String POST_FILE_PATH = "/path/to/post/files"; // POST_FILE_PATH는 적절한 값으로 초기화해야 합니다.
-        String POST_URL = "http://example.com/posts/"; // POST_URL은 적절한 값으로 초기화해야 합니다.
-
-        ReflectionTestUtils.setField(trainerApplicationService, "POST_FILE_PATH", POST_FILE_PATH);
-        ReflectionTestUtils.setField(trainerApplicationService, "POST_URL", POST_URL);
-
         HttpServletRequest requestMock = mock(HttpServletRequest.class);
         HttpServletResponse responseMock = mock(HttpServletResponse.class);
         Part filePartMock = mock(Part.class);
@@ -466,14 +463,12 @@ class TrainerApplicationServiceTest {
         given(filePartMock.getContentType()).willReturn("image/jpeg"); // 적절한 MIME 타입 설정
 
         // When
-        Map<Object, Object> responseData = trainerApplicationService.saveImageToServer(requestMock, responseMock);
+        Map<Object, Object> responseData = trainerApplicationService.saveImageToS3(requestMock, responseMock);
 
         // Then
         assertNotNull(responseData);
         assertEquals(1, responseData.size());
         assertTrue(responseData.containsKey("link"));
-        String linkName = (String) responseData.get("link");
-        assertTrue(linkName.startsWith(POST_URL));
     }
 
     @Test
@@ -512,31 +507,30 @@ class TrainerApplicationServiceTest {
         verify(trainerDomainService, times(1)).updateInfo(request);
     }
 
-//    @Test
+    @Test
     public void givenEmailAndProfile_whenUpdateProfile_thenProfileShouldBeUpdated() throws Exception {
         // Given
         String email = "test@example.com";
         String originalFilename = "profile.jpg";
         String expectedFileName = "/path/to/profile/files/your_generated_uuid.jpg";
-        String PROFILE_FILE_PATH = "/path/to/profile/files";
-
-        ReflectionTestUtils.setField(trainerApplicationService, "PROFILE_FILE_PATH", PROFILE_FILE_PATH);
 
         MultipartFile profileMock = mock(MultipartFile.class);
         Trainer trainerMock = mock(Trainer.class);
 
         given(profileMock.getOriginalFilename()).willReturn(originalFilename);
-        given(MultipartFileUtil.getUUIDPath(originalFilename)).willReturn(expectedFileName);
+        given(profileMock.getContentType()).willReturn("image/jpeg");
         given(trainerDomainService.findByEmail(email)).willReturn(trainerMock);
         given(trainerMock.getProfile()).willReturn(mock(Profile.class));
         given(trainerMock.getProfile().getPath()).willReturn(originalFilename);
+        given(s3Service.upload(profileMock)).willReturn(expectedFileName);
 
         // When
         trainerApplicationService.updateProfile(email, profileMock);
 
         // Then
-        verify(profileMock, times(1)).getOriginalFilename();
         verify(trainerDomainService, times(1)).findByEmail(email);
+        verify(s3Service, times(1)).delete(trainerMock.getProfile().getPath());
+        verify(s3Service, times(1)).upload(profileMock);
         verify(trainerDomainService, times(1)).updateProfile(trainerMock, expectedFileName);
     }
 

@@ -4,13 +4,14 @@ import com.example.deukgeun.authToken.application.service.implement.AuthTokenApp
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.trainer.application.dto.request.PostRequest;
 import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
-import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
-import com.example.deukgeun.trainer.domain.model.entity.Post;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,26 +28,17 @@ public class PostController {
     private final AuthTokenApplicationServiceImpl authTokenApplicationService;
 
     @RequestMapping(method = RequestMethod.DELETE, path = "/")
-    public ResponseEntity<?> delete(HttpServletRequest request){
+    public ResponseEntity<?> deletePost(HttpServletRequest request, @RequestParam("src") String src){
         String authToken = authTokenApplicationService.resolveAuthToken(request);
         String email = authTokenApplicationService.getUserPk(authToken);
-        trainerApplicationService.deletePost(email);
+        trainerApplicationService.deletePost(email, src);
 
         return RestResponseUtil.ok("게시글 삭제 성공했습니다.", null);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, path = "/image")
-    public void deleteServerImage(@RequestParam("src") String src) throws IOException {
-        trainerApplicationService.deleteImageToServer(src);
-    }
-
-    @RequestMapping(method = RequestMethod.GET, path = "/{id}")
-    public ResponseEntity<?> getPostById(@PathVariable("id") Long id) {
-        Trainer trainer = trainerApplicationService.findById(id);
-        Post post = trainer.getPost();
-
-        return RestResponseUtil
-                .ok("조회 성공 했습니다.", post);
+    public void deleteS3Image(@RequestParam("src") String src) throws IOException {
+        trainerApplicationService.deleteImageToS3(src);
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/")
@@ -59,8 +51,8 @@ public class PostController {
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/image")
-    public void uploadServerImage(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Map<Object, Object> responseData = trainerApplicationService.saveImageToServer(request, response);
+    public void uploadS3Image(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Map<Object, Object> responseData = trainerApplicationService.saveImageToS3(request, response);
         String jsonResponseData = new Gson().toJson(responseData);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
