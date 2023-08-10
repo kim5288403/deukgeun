@@ -74,6 +74,7 @@ iamPort:
     key: 6640244608024545
     secret: TGJK7YEsO618StWIkXp0FIUErEzyNp2J3J8bQE9LexDvajoydGIuiZF1fL8BWe1xKZyDNxmbjX2YcHmv
 
+
 cloud:
   aws:
     s3:
