@@ -55,7 +55,6 @@ public class TrainerController {
     @Transactional
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> save(@Valid JoinRequest request, BindingResult bindingResult) throws IOException {
-        // 사용자 저장
         Trainer saveTrainer = trainerApplicationService.save(request);
 
         return RestResponseUtil.ok("회원 가입 성공 했습니다.", null);
@@ -63,7 +62,6 @@ public class TrainerController {
 
     @RequestMapping(method = RequestMethod.PUT, path = "/")
     public ResponseEntity<?> update(@Valid UpdateInfoRequest request, BindingResult bindingResult) {
-        // 정보 업데이트
         trainerApplicationService.updateInfo(request);
 
         return RestResponseUtil.ok("내 정보 수정 성공했습니다.", null);
