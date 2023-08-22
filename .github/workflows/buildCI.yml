@@ -73,9 +73,9 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
     - name: SSH Remote Commands
       uses: appleboy/ssh-action@master
       with:
-        host: ${{ secrets.HOST }}
+        host: 131.186.22.81
         username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
+        password: ${{ secrets.KEY }}
         port: ${{ secrets.PORT }}
         timeout: 40s  # 30초 기본
         script: | 
