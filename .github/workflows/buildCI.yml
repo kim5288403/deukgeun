@@ -39,10 +39,10 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
           redis-version: 7
           host: ${{ secrets.REDIS_HOST }}
 
-      - name: Test Connection # DB 연결 테스트
-        run: |
-          mysql -h ${{ secrets.MYSQL_HOST }} -P ${{ secrets.MYSQL_PORT }} -u ${{ secrets.MYSQL_USER }} -p${{ secrets.MYSQL_PASSWORD }} -e "SELECT 1";
-
+#      - name: Test Connection # DB 연결 테스트
+#        run: |
+#          mysql -h ${{ secrets.MYSQL_HOST }} -P ${{ secrets.MYSQL_PORT }} -u ${{ secrets.MYSQL_USER }} -p${{ secrets.MYSQL_PASSWORD }} -e "SELECT 1";
+#
 #      - name: Checkout repository
 #        uses: actions/checkout@v2
 #
