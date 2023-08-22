@@ -75,7 +75,7 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
       with:
         host: oci
         username: limJyeok
-        password: ${{ secrets.SSH_KEY }}
+        key: ${{ secrets.SSH_KEY }}
         port: 22
         script: | 
           "테스트 출력"
