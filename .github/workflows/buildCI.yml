@@ -78,5 +78,5 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
         key: ${{ secrets.SSH_KEY }}
         port: ${{ secrets.SSH_PORT }}
         script: | 
-          "테스트 출력3"
+          "테스트 출력4"
           ls -al
