@@ -73,7 +73,7 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
       name: ssh-connect
       steps:
         - name: SSH Remote Commands
-          uses: appleboy/ssh-action@v0.1.4
+          uses: appleboy/ssh-action@master
           with:
             host: ${{ secrets.HOST }}
             username: ${{ secrets.USERNAME }}
