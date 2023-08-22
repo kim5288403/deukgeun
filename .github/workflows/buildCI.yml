@@ -76,7 +76,7 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USERNAME }}
         password: ${{ secrets.SSH_KEY }}
-        port: 8080
+        port: 22
         timeout: 40s  # 30초 기본
         script: | 
           "테스트 출력"
