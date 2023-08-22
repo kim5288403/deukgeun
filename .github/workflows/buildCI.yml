@@ -74,9 +74,9 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
       uses: appleboy/ssh-action@master
       with:
         host: 131.186.22.81
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.KEY }}
-        port: ${{ secrets.PORT }}
+        username: ${{ secrets.SSH_USERNAME }}
+        password: ${{ secrets.SSH_KEY }}
+        port: ${{ secrets.SSH_PORT }}
         timeout: 40s  # 30초 기본
         script: | 
           "테스트 출력"
