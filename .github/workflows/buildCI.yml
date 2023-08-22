@@ -9,9 +9,9 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: "CI"
+    branches: ["CI"]
   pull_request:
-    branches: "CI"
+    branches: ["CI"]
 
 jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정의하는 부분
   build: # build 작업을 정의하는 부분
@@ -68,17 +68,16 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
 
   deploy:
     needs: build
-    React-Build-ssh-action:
-      runs-on: ubuntu-latest
-      name: ssh-connect
-      steps:
-        - name: SSH Remote Commands
-          uses: appleboy/ssh-action@master
-          with:
-            host: ${{ secrets.HOST }}
-            username: ${{ secrets.USERNAME }}
-            password: ${{ secrets.PASSWORD }}
-            port: ${{ secrets.PORT }}
-            timeout: 40s  # 30초 기본
-            script: |
-              echo "테스트 출력"
+    runs-on: ubuntu-latest
+    steps:
+    - name: SSH Remote Commands
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        port: ${{ secrets.PORT }}
+        timeout: 40s  # 30초 기본
+        script: | 
+          "테스트 출력"
+          ls -al
