@@ -76,6 +76,7 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
+            "테스트1"
             cd ~/deukgeun/deukgeun
             git pull origin master
-            ./gradlew clean build bootRun
+            ./gradlew clean build
