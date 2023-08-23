@@ -78,5 +78,5 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
         script: | 
           "테스트 출력8"
           ls -al
-          cd deukgeun
+          cd ~/deukgeun/deukgeun
           ls -al
