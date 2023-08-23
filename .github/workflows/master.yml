@@ -75,6 +75,7 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
+          timeout: 50
           script_stop: true
           script: |
             cd ~/git
