@@ -78,5 +78,5 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
           timeout: 50s
           script_stop: true
           script: |
-            cd ~/git
+            cd ~/git 
             sh deploy.sh
