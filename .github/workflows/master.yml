@@ -10,8 +10,6 @@ name: Java master with Gradle
 on:
   push:
     branches: ["master"]
-  pull_request:
-    branches: ["master"]
 
 jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정의하는 부분
   build: # build 작업을 정의하는 부분

@@ -10,8 +10,6 @@ name: Java CI with Gradle
 on:
   push:
     branches: ["CI"]
-  pull_request:
-    branches: ["CI"]
 
 jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정의하는 부분
   build: # build 작업을 정의하는 부분
@@ -54,7 +52,7 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
 #      - run: echo "${{ secrets.APPLICATION_TEST }}" > ./src/test/resources/application-test.yml
 #      - run: cat ./src/test/resources/application-test.yml
 #
-#      - name: Set up JDK 11
+#      - name: Set up JDK 11e
 #        uses: actions/setup-java@v2
 #        with:
 #          java-version: '11'
@@ -79,4 +77,6 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
         port: ${{ secrets.SSH_PORT }}
         script: | 
           "테스트 출력8"
+          ls -al
+          cd deukgeun
           ls -al
