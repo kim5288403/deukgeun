@@ -78,4 +78,4 @@ jobs: # jobs 섹션은 GitHub Actions 워크플로우 파일에서 작업을 정
           script_stop: true
           script: |
             cd ~/git
-            sh deploy.sh
+            sh new_deploy.sh
