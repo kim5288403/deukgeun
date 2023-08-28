@@ -8,7 +8,7 @@ import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
 import com.example.deukgeun.applicant.domain.model.entity.PaymentInfo;
 import com.example.deukgeun.applicant.domain.repository.ApplicantRepository;
 import com.example.deukgeun.applicant.domain.service.implement.ApplicantDomainServiceImpl;
-import com.example.deukgeun.job.domain.model.aggregate.JobPosting;
+import com.example.deukgeun.jobPosting.domain.model.aggregate.JobPosting;
 import com.example.deukgeun.member.infrastructure.persistence.entity.MemberEntity;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

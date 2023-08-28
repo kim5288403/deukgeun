@@ -10,9 +10,9 @@ import com.example.deukgeun.applicant.infrastructure.persistence.model.entity.Ma
 import com.example.deukgeun.applicant.infrastructure.persistence.model.entity.PaymentCancelInfoEntity;
 import com.example.deukgeun.applicant.infrastructure.persistence.model.entity.PaymentInfoEntity;
 import com.example.deukgeun.applicant.infrastructure.persistence.repository.ApplicantJpaRepository;
-import com.example.deukgeun.job.domain.model.aggregate.JobPosting;
-import com.example.deukgeun.job.infrastructure.persistence.model.entity.JobPostingEntity;
-import com.example.deukgeun.job.infrastructure.persistence.model.valueobject.JobAddressVo;
+import com.example.deukgeun.jobPosting.domain.model.aggregate.JobPosting;
+import com.example.deukgeun.jobPosting.infrastructure.persistence.model.entity.JobPostingEntity;
+import com.example.deukgeun.jobPosting.infrastructure.persistence.model.valueobject.JobAddressVo;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

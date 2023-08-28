@@ -2,8 +2,8 @@ package com.example.deukgeun.applicant.repository;
 
 import com.example.deukgeun.applicant.infrastructure.persistence.model.entity.ApplicantEntity;
 import com.example.deukgeun.applicant.infrastructure.persistence.repository.ApplicantJpaRepository;
-import com.example.deukgeun.job.infrastructure.persistence.model.entity.JobPostingEntity;
-import com.example.deukgeun.job.infrastructure.persistence.repository.JobPostingJpaRepository;
+import com.example.deukgeun.jobPosting.infrastructure.persistence.model.entity.JobPostingEntity;
+import com.example.deukgeun.jobPosting.infrastructure.persistence.repository.JobPostingJpaRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;

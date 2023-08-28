@@ -6,8 +6,8 @@ import com.example.deukgeun.applicant.application.service.ApplicantApplicationSe
 import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
 import com.example.deukgeun.authToken.application.dto.response.RestResponse;
 import com.example.deukgeun.global.util.RestResponseUtil;
-import com.example.deukgeun.job.application.service.JobPostingApplicationService;
-import com.example.deukgeun.job.domain.model.aggregate.JobPosting;
+import com.example.deukgeun.jobPosting.application.service.JobPostingApplicationService;
+import com.example.deukgeun.jobPosting.domain.model.aggregate.JobPosting;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

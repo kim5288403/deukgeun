@@ -3,7 +3,7 @@ package com.example.deukgeun.applicant.application.controller;
 import com.example.deukgeun.applicant.application.dto.request.SaveMatchInfoRequest;
 import com.example.deukgeun.applicant.application.service.ApplicantApplicationService;
 import com.example.deukgeun.global.util.RestResponseUtil;
-import com.example.deukgeun.job.application.service.JobPostingApplicationService;
+import com.example.deukgeun.jobPosting.application.service.JobPostingApplicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;

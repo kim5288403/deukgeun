@@ -1,7 +1,7 @@
 package com.example.deukgeun.applicant.infrastructure.persistence.model.entity;
 
 import com.example.deukgeun.global.entity.BaseEntity;
-import com.example.deukgeun.job.infrastructure.persistence.model.entity.JobPostingEntity;
+import com.example.deukgeun.jobPosting.infrastructure.persistence.model.entity.JobPostingEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

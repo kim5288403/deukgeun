@@ -35,6 +35,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-cache'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+	implementation 'org.springframework.kafka:spring-kafka'
 	implementation 'com.google.code.gson:gson:2.9.0'
 	implementation 'com.github.iamport:iamport-rest-client-java:0.2.23'
 	implementation 'commons-io:commons-io:2.11.0'
@@ -49,23 +50,14 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
 	testImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.2'
-	testImplementation 'com.h2database:h2'
 	testImplementation 'org.mockito:mockito-inline:4.0.0'
+	testImplementation 'org.springframework.kafka:spring-kafka-test'
+	testImplementation 'com.h2database:h2'
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
 }
 
 test {
 	useJUnitPlatform()
-//	filter {
-//		excludeTestsMatching "*ProfileApplicationServiceTest*"
-//	}
 }
-
-//tasks.register('ProfileApplicationServiceTest', Test) {
-//	useJUnitPlatform()
-//	filter {
-//		includeTestsMatching "*ProfileApplicationServiceTest*"
-//	}
-//}
 
 targetCompatibility = JavaVersion.VERSION_11
