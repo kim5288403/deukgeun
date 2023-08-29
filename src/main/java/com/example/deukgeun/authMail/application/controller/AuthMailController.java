@@ -6,6 +6,7 @@ import com.example.deukgeun.authMail.application.service.AuthMailApplicationServ
 import com.example.deukgeun.global.util.RestResponseUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,21 +17,13 @@ import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
 
 @RestController()
-@RequestMapping("/api/mail")
+@RequestMapping("/api/authMail")
 @RequiredArgsConstructor
 public class AuthMailController {
 
   private final AuthMailApplicationService authMailApplicationService;
+  private final KafkaTemplate<String, String> kafkaTemplate;
 
-  /**
-   * 이메일을 보내는 메소드입니다.
-   *
-   * @param request        이메일 요청 객체
-   * @param bindingResult  데이터 유효성 검사 결과
-   * @return ResponseEntity<?> 응답 엔티티
-   * @throws MessagingException          메일 전송 중 발생하는 예외
-   * @throws UnsupportedEncodingException 인코딩 예외
-   */
   @RequestMapping(method = RequestMethod.POST, path = "/send")
   public ResponseEntity<?> send(
       @Valid EmailRequest request,
@@ -44,24 +37,22 @@ public class AuthMailController {
 
     // 인증 코드 생성
     String authCode = authMailApplicationService.createCode();
+    AuthMailRequest authMailRequest = new AuthMailRequest();
+    authMailRequest.setCode(authCode);
+    authMailRequest.setEmail(toEmail);
+
+    kafkaTemplate.send("authMail", authCode);
 
     // 메일 전송
-    authMailApplicationService.send(request.getEmail(), authCode);
+//    authMailApplicationService.send(toEmail, authCode);
 
     // 인증 메일 정보 저장
-    authMailApplicationService.save(toEmail, authCode);
+//    authMailApplicationService.save(toEmail, authCode);
 
     return RestResponseUtil
     .ok("인증 메일 보내기 성공했습니다.", null);
   }
 
-  /**
-   * 이메일 인증을 처리하는 메소드입니다.
-   *
-   * @param request        이메일 인증 요청 객체
-   * @param bindingResult  데이터 유효성 검사 결과
-   * @return ResponseEntity<?> 응답 엔티티
-   */
   @RequestMapping(method = RequestMethod.POST, path = "/confirm")
   public ResponseEntity<?> confirm(@Valid AuthMailRequest request, BindingResult bindingResult) {
 

@@ -46,7 +46,7 @@ public class AuthMailControllerTest {
 
         // Then
         verify(authMailApplicationService, times(1)).deleteByEmail(toEmail);
-        verify(authMailApplicationService, times(1)).send(toEmail, authCode);
+//        verify(authMailApplicationService, times(1)).send(toEmail, authCode);
         verify(authMailApplicationService, times(1)).save(toEmail, authCode);
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseEntity.getBody()).isEqualTo(expectedResponse.getBody());

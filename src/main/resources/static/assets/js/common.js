@@ -138,7 +138,7 @@ function licenseDown(data) {
 
 function codeSendAjax(email) {
 	$.ajax({
-		url : "/api/mail/send",
+		url : "/api/authMail/send",
 		type : "post",
 		data : {email : email},
 	    beforeSend: function() {
@@ -163,7 +163,7 @@ function codeSendAjax(email) {
 
 function codeConfirmAjax(email, code) {
 	$.ajax({
-		url : "/api/mail/confirm",
+		url : "/api/authMail/confirm",
 		type : "post",
 		data : {
 			email : email,

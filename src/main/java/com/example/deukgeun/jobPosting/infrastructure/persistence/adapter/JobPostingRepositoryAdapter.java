@@ -46,6 +46,7 @@ public class JobPostingRepositoryAdapter implements JobPostingRepository {
     @Override
     public JobPosting save(JobPosting jobPosting) {
         JobPostingEntity jobPostingEntity = jobPostingJpaRepository.save(convert(jobPosting));
+
         return convert(jobPostingEntity);
     }
 

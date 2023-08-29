@@ -5,7 +5,9 @@ import com.example.deukgeun.authMail.application.service.AuthMailApplicationServ
 import com.example.deukgeun.authMail.domain.service.AuthMailDomainService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
@@ -117,15 +119,14 @@ public class AuthMailApplicationServiceImpl implements AuthMailApplicationServic
         return authMailDomainService.isEmailAuthenticated(email);
     }
 
-    /**
-     * 주어진 이메일 주소로 메일을 전송합니다.
-     *
-     * @param toEmail 수신자 이메일 주소
-     * @throws MessagingException 메일 전송 중 발생한 예외
-     */
-    public void send(String toEmail, String authCode) throws MessagingException {
-        MimeMessage emailForm = createMailForm(toEmail, authCode);
-        emailSender.send(emailForm);
+
+    @KafkaListener(topics = "authMail")
+    public void send(@Payload String payload) throws MessagingException {
+        System.out.println("====================================================");
+        System.out.println(payload);
+        System.out.println("====================================================");
+//        MimeMessage emailForm = createMailForm(toEmail, authCode);
+//        emailSender.send(emailForm);
     }
 
     /**

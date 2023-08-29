@@ -177,7 +177,7 @@ public class AuthMailApplicationServiceTest {
         AuthMailApplicationServiceImpl authMailApplicationService = new AuthMailApplicationServiceImpl(mockEmailSender, mockTemplateEngine, authMailDomainService);
 
         // When
-        authMailApplicationService.send(toEmail, authCode);
+//        authMailApplicationService.send(toEmail, authCode);
 
         // Then
         verify(mockEmailSender, times(1)).send(any(MimeMessage.class));
