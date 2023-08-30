@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
@@ -121,12 +120,9 @@ public class AuthMailApplicationServiceImpl implements AuthMailApplicationServic
 
 
     @KafkaListener(topics = "authMail")
-    public void send(@Payload String payload) throws MessagingException {
-        System.out.println("====================================================");
-        System.out.println(payload);
-        System.out.println("====================================================");
-//        MimeMessage emailForm = createMailForm(toEmail, authCode);
-//        emailSender.send(emailForm);
+    public void send(AuthMailRequest authMailRequest) throws MessagingException {
+        MimeMessage emailForm = createMailForm(authMailRequest.getEmail(), authMailRequest.getCode());
+        emailSender.send(emailForm);
     }
 
     /**
@@ -141,12 +137,7 @@ public class AuthMailApplicationServiceImpl implements AuthMailApplicationServic
         return templateEngine.process("/web/mail", context); //mail.html
     }
 
-    /**
-     * 이메일 주소를 제공하여 AuthMail 객체를 저장합니다.
-     *
-     * @param toEmail 저장할 이메일 주소
-     */
-    public void save(String toEmail, String authCode) {
-        authMailDomainService.save(toEmail, authCode);
+    public void save(AuthMailRequest authMailRequest) {
+        authMailDomainService.save(authMailRequest.getEmail(), authMailRequest.getCode());
     }
 }

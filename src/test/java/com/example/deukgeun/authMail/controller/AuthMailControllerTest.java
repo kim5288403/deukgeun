@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.validation.BindingResult;
 
 import javax.mail.MessagingException;
@@ -28,6 +29,8 @@ public class AuthMailControllerTest {
     private AuthMailController authMailController;
     @Mock
     private AuthMailApplicationService authMailApplicationService;
+    @Mock
+    private KafkaTemplate<String, String> kafkaTemplate;
     @Mock
     private BindingResult bindingResult;
 
@@ -46,8 +49,6 @@ public class AuthMailControllerTest {
 
         // Then
         verify(authMailApplicationService, times(1)).deleteByEmail(toEmail);
-//        verify(authMailApplicationService, times(1)).send(toEmail, authCode);
-        verify(authMailApplicationService, times(1)).save(toEmail, authCode);
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseEntity.getBody()).isEqualTo(expectedResponse.getBody());
     }

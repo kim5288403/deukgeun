@@ -1,7 +1,6 @@
 package com.example.deukgeun.authMail.service.application;
 
 import com.example.deukgeun.authMail.application.dto.request.AuthMailRequest;
-import com.example.deukgeun.authMail.application.service.AuthMailApplicationService;
 import com.example.deukgeun.authMail.application.service.implement.AuthMailApplicationServiceImpl;
 import com.example.deukgeun.authMail.domain.service.AuthMailDomainService;
 import org.junit.jupiter.api.Test;
@@ -167,21 +166,24 @@ public class AuthMailApplicationServiceTest {
         verify(authMailDomainService, times(1)).isEmailAuthenticated(email);
     }
 
-//    @Test
-//    void givenToEmailAndAuthCode_whenSend_thenIsSend() throws MessagingException {
-//        // Given
-//        String toEmail = "test@example.com";
-//        String authCode = "123456";
-//        MimeMessage mimeMessage = mock(MimeMessage.class);
-//        given(mockEmailSender.createMimeMessage()).willReturn(mimeMessage);
-//        AuthMailApplicationServiceImpl authMailApplicationService = new AuthMailApplicationServiceImpl(mockEmailSender, mockTemplateEngine, authMailDomainService);
-//
-//        // When
-//        authMailApplicationService.send(toEmail, authCode);
-//
-//        // Then
-//        verify(mockEmailSender, times(1)).send(any(MimeMessage.class));
-//    }
+    @Test
+    void givenToEmailAndAuthCode_whenSend_thenIsSend() throws MessagingException {
+        // Given
+        String toEmail = "test@example.com";
+        String authCode = "123456";
+        MimeMessage mimeMessage = mock(MimeMessage.class);
+        given(mockEmailSender.createMimeMessage()).willReturn(mimeMessage);
+        AuthMailApplicationServiceImpl authMailApplicationService = new AuthMailApplicationServiceImpl(mockEmailSender, mockTemplateEngine, authMailDomainService);
+        AuthMailRequest authMailRequest = new AuthMailRequest();
+        authMailRequest.setEmail(toEmail);
+        authMailRequest.setCode(authCode);
+
+        // When
+        authMailApplicationService.send(authMailRequest);
+
+        // Then
+        verify(mockEmailSender, times(1)).send(any(MimeMessage.class));
+    }
 
     @Test
     void givenCode_whenSetContext_thenProcessTemplate() {
@@ -201,9 +203,12 @@ public class AuthMailApplicationServiceTest {
         // Given
         String toEmail = "test@example.com";
         String authCode = "123456";
+        AuthMailRequest authMailRequest = new AuthMailRequest();
+        authMailRequest.setEmail(toEmail);
+        authMailRequest.setCode(authCode);
 
         // When
-        mockAuthMailApplicationService.save(toEmail, authCode);
+        mockAuthMailApplicationService.save(authMailRequest);
 
         // Then
         verify(authMailDomainService, times(1)).save(toEmail, authCode);

@@ -22,7 +22,7 @@ import java.io.UnsupportedEncodingException;
 public class AuthMailController {
 
   private final AuthMailApplicationService authMailApplicationService;
-  private final KafkaTemplate<String, String> kafkaTemplate;
+  private final KafkaTemplate<String, AuthMailRequest> kafkaTemplate;
 
   @RequestMapping(method = RequestMethod.POST, path = "/send")
   public ResponseEntity<?> send(
@@ -37,17 +37,18 @@ public class AuthMailController {
 
     // 인증 코드 생성
     String authCode = authMailApplicationService.createCode();
+
     AuthMailRequest authMailRequest = new AuthMailRequest();
     authMailRequest.setCode(authCode);
     authMailRequest.setEmail(toEmail);
 
-    kafkaTemplate.send("authMail", authCode);
-
     // 메일 전송
-//    authMailApplicationService.send(toEmail, authCode);
+//    authMailApplicationService.send(authMailRequest);
 
     // 인증 메일 정보 저장
-//    authMailApplicationService.save(toEmail, authCode);
+    authMailApplicationService.save(authMailRequest);
+
+    kafkaTemplate.send("authMail", authMailRequest);
 
     return RestResponseUtil
     .ok("인증 메일 보내기 성공했습니다.", null);
