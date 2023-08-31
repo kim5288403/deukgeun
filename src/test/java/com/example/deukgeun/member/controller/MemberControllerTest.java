@@ -48,7 +48,7 @@ public class MemberControllerTest {
                 joinRequest.getGender()
                 );
 
-        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("회원 가입 성공 했습니다.", member);
+        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("회원 가입 성공 했습니다.", null);
         given(memberApplicationService.save(joinRequest)).willReturn(member);
 
         // When

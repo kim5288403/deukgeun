@@ -32,20 +32,14 @@ public class AuthMailController {
 
     String toEmail = request.getEmail();
 
-    // 중복 인증 정보 제거
     authMailApplicationService.deleteByEmail(toEmail);
 
-    // 인증 코드 생성
     String authCode = authMailApplicationService.createCode();
 
     AuthMailRequest authMailRequest = new AuthMailRequest();
     authMailRequest.setCode(authCode);
     authMailRequest.setEmail(toEmail);
 
-    // 메일 전송
-//    authMailApplicationService.send(authMailRequest);
-
-    // 인증 메일 정보 저장
     authMailApplicationService.save(authMailRequest);
 
     kafkaTemplate.send("authMail", authMailRequest);

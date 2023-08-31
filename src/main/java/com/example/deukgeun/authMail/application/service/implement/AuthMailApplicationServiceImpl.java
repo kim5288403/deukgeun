@@ -27,21 +27,10 @@ public class AuthMailApplicationServiceImpl implements AuthMailApplicationServic
     @Value("${trainer.mail.email}")
     private String fromEmail; // 보내는 이메일
 
-    /**
-     * 주어진 이메일과 코드를 사용하여 메일 인증 정보의 상태를 업데이트합니다.
-     *
-     * @param request 업데이트할 메일 인증 정보의 이메일과 코드
-     */
     public void confirm(AuthMailRequest request) {
         authMailDomainService.confirm(request);
     }
 
-    /**
-     * 랜덤한 인증 코드를 생성합니다.
-     * 생성된 인증 코드는 클래스 변수 authCode 에 저장됩니다.
-     *
-     * @return 인증 코드
-     */
     public String createCode() {
         Random random = new Random();
         StringBuffer key = new StringBuffer();
@@ -68,14 +57,6 @@ public class AuthMailApplicationServiceImpl implements AuthMailApplicationServic
         return key.toString();
     }
 
-    /**
-     * 수신자 이메일을 기반으로 MimeMessage 객체를 생성합니다.
-     * 생성된 MimeMessage 에는 인증 코드를 포함한 이메일 내용이 설정됩니다.
-     *
-     * @param toEmail 수신자 이메일
-     * @return 생성된 MimeMessage 객체
-     * @throws MessagingException 메일 생성 중 발생한 예외
-     */
     public MimeMessage createMailForm(String toEmail, String authCode) throws MessagingException {
         MimeMessage message = emailSender.createMimeMessage();
         message.addRecipients(MimeMessage.RecipientType.TO, toEmail);
@@ -87,37 +68,17 @@ public class AuthMailApplicationServiceImpl implements AuthMailApplicationServic
         return message;
     }
 
-    /**
-     * 주어진 이메일에 대한 인증 메일 정보를 삭제합니다.
-     *
-     * @param email 삭제할 인증 메일의 이메일
-     */
     public void deleteByEmail(String email) {
         authMailDomainService.deleteByEmail(email);
     }
 
-    /**
-     * 주어진 이메일과 코드를 사용하여 메일 인증을 확인합니다.
-     *
-     * @param email 메일 인증을 확인할 이메일
-     * @param code  메일 인증 코드
-     * @return 인증이 확인되면 true 를 반환하고, 그렇지 않으면 false 를 반환합니다.
-     */
     public boolean existsByEmailAndCode(String email, String code) {
         return authMailDomainService.existsByEmailAndCode(email, code);
     }
 
-    /**
-     * 주어진 이메일이 인증된 이메일인지 확인합니다.
-     *
-     * @param email 인증 여부를 확인할 이메일
-     * @return 이메일이 인증된 경우 true 를 반환하고, 그렇지 않으면 false 를 반환합니다.
-     * @throws EntityNotFoundException 주어진 이메일에 해당하는 사용자를 찾을 수 없는 경우 발생하는 예외
-     */
     public boolean isEmailAuthenticated(String email) throws EntityNotFoundException {
         return authMailDomainService.isEmailAuthenticated(email);
     }
-
 
     @KafkaListener(topics = "authMail")
     public void send(AuthMailRequest authMailRequest) throws MessagingException {
@@ -125,16 +86,10 @@ public class AuthMailApplicationServiceImpl implements AuthMailApplicationServic
         emailSender.send(emailForm);
     }
 
-    /**
-     * 주어진 코드를 이용하여 메일 내용을 생성합니다.
-     *
-     * @param code 인증 코드
-     * @return 생성된 메일 내용
-     */
     public String setContext(String code) {
         Context context = new Context();
         context.setVariable("code", code);
-        return templateEngine.process("/web/mail", context); //mail.html
+        return templateEngine.process("/web/mail", context);
     }
 
     public void save(AuthMailRequest authMailRequest) {
