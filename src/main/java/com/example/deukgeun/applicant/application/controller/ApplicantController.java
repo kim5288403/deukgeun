@@ -35,7 +35,6 @@ public class ApplicantController {
     public ResponseEntity<?> list(Long jobPostingId, int currentPage) {
         Page<ApplicantResponse.ListResponse> list = applicantApplicationService.getByJobPostingId(jobPostingId, currentPage);
 
-
         return RestResponseUtil.ok("조회 성공했습니다.", list);
     }
 
