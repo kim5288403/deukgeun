@@ -40,7 +40,6 @@ public class AuthMailController {
     authMailRequest.setCode(authCode);
     authMailRequest.setEmail(toEmail);
 
-
     authMailApplicationService.save(authMailRequest);
 
     kafkaTemplate.send("authMail", authMailRequest);
