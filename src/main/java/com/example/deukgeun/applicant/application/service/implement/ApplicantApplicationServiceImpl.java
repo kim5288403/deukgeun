@@ -30,6 +30,7 @@ public class ApplicantApplicationServiceImpl implements ApplicantApplicationServ
     @Override
     public void cancel(Long id, IamPortCancelResponse iamPortCancelResponse) {
         applicantDomainService.cancel(id, iamPortCancelResponse);
+
     }
 
     @Override
