@@ -24,7 +24,7 @@ public class ApplicantApplicationServiceImpl implements ApplicantApplicationServ
 
     private final ApplicantDomainService applicantDomainService;
 
-    @Value("${deukgeun.status.paymentWaiting}")
+    @Value("${status.payment.waiting}")
     private Integer PAYMENT_WAITING;
 
     @Override
@@ -43,15 +43,15 @@ public class ApplicantApplicationServiceImpl implements ApplicantApplicationServ
     }
 
     @Override
-    public Page<ApplicantResponse.ListResponse> getByJobPostingId(Long jobPostingId, int currentPage) {
+    public Page<ApplicantResponse.ListResponse> getByJobId(Long jobId, int currentPage) {
         PageRequest pageRequest = PageRequest.of(currentPage, 10);
-        Page<Applicant> applicants = applicantDomainService.getByJobPostingId(jobPostingId, pageRequest);
+        Page<Applicant> applicants = applicantDomainService.getByJobId(jobId, pageRequest);
         return applicants.map(ApplicantResponse.ListResponse::new);
     }
 
     @Override
-    public void isAnnouncementMatchedByJobPostingId(Long jobPostingId) {
-        boolean isAnnouncement = applicantDomainService.isAnnouncementMatchedByJobPostingId(jobPostingId);
+    public void isAnnouncementMatchedByJobId(Long jobId) {
+        boolean isAnnouncement = applicantDomainService.isAnnouncementMatchedByJobId(jobId);
         if (isAnnouncement) {
             throw new EntityExistsException("이미 선택한 지원자가 있습니다.");
         }

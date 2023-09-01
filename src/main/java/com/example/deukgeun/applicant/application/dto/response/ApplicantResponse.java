@@ -20,7 +20,7 @@ public class ApplicantResponse {
 
         private Long trainerId;
 
-        private Long jobPostingId;
+        private Long jobId;
 
         private Integer supportAmount;
 
@@ -29,7 +29,7 @@ public class ApplicantResponse {
         public ListResponse(Applicant applicant) {
             this.id = applicant.getId();
             this.trainerId = applicant.getTrainerId();
-            this.jobPostingId = applicant.getJobPostingId();
+            this.jobId = applicant.getJobId();
             this.supportAmount = applicant.getSupportAmount();
             this.isSelected = applicant.getIsSelected();
         }
@@ -42,7 +42,7 @@ public class ApplicantResponse {
 
         private Long trainerId;
 
-        private Long jobPostingId;
+        private Long jobId;
 
         private Integer isSelected;
 
@@ -61,16 +61,16 @@ public class ApplicantResponse {
         public ApplicantInfo(Applicant applicant, Member member) {
             this.id = applicant.getId();
             this.trainerId = applicant.getTrainerId();
-            this.jobPostingId = applicant.getJobPostingId();
+            this.jobId = applicant.getJobId();
             this.isSelected = applicant.getIsSelected();
-            this.title = applicant.getJobPosting().getTitle();
+            this.title = applicant.getJob().getTitle();
             this.email = member.getEmail();
             this.name = member.getName();
-            this.postcode = applicant.getJobPosting().getAddress().getPostcode();
-            this.roadAddress = applicant.getJobPosting().getAddress().getRoadAddress();
+            this.postcode = applicant.getJob().getAddress().getPostcode();
+            this.roadAddress = applicant.getJob().getAddress().getRoadAddress();
 
-            LocalDateTime startDate = applicant.getJobPosting().getStartDate();
-            LocalDateTime endDate = applicant.getJobPosting().getEndDate();
+            LocalDateTime startDate = applicant.getJob().getStartDate();
+            LocalDateTime endDate = applicant.getJob().getEndDate();
             Period period = Period.between(startDate.toLocalDate(), endDate.toLocalDate());
             int supportAmount = applicant.getSupportAmount();
             this.amount = period.getDays() * supportAmount;

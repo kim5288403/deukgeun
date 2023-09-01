@@ -8,7 +8,7 @@ import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
 import com.example.deukgeun.authToken.application.dto.response.RestResponse;
 import com.example.deukgeun.authToken.application.service.AuthTokenApplicationService;
 import com.example.deukgeun.global.util.RestResponseUtil;
-import com.example.deukgeun.jobPosting.domain.model.aggregate.JobPosting;
+import com.example.deukgeun.job.domain.model.aggregate.Job;
 import com.example.deukgeun.member.application.service.MemberApplicationService;
 import com.example.deukgeun.member.domain.entity.Member;
 import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
@@ -54,18 +54,18 @@ public class ApplicantControllerTest {
     @Test
     public void givenApplicantService_whenList_thenReturnResponseEntity() {
         // Given
-        Long jobPostingId = 123L;
+        Long jobId = 123L;
         int currentPage = 0;
         Page<ApplicantResponse.ListResponse> page = mock(Page.class);
 
-        given(applicantApplicationService.getByJobPostingId(jobPostingId, currentPage)).willReturn(page);
+        given(applicantApplicationService.getByJobId(jobId, currentPage)).willReturn(page);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공했습니다.", page);
 
         // When
-        ResponseEntity<?> responseEntity = applicantController.list(jobPostingId, currentPage);
+        ResponseEntity<?> responseEntity = applicantController.list(jobId, currentPage);
 
         // Then
-        verify(applicantApplicationService, times(1)).getByJobPostingId(jobPostingId, currentPage);
+        verify(applicantApplicationService, times(1)).getByJobId(jobId, currentPage);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
     }
@@ -100,10 +100,10 @@ public class ApplicantControllerTest {
         Applicant applicant = mock(Applicant.class);
         Member member = mock(Member.class);
         given(applicantApplicationService.findById(id)).willReturn(applicant);
-        given(applicant.getJobPosting()).willReturn(mock(JobPosting.class));
-        given(applicant.getJobPosting().getStartDate()).willReturn(LocalDateTime.now());
-        given(applicant.getJobPosting().getEndDate()).willReturn(LocalDateTime.now());
-        given(applicant.getJobPosting().getAddress()).willReturn(mock(Address.class));
+        given(applicant.getJob()).willReturn(mock(Job.class));
+        given(applicant.getJob().getStartDate()).willReturn(LocalDateTime.now());
+        given(applicant.getJob().getEndDate()).willReturn(LocalDateTime.now());
+        given(applicant.getJob().getAddress()).willReturn(mock(Address.class));
         given(memberApplicationService.findById(anyLong())).willReturn(member);
 
         ApplicantResponse.ApplicantInfo result = new ApplicantResponse.ApplicantInfo(applicant, member);

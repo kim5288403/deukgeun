@@ -6,9 +6,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ApplicantJpaRepository extends JpaRepository<ApplicantEntity, Long> {
-    boolean existsByJobPostingIdAndMatchInfoIdNotNull(Long id);
-    Page<ApplicantEntity> findPageByJobPostingId(Long jobPostingId, PageRequest pageRequest);
+    boolean existsByJobIdAndMatchInfoIdNotNull(Long id);
+    Page<ApplicantEntity> findPageByJobId(Long jobId, PageRequest pageRequest);
 
-    boolean existsByJobPostingIdAndTrainerId(Long jobPostingId, Long trainerId);
+    boolean existsByJobIdAndTrainerId(Long jobId, Long trainerId);
 
 }

@@ -27,7 +27,7 @@ public class MainController {
     }
 
     @GetMapping("/job/create")
-    public String jobPosting(Model model) {
+    public String job(Model model) {
         model.addAttribute("menu", "myPage");
         return "member/job/create";
     }

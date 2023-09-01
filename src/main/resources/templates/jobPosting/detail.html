@@ -148,7 +148,7 @@
             if (role === "trainer") {
               $("input[name=applicantBtn]").show();
             } else if (role === "member") {
-              checkJobPostingOwnershipAjax();
+              checkJobOwnershipAjax();
             }
 
 		  }
@@ -158,7 +158,7 @@
 	      getDetailInfoAjax();
 	    });
 
-	    function checkJobPostingOwnershipAjax() {
+	    function checkJobOwnershipAjax() {
 	        $.ajax({
 				url : "/api/job/check",
 				type : "get",
@@ -186,7 +186,7 @@
 				url : "/api/applicant/",
 				type : "post",
 				data : {
-				    jobPostingId : id,
+				    jobId : id,
 				    supportAmount : supportAmount
 				},
 				beforeSend : function (xhr) {

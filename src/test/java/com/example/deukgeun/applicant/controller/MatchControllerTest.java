@@ -6,8 +6,8 @@ import com.example.deukgeun.applicant.application.service.ApplicantApplicationSe
 import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
 import com.example.deukgeun.authToken.application.dto.response.RestResponse;
 import com.example.deukgeun.global.util.RestResponseUtil;
-import com.example.deukgeun.jobPosting.application.service.JobPostingApplicationService;
-import com.example.deukgeun.jobPosting.domain.model.aggregate.JobPosting;
+import com.example.deukgeun.job.application.service.JobApplicationService;
+import com.example.deukgeun.job.domain.model.aggregate.Job;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,7 +28,7 @@ public class MatchControllerTest {
     @InjectMocks
     private MatchController matchController;
     @Mock
-    private JobPostingApplicationService jobPostingApplicationService;
+    private JobApplicationService jobApplicationService;
     @Mock
     private ApplicantApplicationService applicantApplicationService;
     @Mock
@@ -38,7 +38,7 @@ public class MatchControllerTest {
     public void givenMatchInfoService_whenMatching_thenReturnResponseEntity() {
         // Given
         Applicant applicant = mock(Applicant.class);
-        JobPosting jobPosting = mock(JobPosting.class);
+        Job job = mock(Job.class);
         SaveMatchInfoRequest saveMatchInfoRequest = mock(SaveMatchInfoRequest.class);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("매칭 성공했습니다.", null);
 
@@ -52,23 +52,23 @@ public class MatchControllerTest {
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
 
         verify(applicantApplicationService, times(1)).matching(saveMatchInfoRequest);
-        verify(jobPostingApplicationService, times(1)).updateIsActiveByJobPostingId(2, saveMatchInfoRequest.getJobPostingId());
+        verify(jobApplicationService, times(1)).updateIsActiveByJobId(2, saveMatchInfoRequest.getJobId());
     }
 
     @Test
     public void givenMatchInfoService_whenIsAnnouncementMatched_thenReturnResponseEntity() {
         // Given
-        Long jobPostingId = 123L;
+        Long jobId = 123L;
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("검사 성공했습니다.", null);
 
         // When
-        ResponseEntity<?> responseEntity = matchController.isAnnouncementMatched(jobPostingId);
+        ResponseEntity<?> responseEntity = matchController.isAnnouncementMatched(jobId);
 
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
 
-        verify(applicantApplicationService, times(1)).isAnnouncementMatchedByJobPostingId(jobPostingId);
+        verify(applicantApplicationService, times(1)).isAnnouncementMatchedByJobId(jobId);
     }
 
     @Test

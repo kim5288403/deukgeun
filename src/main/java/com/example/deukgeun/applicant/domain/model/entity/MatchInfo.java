@@ -8,25 +8,25 @@ public class MatchInfo {
 
     private Long id;
 
-    private Long jobPostingId;
+    private Long jobId;
 
     private Integer status;
 
     public MatchInfo(
             Long id,
-            Long jobPostingId,
+            Long jobId,
             Integer status
     ) {
         this.id = id;
-        this.jobPostingId = jobPostingId;
+        this.jobId = jobId;
         this.status = status;
     }
 
     public static MatchInfo create(
-            Long jobPostingId,
+            Long jobId,
             Integer status
     ) {
         Long id = LongIdGeneratorUtil.gen();
-        return new MatchInfo(id, jobPostingId, status);
+        return new MatchInfo(id, jobId, status);
     }
 }

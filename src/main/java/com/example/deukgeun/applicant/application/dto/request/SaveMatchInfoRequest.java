@@ -13,5 +13,5 @@ public class SaveMatchInfoRequest {
     private Long applicantId;
 
     @NotNull(message = "공고 아이디는 필수입니다.")
-    private Long jobPostingId;
+    private Long jobId;
 }

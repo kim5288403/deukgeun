@@ -7,10 +7,10 @@ import org.springframework.data.domain.PageRequest;
 import java.util.Optional;
 
 public interface ApplicantRepository {
-    boolean existsByJobPostingIdAndMatchInfoIdNotNull(Long jobPostingId);
-    boolean existsByJobPostingIdAndTrainerId(Long jobPositingId, Long trainerId);
+    boolean existsByJobIdAndMatchInfoIdNotNull(Long jobId);
+    boolean existsByJobIdAndTrainerId(Long jobId, Long trainerId);
     Optional<Applicant> findById(Long id);
-    Page<Applicant>  findPageByJobPostingId(Long jobPostingId, PageRequest pageRequest);
+    Page<Applicant>  findPageByJobId(Long jobId, PageRequest pageRequest);
     Applicant save(Applicant applicant);
 
 }

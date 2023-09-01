@@ -212,7 +212,7 @@ function setList(list) {
 			html += "<td>" + data.endDate + "</td>";
 			html += "<td>" + data.address + "</td>";
 			html += "<td>";
-			html += "<a href='/jobPosting/" + data.id + "' class='button small'>상세보기</a>";
+			html += "<a href='/job/" + data.id + "' class='button small'>상세보기</a>";
 			html += "</td>";
 			html += "</tr>";
 		});

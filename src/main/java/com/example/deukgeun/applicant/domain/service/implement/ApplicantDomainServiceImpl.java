@@ -57,13 +57,13 @@ public class ApplicantDomainServiceImpl implements ApplicantDomainService {
     }
 
     @Override
-    public Page<Applicant> getByJobPostingId(Long jobPostingId, PageRequest pageRequest) {
-        return applicantRepository.findPageByJobPostingId(jobPostingId, pageRequest);
+    public Page<Applicant> getByJobId(Long jobId, PageRequest pageRequest) {
+        return applicantRepository.findPageByJobId(jobId, pageRequest);
     }
 
     @Override
-    public boolean isAnnouncementMatchedByJobPostingId(Long jobPostingId) {
-        return applicantRepository.existsByJobPostingIdAndMatchInfoIdNotNull(jobPostingId);
+    public boolean isAnnouncementMatchedByJobId(Long jobId) {
+        return applicantRepository.existsByJobIdAndMatchInfoIdNotNull(jobId);
     }
 
     @Override
@@ -71,7 +71,7 @@ public class ApplicantDomainServiceImpl implements ApplicantDomainService {
         Applicant applicant = findById(saveMatchInfoRequest.getApplicantId());
 
         MatchInfo matchInfo = MatchInfo.create(
-                saveMatchInfoRequest.getJobPostingId(),
+                saveMatchInfoRequest.getJobId(),
                 status
         );
 
@@ -98,12 +98,12 @@ public class ApplicantDomainServiceImpl implements ApplicantDomainService {
 
     @Override
     public Applicant save(SaveApplicantRequest saveApplicantRequest, Long trainerId) {
-        if (applicantRepository.existsByJobPostingIdAndTrainerId(saveApplicantRequest.getJobPostingId(), trainerId)) {
+        if (applicantRepository.existsByJobIdAndTrainerId(saveApplicantRequest.getJobId(), trainerId)) {
             throw new EntityExistsException("이미 지원한 공고 입니다.");
         }
 
         Applicant applicant = Applicant.create(
-                saveApplicantRequest.getJobPostingId(),
+                saveApplicantRequest.getJobId(),
                 trainerId,
                 saveApplicantRequest.getSupportAmount(),
                 0

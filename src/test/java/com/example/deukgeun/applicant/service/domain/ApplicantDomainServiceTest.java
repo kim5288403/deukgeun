@@ -8,7 +8,7 @@ import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
 import com.example.deukgeun.applicant.domain.model.entity.PaymentInfo;
 import com.example.deukgeun.applicant.domain.repository.ApplicantRepository;
 import com.example.deukgeun.applicant.domain.service.implement.ApplicantDomainServiceImpl;
-import com.example.deukgeun.jobPosting.domain.model.aggregate.JobPosting;
+import com.example.deukgeun.job.domain.model.aggregate.Job;
 import com.example.deukgeun.member.infrastructure.persistence.entity.MemberEntity;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -82,12 +82,12 @@ public class ApplicantDomainServiceTest {
         // Given
         MemberEntity member = mock(MemberEntity.class);
 
-        JobPosting jobPosting = mock(JobPosting.class);
+        Job job = mock(Job.class);
 
         Long applicantId = 12345L;
         Applicant applicant = mock(Applicant.class);
 
-        given(applicant.getJobPosting()).willReturn(jobPosting);
+        given(applicant.getJob()).willReturn(job);
         given(applicantRepository.findById(applicantId)).willReturn(Optional.of(applicant));
 
         // When
@@ -114,58 +114,58 @@ public class ApplicantDomainServiceTest {
     }
 
     @Test
-    void givenExistingJobPostingId_whenGetByJobPostingId_thenReturnsMatching() {
+    void givenExistingJobId_whenGetByJobId_thenReturnsMatching() {
         // Given
-        Long jobPostingId = 123L;
+        Long jobId = 123L;
         int currentPage = 0;
         PageRequest pageable = PageRequest.of(currentPage, 10);
 
-        Applicant list1= new Applicant(1L, jobPostingId, 123L, 30000, 0);
-        Applicant list2 = new Applicant(2L, jobPostingId, 123L, 30000, 0);
+        Applicant list1= new Applicant(1L, jobId, 123L, 30000, 0);
+        Applicant list2 = new Applicant(2L, jobId, 123L, 30000, 0);
 
         List<Applicant> list = new ArrayList<>();
         list.add(list1);
         list.add(list2);
         Page<Applicant> page = new PageImpl<>(list, pageable, list.size());
 
-        given(applicantRepository.findPageByJobPostingId(jobPostingId, pageable)).willReturn(page);
+        given(applicantRepository.findPageByJobId(jobId, pageable)).willReturn(page);
 
         // When
-        Page<Applicant> result = applicantDomainService.getByJobPostingId(jobPostingId, pageable);
+        Page<Applicant> result = applicantDomainService.getByJobId(jobId, pageable);
 
         // Then
         assertNotNull(result);
         assertEquals(list.size(), result.getContent().size());
-        verify(applicantRepository, times(1)).findPageByJobPostingId(jobPostingId, pageable);
+        verify(applicantRepository, times(1)).findPageByJobId(jobId, pageable);
     }
 
     @Test
-    public void givenJobPostingId_whenIsAnnouncementMatchedByJobPostingId_thenCheckExistsByJobPostingIdAndMatchInfoIdNotNull() {
+    public void givenJobId_whenIsAnnouncementMatchedByJobId_thenCheckExistsByJobIdAndMatchInfoIdNotNull() {
         // Given
-        Long jobPostingId = 1L;
+        Long jobId = 1L;
 
-        given(applicantRepository.existsByJobPostingIdAndMatchInfoIdNotNull(jobPostingId)).willReturn(true);
+        given(applicantRepository.existsByJobIdAndMatchInfoIdNotNull(jobId)).willReturn(true);
 
         // When
-        boolean isMatched = applicantDomainService.isAnnouncementMatchedByJobPostingId(jobPostingId);
+        boolean isMatched = applicantDomainService.isAnnouncementMatchedByJobId(jobId);
 
         // Then
-        verify(applicantRepository).existsByJobPostingIdAndMatchInfoIdNotNull(jobPostingId);
+        verify(applicantRepository).existsByJobIdAndMatchInfoIdNotNull(jobId);
         assertTrue(isMatched);
     }
 
     @Test
-    public void givenJobPostingId_whenIsAnnouncementMatchedByJobPostingId_thenReturnFalse() {
+    public void givenJobId_whenIsAnnouncementMatchedByJobId_thenReturnFalse() {
         // Given
-        Long jobPostingId = 2L;
+        Long jobId = 2L;
 
-        given(applicantRepository.existsByJobPostingIdAndMatchInfoIdNotNull(jobPostingId)).willReturn(false);
+        given(applicantRepository.existsByJobIdAndMatchInfoIdNotNull(jobId)).willReturn(false);
 
         // When
-        boolean isMatched = applicantDomainService.isAnnouncementMatchedByJobPostingId(jobPostingId);
+        boolean isMatched = applicantDomainService.isAnnouncementMatchedByJobId(jobId);
 
         // Then
-        verify(applicantRepository).existsByJobPostingIdAndMatchInfoIdNotNull(jobPostingId);
+        verify(applicantRepository).existsByJobIdAndMatchInfoIdNotNull(jobId);
         assertFalse(isMatched);
     }
 
@@ -173,9 +173,9 @@ public class ApplicantDomainServiceTest {
     public void givenSaveMatchInfoRequestAndStatus_whenMatching_thenReturnSavedApplicant() {
         // Given
         Long applicantId = 1L;
-        Long jobPostingId = 123L;
+        Long jobId = 123L;
         int status = 1;
-        SaveMatchInfoRequest saveMatchInfoRequest = new SaveMatchInfoRequest(applicantId, jobPostingId);
+        SaveMatchInfoRequest saveMatchInfoRequest = new SaveMatchInfoRequest(applicantId, jobId);
         Applicant applicant = mock(Applicant.class);
 
         given(applicantRepository.findById(applicantId)).willReturn(Optional.ofNullable(applicant));
@@ -207,11 +207,11 @@ public class ApplicantDomainServiceTest {
     }
 
     @Test
-    public void givenNonExistingJobPostingAndTrainer_whenSave_thenSaveSuccessful() {
+    public void givenNonExistingJobAndTrainer_whenSave_thenSaveSuccessful() {
         // Given
         SaveApplicantRequest saveApplicantRequest = new SaveApplicantRequest(123L, 1000);
         Long trainerId = 456L;
-        given(applicantRepository.existsByJobPostingIdAndTrainerId(saveApplicantRequest.getJobPostingId(), trainerId)).willReturn(false);
+        given(applicantRepository.existsByJobIdAndTrainerId(saveApplicantRequest.getJobId(), trainerId)).willReturn(false);
         given(applicantRepository.save(any(Applicant.class))).willReturn(new Applicant(1L, 123L, trainerId, 1000, 0));
 
         // When
@@ -219,20 +219,20 @@ public class ApplicantDomainServiceTest {
 
         // Then
         assertEquals(1L, savedApplicant.getId());
-        assertEquals(123L, savedApplicant.getJobPostingId());
+        assertEquals(123L, savedApplicant.getJobId());
         assertEquals(trainerId, savedApplicant.getTrainerId());
         assertEquals(1000, savedApplicant.getSupportAmount());
-        verify(applicantRepository, times(1)).existsByJobPostingIdAndTrainerId(saveApplicantRequest.getJobPostingId(), trainerId);
+        verify(applicantRepository, times(1)).existsByJobIdAndTrainerId(saveApplicantRequest.getJobId(), trainerId);
         verify(applicantRepository, times(1)).save(any(Applicant.class));
     }
 
     @Test
-    public void givenExistingJobPostingAndTrainer_whenSaveApplicant_thenThrowEntityExistsException() {
+    public void givenExistingJobAndTrainer_whenSaveApplicant_thenThrowEntityExistsException() {
         // Given
         SaveApplicantRequest saveApplicantRequest = new SaveApplicantRequest(123L, 1000);
         Long trainerId = 456L;
-        given(applicantRepository.existsByJobPostingIdAndTrainerId(
-                saveApplicantRequest.getJobPostingId(),
+        given(applicantRepository.existsByJobIdAndTrainerId(
+                saveApplicantRequest.getJobId(),
                 trainerId
                 ))
                 .willReturn(true);
@@ -241,8 +241,8 @@ public class ApplicantDomainServiceTest {
         assertThrows(EntityExistsException.class, () -> applicantDomainService.save(saveApplicantRequest, trainerId));
 
         verify(applicantRepository, times(1))
-                .existsByJobPostingIdAndTrainerId(
-                        saveApplicantRequest.getJobPostingId(),
+                .existsByJobIdAndTrainerId(
+                        saveApplicantRequest.getJobId(),
                         trainerId
                 );
         verify(applicantRepository, never()).save(any(Applicant.class));

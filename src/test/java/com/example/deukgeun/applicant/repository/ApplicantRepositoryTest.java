@@ -2,8 +2,8 @@ package com.example.deukgeun.applicant.repository;
 
 import com.example.deukgeun.applicant.infrastructure.persistence.model.entity.ApplicantEntity;
 import com.example.deukgeun.applicant.infrastructure.persistence.repository.ApplicantJpaRepository;
-import com.example.deukgeun.jobPosting.infrastructure.persistence.model.entity.JobPostingEntity;
-import com.example.deukgeun.jobPosting.infrastructure.persistence.repository.JobPostingJpaRepository;
+import com.example.deukgeun.job.infrastructure.persistence.model.entity.JobEntity;
+import com.example.deukgeun.job.infrastructure.persistence.repository.JobJpaRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -26,23 +26,23 @@ public class ApplicantRepositoryTest {
     @Autowired
     private ApplicantJpaRepository applicantJpaRepository;
     @Autowired
-    private JobPostingJpaRepository jobPostingRepository;
+    private JobJpaRepository jobRepository;
 
 
     @Test
     void shouldNotNullRepository() {
         assertNotNull(applicantJpaRepository);
-        assertNotNull(jobPostingRepository);
+        assertNotNull(jobRepository);
     }
 
     @Test
-    @Sql({"/insert_member.sql", "/insert_jobPosting.sql"})
+    @Sql({"/insert_member.sql", "/insert_job.sql"})
     void givenApplicant_whenSave_thenReturnValid() {
         // Given
-        List<JobPostingEntity> jobPostingEntity = jobPostingRepository.findAll();
+        List<JobEntity> jobEntity = jobRepository.findAll();
         ApplicantEntity applicantEntity = ApplicantEntity
                 .builder()
-                .jobPostingId(jobPostingEntity.get(0).getId())
+                .jobId(jobEntity.get(0).getId())
                 .trainerId(123L)
                 .supportAmount(30000)
                 .build();
@@ -57,20 +57,20 @@ public class ApplicantRepositoryTest {
     }
 
     @Test
-    @Sql({"/insert_member.sql", "/insert_jobPosting.sql"})
-    void givenApplicant_whenFindByJobPostingId_thenReturnValid() {
+    @Sql({"/insert_member.sql", "/insert_job.sql"})
+    void givenApplicant_whenFindByJobId_thenReturnValid() {
         // Given
-        List<JobPostingEntity> jobPostingEntity = jobPostingRepository.findAll();
-        Long jobPostingId = jobPostingEntity.get(0).getId();
+        List<JobEntity> jobEntity = jobRepository.findAll();
+        Long jobId = jobEntity.get(0).getId();
         ApplicantEntity applicantEntity1 = ApplicantEntity
                 .builder()
-                .jobPostingId(jobPostingId)
+                .jobId(jobId)
                 .trainerId(123L)
                 .supportAmount(30000)
                 .build();
         ApplicantEntity applicantEntity2 = ApplicantEntity
                 .builder()
-                .jobPostingId(jobPostingId)
+                .jobId(jobId)
                 .trainerId(123L)
                 .supportAmount(30000)
                 .build();
@@ -81,43 +81,43 @@ public class ApplicantRepositoryTest {
         PageRequest pageable = PageRequest.of(0, 10);
 
         // When
-        Page<ApplicantEntity> result = applicantJpaRepository.findPageByJobPostingId(jobPostingId, pageable);
+        Page<ApplicantEntity> result = applicantJpaRepository.findPageByJobId(jobId, pageable);
 
         // Then
-        assertEquals(jobPostingId, result.getContent().get(0).getJobPostingId());
-        assertEquals(jobPostingId, result.getContent().get(1).getJobPostingId());
+        assertEquals(jobId, result.getContent().get(0).getJobId());
+        assertEquals(jobId, result.getContent().get(1).getJobId());
     }
 
     @Test
-    @Sql({"/insert_member.sql", "/insert_jobPosting.sql"})
-    public void givenJobPostingIdAndTrainerId_whenExists_thenReturnTrue() {
+    @Sql({"/insert_member.sql", "/insert_job.sql"})
+    public void givenJobIdAndTrainerId_whenExists_thenReturnTrue() {
         // Given
-        Long jobPostingId = 123L;
+        Long jobId = 123L;
         Long trainerId = 1L;
         ApplicantEntity applicant = ApplicantEntity
                 .builder()
                 .trainerId(trainerId)
-                .jobPostingId(jobPostingId)
+                .jobId(jobId)
                 .supportAmount(30000)
                 .build();
 
         applicantJpaRepository.save(applicant);
 
         // When
-        boolean exists = applicantJpaRepository.existsByJobPostingIdAndTrainerId(jobPostingId, trainerId);
+        boolean exists = applicantJpaRepository.existsByJobIdAndTrainerId(jobId, trainerId);
 
         // Then
         assertTrue(exists);
     }
 
     @Test
-    public void givenJobPostingIdAndTrainerId_whenNotExists_thenReturnFalse() {
+    public void givenJobIdAndTrainerId_whenNotExists_thenReturnFalse() {
         // Given
-        Long jobPostingId = 1L;
+        Long jobId = 1L;
         Long trainerId = 1L;
 
         // When
-        boolean exists = applicantJpaRepository.existsByJobPostingIdAndTrainerId(jobPostingId, trainerId);
+        boolean exists = applicantJpaRepository.existsByJobIdAndTrainerId(jobId, trainerId);
 
         // Then
         assertFalse(exists);

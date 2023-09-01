@@ -49,10 +49,10 @@
 		var authToken = getCookie("authToken");
 
 		$(document).ready(function () {
- 			checkJobPostingOwnershipAjax();
+ 			checkJobOwnershipAjax();
 		})
 
-		function checkJobPostingOwnershipAjax() {
+		function checkJobOwnershipAjax() {
 	        $.ajax({
 				url : "/api/job/check",
 				type : "get",
@@ -82,7 +82,7 @@
 				url : "/api/applicant/",
 				method : "get",
 				data : {
-					"jobPostingId" : id,
+					"jobId" : id,
 					"currentPage" : currentPage,
 				},
 				beforeSend : function (xhr) {
@@ -104,7 +104,7 @@
 			} else {
 				$.each(list, function(key, data) {
 					html += "<tr>";
-					html += "<td>" + data.jobPostingId + "</td>";
+					html += "<td>" + data.jobId + "</td>";
 					html += "<td>" + data.trainerId + "</td>";
 					html += "<td>" + data.supportAmount + "</td>";
 					html += "<td>";
@@ -241,7 +241,7 @@
 				url : "/api/match/",
 				method : "post",
 				data : {
-					"jobPostingId" : id,
+					"jobId" : id,
 					"applicantId" : selectApplicantId,
 				},
 				success : function(res) {

@@ -12,8 +12,8 @@ public interface ApplicantApplicationService {
     void cancel(Long id, IamPortCancelResponse iamPortCancelResponse);
     void deleteMatchInfoById(Long id);
     Applicant findById(Long id);
-    Page<ApplicantResponse.ListResponse> getByJobPostingId(Long jobPostingId, int currentPage);
-    void isAnnouncementMatchedByJobPostingId(Long jobPostingId);
+    Page<ApplicantResponse.ListResponse> getByJobId(Long jobId, int currentPage);
+    void isAnnouncementMatchedByJobId(Long jobId);
     Applicant matching(SaveMatchInfoRequest saveMatchInfoRequest);
     Applicant payment(PaymentInfoRequest request);
     Applicant save(SaveApplicantRequest saveApplicantRequest, Long trainerId);

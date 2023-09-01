@@ -2,7 +2,7 @@ package com.example.deukgeun.member.infrastructure.persistence.entity;
 
 import com.example.deukgeun.global.entity.BaseEntity;
 import com.example.deukgeun.global.enums.Gender;
-import com.example.deukgeun.jobPosting.infrastructure.persistence.model.entity.JobPostingEntity;
+import com.example.deukgeun.job.infrastructure.persistence.model.entity.JobEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,7 +41,7 @@ public class MemberEntity extends BaseEntity implements UserDetails {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "memberId", insertable = false, updatable = false)
-    private List<JobPostingEntity> jobPostingEntity;
+    private List<JobEntity> jobEntity;
 
     @Builder
     public MemberEntity(

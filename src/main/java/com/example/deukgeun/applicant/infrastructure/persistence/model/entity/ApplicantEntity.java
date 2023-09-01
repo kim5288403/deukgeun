@@ -1,7 +1,7 @@
 package com.example.deukgeun.applicant.infrastructure.persistence.model.entity;
 
 import com.example.deukgeun.global.entity.BaseEntity;
-import com.example.deukgeun.jobPosting.infrastructure.persistence.model.entity.JobPostingEntity;
+import com.example.deukgeun.job.infrastructure.persistence.model.entity.JobEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,10 +31,10 @@ public class ApplicantEntity extends BaseEntity {
     private Integer isSelected;
 
     @ManyToOne
-    @JoinColumn(name = "jobPostingId", insertable = false, updatable = false)
-    private JobPostingEntity jobPostingEntity;
+    @JoinColumn(name = "jobId", insertable = false, updatable = false)
+    private JobEntity jobEntity;
 
-    private Long jobPostingId;
+    private Long jobId;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "matchInfoId", insertable = false, updatable = false)

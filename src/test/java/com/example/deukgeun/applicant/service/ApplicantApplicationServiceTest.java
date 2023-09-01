@@ -75,7 +75,7 @@ public class ApplicantApplicationServiceTest {
         // Then
         assertNotNull(applicantInfo);
         assertEquals(existingApplicant.getId(), applicantInfo.getId());
-        assertEquals(existingApplicant.getJobPostingId(), applicantInfo.getJobPostingId());
+        assertEquals(existingApplicant.getJobId(), applicantInfo.getJobId());
         assertEquals(existingApplicant.getTrainerId(), applicantInfo.getTrainerId());
     }
 
@@ -93,22 +93,22 @@ public class ApplicantApplicationServiceTest {
     }
 
     @Test
-    public void givenJobPostingIdAndCurrentPage_whenGetByJobPostingId_thenReturnApplicantListResponsePage() {
+    public void givenJobIdAndCurrentPage_whenGetByJobId_thenReturnApplicantListResponsePage() {
         // Given
-        Long jobPostingId = 123L;
+        Long jobId = 123L;
         int currentPage = 0;
         PageRequest pageRequest = PageRequest.of(currentPage, 10);
 
         List<Applicant> applicantsList = new ArrayList<>();
-        applicantsList.add(new Applicant(1L, jobPostingId, 456L, 1000, 0));
-        applicantsList.add(new Applicant(2L, jobPostingId, 789L, 1500, 0));
+        applicantsList.add(new Applicant(1L, jobId, 456L, 1000, 0));
+        applicantsList.add(new Applicant(2L, jobId, 789L, 1500, 0));
 
         Page<Applicant> applicantsPage = new PageImpl<>(applicantsList, pageRequest, applicantsList.size());
 
-        given(applicantDomainService.getByJobPostingId(jobPostingId, pageRequest)).willReturn(applicantsPage);
+        given(applicantDomainService.getByJobId(jobId, pageRequest)).willReturn(applicantsPage);
 
         // When
-        Page<ApplicantResponse.ListResponse> applicantResponsePage = applicantApplicationService.getByJobPostingId(jobPostingId, currentPage);
+        Page<ApplicantResponse.ListResponse> applicantResponsePage = applicantApplicationService.getByJobId(jobId, currentPage);
 
         // Then
         assertEquals(applicantsList.size(), applicantResponsePage.getContent().size());
@@ -118,27 +118,27 @@ public class ApplicantApplicationServiceTest {
     }
 
     @Test
-    public void givenJobPostingIdWithNoAnnouncement_whenIsAnnouncementMatchedByJobPostingId_thenNoExceptionThrown() {
+    public void givenJobIdWithNoAnnouncement_whenIsAnnouncementMatchedByJobId_thenNoExceptionThrown() {
         // Given
-        Long jobPostingId = 1L;
+        Long jobId = 1L;
 
-        given(applicantDomainService.isAnnouncementMatchedByJobPostingId(jobPostingId)).willReturn(false);
+        given(applicantDomainService.isAnnouncementMatchedByJobId(jobId)).willReturn(false);
 
         // When and Then
-        assertDoesNotThrow(() -> applicantApplicationService.isAnnouncementMatchedByJobPostingId(jobPostingId));
-        verify(applicantDomainService, times(1)).isAnnouncementMatchedByJobPostingId(jobPostingId);
+        assertDoesNotThrow(() -> applicantApplicationService.isAnnouncementMatchedByJobId(jobId));
+        verify(applicantDomainService, times(1)).isAnnouncementMatchedByJobId(jobId);
     }
 
     @Test
-    public void givenJobPostingIdWithAnnouncement_whenIsAnnouncementMatchedByJobPostingId_thenEntityExistsExceptionThrown() {
+    public void givenJobIdWithAnnouncement_whenIsAnnouncementMatchedByJobId_thenEntityExistsExceptionThrown() {
         // Given
-        Long jobPostingId = 1L;
+        Long jobId = 1L;
 
-        given(applicantDomainService.isAnnouncementMatchedByJobPostingId(jobPostingId)).willReturn(true);
+        given(applicantDomainService.isAnnouncementMatchedByJobId(jobId)).willReturn(true);
 
         // When and Then
-        assertThrows(EntityExistsException.class, () -> applicantApplicationService.isAnnouncementMatchedByJobPostingId(jobPostingId));
-        verify(applicantDomainService, times(1)).isAnnouncementMatchedByJobPostingId(jobPostingId);
+        assertThrows(EntityExistsException.class, () -> applicantApplicationService.isAnnouncementMatchedByJobId(jobId));
+        verify(applicantDomainService, times(1)).isAnnouncementMatchedByJobId(jobId);
     }
 
     @Test
@@ -178,7 +178,7 @@ public class ApplicantApplicationServiceTest {
         SaveApplicantRequest saveApplicantRequest = new SaveApplicantRequest(123L, 1000);
         Long trainerId = 456L;
 
-        Applicant expectedSavedApplicant = new Applicant(1L, saveApplicantRequest.getJobPostingId(), trainerId, saveApplicantRequest.getSupportAmount(), 0);
+        Applicant expectedSavedApplicant = new Applicant(1L, saveApplicantRequest.getJobId(), trainerId, saveApplicantRequest.getSupportAmount(), 0);
 
         given(applicantDomainService.save(saveApplicantRequest, trainerId)).willReturn(expectedSavedApplicant);
 
@@ -187,7 +187,7 @@ public class ApplicantApplicationServiceTest {
 
         // Then
         assertEquals(expectedSavedApplicant.getId(), savedApplicant.getId());
-        assertEquals(expectedSavedApplicant.getJobPostingId(), savedApplicant.getJobPostingId());
+        assertEquals(expectedSavedApplicant.getJobId(), savedApplicant.getJobId());
         assertEquals(expectedSavedApplicant.getTrainerId(), savedApplicant.getTrainerId());
         assertEquals(expectedSavedApplicant.getSupportAmount(), savedApplicant.getSupportAmount());
     }

@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 public class SaveApplicantRequest {
 
     @NotNull(message = "공고 아이디는 필수 값입니다.")
-    private Long jobPostingId;
+    private Long jobId;
 
     @NotNull(message = "지원금액은 필수 값입니다.")
     private Integer supportAmount;

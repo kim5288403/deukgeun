@@ -10,9 +10,9 @@ import com.example.deukgeun.applicant.infrastructure.persistence.model.entity.Ma
 import com.example.deukgeun.applicant.infrastructure.persistence.model.entity.PaymentCancelInfoEntity;
 import com.example.deukgeun.applicant.infrastructure.persistence.model.entity.PaymentInfoEntity;
 import com.example.deukgeun.applicant.infrastructure.persistence.repository.ApplicantJpaRepository;
-import com.example.deukgeun.jobPosting.domain.model.aggregate.JobPosting;
-import com.example.deukgeun.jobPosting.infrastructure.persistence.model.entity.JobPostingEntity;
-import com.example.deukgeun.jobPosting.infrastructure.persistence.model.valueobject.JobAddressVo;
+import com.example.deukgeun.job.domain.model.aggregate.Job;
+import com.example.deukgeun.job.infrastructure.persistence.model.entity.JobEntity;
+import com.example.deukgeun.job.infrastructure.persistence.model.valueobject.JobAddressVo;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,13 +27,13 @@ public class ApplicantRepositoryAdapter implements ApplicantRepository {
     private final ApplicantJpaRepository applicantJpaRepository;
 
     @Override
-    public boolean existsByJobPostingIdAndMatchInfoIdNotNull(Long jobPostingId) {
-        return applicantJpaRepository.existsByJobPostingIdAndMatchInfoIdNotNull(jobPostingId);
+    public boolean existsByJobIdAndMatchInfoIdNotNull(Long jobId) {
+        return applicantJpaRepository.existsByJobIdAndMatchInfoIdNotNull(jobId);
     }
 
     @Override
-    public boolean existsByJobPostingIdAndTrainerId(Long jobPositingId, Long trainerId) {
-        return applicantJpaRepository.existsByJobPostingIdAndTrainerId(jobPositingId, trainerId);
+    public boolean existsByJobIdAndTrainerId(Long jobId, Long trainerId) {
+        return applicantJpaRepository.existsByJobIdAndTrainerId(jobId, trainerId);
     }
 
     @Override
@@ -43,8 +43,8 @@ public class ApplicantRepositoryAdapter implements ApplicantRepository {
     }
 
     @Override
-    public Page<Applicant> findPageByJobPostingId(Long jobPostingId, PageRequest pageRequest) {
-        Page<ApplicantEntity> applicantEntities = applicantJpaRepository.findPageByJobPostingId(jobPostingId, pageRequest);
+    public Page<Applicant> findPageByJobId(Long jobId, PageRequest pageRequest) {
+        Page<ApplicantEntity> applicantEntities = applicantJpaRepository.findPageByJobId(jobId, pageRequest);
         return applicantEntities.map(this::convert);
     }
 
@@ -57,13 +57,13 @@ public class ApplicantRepositoryAdapter implements ApplicantRepository {
     private Applicant convert(ApplicantEntity applicantEntity) {
         return new Applicant(
                 applicantEntity.getId(),
-                applicantEntity.getJobPostingId(),
+                applicantEntity.getJobId(),
                 applicantEntity.getMatchInfoId(),
                 applicantEntity.getPaymentInfoId(),
                 applicantEntity.getTrainerId(),
                 applicantEntity.getSupportAmount(),
                 applicantEntity.getIsSelected(),
-                convert(applicantEntity.getJobPostingEntity()),
+                convert(applicantEntity.getJobEntity()),
                 convert(applicantEntity.getMatchInfoEntity()),
                 convert(applicantEntity.getPaymentInfoEntity())
         );
@@ -73,11 +73,11 @@ public class ApplicantRepositoryAdapter implements ApplicantRepository {
         return ApplicantEntity
                 .builder()
                 .id(applicant.getId())
-                .jobPostingId(applicant.getJobPostingId())
+                .jobId(applicant.getJobId())
                 .trainerId(applicant.getTrainerId())
                 .supportAmount(applicant.getSupportAmount())
                 .isSelected(applicant.getIsSelected())
-                .jobPostingEntity(convert(applicant.getJobPosting()))
+                .jobEntity(convert(applicant.getJob()))
                 .matchInfoEntity(convert(applicant.getMatchInfo()))
                 .matchInfoId(applicant.getMatchInfoId())
                 .paymentInfoEntity(convert(applicant.getPaymentInfo()))
@@ -91,7 +91,7 @@ public class ApplicantRepositoryAdapter implements ApplicantRepository {
         }
         return new MatchInfo(
                 matchInfoEntity.getId(),
-                matchInfoEntity.getJobPostingId(),
+                matchInfoEntity.getJobId(),
                 matchInfoEntity.getStatus()
         );
     }
@@ -103,7 +103,7 @@ public class ApplicantRepositoryAdapter implements ApplicantRepository {
         return MatchInfoEntity
                 .builder()
                 .id(matchInfo.getId())
-                .jobPostingId(matchInfo.getJobPostingId())
+                .jobId(matchInfo.getJobId())
                 .status(matchInfo.getStatus())
                 .build();
     }
@@ -170,45 +170,45 @@ public class ApplicantRepositoryAdapter implements ApplicantRepository {
                 .build();
     }
 
-    private JobPosting convert(JobPostingEntity jobPostingEntity) {
-        return new JobPosting(
-                jobPostingEntity.getId(),
-                jobPostingEntity.getMemberId(),
-                jobPostingEntity.getTitle(),
-                jobPostingEntity.getRequirementLicense(),
-                jobPostingEntity.getRequirementEtc(),
+    private Job convert(JobEntity jobEntity) {
+        return new Job(
+                jobEntity.getId(),
+                jobEntity.getMemberId(),
+                jobEntity.getTitle(),
+                jobEntity.getRequirementLicense(),
+                jobEntity.getRequirementEtc(),
                 new Address(
-                        jobPostingEntity.getJobAddressVo().getPostcode(),
-                        jobPostingEntity.getJobAddressVo().getJibunAddress(),
-                        jobPostingEntity.getJobAddressVo().getRoadAddress(),
-                        jobPostingEntity.getJobAddressVo().getDetailAddress(),
-                        jobPostingEntity.getJobAddressVo().getExtraAddress()
+                        jobEntity.getJobAddressVo().getPostcode(),
+                        jobEntity.getJobAddressVo().getJibunAddress(),
+                        jobEntity.getJobAddressVo().getRoadAddress(),
+                        jobEntity.getJobAddressVo().getDetailAddress(),
+                        jobEntity.getJobAddressVo().getExtraAddress()
                 ),
-                jobPostingEntity.getIsActive(),
-                jobPostingEntity.getStartDate(),
-                jobPostingEntity.getEndDate()
+                jobEntity.getIsActive(),
+                jobEntity.getStartDate(),
+                jobEntity.getEndDate()
         );
     }
 
-    private JobPostingEntity convert(JobPosting jobPosting) {
-        return JobPostingEntity
+    private JobEntity convert(Job job) {
+        return JobEntity
                 .builder()
-                .id(jobPosting.getId())
-                .memberId(jobPosting.getMemberId())
-                .title(jobPosting.getTitle())
-                .requirementLicense(jobPosting.getRequirementLicense())
-                .requirementEtc(jobPosting.getRequirementEtc())
+                .id(job.getId())
+                .memberId(job.getMemberId())
+                .title(job.getTitle())
+                .requirementLicense(job.getRequirementLicense())
+                .requirementEtc(job.getRequirementEtc())
                 .jobAddressVo(new JobAddressVo(
-                        jobPosting.getAddress().getPostcode(),
-                        jobPosting.getAddress().getRoadAddress(),
-                        jobPosting.getAddress().getJibunAddress(),
-                        jobPosting.getAddress().getRoadAddress(),
-                        jobPosting.getAddress().getExtraAddress()
+                        job.getAddress().getPostcode(),
+                        job.getAddress().getRoadAddress(),
+                        job.getAddress().getJibunAddress(),
+                        job.getAddress().getRoadAddress(),
+                        job.getAddress().getExtraAddress()
                 ))
-                .isActive(jobPosting.getIsActive())
-                .startDate(jobPosting.getStartDate())
-                .endDate(jobPosting.getEndDate())
-                .memberId(jobPosting.getMemberId())
+                .isActive(job.getIsActive())
+                .startDate(job.getStartDate())
+                .endDate(job.getEndDate())
+                .memberId(job.getMemberId())
                 .build();
     }
 }

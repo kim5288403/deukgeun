@@ -35,18 +35,18 @@ class AuthTokenApplicationServiceTest {
     @InjectMocks
     private AuthTokenApplicationServiceImpl authTokenApplicationService;
     @Value("${jwt.authTokenTime}")
-    private long authTokenTime;
+    private long AUTH_TOKEN_TIME;
     @Value("${jwt.refreshTokenTime}")
-    private long refreshTokenTime;
+    private long REFRESH_TOKEN_TIME;
     @Value("${jwt.secretKey}")
-    private String secretKey;
+    private String SECRET_KEY;
 
     @BeforeEach
     void setUp() {
-        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
-        ReflectionTestUtils.setField(authTokenApplicationService, "secretKey", secretKey);
-        ReflectionTestUtils.setField(authTokenApplicationService, "refreshTokenTime", refreshTokenTime);
-        ReflectionTestUtils.setField(authTokenApplicationService, "authTokenTime", authTokenTime);
+        SECRET_KEY = Base64.getEncoder().encodeToString(SECRET_KEY.getBytes());
+        ReflectionTestUtils.setField(authTokenApplicationService, "SECRET_KEY", SECRET_KEY);
+        ReflectionTestUtils.setField(authTokenApplicationService, "REFRESH_TOKEN_TIME", REFRESH_TOKEN_TIME);
+        ReflectionTestUtils.setField(authTokenApplicationService, "AUTH_TOKEN_TIME", AUTH_TOKEN_TIME);
     }
 
     @Test
@@ -72,7 +72,7 @@ class AuthTokenApplicationServiceTest {
         String authToken = authTokenApplicationService.createAuthToken(userPk, roles);
 
         // Then
-        Claims parsedClaims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(authToken).getBody();
+        Claims parsedClaims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(authToken).getBody();
         assertEquals(userPk, parsedClaims.getSubject());
         assertEquals(roles, parsedClaims.get("roles"));
     }
@@ -87,7 +87,7 @@ class AuthTokenApplicationServiceTest {
         String authToken = authTokenApplicationService.createRefreshToken(userPk, roles);
 
         // Then
-        Claims parsedClaims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(authToken).getBody();
+        Claims parsedClaims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(authToken).getBody();
         assertEquals(userPk, parsedClaims.getSubject());
         assertEquals(roles, parsedClaims.get("roles"));
     }
@@ -105,8 +105,8 @@ class AuthTokenApplicationServiceTest {
         String token = Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + authTokenTime))
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .setExpiration(new Date(now.getTime() + AUTH_TOKEN_TIME))
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
 
         // When
@@ -129,8 +129,8 @@ class AuthTokenApplicationServiceTest {
         String authToken = Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + authTokenTime))
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .setExpiration(new Date(now.getTime() + AUTH_TOKEN_TIME))
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
 
         AuthToken foundToken = new AuthToken(123L, authToken, "refreshToken");
@@ -159,8 +159,8 @@ class AuthTokenApplicationServiceTest {
         String authToken = Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + authTokenTime))
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .setExpiration(new Date(now.getTime() + AUTH_TOKEN_TIME))
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
 
         given(authTokenDomainService.findByAuthToken(authToken)).willReturn(null);
@@ -186,8 +186,8 @@ class AuthTokenApplicationServiceTest {
         String token = Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + authTokenTime))
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .setExpiration(new Date(now.getTime() + AUTH_TOKEN_TIME))
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
 
         // When
@@ -210,8 +210,8 @@ class AuthTokenApplicationServiceTest {
         String token = Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + authTokenTime))
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .setExpiration(new Date(now.getTime() + AUTH_TOKEN_TIME))
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
 
         // When
@@ -234,12 +234,12 @@ class AuthTokenApplicationServiceTest {
         String token = Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + authTokenTime))
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .setExpiration(new Date(now.getTime() + AUTH_TOKEN_TIME))
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
 
         UserDetails userDetails = mock(UserDetails.class);
-        ReflectionTestUtils.setField(authTokenApplicationService, "trainerRole", roles);
+        ReflectionTestUtils.setField(authTokenApplicationService, "TRAINER_ROLE", roles);
         given(authTokenDomainService.loadUserByTrainerUsername(anyString())).willReturn(userDetails);
 
         // When
@@ -335,8 +335,8 @@ class AuthTokenApplicationServiceTest {
         String authToken = Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + authTokenTime))
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .setExpiration(new Date(now.getTime() + AUTH_TOKEN_TIME))
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
 
         String newAuthToken = "newAuthToken";
@@ -361,8 +361,8 @@ class AuthTokenApplicationServiceTest {
         String token = Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + authTokenTime))
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .setExpiration(new Date(now.getTime() + AUTH_TOKEN_TIME))
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
 
         // When
@@ -386,7 +386,7 @@ class AuthTokenApplicationServiceTest {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime()))
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
 
         // When

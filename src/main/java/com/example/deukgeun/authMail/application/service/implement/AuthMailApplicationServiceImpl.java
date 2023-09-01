@@ -24,7 +24,7 @@ public class AuthMailApplicationServiceImpl implements AuthMailApplicationServic
     private final SpringTemplateEngine templateEngine;
     private final AuthMailDomainService authMailDomainService;
 
-    @Value("${trainer.mail.email}")
+    @Value("${spring.mail.username}")
     private String fromEmail; // 보내는 이메일
 
     public void confirm(AuthMailRequest request) {
@@ -41,11 +41,11 @@ public class AuthMailApplicationServiceImpl implements AuthMailApplicationServic
             switch (index) {
                 case 0:
                     // 소문자 알파벳
-                    key.append((char) ((int) random.nextInt(26) + 97));
+                    key.append((char) (random.nextInt(26) + 97));
                     break;
                 case 1:
                     // 대문자 알파벳
-                    key.append((char) ((int) random.nextInt(26) + 65));
+                    key.append((char) (random.nextInt(26) + 65));
                     break;
                 case 2:
                     // 숫자
