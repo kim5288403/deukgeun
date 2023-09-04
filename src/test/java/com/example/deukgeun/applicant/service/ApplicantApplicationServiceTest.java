@@ -108,7 +108,7 @@ public class ApplicantApplicationServiceTest {
         given(applicantDomainService.getByJobId(jobId, pageRequest)).willReturn(applicantsPage);
 
         // When
-        Page<ApplicantResponse.ListResponse> applicantResponsePage = applicantApplicationService.getByJobId(jobId, currentPage);
+        Page<ApplicantResponse.List> applicantResponsePage = applicantApplicationService.getByJobId(jobId, currentPage);
 
         // Then
         assertEquals(applicantsList.size(), applicantResponsePage.getContent().size());
@@ -145,14 +145,13 @@ public class ApplicantApplicationServiceTest {
     public void givenSaveMatchInfoRequest_whenMatching_thenCallApplicantDomainService() {
         // Given
         int PAYMENT_WAITING = 1;
-        ReflectionTestUtils.setField(applicantApplicationService, "PAYMENT_WAITING", PAYMENT_WAITING);
         SaveMatchInfoRequest saveMatchInfoRequest = mock(SaveMatchInfoRequest.class);
         Applicant applicant = mock(Applicant.class);
 
         given(applicantDomainService.matching(saveMatchInfoRequest, PAYMENT_WAITING)).willReturn(applicant);
 
         // When
-        Applicant matchedApplicant = applicantApplicationService.matching(saveMatchInfoRequest);
+        Applicant matchedApplicant = applicantApplicationService.matching(saveMatchInfoRequest, PAYMENT_WAITING);
 
         // Then
         verify(applicantDomainService).matching(saveMatchInfoRequest, PAYMENT_WAITING);

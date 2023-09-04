@@ -24,8 +24,10 @@ public class MatchController {
     private int APPLICANT_SELECT;
     @Value("${status.applicant.waiting}")
     private int APPLICANT_WAITING;
-    @Value("${status.job.active}")
-    private int JOB_ACTIVE;
+    @Value("${status.job.inactive}")
+    private int JOB_INACTIVE;
+    @Value("${status.payment.waiting}")
+    private int PAYMENT_WAITING;
 
 
     /**
@@ -44,6 +46,12 @@ public class MatchController {
         return RestResponseUtil.ok("취소 성공했습니다.", null);
     }
 
+    /**
+     * 지원할 공고 ID를 사용하여 지원가능한 공고인지 확인하는 메서드입니다.
+     *
+     * @param id 확인할 공고 ID
+     * @return 지원가능한 공고 확인 여부에 대한 응답 ResponseEntity
+     */
     @RequestMapping(method = RequestMethod.GET, path = "/check/{id}")
     public ResponseEntity<?> isAnnouncementMatched(@PathVariable Long id) {
         applicantApplicationService.isAnnouncementMatchedByJobId(id);
@@ -51,11 +59,18 @@ public class MatchController {
         return RestResponseUtil.ok("검사 성공했습니다.", null);
     }
 
+    /**
+     * 매칭을 수행하는 메서드입니다.
+     *
+     * @param saveMatchInfoRequest 매칭 정보를 담고 있는 요청 객체
+     * @param bindingResult        요청 객체의 유효성 검사 결과
+     * @return 매칭 결과에 대한 응답 ResponseEntity
+     */
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> matching(@Valid SaveMatchInfoRequest saveMatchInfoRequest, BindingResult bindingResult) {
-        applicantApplicationService.matching(saveMatchInfoRequest);
+        applicantApplicationService.matching(saveMatchInfoRequest, PAYMENT_WAITING);
         applicantApplicationService.updateIsSelectedById(saveMatchInfoRequest.getApplicantId(), APPLICANT_SELECT);
-        jobApplicationService.updateIsActiveByJobId(2, saveMatchInfoRequest.getJobId());
+        jobApplicationService.updateIsActiveByJobId(JOB_INACTIVE, saveMatchInfoRequest.getJobId());
 
         return RestResponseUtil.ok("매칭 성공했습니다.", null);
     }

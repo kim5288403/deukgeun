@@ -8,6 +8,7 @@ import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
 import com.example.deukgeun.authToken.application.dto.response.RestResponse;
 import com.example.deukgeun.authToken.application.service.AuthTokenApplicationService;
 import com.example.deukgeun.global.util.RestResponseUtil;
+import com.example.deukgeun.job.application.service.JobApplicationService;
 import com.example.deukgeun.job.domain.model.aggregate.Job;
 import com.example.deukgeun.member.application.service.MemberApplicationService;
 import com.example.deukgeun.member.domain.entity.Member;
@@ -24,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,6 +45,8 @@ public class ApplicantControllerTest {
     @Mock
     private MemberApplicationService memberApplicationService;
     @Mock
+    private JobApplicationService jobApplicationService;
+    @Mock
     private HttpServletRequest request;
     @Mock
     private BindingResult bindingResult;
@@ -56,7 +60,7 @@ public class ApplicantControllerTest {
         // Given
         Long jobId = 123L;
         int currentPage = 0;
-        Page<ApplicantResponse.ListResponse> page = mock(Page.class);
+        Page<ApplicantResponse.List> page = mock(Page.class);
 
         given(applicantApplicationService.getByJobId(jobId, currentPage)).willReturn(page);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공했습니다.", page);
@@ -99,14 +103,17 @@ public class ApplicantControllerTest {
         Long id = 123L;
         Applicant applicant = mock(Applicant.class);
         Member member = mock(Member.class);
+        Job job = mock(Job.class);
+
         given(applicantApplicationService.findById(id)).willReturn(applicant);
-        given(applicant.getJob()).willReturn(mock(Job.class));
-        given(applicant.getJob().getStartDate()).willReturn(LocalDateTime.now());
-        given(applicant.getJob().getEndDate()).willReturn(LocalDateTime.now());
-        given(applicant.getJob().getAddress()).willReturn(mock(Address.class));
+        given(jobApplicationService.findById(anyLong())).willReturn(job);
         given(memberApplicationService.findById(anyLong())).willReturn(member);
 
-        ApplicantResponse.ApplicantInfo result = new ApplicantResponse.ApplicantInfo(applicant, member);
+        given(job.getAddress()).willReturn(mock(Address.class));
+        given(job.getStartDate()).willReturn(LocalDateTime.now());
+        given(job.getEndDate()).willReturn(LocalDateTime.now());
+
+        ApplicantResponse.ApplicantInfo result = new ApplicantResponse.ApplicantInfo(applicant, member, job);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공했습니다.", result);
 
         // When

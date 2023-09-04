@@ -7,7 +7,6 @@ import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
 import com.example.deukgeun.authToken.application.dto.response.RestResponse;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.job.application.service.JobApplicationService;
-import com.example.deukgeun.job.domain.model.aggregate.Job;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.validation.BindingResult;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,11 +38,13 @@ public class MatchControllerTest {
     public void givenMatchInfoService_whenMatching_thenReturnResponseEntity() {
         // Given
         Applicant applicant = mock(Applicant.class);
-        Job job = mock(Job.class);
         SaveMatchInfoRequest saveMatchInfoRequest = mock(SaveMatchInfoRequest.class);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("매칭 성공했습니다.", null);
+        ReflectionTestUtils.setField(matchController, "PAYMENT_WAITING", 1);
+        ReflectionTestUtils.setField(matchController, "APPLICANT_SELECT", 1);
+        ReflectionTestUtils.setField(matchController, "JOB_INACTIVE", 2);
 
-        given(applicantApplicationService.matching(saveMatchInfoRequest)).willReturn(applicant);
+        given(applicantApplicationService.matching(saveMatchInfoRequest, 1)).willReturn(applicant);
 
         // When
         ResponseEntity<?> responseEntity = matchController.matching(saveMatchInfoRequest, bindingResult);
@@ -51,7 +53,8 @@ public class MatchControllerTest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
 
-        verify(applicantApplicationService, times(1)).matching(saveMatchInfoRequest);
+        verify(applicantApplicationService, times(1)).matching(saveMatchInfoRequest, 1);
+        verify(applicantApplicationService, times(1)).updateIsSelectedById(saveMatchInfoRequest.getApplicantId(), 1);
         verify(jobApplicationService, times(1)).updateIsActiveByJobId(2, saveMatchInfoRequest.getJobId());
     }
 

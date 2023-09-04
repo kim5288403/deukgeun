@@ -1,6 +1,9 @@
 package com.example.deukgeun.applicant.application.dto.response;
 
 import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
+import com.example.deukgeun.applicant.domain.model.entity.PaymentCancelInfo;
+import com.example.deukgeun.applicant.domain.model.entity.PaymentInfo;
+import com.example.deukgeun.job.domain.model.aggregate.Job;
 import com.example.deukgeun.member.domain.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,7 +18,7 @@ public class ApplicantResponse {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class ListResponse {
+    public static class List {
         private Long id;
 
         private Long trainerId;
@@ -26,7 +29,7 @@ public class ApplicantResponse {
 
         private Integer isSelected;
 
-        public ListResponse(Applicant applicant) {
+        public List(Applicant applicant) {
             this.id = applicant.getId();
             this.trainerId = applicant.getTrainerId();
             this.jobId = applicant.getJobId();
@@ -58,22 +61,60 @@ public class ApplicantResponse {
 
         private Integer amount;
 
-        public ApplicantInfo(Applicant applicant, Member member) {
+        public ApplicantInfo(Applicant applicant, Member member, Job job) {
             this.id = applicant.getId();
             this.trainerId = applicant.getTrainerId();
             this.jobId = applicant.getJobId();
             this.isSelected = applicant.getIsSelected();
-            this.title = applicant.getJob().getTitle();
+            this.title = job.getTitle();
             this.email = member.getEmail();
             this.name = member.getName();
-            this.postcode = applicant.getJob().getAddress().getPostcode();
-            this.roadAddress = applicant.getJob().getAddress().getRoadAddress();
+            this.postcode = job.getAddress().getPostcode();
+            this.roadAddress = job.getAddress().getRoadAddress();
 
-            LocalDateTime startDate = applicant.getJob().getStartDate();
-            LocalDateTime endDate = applicant.getJob().getEndDate();
+            LocalDateTime startDate = job.getStartDate();
+            LocalDateTime endDate = job.getEndDate();
             Period period = Period.between(startDate.toLocalDate(), endDate.toLocalDate());
             int supportAmount = applicant.getSupportAmount();
             this.amount = period.getDays() * supportAmount;
         }
     }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PaymentInfoResponse {
+        private Long id;
+
+        private String impUid;
+
+        private String pgProvider;
+
+        private String pgTid;
+
+        private String channel;
+
+        private Integer amount;
+
+        private LocalDateTime paidAt;
+
+        private LocalDateTime deleteDate;
+
+        private PaymentCancelInfo paymentCancelInfo;
+
+        private Long paymentCancelInfoId = null;
+
+        public PaymentInfoResponse (PaymentInfo paymentInfo) {
+            this.id = paymentInfo.getId();
+            this.impUid = paymentInfo.getImpUid();
+            this.pgProvider = paymentInfo.getPgProvider();
+            this.pgTid = paymentInfo.getPgTid();
+            this.channel = paymentInfo.getChannel();
+            this.amount = paymentInfo.getAmount();
+            this.paidAt = paymentInfo.getPaidAt();
+            this.paymentCancelInfo = paymentInfo.getPaymentCancelInfo();
+        }
+    }
+
+
 }

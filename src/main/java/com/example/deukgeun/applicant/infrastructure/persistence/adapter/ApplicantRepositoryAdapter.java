@@ -10,10 +10,6 @@ import com.example.deukgeun.applicant.infrastructure.persistence.model.entity.Ma
 import com.example.deukgeun.applicant.infrastructure.persistence.model.entity.PaymentCancelInfoEntity;
 import com.example.deukgeun.applicant.infrastructure.persistence.model.entity.PaymentInfoEntity;
 import com.example.deukgeun.applicant.infrastructure.persistence.repository.ApplicantJpaRepository;
-import com.example.deukgeun.job.domain.model.aggregate.Job;
-import com.example.deukgeun.job.infrastructure.persistence.model.entity.JobEntity;
-import com.example.deukgeun.job.infrastructure.persistence.model.valueobject.JobAddressVo;
-import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -55,18 +51,16 @@ public class ApplicantRepositoryAdapter implements ApplicantRepository {
     }
 
     private Applicant convert(ApplicantEntity applicantEntity) {
-        return new Applicant(
+        Applicant applicant = new Applicant(
                 applicantEntity.getId(),
                 applicantEntity.getJobId(),
                 applicantEntity.getMatchInfoId(),
-                applicantEntity.getPaymentInfoId(),
-                applicantEntity.getTrainerId(),
                 applicantEntity.getSupportAmount(),
-                applicantEntity.getIsSelected(),
-                convert(applicantEntity.getJobEntity()),
-                convert(applicantEntity.getMatchInfoEntity()),
-                convert(applicantEntity.getPaymentInfoEntity())
-        );
+                applicantEntity.getIsSelected()
+                );
+        applicant.setPaymentInfo(convert(applicantEntity.getPaymentInfoEntity()));
+        applicant.setMatchInfo(convert(applicantEntity.getMatchInfoEntity()));
+        return applicant;
     }
 
     private ApplicantEntity convert(Applicant applicant) {
@@ -77,7 +71,6 @@ public class ApplicantRepositoryAdapter implements ApplicantRepository {
                 .trainerId(applicant.getTrainerId())
                 .supportAmount(applicant.getSupportAmount())
                 .isSelected(applicant.getIsSelected())
-                .jobEntity(convert(applicant.getJob()))
                 .matchInfoEntity(convert(applicant.getMatchInfo()))
                 .matchInfoId(applicant.getMatchInfoId())
                 .paymentInfoEntity(convert(applicant.getPaymentInfo()))
@@ -167,48 +160,6 @@ public class ApplicantRepositoryAdapter implements ApplicantRepository {
                 .channel(paymentCancelInfo.getChannel())
                 .cancel_reason(paymentCancelInfo.getCancelReason())
                 .cancel_amount(paymentCancelInfo.getCancelAmount())
-                .build();
-    }
-
-    private Job convert(JobEntity jobEntity) {
-        return new Job(
-                jobEntity.getId(),
-                jobEntity.getMemberId(),
-                jobEntity.getTitle(),
-                jobEntity.getRequirementLicense(),
-                jobEntity.getRequirementEtc(),
-                new Address(
-                        jobEntity.getJobAddressVo().getPostcode(),
-                        jobEntity.getJobAddressVo().getJibunAddress(),
-                        jobEntity.getJobAddressVo().getRoadAddress(),
-                        jobEntity.getJobAddressVo().getDetailAddress(),
-                        jobEntity.getJobAddressVo().getExtraAddress()
-                ),
-                jobEntity.getIsActive(),
-                jobEntity.getStartDate(),
-                jobEntity.getEndDate()
-        );
-    }
-
-    private JobEntity convert(Job job) {
-        return JobEntity
-                .builder()
-                .id(job.getId())
-                .memberId(job.getMemberId())
-                .title(job.getTitle())
-                .requirementLicense(job.getRequirementLicense())
-                .requirementEtc(job.getRequirementEtc())
-                .jobAddressVo(new JobAddressVo(
-                        job.getAddress().getPostcode(),
-                        job.getAddress().getRoadAddress(),
-                        job.getAddress().getJibunAddress(),
-                        job.getAddress().getRoadAddress(),
-                        job.getAddress().getExtraAddress()
-                ))
-                .isActive(job.getIsActive())
-                .startDate(job.getStartDate())
-                .endDate(job.getEndDate())
-                .memberId(job.getMemberId())
                 .build();
     }
 }

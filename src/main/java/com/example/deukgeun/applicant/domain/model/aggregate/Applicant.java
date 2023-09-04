@@ -22,35 +22,9 @@ public class Applicant {
 
     private Integer isSelected = 0;
 
-    private Job job;
-
     private MatchInfo matchInfo = null;
 
     private PaymentInfo paymentInfo = null;
-
-    public Applicant(
-            Long id,
-            Long jobId,
-            Long matchInfoId,
-            Long paymentInfoId,
-            Long trainerId,
-            Integer supportAmount,
-            Integer isSelected,
-            Job job,
-            MatchInfo matchInfo,
-            PaymentInfo paymentInfo
-    ) {
-        this.id = id;
-        this.jobId = jobId;
-        this.matchInfoId = matchInfoId;
-        this.paymentInfoId = paymentInfoId;
-        this.trainerId = trainerId;
-        this.supportAmount = supportAmount;
-        this.isSelected = isSelected;
-        this.job = job;
-        this.matchInfo = matchInfo;
-        this.paymentInfo = paymentInfo;
-    }
 
     public Applicant(
             Long id,

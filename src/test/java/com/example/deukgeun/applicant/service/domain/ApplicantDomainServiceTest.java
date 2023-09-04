@@ -80,14 +80,9 @@ public class ApplicantDomainServiceTest {
     @Test
     public void givenExistingApplicantId_whenFindById_thenShouldReturnApplicantInfo() {
         // Given
-        MemberEntity member = mock(MemberEntity.class);
-
-        Job job = mock(Job.class);
-
         Long applicantId = 12345L;
         Applicant applicant = mock(Applicant.class);
 
-        given(applicant.getJob()).willReturn(job);
         given(applicantRepository.findById(applicantId)).willReturn(Optional.of(applicant));
 
         // When
