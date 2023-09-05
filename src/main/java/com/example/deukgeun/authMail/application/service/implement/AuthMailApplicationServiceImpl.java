@@ -25,7 +25,7 @@ public class AuthMailApplicationServiceImpl implements AuthMailApplicationServic
     private final AuthMailDomainService authMailDomainService;
 
     @Value("${spring.mail.username}")
-    private final String FROM_MAIL;
+    private String FROM_MAIL;
 
     /**
      * 메일 인증 요청을 확인하고 처리합니다.
