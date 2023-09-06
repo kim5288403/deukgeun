@@ -3,6 +3,8 @@ package com.example.deukgeun.authToken.service.application;
 import com.example.deukgeun.authToken.application.service.implement.AuthTokenApplicationServiceImpl;
 import com.example.deukgeun.authToken.domain.model.entity.AuthToken;
 import com.example.deukgeun.authToken.domain.service.implement.AuthTokenDomainServiceImpl;
+import com.example.deukgeun.member.domain.service.implement.MemberDomainServiceImpl;
+import com.example.deukgeun.trainer.domain.service.implement.TrainerDomainServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -32,6 +34,10 @@ class AuthTokenApplicationServiceTest {
     private HttpServletResponse response;
     @Mock
     private AuthTokenDomainServiceImpl authTokenDomainService;
+    @Mock
+    private MemberDomainServiceImpl memberDomainService;
+    @Mock
+    private TrainerDomainServiceImpl trainerDomainService;
     @InjectMocks
     private AuthTokenApplicationServiceImpl authTokenApplicationService;
     @Value("${jwt.authTokenTime}")
@@ -240,13 +246,13 @@ class AuthTokenApplicationServiceTest {
 
         UserDetails userDetails = mock(UserDetails.class);
         ReflectionTestUtils.setField(authTokenApplicationService, "TRAINER_ROLE", roles);
-        given(authTokenDomainService.loadUserByTrainerUsername(anyString())).willReturn(userDetails);
+        given(trainerDomainService.loadUserByTrainerUsername(anyString())).willReturn(userDetails);
 
         // When
         Authentication authentication = authTokenApplicationService.getAuthentication(token, roles);
 
         // Then
-        verify(authTokenDomainService, times(1)).loadUserByTrainerUsername(userPk);
+        verify(trainerDomainService, times(1)).loadUserByTrainerUsername(userPk);
         assertEquals(userDetails, authentication.getPrincipal());
         assertEquals("", authentication.getCredentials());
         assertEquals(userDetails.getAuthorities(), authentication.getAuthorities());

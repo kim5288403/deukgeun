@@ -19,12 +19,6 @@ public class MemberRepositoryAdapter implements MemberRepository {
     private final MemberJpaRepository memberRepository;
 
     @Override
-    public List<Member> findAll() {
-        List<MemberEntity> memberEntityList = memberRepository.findAll();
-        return memberEntityList.stream().map(this::covert).collect(Collectors.toList());
-    }
-
-    @Override
     public Optional<Member> findById(Long id) {
         Optional<MemberEntity> memberEntity = memberRepository.findById(id);
         return memberEntity.map(this::covert);

@@ -5,6 +5,8 @@ import com.example.deukgeun.trainer.application.dto.request.UpdateInfoRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdatePasswordRequest;
 import com.example.deukgeun.trainer.application.dto.response.LicenseResponse;
 import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -15,6 +17,7 @@ public interface TrainerDomainService {
     boolean existsByEmail(String email);
     Trainer findById(Long id) throws EntityNotFoundException;
     Trainer findByEmail(String email) throws EntityNotFoundException;
+    UserDetails loadUserByTrainerUsername(String email) throws UsernameNotFoundException;
     Trainer save(JoinRequest request, String fileName);
     Trainer saveLicense(String email, LicenseResponse.Result licenseResult);
     void updateInfo(UpdateInfoRequest request);

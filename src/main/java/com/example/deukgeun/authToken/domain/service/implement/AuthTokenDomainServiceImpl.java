@@ -3,16 +3,10 @@ package com.example.deukgeun.authToken.domain.service.implement;
 import com.example.deukgeun.authToken.domain.model.entity.AuthToken;
 import com.example.deukgeun.authToken.domain.repository.AuthTokenRepository;
 import com.example.deukgeun.authToken.domain.service.AuthTokenDomainService;
-import com.example.deukgeun.member.domain.entity.Member;
 import com.example.deukgeun.member.domain.repository.MemberRepository;
-import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import com.example.deukgeun.trainer.domain.repository.TrainerRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import javax.persistence.EntityNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +15,12 @@ public class AuthTokenDomainServiceImpl implements AuthTokenDomainService {
     private final MemberRepository memberRepository;
     private final TrainerRepository trainerRepository;
 
+    /**
+     * 주어진 인증 토큰과 갱신 토큰을 사용하여 새로운 토큰 정보를 생성하고 저장합니다.
+     *
+     * @param authToken    인증 토큰
+     * @param refreshToken 갱신 토큰
+     */
     @Override
     public void createToken(String authToken, String refreshToken) {
         AuthToken createAuthToken = AuthToken.create(authToken, refreshToken);
@@ -28,38 +28,34 @@ public class AuthTokenDomainServiceImpl implements AuthTokenDomainService {
         authTokenRepository.save(createAuthToken);
     }
 
+    /**
+     * 주어진 인증 토큰에 해당하는 토큰 정보를 데이터베이스에서 삭제합니다.
+     *
+     * @param authToken 삭제할 인증 토큰
+     */
     @Override
     public void deleteByAuthToken(String authToken) {
         authTokenRepository.deleteByAuthToken(authToken);
     }
 
-    @Override
-    public Member findMemberByEmail(String email) {
-        return memberRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
-    }
-
-    @Override
-    public Trainer findTrainerByEmail(String email) {
-        return trainerRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
-    }
-
+    /**
+     * 주어진 인증 토큰에 해당하는 토큰 정보를 검색합니다.
+     * 검색 결과가 없는 경우 null 반환합니다.
+     *
+     * @param authToken 검색할 인증 토큰
+     * @return 검색한 토큰 정보 또는 null (토큰이 존재하지 않는 경우)
+     */
     @Override
     public AuthToken findByAuthToken(String authToken) {
         return authTokenRepository.findByAuthToken(authToken).orElse(null);
     }
 
-    @Override
-    public UserDetails loadUserByMemberUsername(String email) throws UsernameNotFoundException {
-        return memberRepository.loadUserByUsername(email);
-    }
-
-    @Override
-    public UserDetails loadUserByTrainerUsername(String email) throws UsernameNotFoundException {
-        return trainerRepository.loadUserByUsername(email);
-    }
-
+    /**
+     * 주어진 인증 토큰에 해당하는 토큰 정보를 검색하고, 새로운 인증 토큰으로 업데이트 합니다.
+     *
+     * @param authToken    기존 인증 토큰
+     * @param newAuthToken 새로운 인증 토큰
+     */
     @Override
     public void updateAuthToken(String authToken, String newAuthToken) {
         AuthToken saveToken = authTokenRepository.findByAuthToken(authToken).orElse(null);
