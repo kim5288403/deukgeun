@@ -29,6 +29,13 @@ public class JobController {
     private final MemberApplicationService memberApplicationService;
     private final AuthTokenApplicationService authTokenApplicationService;
 
+    /**
+     * 공고 소유권을 확인하는 GET 요청을 처리합니다.
+     *
+     * @param request HTTP 요청 객체입니다.
+     * @param id      공고 식별자입니다.
+     * @return 공고 소유권 확인 결과를 담은 응답입니다.
+     */
     @RequestMapping(method = RequestMethod.GET, path = "/check")
     public ResponseEntity<?> checkJobOwnership(HttpServletRequest request, Long id) {
         String authToken = authTokenApplicationService.resolveAuthToken(request);
@@ -39,6 +46,12 @@ public class JobController {
         return RestResponseUtil.ok("체크 성공했습니다.", result);
     }
 
+    /**
+     * 공고의 세부 정보를 조회하는 GET 요청을 처리합니다.
+     *
+     * @param id 공고의 식별자입니다.
+     * @return 공고의 세부 정보를 담은 응답입니다.
+     */
     @RequestMapping(method = RequestMethod.GET, path = "/{id}")
     public ResponseEntity<?> detail(@PathVariable Long id) {
         Job detail = jobApplicationService.findById(id);
@@ -46,6 +59,13 @@ public class JobController {
         return RestResponseUtil.ok("조회 성공했습니다.", detail);
     }
 
+    /**
+     * 키워드를 기반으로 공고 목록을 조회하는 GET 요청을 처리합니다.
+     *
+     * @param keyword      검색 키워드입니다.
+     * @param currentPage  현재 페이지 번호입니다.
+     * @return 키워드를 기반으로 조회된 공고 목록을 담은 응답입니다.
+     */
     @RequestMapping(method = RequestMethod.GET, path = "/")
     public ResponseEntity<?> getListByKeyword(String keyword, int currentPage) {
         Page<JobResponse.List> list = jobApplicationService.getListByKeyword(keyword, currentPage);
@@ -53,6 +73,13 @@ public class JobController {
         return RestResponseUtil.ok("조회 성공했습니다.", list);
     }
 
+    /**
+     * 사용자 식별자를 기반으로 해당 사용자의 공고 목록을 조회하는 GET 요청을 처리합니다.
+     *
+     * @param request     HTTP 요청 객체입니다.
+     * @param currentPage 현재 페이지 번호입니다.
+     * @return 사용자의 공고 목록을 담은 응답입니다.
+     */
     @RequestMapping(method = RequestMethod.GET, path = "/member")
     public ResponseEntity<?> getListByMemberId(HttpServletRequest request, int currentPage) {
         String token = authTokenApplicationService.resolveAuthToken(request);
@@ -63,6 +90,14 @@ public class JobController {
         return RestResponseUtil.ok("조회 성공했습니다.", list);
     }
 
+    /**
+     * 공고를 등록하는 POST 요청을 처리합니다.
+     *
+     * @param request           HTTP 요청 객체입니다.
+     * @param saveJobRequest    공고 등록 요청 DTO 입니다.
+     * @param bindingResult     요청 데이터 유효성 검사 결과입니다.
+     * @return 공고 등록 결과를 담은 응답입니다.
+     */
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> save(HttpServletRequest request, @Valid SaveJobRequest saveJobRequest, BindingResult bindingResult) {
         String token = authTokenApplicationService.resolveAuthToken(request);
