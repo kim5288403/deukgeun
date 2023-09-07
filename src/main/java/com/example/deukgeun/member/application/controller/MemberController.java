@@ -19,6 +19,13 @@ public class MemberController {
 
     private final MemberApplicationServiceImpl memberApplicationService;
 
+    /**
+     * 새로운 회원을 가입시킵니다.
+     *
+     * @param request        가입 요청 정보를 포함하는 객체입니다.
+     * @param bindingResult  입력 유효성 검사 결과를 담은 객체입니다.
+     * @return 회원 가입 성공 여부를 나타내는 응답입니다.
+     */
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> save(@Valid JoinRequest request, BindingResult bindingResult) {
         memberApplicationService.save(request);
