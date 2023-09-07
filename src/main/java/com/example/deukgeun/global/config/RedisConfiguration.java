@@ -19,27 +19,30 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 @Configuration
 @EnableCaching
 public class RedisConfiguration {
-    @Value("${spring.redis.host}")
-    private String host;
 
-    @Value("${spring.redis.port}")
-    private int port;
-
+    /**
+     * 이 메서드는 Redis를 사용하는 CacheManager Bean을 생성하고 구성합니다.
+     *
+     * @param connectionFactory RedisConnectionFactory 인스턴스로 Redis 연결을 구성합니다.
+     * @return Redis를 사용하는 CacheManager 객체를 반환합니다.
+     */
     @Bean
     public CacheManager projectCacheManager(RedisConnectionFactory connectionFactory) {
-        RedisSerializer<Object> serializer = redisSerializer();
         Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
 
+        // Jackson ObjectMapper 설정
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
         objectMapper.registerModule(new JavaTimeModule());
 
         jackson2JsonRedisSerializer.setObjectMapper(objectMapper);
 
+        // RedisCacheConfiguration 설정
         RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jackson2JsonRedisSerializer))
                 .disableCachingNullValues();
 
+        // RedisCacheManager 생성 및 구성
         return RedisCacheManager.builder(connectionFactory)
                 .cacheDefaults(redisCacheConfiguration)
                 .build();
