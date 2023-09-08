@@ -333,7 +333,7 @@ class TrainerDomainServiceTest {
         given(trainerRepository.findByEmail(request.getEmail())).willReturn(Optional.of(trainer));
 
         // When
-        trainerDomainService.updateInfo(request);
+        trainerDomainService.updateInfoByEmail(request);
 
         // Verify
         verify(trainerRepository, times(1)).findByEmail(request.getEmail());
@@ -369,10 +369,10 @@ class TrainerDomainServiceTest {
                 mock(Post.class)
         );
 
-        trainer.getProfile().updatePath(newPath);
+        given(trainerRepository.findByEmail(email)).willReturn(Optional.of(trainer));
 
         // when
-        trainerDomainService.updateProfile(trainer, newPath);
+        trainerDomainService.updateProfileByEmail(email, newPath);
 
         // then
         verify(trainerRepository, times(1)).save(trainer);
@@ -410,7 +410,7 @@ class TrainerDomainServiceTest {
         given(trainerRepository.findByEmail(request.getEmail())).willReturn(Optional.of(trainer));
 
         // When
-        trainerDomainService.updatePassword(request);
+        trainerDomainService.updatePasswordByEmail(request);
 
         // Then
         verify(trainerRepository, times(1)).findByEmail(request.getEmail());
@@ -446,7 +446,7 @@ class TrainerDomainServiceTest {
         given(trainerRepository.findByEmail(email)).willReturn(Optional.of(trainer));
 
         // When
-        trainerDomainService.uploadPost(email, html);
+        trainerDomainService.uploadPostByEmail(email, html);
 
         // Then
         verify(trainerRepository, times(1)).findByEmail(email);

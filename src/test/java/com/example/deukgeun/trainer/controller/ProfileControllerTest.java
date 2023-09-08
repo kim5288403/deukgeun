@@ -45,7 +45,7 @@ public class ProfileControllerTest {
     private BindingResult bindingResult;
 
     @Test
-    public void givenValidTrainerId_whenGetProfileByTrainerId_thenProfileReturnedSuccessfully() {
+    public void givenValidTrainerId_whenGetProfileById_thenProfileReturnedSuccessfully() {
         // given
         Long trainerId = 1L;
         Trainer trainer = new Trainer(
@@ -72,12 +72,13 @@ public class ProfileControllerTest {
                 mock(Post.class)
         );
 
-        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("트레이너 상세보기 성공했습니다.", trainer.getProfile());
+        ProfileResponse profileResponse = new ProfileResponse(trainer.getProfile().getPath());
+        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("트레이너 상세보기 성공했습니다.", profileResponse);
 
         given(trainerApplicationService.findById(trainerId)).willReturn(trainer);
 
         // When
-        ResponseEntity<?> responseEntity = profileController.getProfileByTrainerId(1L);
+        ResponseEntity<?> responseEntity = profileController.getProfileById(1L);
 
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());

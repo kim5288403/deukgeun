@@ -18,7 +18,7 @@ import java.util.Map;
 public interface TrainerApplicationService {
     void delete(String email) throws IOException;
     void deleteLicenseByLicenseId(String email, Long licenseId);
-    void deletePost(String email, String src);
+    void deletePostByEmail(String email);
     void deleteImageToS3(String email) throws IOException;
     boolean existsByEmail(String email);
     Trainer findById(Long id);
@@ -26,7 +26,6 @@ public interface TrainerApplicationService {
     ProfileResponse getProfileByEmail(String email);
     List<LicenseResponse.List> getLicensesById(Long id);
     List<LicenseResponse.List> getLicensesByEmail(String email);
-    boolean isEmptyGroupName(String groupName, String groupStatus);
     Trainer save(JoinRequest request) throws IOException;
     Trainer saveLicense(String email, LicenseResponse.Result licenseResult);
     Map<Object, Object> saveImageToS3(HttpServletRequest request, HttpServletResponse response) throws Exception;

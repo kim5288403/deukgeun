@@ -41,7 +41,7 @@ public class PostControllerTest {
     private HttpServletResponse response;
 
     @Test
-    public void givenPostService_whenDeletePost_thenDeletePostAndReturnSuccessResponse() {
+    public void givenPostService_whenDeletePost_thenDeletePostAndReturnSuccessResponse() throws IOException {
         // Given
         String authToken = "exampleAuthToken";
         String email = "test";
@@ -55,7 +55,8 @@ public class PostControllerTest {
         ResponseEntity<?> responseEntity = postController.deletePost(request, src);
 
         // Then
-        verify(trainerApplicationService).deletePost(email, src);
+        verify(trainerApplicationService).deletePostByEmail(email);
+        verify(trainerApplicationService).deleteImageToS3(src);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
     }

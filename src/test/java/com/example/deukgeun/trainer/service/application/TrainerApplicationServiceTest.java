@@ -106,16 +106,15 @@ class TrainerApplicationServiceTest {
     }
 
     @Test
-    public void givenTrainerWithEmail_whenDeletePost_thenPostShouldBeDeleted() {
+    public void givenTrainerWithEmail_whenDeletePostByEmail_thenPostShouldBeDeleted() {
         // Given
         String email = "test@example.com";
         String src = "testSrc";
 
         // When
-        trainerApplicationService.deletePost(email, src);
+        trainerApplicationService.deletePostByEmail(email);
 
         // Then
-        verify(s3Service, times(1)).delete(src);
         verify(trainerDomainService, times(1)).deletePost(email);
     }
 
@@ -326,58 +325,6 @@ class TrainerApplicationServiceTest {
     }
 
     @Test
-    void givenValidGroupStatusAndNonEmptyGroupName_whenIsEmptyGroupName_thenReturnFalse() {
-        // Given
-        String groupName = "Group A";
-        String groupStatus = "Y";
-
-        // When
-        boolean result = trainerApplicationService.isEmptyGroupName(groupName, groupStatus);
-
-        // Then
-        assertTrue(result);
-    }
-
-    @Test
-    void givenValidGroupStatusAndEmptyGroupName_whenIsEmptyGroupName_thenReturnTrue() {
-        // Given
-        String groupName = "";
-        String groupStatus = "Y";
-
-        // When
-        boolean result = trainerApplicationService.isEmptyGroupName(groupName, groupStatus);
-
-        // Then
-        assertFalse(result);
-    }
-
-    @Test
-    void givenInvalidGroupStatusAndNonEmptyGroupName_whenIsEmptyGroupName_thenReturnTrue() {
-        // Given
-        String groupName = "Group A";
-        String groupStatus = "N";
-
-        // When
-        boolean result = trainerApplicationService.isEmptyGroupName(groupName, groupStatus);
-
-        // Then
-        assertTrue(result);
-    }
-
-    @Test
-    void givenInvalidGroupStatusAndEmptyGroupName_whenIsEmptyGroupName_thenReturnTrue() {
-        // Given
-        String groupName = "";
-        String groupStatus = "N";
-
-        // When
-        boolean result = trainerApplicationService.isEmptyGroupName(groupName, groupStatus);
-
-        // Then
-        assertTrue(result);
-    }
-
-    @Test
     void givenJoinRequest_whenSave_thenTrainerIsSavedAndReturned() throws IOException {
         // Given
         JoinRequest request = mock(JoinRequest.class);
@@ -403,7 +350,7 @@ class TrainerApplicationServiceTest {
         );
 
         given(request.getProfile()).willReturn(mock(MockMultipartFile.class));
-        given(s3Service.upload(any(MultipartFile.class))).willReturn("test");
+        given(s3Service.uploadByMultiPartFile(any(MultipartFile.class))).willReturn("test");
         given(trainerDomainService.save(any(JoinRequest.class), anyString())).willReturn(savedTrainer);
 
         // When
@@ -504,7 +451,7 @@ class TrainerApplicationServiceTest {
         trainerApplicationService.updateInfo(request);
 
         // Verify
-        verify(trainerDomainService, times(1)).updateInfo(request);
+        verify(trainerDomainService, times(1)).updateInfoByEmail(request);
     }
 
     @Test
@@ -513,25 +460,22 @@ class TrainerApplicationServiceTest {
         String email = "test@example.com";
         String originalFilename = "profile.jpg";
         String expectedFileName = "/path/to/profile/files/your_generated_uuid.jpg";
+        String existingPath = "/path/to/profile/files/your_generated_uuid.jpg";
 
         MultipartFile profileMock = mock(MultipartFile.class);
-        Trainer trainerMock = mock(Trainer.class);
 
         given(profileMock.getOriginalFilename()).willReturn(originalFilename);
         given(profileMock.getContentType()).willReturn("image/jpeg");
-        given(trainerDomainService.findByEmail(email)).willReturn(trainerMock);
-        given(trainerMock.getProfile()).willReturn(mock(Profile.class));
-        given(trainerMock.getProfile().getPath()).willReturn(originalFilename);
-        given(s3Service.upload(profileMock)).willReturn(expectedFileName);
+        given(s3Service.uploadByMultiPartFile(profileMock)).willReturn(expectedFileName);
+        given(trainerDomainService.updateProfileByEmail(email, expectedFileName)).willReturn(existingPath);
 
         // When
         trainerApplicationService.updateProfile(email, profileMock);
 
         // Then
-        verify(trainerDomainService, times(1)).findByEmail(email);
-        verify(s3Service, times(1)).delete(trainerMock.getProfile().getPath());
-        verify(s3Service, times(1)).upload(profileMock);
-        verify(trainerDomainService, times(1)).updateProfile(trainerMock, expectedFileName);
+        verify(s3Service, times(1)).delete(existingPath);
+        verify(s3Service, times(1)).uploadByMultiPartFile(profileMock);
+        verify(trainerDomainService, times(1)).updateProfileByEmail(email, expectedFileName);
     }
 
     @Test
@@ -545,7 +489,7 @@ class TrainerApplicationServiceTest {
         trainerApplicationService.updatePassword(request);
 
         // Then
-        verify(trainerDomainService, times(1)).updatePassword(request);
+        verify(trainerDomainService, times(1)).updatePasswordByEmail(request);
     }
 
     @Test
@@ -561,6 +505,6 @@ class TrainerApplicationServiceTest {
         trainerApplicationService.uploadPost(email, postRequest);
 
         // Then
-        verify(trainerDomainService, times(1)).uploadPost(email, HtmlUtils.htmlEscape(content));
+        verify(trainerDomainService, times(1)).uploadPostByEmail(email, HtmlUtils.htmlEscape(content));
     }
 }

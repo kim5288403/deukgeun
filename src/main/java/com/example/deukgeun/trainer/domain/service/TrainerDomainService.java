@@ -20,8 +20,8 @@ public interface TrainerDomainService {
     UserDetails loadUserByTrainerUsername(String email) throws UsernameNotFoundException;
     Trainer save(JoinRequest request, String fileName);
     Trainer saveLicense(String email, LicenseResponse.Result licenseResult);
-    void updateInfo(UpdateInfoRequest request);
-    void updateProfile(Trainer trainer, String fileName);
-    void updatePassword(UpdatePasswordRequest request);
-    Trainer uploadPost(String email, String html);
+    void updateInfoByEmail(UpdateInfoRequest request);
+    String updateProfileByEmail(String email, String fileName);
+    void updatePasswordByEmail(UpdatePasswordRequest request);
+    void uploadPostByEmail(String email, String html);
 }
