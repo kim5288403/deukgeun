@@ -116,7 +116,6 @@ public class ApplicantRepositoryAdapter implements ApplicantRepository {
         }
         return new MatchInfo(
                 matchInfoEntity.getId(),
-                matchInfoEntity.getJobId(),
                 matchInfoEntity.getStatus()
         );
     }
@@ -128,7 +127,6 @@ public class ApplicantRepositoryAdapter implements ApplicantRepository {
         return MatchInfoEntity
                 .builder()
                 .id(matchInfo.getId())
-                .jobId(matchInfo.getJobId())
                 .status(matchInfo.getStatus())
                 .build();
     }

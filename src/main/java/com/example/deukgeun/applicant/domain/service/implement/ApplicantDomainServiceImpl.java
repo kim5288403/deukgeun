@@ -120,7 +120,6 @@ public class ApplicantDomainServiceImpl implements ApplicantDomainService {
 
         // 새로운 매칭 정보 생성
         MatchInfo matchInfo = MatchInfo.create(
-                saveMatchInfoRequest.getJobId(),
                 status
         );
 
