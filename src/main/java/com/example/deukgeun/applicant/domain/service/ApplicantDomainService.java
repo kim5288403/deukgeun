@@ -11,13 +11,13 @@ import org.springframework.data.domain.PageRequest;
 import java.time.LocalDateTime;
 
 public interface ApplicantDomainService {
-    void cancel(Long id, IamPortCancelResponse iamPortCancelResponse);
     void deleteMatchInfoById(Long id);
     Applicant findById(Long id);
     Page<Applicant> getByJobId(Long jobId, PageRequest pageRequest);
     boolean isAnnouncementMatchedByJobId(Long jobId);
-    Applicant matching(SaveMatchInfoRequest saveMatchInfoRequest, int status);
-    Applicant payment(PaymentInfoRequest request, LocalDateTime paidAt);
     Applicant save(SaveApplicantRequest saveApplicantRequest, Long trainerId);
+    Applicant savePaymentInfo(PaymentInfoRequest request, LocalDateTime paidAt);
+    Applicant saveMatchInfo(SaveMatchInfoRequest saveMatchInfoRequest, int status);
+    void updatePaymentCancelInfoById(Long id, IamPortCancelResponse iamPortCancelResponse);
     void updateIsSelectedById(Long applicantId, int isSelected);
 }

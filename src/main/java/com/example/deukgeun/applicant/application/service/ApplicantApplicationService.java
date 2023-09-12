@@ -9,14 +9,14 @@ import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
 import org.springframework.data.domain.Page;
 
 public interface ApplicantApplicationService {
-    void cancel(Long id, IamPortCancelResponse iamPortCancelResponse);
     void deleteMatchInfoById(Long id);
     Applicant findById(Long id);
     Page<ApplicantResponse.List> getByJobId(Long jobId, int currentPage);
     void isAnnouncementMatchedByJobId(Long jobId);
-    Applicant matching(SaveMatchInfoRequest saveMatchInfoRequest, int status);
-    Applicant payment(PaymentInfoRequest request);
     Applicant save(SaveApplicantRequest saveApplicantRequest, Long trainerId);
+    Applicant savePaymentInfo(PaymentInfoRequest request);
+    Applicant saveMatchInfo(SaveMatchInfoRequest saveMatchInfoRequest, int status);
+    void updatePaymentCancelInfoById(Long id, IamPortCancelResponse iamPortCancelResponse);
     void updateIsSelectedById(Long id, int isSelected);
 
 }

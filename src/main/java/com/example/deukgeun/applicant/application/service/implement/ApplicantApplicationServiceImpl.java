@@ -30,8 +30,8 @@ public class ApplicantApplicationServiceImpl implements ApplicantApplicationServ
      * @param iamPortCancelResponse IamPort 결제 취소 응답 객체
      */
     @Override
-    public void cancel(Long id, IamPortCancelResponse iamPortCancelResponse) {
-        applicantDomainService.cancel(id, iamPortCancelResponse);
+    public void updatePaymentCancelInfoById(Long id, IamPortCancelResponse iamPortCancelResponse) {
+        applicantDomainService.updatePaymentCancelInfoById(id, iamPortCancelResponse);
     }
 
     /**
@@ -86,34 +86,6 @@ public class ApplicantApplicationServiceImpl implements ApplicantApplicationServ
     }
 
     /**
-     * SaveMatchInfoRequest, 상태(status) 정보를 사용하여 지원자와 매칭하는 메서드입니다.
-     *
-     * @param saveMatchInfoRequest 매칭 정보를 저장하는 데 사용되는 요청 객체
-     * @param status 매칭 상태를 나타내는 정수 값
-     * @return 매칭된 지원자 정보를 포함하는 Applicant 객체
-     */
-    @Override
-    public Applicant matching(SaveMatchInfoRequest saveMatchInfoRequest, int status) {
-        return applicantDomainService.matching(saveMatchInfoRequest, status);
-    }
-
-    /**
-     * PaymentInfoRequest 사용하여 결제 정보를 처리하고 지원자 정보를 반환하는 메서드입니다.
-     *
-     * @param request 결제 정보를 나타내는 PaymentInfoRequest 객체
-     * @return 처리된 지원자 정보를 포함하는 Applicant 객체
-     */
-    @Override
-    public Applicant payment(PaymentInfoRequest request) {
-        // 날짜 형식 지정을 위한 DateTimeFormatter 객체 생성
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-        // 요청에서 'paidAt' 값을 파싱하여 LocalDateTime 객체로 변환
-        LocalDateTime paidAt = LocalDateTime.parse(request.getPaidAt(), formatter);
-
-        return applicantDomainService.payment(request, paidAt);
-    }
-
-    /**
      * SaveApplicantRequest 트레이너 ID를 사용하여 지원자 정보를 저장하는 메서드입니다.
      *
      * @param saveApplicantRequest 저장할 지원자 정보를 담은 요청 객체
@@ -124,6 +96,35 @@ public class ApplicantApplicationServiceImpl implements ApplicantApplicationServ
     public Applicant save(SaveApplicantRequest saveApplicantRequest, Long trainerId) {
         return applicantDomainService.save(saveApplicantRequest, trainerId);
     }
+
+    /**
+     * PaymentInfoRequest 사용하여 결제 정보를 처리하고 지원자 정보를 반환하는 메서드입니다.
+     *
+     * @param request 결제 정보를 나타내는 PaymentInfoRequest 객체
+     * @return 처리된 지원자 정보를 포함하는 Applicant 객체
+     */
+    @Override
+    public Applicant savePaymentInfo(PaymentInfoRequest request) {
+        // 날짜 형식 지정을 위한 DateTimeFormatter 객체 생성
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        // 요청에서 'paidAt' 값을 파싱하여 LocalDateTime 객체로 변환
+        LocalDateTime paidAt = LocalDateTime.parse(request.getPaidAt(), formatter);
+
+        return applicantDomainService.savePaymentInfo(request, paidAt);
+    }
+
+    /**
+     * SaveMatchInfoRequest, 상태(status) 정보를 사용하여 지원자와 매칭하는 메서드입니다.
+     *
+     * @param saveMatchInfoRequest 매칭 정보를 저장하는 데 사용되는 요청 객체
+     * @param status 매칭 상태를 나타내는 정수 값
+     * @return 매칭된 지원자 정보를 포함하는 Applicant 객체
+     */
+    @Override
+    public Applicant saveMatchInfo(SaveMatchInfoRequest saveMatchInfoRequest, int status) {
+        return applicantDomainService.saveMatchInfo(saveMatchInfoRequest, status);
+    }
+
 
     /**
      * 고유 지원자 ID와 선택 여부(isSelected) 정보를 사용하여 지원자 정보를 업데이트하는 메서드입니다.

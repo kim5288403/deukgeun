@@ -20,13 +20,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
@@ -51,61 +54,62 @@ public class ApplicantControllerTest {
     @Mock
     private BindingResult bindingResult;
 
-    static {
-        System.setProperty("com.amazonaws.sdk.disableEc2Metadata", "true");
-    }
-
     @Test
-    public void givenApplicantService_whenList_thenReturnResponseEntity() {
+    public void givenValidJobId_whenList_thenReturnReturnOkResponse() {
         // Given
-        Long jobId = 123L;
-        int currentPage = 0;
-        Page<ApplicantResponse.List> page = mock(Page.class);
+        Long jobId = 1L;
+        int currentPage = 1;
+        List<ApplicantResponse.List> list = new ArrayList<>();
+        ApplicantResponse.List applicantResponse = mock(ApplicantResponse.List.class);
+        list.add(applicantResponse);
+        Pageable pageable = mock(Pageable.class);
+        Page<ApplicantResponse.List> page = new PageImpl<>(list, pageable, list.size());
 
         given(applicantApplicationService.getByJobId(jobId, currentPage)).willReturn(page);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공했습니다.", page);
 
         // When
-        ResponseEntity<?> responseEntity = applicantController.list(jobId, currentPage);
+        ResponseEntity<?> response = applicantController.list(jobId, currentPage);
 
         // Then
         verify(applicantApplicationService, times(1)).getByJobId(jobId, currentPage);
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(expectedResponse.getBody(), responseEntity.getBody());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(expectedResponse.getBody(), response.getBody());
     }
 
     @Test
     public void givenValidSaveApplicantRequest_whenSave_thenReturnOkResponse() {
         // Given
-        Long trainerId = 123L;
-        SaveApplicantRequest saveApplicantRequest = new SaveApplicantRequest(123L, 30000);
         String authToken = "your_mocked_auth_token";
         String email = "mocked_user_email";
         Trainer trainer = mock(Trainer.class);
+        SaveApplicantRequest saveApplicantRequest = mock(SaveApplicantRequest.class);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("지원 성공했습니다.", null);
 
         given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
         given(authTokenApplicationService.getUserPk(authToken)).willReturn(email);
         given(trainerApplicationService.findByEmail(email)).willReturn(trainer);
-        given(trainerApplicationService.findByEmail(email).getId()).willReturn(trainerId);
 
         // When
         ResponseEntity<?> responseEntity = applicantController.save(request, saveApplicantRequest, bindingResult);
 
         // Then
-        verify(applicantApplicationService).save(saveApplicantRequest, trainerId);
+        verify(authTokenApplicationService).resolveAuthToken(request);
+        verify(authTokenApplicationService).getUserPk(authToken);
+        verify(trainerApplicationService).findByEmail(email);
+        verify(applicantApplicationService).save(eq(saveApplicantRequest), anyLong());
         assertEquals(expectedResponse, responseEntity);
     }
 
     @Test
-    public void givenApplicantService_whenGetApplicantInfo_thenReturnResponseEntity() {
+    public void givenValidId_whenGetApplicantInfo_thenReturnOkResponse() {
         // Given
-        Long id = 123L;
+        Long id = 1L;
         Applicant applicant = mock(Applicant.class);
         Member member = mock(Member.class);
         Job job = mock(Job.class);
 
-        given(applicantApplicationService.findById(id)).willReturn(applicant);
+        given(applicantApplicationService.findById(anyLong())).willReturn(applicant);
         given(jobApplicationService.findById(anyLong())).willReturn(job);
         given(memberApplicationService.findById(anyLong())).willReturn(member);
 
@@ -117,11 +121,13 @@ public class ApplicantControllerTest {
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공했습니다.", result);
 
         // When
-        ResponseEntity<?> responseEntity = applicantController.getApplicantInfo(id);
+        ResponseEntity<?> response = applicantController.getApplicantInfo(id);
 
         // Then
         verify(applicantApplicationService, times(1)).findById(id);
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(expectedResponse.getBody(), responseEntity.getBody());
+        verify(jobApplicationService, times(1)).findById(anyLong());
+        verify(memberApplicationService, times(1)).findById(anyLong());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(expectedResponse.getBody(), response.getBody());
     }
 }

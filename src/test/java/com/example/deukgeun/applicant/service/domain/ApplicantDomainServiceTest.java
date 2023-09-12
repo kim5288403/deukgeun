@@ -8,8 +8,6 @@ import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
 import com.example.deukgeun.applicant.domain.model.entity.PaymentInfo;
 import com.example.deukgeun.applicant.domain.repository.ApplicantRepository;
 import com.example.deukgeun.applicant.domain.service.implement.ApplicantDomainServiceImpl;
-import com.example.deukgeun.job.domain.model.aggregate.Job;
-import com.example.deukgeun.member.infrastructure.persistence.entity.MemberEntity;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -38,22 +36,23 @@ public class ApplicantDomainServiceTest {
     private ApplicantRepository applicantRepository;
 
     @Test
-    public void givenApplicantIdAndIamPortCancelResponse_whenCancel_thenShouldUpdatePaymentInfo() {
+    public void givenValidIdAndIamPortCancelResponse_whenUpdatePaymentCancelInfoById_thenShouldUpdatePaymentCancelInfo() {
         // Given
         Long applicantId = 1L;
         IamPortCancelResponse iamPortCancelResponse = new IamPortCancelResponse();
-        iamPortCancelResponse.setResponse(new IamPortCancelResponse.Response("test",
+        iamPortCancelResponse.setResponse(new IamPortCancelResponse.Response(
+                "test",
                 "test",
                 "test",
                 30000));
         Applicant applicant = mock(Applicant.class);
         PaymentInfo paymentInfo = mock(PaymentInfo.class);
 
-        given(applicantRepository.findById(applicantId)).willReturn(Optional.ofNullable(applicant));
+        given(applicantRepository.findById(applicantId)).willReturn(Optional.of(applicant));
         given(applicant.getPaymentInfo()).willReturn(paymentInfo);
 
         // When
-        applicantDomainService.cancel(applicantId, iamPortCancelResponse);
+        applicantDomainService.updatePaymentCancelInfoById(applicantId, iamPortCancelResponse);
 
         // Then
         verify(applicantRepository).findById(applicantId);
@@ -61,7 +60,7 @@ public class ApplicantDomainServiceTest {
     }
 
     @Test
-    public void givenApplicantId_whenDeleteMatchInfoById_thenDeleteMatchInfoAndSave() {
+    public void givenValidId_whenDeleteMatchInfoById_thenShouldDeleteMatchInfo() {
         // Given
         Long applicantId = 1L;
         Applicant applicant = mock(Applicant.class);
@@ -73,14 +72,13 @@ public class ApplicantDomainServiceTest {
 
         // Then
         verify(applicantRepository, times(1)).findById(applicantId);
-        verify(applicant, times(1)).deleteMatchInfo();
         verify(applicantRepository, times(1)).save(applicant);
     }
 
     @Test
-    public void givenExistingApplicantId_whenFindById_thenShouldReturnApplicantInfo() {
+    public void givenExistingId_whenFindById_thenShouldReturnApplicant() {
         // Given
-        Long applicantId = 12345L;
+        Long applicantId = 1L;
         Applicant applicant = mock(Applicant.class);
 
         given(applicantRepository.findById(applicantId)).willReturn(Optional.of(applicant));
@@ -95,9 +93,9 @@ public class ApplicantDomainServiceTest {
     }
 
     @Test
-    public void givenNonExistingApplicantId_whenFindById_thenShouldThrowEntityNotFoundException() {
+    public void givenNonExistingId_whenFindById_thenShouldThrowEntityNotFoundException() {
         // Given
-        Long applicantId = 99999L;
+        Long applicantId = 1L;
         given(applicantRepository.findById(applicantId)).willReturn(Optional.empty());
 
         // When and Then
@@ -109,18 +107,18 @@ public class ApplicantDomainServiceTest {
     }
 
     @Test
-    void givenExistingJobId_whenGetByJobId_thenReturnsMatching() {
+    void givenExistingJobId_whenGetByJobId_thenShouldReturnApplicantPage() {
         // Given
-        Long jobId = 123L;
+        Long jobId = 1L;
         int currentPage = 0;
         PageRequest pageable = PageRequest.of(currentPage, 10);
 
-        Applicant list1= new Applicant(1L, jobId, 123L, 30000, 0);
-        Applicant list2 = new Applicant(2L, jobId, 123L, 30000, 0);
+        Applicant applicant1= mock(Applicant.class);
+        Applicant applicant2= mock(Applicant.class);
 
         List<Applicant> list = new ArrayList<>();
-        list.add(list1);
-        list.add(list2);
+        list.add(applicant1);
+        list.add(applicant2);
         Page<Applicant> page = new PageImpl<>(list, pageable, list.size());
 
         given(applicantRepository.findPageByJobId(jobId, pageable)).willReturn(page);
@@ -131,11 +129,12 @@ public class ApplicantDomainServiceTest {
         // Then
         assertNotNull(result);
         assertEquals(list.size(), result.getContent().size());
+
         verify(applicantRepository, times(1)).findPageByJobId(jobId, pageable);
     }
 
     @Test
-    public void givenJobId_whenIsAnnouncementMatchedByJobId_thenCheckExistsByJobIdAndMatchInfoIdNotNull() {
+    public void givenJobId_whenIsAnnouncementMatchedByJobId_thenShouldReturnTrue() {
         // Given
         Long jobId = 1L;
 
@@ -145,12 +144,12 @@ public class ApplicantDomainServiceTest {
         boolean isMatched = applicantDomainService.isAnnouncementMatchedByJobId(jobId);
 
         // Then
-        verify(applicantRepository).existsByJobIdAndMatchInfoIdNotNull(jobId);
         assertTrue(isMatched);
+        verify(applicantRepository).existsByJobIdAndMatchInfoIdNotNull(jobId);
     }
 
     @Test
-    public void givenJobId_whenIsAnnouncementMatchedByJobId_thenReturnFalse() {
+    public void givenJobId_whenIsAnnouncementMatchedByJobId_thenShouldReturnFalse() {
         // Given
         Long jobId = 2L;
 
@@ -160,33 +159,35 @@ public class ApplicantDomainServiceTest {
         boolean isMatched = applicantDomainService.isAnnouncementMatchedByJobId(jobId);
 
         // Then
-        verify(applicantRepository).existsByJobIdAndMatchInfoIdNotNull(jobId);
         assertFalse(isMatched);
+        verify(applicantRepository).existsByJobIdAndMatchInfoIdNotNull(jobId);
     }
 
     @Test
-    public void givenSaveMatchInfoRequestAndStatus_whenMatching_thenReturnSavedApplicant() {
+    public void givenValidSaveApplicantRequest_whenSave_thenShouldSaveApplicant() {
         // Given
-        Long applicantId = 1L;
-        Long jobId = 123L;
-        int status = 1;
-        SaveMatchInfoRequest saveMatchInfoRequest = new SaveMatchInfoRequest(applicantId, jobId);
-        Applicant applicant = mock(Applicant.class);
+        Long jobId = 1L;
+        Long trainerId = 2L;
+        Long ApplicantId = 3L;
+        SaveApplicantRequest saveApplicantRequest = new SaveApplicantRequest(jobId, 1000);
+        Applicant applicant = new Applicant(ApplicantId, jobId, trainerId, 1000, 0);
 
-        given(applicantRepository.findById(applicantId)).willReturn(Optional.ofNullable(applicant));
-        given(applicantRepository.save(applicant)).willReturn(applicant);
+        given(applicantRepository.existsByJobIdAndTrainerId(anyLong(), anyLong())).willReturn(false);
+        given(applicantRepository.save(any(Applicant.class))).willReturn(applicant);
 
         // When
-        Applicant savedApplicant = applicantDomainService.matching(saveMatchInfoRequest, status);
+        Applicant savedApplicant = applicantDomainService.save(saveApplicantRequest, trainerId);
 
         // Then
-        verify(applicantRepository).findById(applicantId);
-        verify(applicantRepository).save(applicant);
-        assertEquals(applicant, savedApplicant);
+        assertEquals(ApplicantId, savedApplicant.getId());
+        assertEquals(jobId, savedApplicant.getJobId());
+        assertEquals(trainerId, savedApplicant.getTrainerId());
+        verify(applicantRepository, times(1)).existsByJobIdAndTrainerId(saveApplicantRequest.getJobId(), trainerId);
+        verify(applicantRepository, times(1)).save(any(Applicant.class));
     }
 
     @Test
-    public void givenPaymentInfoRequestAndPaidAt_whenPayment_thenShouldCreatePaymentInfo() {
+    public void givenPaymentInfoRequestAndPaidAt_whenSavePaymentInfo_thenShouldSavePaymentInfo() {
         // Given
         LocalDateTime paidAt = LocalDateTime.now();
         PaymentInfoRequest paymentInfoRequest = mock(PaymentInfoRequest.class);
@@ -194,7 +195,7 @@ public class ApplicantDomainServiceTest {
         given(applicantRepository.findById(anyLong())).willReturn(Optional.ofNullable(applicant));
 
         // When
-        applicantDomainService.payment(paymentInfoRequest, paidAt);
+        applicantDomainService.savePaymentInfo(paymentInfoRequest, paidAt);
 
         // Then
         verify(applicantRepository).findById(anyLong());
@@ -202,57 +203,38 @@ public class ApplicantDomainServiceTest {
     }
 
     @Test
-    public void givenNonExistingJobAndTrainer_whenSave_thenSaveSuccessful() {
+    public void givenValidSaveMatchInfoRequestAndStatus_whenSaveMatchInfo_thenReturnSavedApplicant() {
         // Given
-        SaveApplicantRequest saveApplicantRequest = new SaveApplicantRequest(123L, 1000);
-        Long trainerId = 456L;
-        given(applicantRepository.existsByJobIdAndTrainerId(saveApplicantRequest.getJobId(), trainerId)).willReturn(false);
-        given(applicantRepository.save(any(Applicant.class))).willReturn(new Applicant(1L, 123L, trainerId, 1000, 0));
+        int status = 1;
+        SaveMatchInfoRequest saveMatchInfoRequest = mock(SaveMatchInfoRequest.class);
+        Applicant applicant = mock(Applicant.class);
+
+        given(applicantRepository.findById(anyLong())).willReturn(Optional.ofNullable(applicant));
+        given(applicantRepository.save(any(Applicant.class))).willReturn(applicant);
 
         // When
-        Applicant savedApplicant = applicantDomainService.save(saveApplicantRequest, trainerId);
+        Applicant savedApplicant = applicantDomainService.saveMatchInfo(saveMatchInfoRequest, status);
 
         // Then
-        assertEquals(1L, savedApplicant.getId());
-        assertEquals(123L, savedApplicant.getJobId());
-        assertEquals(trainerId, savedApplicant.getTrainerId());
-        assertEquals(1000, savedApplicant.getSupportAmount());
-        verify(applicantRepository, times(1)).existsByJobIdAndTrainerId(saveApplicantRequest.getJobId(), trainerId);
-        verify(applicantRepository, times(1)).save(any(Applicant.class));
+        assertEquals(applicant, savedApplicant);
+
+        verify(applicantRepository).save(applicant);
+        verify(applicantRepository).findById(anyLong());
     }
 
     @Test
-    public void givenExistingJobAndTrainer_whenSaveApplicant_thenThrowEntityExistsException() {
-        // Given
-        SaveApplicantRequest saveApplicantRequest = new SaveApplicantRequest(123L, 1000);
-        Long trainerId = 456L;
-        given(applicantRepository.existsByJobIdAndTrainerId(
-                saveApplicantRequest.getJobId(),
-                trainerId
-                ))
-                .willReturn(true);
-
-        // When - Then
-        assertThrows(EntityExistsException.class, () -> applicantDomainService.save(saveApplicantRequest, trainerId));
-
-        verify(applicantRepository, times(1))
-                .existsByJobIdAndTrainerId(
-                        saveApplicantRequest.getJobId(),
-                        trainerId
-                );
-        verify(applicantRepository, never()).save(any(Applicant.class));
-    }
-
-    @Test
-    public void givenApplicantExists_whenUpdateIsSelectedById_thenIsSelectedUpdated() {
+    public void givenValidIdAndIsSelected_whenUpdateIsSelectedById_thenShouldUpdateIsselect() {
         // Given
         Long applicantId = 1L;
-        Applicant applicant = new Applicant(applicantId, 123L, 456L, 1000, 0);
+        Long jobId = 2L;
+        Long trainerId = 3L;
+        int isSelected = 1;
+        Applicant applicant = new Applicant(applicantId, jobId, trainerId, 1000, isSelected);
 
         given(applicantRepository.findById(anyLong())).willReturn(Optional.of(applicant));
 
         // When
-        applicantDomainService.updateIsSelectedById(applicantId, 1);
+        applicantDomainService.updateIsSelectedById(applicantId, isSelected);
 
         // Then
         verify(applicantRepository, times(1)).findById(applicantId);

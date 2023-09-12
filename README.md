@@ -5,16 +5,16 @@
 
 ## 🖥 주요 개발 내용
 
-1. Spring Security와 JWT를 활용한 인증 및 인가 관리
-2. Redis + Spring cache를 활용한 cache 관리
-3. [data.kca.kr](http://data.kca.kr/) open api를 활용한 국가공인자격증 진위 여부
-4. froala editor 라이브러리를 활용한 게시물 서버 및 DB 저장
-5. AWS S3 를 활용한 이미지 저장
-6. GitHub Action으로 CI/CD 구현
-7. KafKa를 활용한 Event Driven Architecture 설계
-8. Domain Driven Development 설계
-9. BDD 스타일 Test Driven Development 개발
-10. 카카오페이 간편 결제(iamport open api 사용)
+- GitHub Action으로 CI/CD 구현
+- KafKa를 활용한 Event Driven Architecture 설계 
+- Domain Driven Development 설계
+- BDD 스타일 Test Driven Development 개발
+- Spring Security와 JWT를 활용한 인증 및 인가 관리
+- Redis + Spring cache를 활용한 cache 관리
+- [data.kca.kr](http://data.kca.kr/) open api를 활용한 국가공인자격증 진위 여부
+- froala editor 라이브러리를 활용한 게시물 서버 및 DB 저장
+- AWS S3 를 활용한 이미지 저장 
+- 카카오페이 간편 결제(iamport open api 사용)
 
 ## 🛠 **개발 환경**
 
@@ -33,24 +33,23 @@
 - iamport 0.2.23
 
 ## 🌐 **인프라 환경**
-
-- Ubuntu 22.04.3 LTS
-- Docker
-- Docker-composer
 - Oracle cloud
+  - Ubuntu 22.04.3 LTS
+  - Docker
 
 ## **소프트웨어 설계 및 개발**
 - Domain Driven Design
 - Event Driven Architecture
 - Test Driven Development
 
-## **통합/배포**
-- github
-- github action
-- CI/CD
+## **CI/CD**
+- CI
+  - github action을 통해 자동화 통합 테스트를 진행 후 성공 시 통합을 진행합니다. 
+- CD
+  - github action을 통해 자동화 통합 테스트를 진행 후 성공 시 ssh 서버 연결 배포 파이프라인 deploy.sh 파일 실행
+    - blue/green 방식의 무중단 배포를 진행합니다.
 
-## **테스트 코드**
-BDD 스타일 TDD 형식으로 작성했습니다.
+## **TDD**
 
 - 개발 순서
   - Repository

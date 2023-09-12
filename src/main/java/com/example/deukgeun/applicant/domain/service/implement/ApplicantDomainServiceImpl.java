@@ -25,18 +25,15 @@ public class ApplicantDomainServiceImpl implements ApplicantDomainService {
     private final ApplicantRepository applicantRepository;
 
     /**
-     * 결제를 취소하고 관련 정보를 업데이트하는 메서드입니다.
+     * 고유 ID를 사용하여 지원자의 결제 취소 정보를 업데이트합니다.
      *
-     * @param id 지원자의 고유 ID
-     * @param iamPortCancelResponse IamPort 결제 취소 응답 객체
+     * @param id                   지원자의 고유 ID
+     * @param iamPortCancelResponse IamPort 결제 취소 응답 정보
      */
     @Override
-    public void cancel(Long id, IamPortCancelResponse iamPortCancelResponse) {
+    public void updatePaymentCancelInfoById(Long id, IamPortCancelResponse iamPortCancelResponse) {
         // 고유 ID를 사용하여 지원자 정보 조회
         Applicant applicant = findById(id);
-
-        // 지원자의 결제 정보 삭제
-        applicant.deletePaymentInfo();
 
         // 결제 취소 정보 생성 및 설정
         PaymentCancelInfo paymentCancelInfo = PaymentCancelInfo.create(
@@ -46,6 +43,7 @@ public class ApplicantDomainServiceImpl implements ApplicantDomainService {
                 iamPortCancelResponse.getResponse().getCancel_amount()
         );
 
+        // 지원자의 결제 취소 정보 업데이트
         applicant.getPaymentInfo().setPaymentCancelInfo(paymentCancelInfo);
 
         // 업데이트된 지원자 정보 저장
@@ -106,57 +104,6 @@ public class ApplicantDomainServiceImpl implements ApplicantDomainService {
         return applicantRepository.existsByJobIdAndMatchInfoIdNotNull(jobId);
     }
 
-    /**
-     * SaveMatchInfoRequest, 상태(status) 정보를 사용하여 지원자와 매칭 정보를 업데이트하고 저장하는 메서드입니다.
-     *
-     * @param saveMatchInfoRequest 매칭 정보를 저장하는 데 사용되는 요청 객체
-     * @param status 매칭 상태를 나타내는 정수 값
-     * @return 업데이트된 지원자 정보를 포함하는 Applicant 객체
-     */
-    @Override
-    public Applicant matching(SaveMatchInfoRequest saveMatchInfoRequest, int status) {
-        // 지원자 ID를 사용하여 해당 지원자 정보 조회
-        Applicant applicant = findById(saveMatchInfoRequest.getApplicantId());
-
-        // 새로운 매칭 정보 생성
-        MatchInfo matchInfo = MatchInfo.create(
-                status
-        );
-
-        // 지원자에게 새로운 매칭 정보 설정
-        applicant.setMatchInfo(matchInfo);
-
-        // 업데이트된 지원자 정보 저장 후 반환
-        return applicantRepository.save(applicant);
-    }
-
-    /**
-     * PaymentInfoRequest, 결제 일시(paidAt) 정보를 사용하여 지원자의 결제 정보를 처리하는 메서드입니다.
-     *
-     * @param request PaymentInfoRequest 객체를 사용하여 결제 정보를 나타냅니다.
-     * @param paidAt 결제가 이루어진 일시를 나타내는 LocalDateTime 객체
-     * @return 처리된 지원자 정보를 포함하는 Applicant 객체
-     */
-    @Override
-    public Applicant payment(PaymentInfoRequest request, LocalDateTime paidAt) {
-        // 지원자 ID를 사용하여 해당 지원자 정보 조회
-        Applicant applicant = findById(request.getApplicantId());
-
-        // 결제 정보 생성
-        PaymentInfo paymentInfo = PaymentInfo.create(
-                request.getImpUid(),
-                request.getPgProvider(),
-                request.getPgTid(),
-                request.getChannel(),
-                request.getAmount(),
-                paidAt
-        );
-        // 지원자에게 결제 정보 설정
-        applicant.setPaymentInfo(paymentInfo);
-
-        // 업데이트된 지원자 정보 저장 후 반환
-        return applicantRepository.save(applicant);
-    }
 
     /**
      * SaveApplicantRequest, 트레이너 ID를 사용하여 지원자 정보를 저장하는 메서드입니다.
@@ -180,6 +127,59 @@ public class ApplicantDomainServiceImpl implements ApplicantDomainService {
                 saveApplicantRequest.getSupportAmount(),
                 0
         );
+
+        // 업데이트된 지원자 정보 저장 후 반환
+        return applicantRepository.save(applicant);
+    }
+
+    /**
+     * PaymentInfoRequest, 결제 일시(paidAt) 정보를 사용하여 지원자의 결제 정보를 처리하는 메서드입니다.
+     *
+     * @param request PaymentInfoRequest 객체를 사용하여 결제 정보를 나타냅니다.
+     * @param paidAt 결제가 이루어진 일시를 나타내는 LocalDateTime 객체
+     * @return 처리된 지원자 정보를 포함하는 Applicant 객체
+     */
+    @Override
+    public Applicant savePaymentInfo(PaymentInfoRequest request, LocalDateTime paidAt) {
+        // 지원자 ID를 사용하여 해당 지원자 정보 조회
+        Applicant applicant = findById(request.getApplicantId());
+
+        // 결제 정보 생성
+        PaymentInfo paymentInfo = PaymentInfo.create(
+                request.getImpUid(),
+                request.getPgProvider(),
+                request.getPgTid(),
+                request.getChannel(),
+                request.getAmount(),
+                paidAt
+        );
+
+        // 지원자에게 결제 정보 설정
+        applicant.setPaymentInfo(paymentInfo);
+
+        // 업데이트된 지원자 정보 저장 후 반환
+        return applicantRepository.save(applicant);
+    }
+
+    /**
+     * SaveMatchInfoRequest, 상태(status) 정보를 사용하여 지원자와 매칭 정보를 업데이트하고 저장하는 메서드입니다.
+     *
+     * @param saveMatchInfoRequest 매칭 정보를 저장하는 데 사용되는 요청 객체
+     * @param status 매칭 상태를 나타내는 정수 값
+     * @return 업데이트된 지원자 정보를 포함하는 Applicant 객체
+     */
+    @Override
+    public Applicant saveMatchInfo(SaveMatchInfoRequest saveMatchInfoRequest, int status) {
+        // 지원자 ID를 사용하여 해당 지원자 정보 조회
+        Applicant applicant = findById(saveMatchInfoRequest.getApplicantId());
+
+        // 새로운 매칭 정보 생성
+        MatchInfo matchInfo = MatchInfo.create(
+                status
+        );
+
+        // 지원자에게 새로운 매칭 정보 설정
+        applicant.setMatchInfo(matchInfo);
 
         // 업데이트된 지원자 정보 저장 후 반환
         return applicantRepository.save(applicant);

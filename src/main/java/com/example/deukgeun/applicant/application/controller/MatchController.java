@@ -49,12 +49,12 @@ public class MatchController {
     /**
      * 지원할 공고 ID를 사용하여 지원가능한 공고인지 확인하는 메서드입니다.
      *
-     * @param id 확인할 공고 ID
+     * @param jobId 확인할 공고 ID
      * @return 지원가능한 공고 확인 여부에 대한 응답 ResponseEntity
      */
-    @RequestMapping(method = RequestMethod.GET, path = "/check/{id}")
-    public ResponseEntity<?> isAnnouncementMatched(@PathVariable Long id) {
-        applicantApplicationService.isAnnouncementMatchedByJobId(id);
+    @RequestMapping(method = RequestMethod.GET, path = "/check/{jobId}")
+    public ResponseEntity<?> isAnnouncementMatched(@PathVariable Long jobId) {
+        applicantApplicationService.isAnnouncementMatchedByJobId(jobId);
 
         return RestResponseUtil.ok("검사 성공했습니다.", null);
     }
@@ -68,7 +68,7 @@ public class MatchController {
      */
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> matching(@Valid SaveMatchInfoRequest saveMatchInfoRequest, BindingResult bindingResult) {
-        applicantApplicationService.matching(saveMatchInfoRequest, PAYMENT_WAITING);
+        applicantApplicationService.saveMatchInfo(saveMatchInfoRequest, PAYMENT_WAITING);
         applicantApplicationService.updateIsSelectedById(saveMatchInfoRequest.getApplicantId(), APPLICANT_SELECT);
         jobApplicationService.updateIsActiveByJobId(JOB_INACTIVE, saveMatchInfoRequest.getJobId());
 

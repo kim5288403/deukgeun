@@ -42,41 +42,52 @@ public class PaymentControllerTest {
     private BindingResult bindingResult;
 
     @Test
-    public void givenImpUid_whenPayment_thenShouldReturnIamPortResponse() throws IamportResponseException, IOException {
+    public void givenValidCancelRequest_whenCancel_thenReturnReturnOkResponse() throws Exception {
         // Given
-        String impUid = "imp12345";
-        IamportResponse<Payment> expectedResponse = new IamportResponse<>();
-        given(iamPortApiService.paymentByImpUid(impUid)).willReturn(expectedResponse);
+        CancelRequest cancelRequest = mock(CancelRequest.class);
+        IamPortCancelResponse iamPortCancelResponse = mock(IamPortCancelResponse.class);
+        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("결제 취소 성공했습니다.", iamPortCancelResponse.getResponse());
+
+        given(iamPortApiService.cancelIamPort(cancelRequest)).willReturn(iamPortCancelResponse);
+        given(iamPortCancelResponse.getCode()).willReturn(0);
 
         // When
-        IamportResponse<Payment> result = paymentController.payment(impUid);
+        ResponseEntity<?> responseEntity = paymentController.cancel(cancelRequest, bindingResult);
 
         // Then
-        assertNotNull(result);
-        assertEquals(expectedResponse, result);
-        verify(iamPortApiService, times(1)).paymentByImpUid(impUid);
-    }
-
-    @Test
-    public void givenPaymentService_whenPayment_thenReturnResponseEntity() {
-        // Given
-        PaymentInfoRequest request = mock(PaymentInfoRequest.class);
-        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("저장 성공했습니다.", null);
-
-        // When
-        ResponseEntity<?> responseEntity = paymentController.payment(request, bindingResult);
-
-        // Then
-        verify(applicantApplicationService, times(1)).payment(request);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
+
+        verify(iamPortApiService, times(1)).cancelIamPort(cancelRequest);
+        verify(applicantApplicationService, times(1)).deleteMatchInfoById(cancelRequest.getId());
+        verify(applicantApplicationService, times(1)).updatePaymentCancelInfoById(cancelRequest.getId(), iamPortCancelResponse);
     }
 
     @Test
-    public void givenPaymentService_whenGetPaymentInfo_thenReturnResponseEntity() {
+    public void given_whenGetIamPortAuthToken_thenReturnReturnOkResponse() throws Exception {
         // Given
-        Long applicantId =123L;
+        String authToken = "authToken";
+
+        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공했습니다.", authToken);
+
+        given(iamPortApiService.getIamPortAuthToken()).willReturn(authToken);
+
+        // When
+        ResponseEntity<?> responseEntity = paymentController.getIamPortAuthToken();
+
+        // Then
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(expectedResponse.getBody(), responseEntity.getBody());
+
+        verify(iamPortApiService, times(1)).getIamPortAuthToken();
+    }
+
+    @Test
+    public void givenValidId_whenGetPaymentInfo_thenReturnReturnOkResponse() {
+        // Given
+        Long applicantId =1L;
         Applicant applicant = mock(Applicant.class);
+
         given(applicantApplicationService.findById(applicantId)).willReturn(applicant);
         given(applicant.getPaymentInfo()).willReturn(mock(PaymentInfo.class));
 
@@ -87,27 +98,43 @@ public class PaymentControllerTest {
         ResponseEntity<?> responseEntity = paymentController.getPaymentInfo(applicantId);
 
         // Then
-        verify(applicantApplicationService, times(1)).findById(applicantId);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
+
+        verify(applicantApplicationService, times(1)).findById(applicantId);
     }
 
     @Test
-    public void givenPaymentService_whenCancel_thenReturnResponseEntity() throws Exception {
+    public void givenValidImpUid_whenPayment_thenReturnReturnOkResponse() throws IamportResponseException, IOException {
         // Given
-        CancelRequest cancelRequest = mock(CancelRequest.class);
-        IamPortCancelResponse iamPortCancelResponse = mock(IamPortCancelResponse.class);
-        given(iamPortApiService.cancelIamPort(cancelRequest)).willReturn(iamPortCancelResponse);
-        given(iamPortCancelResponse.getCode()).willReturn(0);
-        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("결제 취소 성공했습니다.", iamPortCancelResponse.getResponse());
+        String impUid = "imp12345";
+        IamportResponse<Payment> expectedResponse = new IamportResponse<>();
+
+        given(iamPortApiService.paymentByImpUid(impUid)).willReturn(expectedResponse);
 
         // When
-        ResponseEntity<?> responseEntity = paymentController.cancel(cancelRequest, bindingResult);
+        IamportResponse<Payment> result = paymentController.payment(impUid);
 
         // Then
-        verify(iamPortApiService, times(1)).cancelIamPort(cancelRequest);
-        verify(applicantApplicationService, times(1)).cancel(cancelRequest.getId(), iamPortCancelResponse);
+        assertNotNull(result);
+        assertEquals(expectedResponse, result);
+
+        verify(iamPortApiService, times(1)).paymentByImpUid(impUid);
+    }
+
+    @Test
+    public void givenValidPaymentRequest_whenPayment_thenReturnReturnOkResponse() {
+        // Given
+        PaymentInfoRequest request = mock(PaymentInfoRequest.class);
+        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("저장 성공했습니다.", null);
+
+        // When
+        ResponseEntity<?> responseEntity = paymentController.payment(request, bindingResult);
+
+        // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
+
+        verify(applicantApplicationService, times(1)).savePaymentInfo(request);
     }
 }

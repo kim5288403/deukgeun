@@ -11,6 +11,7 @@ import com.example.deukgeun.job.domain.model.aggregate.Job;
 import com.example.deukgeun.member.application.service.MemberApplicationService;
 import com.example.deukgeun.member.domain.entity.Member;
 import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
+import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -64,7 +65,9 @@ public class ApplicantController {
         // 토큰으로부터 사용자 이메일을 추출합니다.
         String email = authTokenApplicationService.getUserPk(authToken);
         // 이메일을 사용하여 트레이너 ID를 조회합니다.
-        Long trainerId = trainerApplicationService.findByEmail(email).getId();
+        Trainer trainer = trainerApplicationService.findByEmail(email);
+        Long trainerId = trainer.getId();
+
         // 지원자 정보를 저장합니다.
         applicantApplicationService.save(saveApplicantRequest, trainerId);
 

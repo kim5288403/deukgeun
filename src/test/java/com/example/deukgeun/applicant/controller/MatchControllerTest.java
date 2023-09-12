@@ -7,10 +7,12 @@ import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
 import com.example.deukgeun.authToken.application.dto.response.RestResponse;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.job.application.service.JobApplicationService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,34 +36,44 @@ public class MatchControllerTest {
     @Mock
     private BindingResult bindingResult;
 
-    @Test
-    public void givenMatchInfoService_whenMatching_thenReturnResponseEntity() {
-        // Given
-        Applicant applicant = mock(Applicant.class);
-        SaveMatchInfoRequest saveMatchInfoRequest = mock(SaveMatchInfoRequest.class);
-        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("매칭 성공했습니다.", null);
-        ReflectionTestUtils.setField(matchController, "PAYMENT_WAITING", 1);
-        ReflectionTestUtils.setField(matchController, "APPLICANT_SELECT", 1);
-        ReflectionTestUtils.setField(matchController, "JOB_INACTIVE", 2);
+    @Value("${status.applicant.select}")
+    private int APPLICANT_SELECT;
+    @Value("${status.applicant.waiting}")
+    private int APPLICANT_WAITING;
+    @Value("${status.job.inactive}")
+    private int JOB_INACTIVE;
+    @Value("${status.payment.waiting}")
+    private int PAYMENT_WAITING;
 
-        given(applicantApplicationService.matching(saveMatchInfoRequest, 1)).willReturn(applicant);
+    @BeforeEach
+    public void setup() {
+        ReflectionTestUtils.setField(matchController, "PAYMENT_WAITING", PAYMENT_WAITING);
+        ReflectionTestUtils.setField(matchController, "APPLICANT_SELECT", APPLICANT_SELECT);
+        ReflectionTestUtils.setField(matchController, "APPLICANT_WAITING", APPLICANT_WAITING);
+        ReflectionTestUtils.setField(matchController, "JOB_INACTIVE", JOB_INACTIVE);
+    }
+
+    @Test
+    public void givenValidId_whenCancel_thenReturnReturnOkResponse() {
+        // Given
+        Long id = 1L;
+        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("취소 성공했습니다.", null);
 
         // When
-        ResponseEntity<?> responseEntity = matchController.matching(saveMatchInfoRequest, bindingResult);
+        ResponseEntity<?> responseEntity = matchController.cancel(id);
 
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
 
-        verify(applicantApplicationService, times(1)).matching(saveMatchInfoRequest, 1);
-        verify(applicantApplicationService, times(1)).updateIsSelectedById(saveMatchInfoRequest.getApplicantId(), 1);
-        verify(jobApplicationService, times(1)).updateIsActiveByJobId(2, saveMatchInfoRequest.getJobId());
+        verify(applicantApplicationService, times(1)).deleteMatchInfoById(id);
+        verify(applicantApplicationService, times(1)).updateIsSelectedById(id, 0);
     }
 
     @Test
-    public void givenMatchInfoService_whenIsAnnouncementMatched_thenReturnResponseEntity() {
+    public void givenValidJobId_whenIsAnnouncementMatched_thenReturnReturnOkResponse() {
         // Given
-        Long jobId = 123L;
+        Long jobId = 1L;
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("검사 성공했습니다.", null);
 
         // When
@@ -75,19 +87,24 @@ public class MatchControllerTest {
     }
 
     @Test
-    public void givenMatchInfoService_whenCancel_thenReturnResponseEntity() {
+    public void givenValidSaveMatchInfoRequest_whenMatching_thenReturnReturnOkResponse() {
         // Given
-        Long id = 123L;
-        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("취소 성공했습니다.", null);
+        Applicant applicant = mock(Applicant.class);
+        SaveMatchInfoRequest saveMatchInfoRequest = mock(SaveMatchInfoRequest.class);
+        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("매칭 성공했습니다.", null);
+
+
+        given(applicantApplicationService.saveMatchInfo(saveMatchInfoRequest, 1)).willReturn(applicant);
 
         // When
-        ResponseEntity<?> responseEntity = matchController.cancel(id);
+        ResponseEntity<?> responseEntity = matchController.matching(saveMatchInfoRequest, bindingResult);
 
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
 
-        verify(applicantApplicationService, times(1)).deleteMatchInfoById(id);
-        verify(applicantApplicationService, times(1)).updateIsSelectedById(id, 0);
+        verify(applicantApplicationService, times(1)).saveMatchInfo(saveMatchInfoRequest, 1);
+        verify(applicantApplicationService, times(1)).updateIsSelectedById(saveMatchInfoRequest.getApplicantId(), 1);
+        verify(jobApplicationService, times(1)).updateIsActiveByJobId(2, saveMatchInfoRequest.getJobId());
     }
 }

@@ -15,7 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
@@ -43,10 +42,10 @@ public class ApplicantApplicationServiceTest {
         given(applicantDomainService.findById(applicantId)).willReturn(applicant);
 
         // When
-        applicantApplicationService.cancel(applicantId, iamPortCancelResponse);
+        applicantApplicationService.updatePaymentCancelInfoById(applicantId, iamPortCancelResponse);
 
         // Then
-        verify(applicantDomainService).cancel(applicantId, iamPortCancelResponse);
+        verify(applicantDomainService).updatePaymentCancelInfoById(applicantId, iamPortCancelResponse);
     }
 
     @Test
@@ -148,13 +147,13 @@ public class ApplicantApplicationServiceTest {
         SaveMatchInfoRequest saveMatchInfoRequest = mock(SaveMatchInfoRequest.class);
         Applicant applicant = mock(Applicant.class);
 
-        given(applicantDomainService.matching(saveMatchInfoRequest, PAYMENT_WAITING)).willReturn(applicant);
+        given(applicantDomainService.saveMatchInfo(saveMatchInfoRequest, PAYMENT_WAITING)).willReturn(applicant);
 
         // When
-        Applicant matchedApplicant = applicantApplicationService.matching(saveMatchInfoRequest, PAYMENT_WAITING);
+        Applicant matchedApplicant = applicantApplicationService.saveMatchInfo(saveMatchInfoRequest, PAYMENT_WAITING);
 
         // Then
-        verify(applicantDomainService).matching(saveMatchInfoRequest, PAYMENT_WAITING);
+        verify(applicantDomainService).saveMatchInfo(saveMatchInfoRequest, PAYMENT_WAITING);
         assertEquals(applicant, matchedApplicant);
     }
 
@@ -165,10 +164,10 @@ public class ApplicantApplicationServiceTest {
         paymentInfoRequest.setPaidAt("2022-12-15T13:00:00.123+09:00");
 
         // When
-        applicantApplicationService.payment(paymentInfoRequest);
+        applicantApplicationService.savePaymentInfo(paymentInfoRequest);
 
         // Then
-        verify(applicantDomainService).payment(any(PaymentInfoRequest.class), any(LocalDateTime.class));
+        verify(applicantDomainService).savePaymentInfo(any(PaymentInfoRequest.class), any(LocalDateTime.class));
     }
 
     @Test

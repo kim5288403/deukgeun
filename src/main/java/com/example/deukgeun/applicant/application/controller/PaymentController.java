@@ -11,6 +11,7 @@ import com.example.deukgeun.global.util.RestResponseUtil;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -24,16 +25,10 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/payment")
+@RequiredArgsConstructor
 public class PaymentController {
-    @Autowired
     private final ApplicantApplicationService applicantApplicationService;
-    @Autowired
     private final IamPortApiService iamPortApiService;
-
-    public PaymentController(ApplicantApplicationService applicantApplicationService, IamPortApiService iamPortApiService) {
-        this.applicantApplicationService = applicantApplicationService;
-        this.iamPortApiService = iamPortApiService;
-    }
 
     /**
      * 결제 취소를 수행하는 메서드입니다.
@@ -49,7 +44,8 @@ public class PaymentController {
         IamPortCancelResponse response = iamPortApiService.cancelIamPort(request);
 
         // 결제 취소 정보를 applicantApplicationService를 사용하여 처리합니다.
-        applicantApplicationService.cancel(request.getId(), response);
+        applicantApplicationService.deleteMatchInfoById(request.getId());
+        applicantApplicationService.updatePaymentCancelInfoById(request.getId(), response);
 
         return RestResponseUtil.ok("결제 취소 성공했습니다.", response.getResponse());
     }
@@ -107,7 +103,7 @@ public class PaymentController {
      */
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> payment(@Valid PaymentInfoRequest request, BindingResult bindingResult) {
-        applicantApplicationService.payment(request);
+        applicantApplicationService.savePaymentInfo(request);
 
         return RestResponseUtil.ok("저장 성공했습니다.", null);
     }
