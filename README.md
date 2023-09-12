@@ -42,12 +42,13 @@
 - Event Driven Architecture
 - Test Driven Development
 
-## **CI/CD**
+## **Github action CI/CD**
 - CI
-  - github action을 통해 자동화 통합 테스트를 진행 후 성공 시 통합을 진행합니다. 
+  - 통합 테스트 자동화 했습니다. 통합 테스트 성공시 merge를 진행합니다.
 - CD
-  - github action을 통해 자동화 통합 테스트를 진행 후 성공 시 ssh 서버 연결 배포 파이프라인 deploy.sh 파일 실행
-    - blue/green 방식의 무중단 배포를 진행합니다.
+  - 통합 테스트 성공시 ssh 서버 연결하여 배포 script인 deploy.sh 파일 실행합니다.
+    - deploy.sh
+      - blue/green 방식의 무중단 배포 내용을 담고있습니다.
 
 ## **TDD**
 
