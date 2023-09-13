@@ -45,12 +45,12 @@
 - 운영 체제: Ubuntu 22.04.3 LTS
 - 컨테이너 관리: Docker
 
-## **소프트웨어 설계 및 개발**
+## 👨‍💻 **소프트웨어 설계 및 개발**
 - 도메인 주도 개발 (DDD)
 - 이벤트 주도 아키텍처 (EDA)
 - 테스트 주도 개발 (TDD)
 
-## **Github action CI/CD 설정**
+## 😸 **Github action CI/CD 설정**
 
 #### Continuous Integration (CI) 설정
 CI는 소스 코드의 변경 사항을 지속적으로 통합하고 테스트하는 프로세스입니다. 이를 위해 GitHub Actions를 사용하여 다음과 같이 설정할 수 있습니다:
@@ -67,7 +67,7 @@ CD는 통합 테스트를 통과한 코드를 실제 서버에 자동으로 배�
   - GitHub Actions 워크플로우를 설정하여 통합 테스트가 성공하면 자동으로 서버에 연결하고 배포 스크립트를 실행합니다.
   서버에 대한 SSH 키를 GitHub Secrets에 안전하게 저장하고 사용합니다.
 
-## **Test-Driven Development (TDD) 개발 순서**
+## 👨‍🔬 **Test-Driven Development (TDD) 개발 순서**
 
 TDD는 소프트웨어 개발을 위한 접근 방식으로, 테스트 케이스를 먼저 작성하고 그에 따라 코드를 개발하는 방식입니다. 다음은 TDD를 따르는 개발 순서입니다:
 
@@ -88,7 +88,7 @@ TDD는 소프트웨어 개발을 위한 접근 방식으로, 테스트 케이스
 
 이 프로젝트는 java 8 + Spring Boot 2.7.11을 사용하여 개발되었습니다. 프론트엔드는 html5 무료 템플릿으로 구현되었으며 반응형 웹개발도 구현했습니다, jQuery를 사용하여 Ajax 통신을 처리합니다. 데이터베이스는 MySQL 8.0.33를 사용하며, Thymeleaf를 사용하여 뷰를 렌더링합니다.
 
-## **작성자 정보**
+## 📝 **작성자 정보**
 
 - 작성자: limJyeok
 - 이메일 주소: kim5288403[@gmail.com](mailto:myusername@example.com)
