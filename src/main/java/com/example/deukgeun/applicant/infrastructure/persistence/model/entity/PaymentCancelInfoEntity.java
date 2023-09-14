@@ -29,8 +29,8 @@ public class PaymentCancelInfoEntity extends BaseEntity {
     private String channel;
 
     @Column(length = 100, nullable = false)
-    private String cancel_reason;
+    private String cancelReason;
 
     @Column(length = 100, nullable = false)
-    private Integer cancel_amount;
+    private Integer cancelAmount;
 }

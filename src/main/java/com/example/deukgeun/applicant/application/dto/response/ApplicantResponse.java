@@ -16,8 +16,6 @@ import java.time.Period;
 @AllArgsConstructor
 public class ApplicantResponse {
     @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
     public static class List {
         private Long id;
 
@@ -28,15 +26,8 @@ public class ApplicantResponse {
         private Integer supportAmount;
 
         private Integer isSelected;
-
-        public List(Applicant applicant) {
-            this.id = applicant.getId();
-            this.trainerId = applicant.getTrainerId();
-            this.jobId = applicant.getJobId();
-            this.supportAmount = applicant.getSupportAmount();
-            this.isSelected = applicant.getIsSelected();
-        }
     }
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor

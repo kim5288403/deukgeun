@@ -54,18 +54,13 @@ public class Applicant {
         this.matchInfoId = null;
     }
 
-    public void deletePaymentInfo() {
-        this.paymentInfo.delete();
-        this.paymentInfoId = null;
-    }
-
     public void setMatchInfo(MatchInfo matchInfo) {
         this.matchInfo = matchInfo;
-        this.matchInfoId = matchInfo.getId();
+//        this.matchInfoId = matchInfo.getId();
     }
     public void setPaymentInfo(PaymentInfo paymentInfo) {
         this.paymentInfo = paymentInfo;
-        this.paymentInfoId = paymentInfo.getId();
+//        this.paymentInfoId = paymentInfo.getId();
     }
 
     public void updateIsSelect(int isSelected) {

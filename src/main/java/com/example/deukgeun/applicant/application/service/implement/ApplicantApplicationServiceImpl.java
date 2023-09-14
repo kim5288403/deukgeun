@@ -5,7 +5,14 @@ import com.example.deukgeun.applicant.application.dto.request.SaveApplicantReque
 import com.example.deukgeun.applicant.application.dto.request.SaveMatchInfoRequest;
 import com.example.deukgeun.applicant.application.dto.response.ApplicantResponse;
 import com.example.deukgeun.applicant.application.dto.response.IamPortCancelResponse;
+import com.example.deukgeun.applicant.infrastructure.persistence.mapper.ApplicantMapper;
+import com.example.deukgeun.applicant.infrastructure.persistence.mapper.MatchMapper;
+import com.example.deukgeun.applicant.infrastructure.persistence.mapper.PaymentMapper;
 import com.example.deukgeun.applicant.application.service.ApplicantApplicationService;
+import com.example.deukgeun.applicant.domain.dto.PaymentCancelInfoDTO;
+import com.example.deukgeun.applicant.domain.dto.SaveApplicantDTO;
+import com.example.deukgeun.applicant.domain.dto.SaveMatchInfoDTO;
+import com.example.deukgeun.applicant.domain.dto.SavePaymentInfoDTO;
 import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
 import com.example.deukgeun.applicant.domain.service.ApplicantDomainService;
 import lombok.RequiredArgsConstructor;
@@ -22,17 +29,9 @@ import java.time.format.DateTimeFormatter;
 public class ApplicantApplicationServiceImpl implements ApplicantApplicationService {
 
     private final ApplicantDomainService applicantDomainService;
-
-    /**
-     * 지정된 ID를 사용하여 결제를 취소하는 메서드입니다.
-     *
-     * @param id 결제를 취소할 지원자(ID)의 고유 ID
-     * @param iamPortCancelResponse IamPort 결제 취소 응답 객체
-     */
-    @Override
-    public void updatePaymentCancelInfoById(Long id, IamPortCancelResponse iamPortCancelResponse) {
-        applicantDomainService.updatePaymentCancelInfoById(id, iamPortCancelResponse);
-    }
+    private final PaymentMapper paymentMapper;
+    private final ApplicantMapper applicantMapper;
+    private final MatchMapper matchMapper;
 
     /**
      * 지정된 ID를 사용하여 매치 정보를 삭제하는 메서드입니다.
@@ -65,8 +64,9 @@ public class ApplicantApplicationServiceImpl implements ApplicantApplicationServ
     @Override
     public Page<ApplicantResponse.List> getByJobId(Long jobId, int currentPage) {
         PageRequest pageRequest = PageRequest.of(currentPage, 10);
-        Page<Applicant> applicants = applicantDomainService.getByJobId(jobId, pageRequest);
-        return applicants.map(ApplicantResponse.List::new);
+
+        return applicantDomainService.getByJobId(jobId, pageRequest)
+                .map(applicantMapper.INSTANCE::toApplicantResponseList);
     }
 
     /**
@@ -94,23 +94,28 @@ public class ApplicantApplicationServiceImpl implements ApplicantApplicationServ
      */
     @Override
     public Applicant save(SaveApplicantRequest saveApplicantRequest, Long trainerId) {
-        return applicantDomainService.save(saveApplicantRequest, trainerId);
+        applicantDomainService.existsByJobIdAndTrainerId(saveApplicantRequest.getJobId(), trainerId);
+
+        SaveApplicantDTO saveApplicantDTO = ApplicantMapper.INSTANCE.toSaveApplicantDto(trainerId, saveApplicantRequest);
+
+        return applicantDomainService.save(saveApplicantDTO);
     }
 
     /**
      * PaymentInfoRequest 사용하여 결제 정보를 처리하고 지원자 정보를 반환하는 메서드입니다.
      *
      * @param request 결제 정보를 나타내는 PaymentInfoRequest 객체
-     * @return 처리된 지원자 정보를 포함하는 Applicant 객체
      */
     @Override
-    public Applicant savePaymentInfo(PaymentInfoRequest request) {
+    public void savePaymentInfo(PaymentInfoRequest request) {
         // 날짜 형식 지정을 위한 DateTimeFormatter 객체 생성
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
         // 요청에서 'paidAt' 값을 파싱하여 LocalDateTime 객체로 변환
         LocalDateTime paidAt = LocalDateTime.parse(request.getPaidAt(), formatter);
 
-        return applicantDomainService.savePaymentInfo(request, paidAt);
+        SavePaymentInfoDTO savePaymentInfoDTO = PaymentMapper.INSTANCE.toSavePaymentInfoDto(paidAt, request);
+
+        applicantDomainService.savePaymentInfo(savePaymentInfoDTO);
     }
 
     /**
@@ -122,9 +127,23 @@ public class ApplicantApplicationServiceImpl implements ApplicantApplicationServ
      */
     @Override
     public Applicant saveMatchInfo(SaveMatchInfoRequest saveMatchInfoRequest, int status) {
-        return applicantDomainService.saveMatchInfo(saveMatchInfoRequest, status);
+        SaveMatchInfoDTO saveMatchInfoDTO = matchMapper.INSTANCE.toSaveMatchInfoDto(status, saveMatchInfoRequest);
+
+        return applicantDomainService.saveMatchInfo(saveMatchInfoDTO);
     }
 
+    /**
+     * 지정된 ID를 사용하여 결제를 취소하는 메서드입니다.
+     *
+     * @param id 결제를 취소할 지원자(ID)의 고유 ID
+     * @param iamPortCancelResponse IamPort 결제 취소 응답 객체
+     */
+    @Override
+    public void updatePaymentCancelInfoById(Long id, IamPortCancelResponse iamPortCancelResponse) {
+        PaymentCancelInfoDTO paymentCancelInfoDTO = paymentMapper.INSTANCE.toPaymentCancelInfoDto(id, iamPortCancelResponse);
+
+        applicantDomainService.updatePaymentCancelInfoById(paymentCancelInfoDTO);
+    }
 
     /**
      * 고유 지원자 ID와 선택 여부(isSelected) 정보를 사용하여 지원자 정보를 업데이트하는 메서드입니다.

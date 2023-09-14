@@ -6,6 +6,10 @@ import com.example.deukgeun.applicant.application.dto.request.SaveMatchInfoReque
 import com.example.deukgeun.applicant.application.dto.response.ApplicantResponse;
 import com.example.deukgeun.applicant.application.dto.response.IamPortCancelResponse;
 import com.example.deukgeun.applicant.application.service.implement.ApplicantApplicationServiceImpl;
+import com.example.deukgeun.applicant.domain.dto.PaymentCancelInfoDTO;
+import com.example.deukgeun.applicant.domain.dto.SaveApplicantDTO;
+import com.example.deukgeun.applicant.domain.dto.SaveMatchInfoDTO;
+import com.example.deukgeun.applicant.domain.dto.SavePaymentInfoDTO;
 import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
 import com.example.deukgeun.applicant.domain.service.ApplicantDomainService;
 import org.junit.jupiter.api.Test;
@@ -32,21 +36,6 @@ public class ApplicantApplicationServiceTest {
     private ApplicantApplicationServiceImpl applicantApplicationService;
     @Mock
     private ApplicantDomainService applicantDomainService;
-
-    @Test
-    public void givenApplicantIdAndIamPortCancelResponse_whenCancel_thenShouldUpdatePaymentInfo() {
-        // Given
-        Long applicantId = 1L;
-        IamPortCancelResponse iamPortCancelResponse = mock(IamPortCancelResponse.class);
-        Applicant applicant = mock(Applicant.class);
-        given(applicantDomainService.findById(applicantId)).willReturn(applicant);
-
-        // When
-        applicantApplicationService.updatePaymentCancelInfoById(applicantId, iamPortCancelResponse);
-
-        // Then
-        verify(applicantDomainService).updatePaymentCancelInfoById(applicantId, iamPortCancelResponse);
-    }
 
     @Test
     public void givenApplicantId_whenDeleteMatchInfoById_thenCallApplicantDomainService() {
@@ -101,7 +90,6 @@ public class ApplicantApplicationServiceTest {
         List<Applicant> applicantsList = new ArrayList<>();
         applicantsList.add(new Applicant(1L, jobId, 456L, 1000, 0));
         applicantsList.add(new Applicant(2L, jobId, 789L, 1500, 0));
-
         Page<Applicant> applicantsPage = new PageImpl<>(applicantsList, pageRequest, applicantsList.size());
 
         given(applicantDomainService.getByJobId(jobId, pageRequest)).willReturn(applicantsPage);
@@ -147,13 +135,13 @@ public class ApplicantApplicationServiceTest {
         SaveMatchInfoRequest saveMatchInfoRequest = mock(SaveMatchInfoRequest.class);
         Applicant applicant = mock(Applicant.class);
 
-        given(applicantDomainService.saveMatchInfo(saveMatchInfoRequest, PAYMENT_WAITING)).willReturn(applicant);
+        given(applicantDomainService.saveMatchInfo(any(SaveMatchInfoDTO.class))).willReturn(applicant);
 
         // When
         Applicant matchedApplicant = applicantApplicationService.saveMatchInfo(saveMatchInfoRequest, PAYMENT_WAITING);
 
         // Then
-        verify(applicantDomainService).saveMatchInfo(saveMatchInfoRequest, PAYMENT_WAITING);
+        verify(applicantDomainService).saveMatchInfo(any(SaveMatchInfoDTO.class));
         assertEquals(applicant, matchedApplicant);
     }
 
@@ -167,18 +155,17 @@ public class ApplicantApplicationServiceTest {
         applicantApplicationService.savePaymentInfo(paymentInfoRequest);
 
         // Then
-        verify(applicantDomainService).savePaymentInfo(any(PaymentInfoRequest.class), any(LocalDateTime.class));
+        verify(applicantDomainService).savePaymentInfo(any(SavePaymentInfoDTO.class));
     }
 
     @Test
     public void givenSaveApplicantRequestAndTrainerId_whenSave_thenReturnSavedApplicant() {
         // Given
-        SaveApplicantRequest saveApplicantRequest = new SaveApplicantRequest(123L, 1000);
         Long trainerId = 456L;
-
+        SaveApplicantRequest saveApplicantRequest = new SaveApplicantRequest(123L, 1000);
         Applicant expectedSavedApplicant = new Applicant(1L, saveApplicantRequest.getJobId(), trainerId, saveApplicantRequest.getSupportAmount(), 0);
 
-        given(applicantDomainService.save(saveApplicantRequest, trainerId)).willReturn(expectedSavedApplicant);
+        given(applicantDomainService.save(any(SaveApplicantDTO.class))).willReturn(expectedSavedApplicant);
 
         // When
         Applicant savedApplicant = applicantApplicationService.save(saveApplicantRequest, trainerId);
@@ -190,7 +177,21 @@ public class ApplicantApplicationServiceTest {
         assertEquals(expectedSavedApplicant.getSupportAmount(), savedApplicant.getSupportAmount());
     }
 
+    @Test
+    public void givenIdAndIamPortCancelResponse_whenUpdatePaymentCancelInfoById_thenShouldUpdatePaymentInfo() {
+        // Given
+        Long applicantId = 1L;
+        IamPortCancelResponse iamPortCancelResponse = mock(IamPortCancelResponse.class);
+        Applicant applicant = mock(Applicant.class);
 
+        given(applicantDomainService.findById(applicantId)).willReturn(applicant);
+
+        // When
+        applicantApplicationService.updatePaymentCancelInfoById(applicantId, iamPortCancelResponse);
+
+        // Then
+        verify(applicantDomainService).updatePaymentCancelInfoById(any(PaymentCancelInfoDTO.class));
+    }
 
     @Test
     public void givenApplicantIdAndIsSelected_whenUpdateIsSelectedById_thenCallApplicantDomainService() {

@@ -1,9 +1,10 @@
 package com.example.deukgeun.applicant.service.domain;
 
-import com.example.deukgeun.applicant.application.dto.request.PaymentInfoRequest;
-import com.example.deukgeun.applicant.application.dto.request.SaveApplicantRequest;
 import com.example.deukgeun.applicant.application.dto.request.SaveMatchInfoRequest;
-import com.example.deukgeun.applicant.application.dto.response.IamPortCancelResponse;
+import com.example.deukgeun.applicant.domain.dto.PaymentCancelInfoDTO;
+import com.example.deukgeun.applicant.domain.dto.SaveApplicantDTO;
+import com.example.deukgeun.applicant.domain.dto.SaveMatchInfoDTO;
+import com.example.deukgeun.applicant.domain.dto.SavePaymentInfoDTO;
 import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
 import com.example.deukgeun.applicant.domain.model.entity.PaymentInfo;
 import com.example.deukgeun.applicant.domain.repository.ApplicantRepository;
@@ -16,9 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
-import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,30 +33,6 @@ public class ApplicantDomainServiceTest {
     private ApplicantDomainServiceImpl applicantDomainService;
     @Mock
     private ApplicantRepository applicantRepository;
-
-    @Test
-    public void givenValidIdAndIamPortCancelResponse_whenUpdatePaymentCancelInfoById_thenShouldUpdatePaymentCancelInfo() {
-        // Given
-        Long applicantId = 1L;
-        IamPortCancelResponse iamPortCancelResponse = new IamPortCancelResponse();
-        iamPortCancelResponse.setResponse(new IamPortCancelResponse.Response(
-                "test",
-                "test",
-                "test",
-                30000));
-        Applicant applicant = mock(Applicant.class);
-        PaymentInfo paymentInfo = mock(PaymentInfo.class);
-
-        given(applicantRepository.findById(applicantId)).willReturn(Optional.of(applicant));
-        given(applicant.getPaymentInfo()).willReturn(paymentInfo);
-
-        // When
-        applicantDomainService.updatePaymentCancelInfoById(applicantId, iamPortCancelResponse);
-
-        // Then
-        verify(applicantRepository).findById(applicantId);
-        verify(applicantRepository).save(applicant);
-    }
 
     @Test
     public void givenValidId_whenDeleteMatchInfoById_thenShouldDeleteMatchInfo() {
@@ -164,38 +139,36 @@ public class ApplicantDomainServiceTest {
     }
 
     @Test
-    public void givenValidSaveApplicantRequest_whenSave_thenShouldSaveApplicant() {
+    public void givenValidSaveApplicantDTO_whenSave_thenShouldSaveApplicant() {
         // Given
         Long jobId = 1L;
         Long trainerId = 2L;
         Long ApplicantId = 3L;
-        SaveApplicantRequest saveApplicantRequest = new SaveApplicantRequest(jobId, 1000);
         Applicant applicant = new Applicant(ApplicantId, jobId, trainerId, 1000, 0);
+        SaveApplicantDTO saveApplicantDTO = mock(SaveApplicantDTO.class);
 
-        given(applicantRepository.existsByJobIdAndTrainerId(anyLong(), anyLong())).willReturn(false);
         given(applicantRepository.save(any(Applicant.class))).willReturn(applicant);
 
         // When
-        Applicant savedApplicant = applicantDomainService.save(saveApplicantRequest, trainerId);
+        Applicant savedApplicant = applicantDomainService.save(saveApplicantDTO);
 
         // Then
         assertEquals(ApplicantId, savedApplicant.getId());
         assertEquals(jobId, savedApplicant.getJobId());
         assertEquals(trainerId, savedApplicant.getTrainerId());
-        verify(applicantRepository, times(1)).existsByJobIdAndTrainerId(saveApplicantRequest.getJobId(), trainerId);
         verify(applicantRepository, times(1)).save(any(Applicant.class));
     }
 
     @Test
-    public void givenPaymentInfoRequestAndPaidAt_whenSavePaymentInfo_thenShouldSavePaymentInfo() {
+    public void givenSavePaymentInfoDTO_whenSavePaymentInfo_thenShouldSavePaymentInfo() {
         // Given
-        LocalDateTime paidAt = LocalDateTime.now();
-        PaymentInfoRequest paymentInfoRequest = mock(PaymentInfoRequest.class);
         Applicant applicant = mock(Applicant.class);
+        SavePaymentInfoDTO savePaymentInfoDTO = mock(SavePaymentInfoDTO.class);
+
         given(applicantRepository.findById(anyLong())).willReturn(Optional.ofNullable(applicant));
 
         // When
-        applicantDomainService.savePaymentInfo(paymentInfoRequest, paidAt);
+        applicantDomainService.savePaymentInfo(savePaymentInfoDTO);
 
         // Then
         verify(applicantRepository).findById(anyLong());
@@ -205,15 +178,14 @@ public class ApplicantDomainServiceTest {
     @Test
     public void givenValidSaveMatchInfoRequestAndStatus_whenSaveMatchInfo_thenReturnSavedApplicant() {
         // Given
-        int status = 1;
-        SaveMatchInfoRequest saveMatchInfoRequest = mock(SaveMatchInfoRequest.class);
         Applicant applicant = mock(Applicant.class);
+        SaveMatchInfoDTO saveMatchInfoDTO = mock(SaveMatchInfoDTO.class);
 
         given(applicantRepository.findById(anyLong())).willReturn(Optional.ofNullable(applicant));
         given(applicantRepository.save(any(Applicant.class))).willReturn(applicant);
 
         // When
-        Applicant savedApplicant = applicantDomainService.saveMatchInfo(saveMatchInfoRequest, status);
+        Applicant savedApplicant = applicantDomainService.saveMatchInfo(saveMatchInfoDTO);
 
         // Then
         assertEquals(applicant, savedApplicant);
@@ -223,7 +195,25 @@ public class ApplicantDomainServiceTest {
     }
 
     @Test
-    public void givenValidIdAndIsSelected_whenUpdateIsSelectedById_thenShouldUpdateIsselect() {
+    public void givenValidPaymentCancelInfoDTO_whenUpdatePaymentCancelInfoById_thenShouldUpdatePaymentCancelInfo() {
+        // Given
+        Applicant applicant = mock(Applicant.class);
+        PaymentInfo paymentInfo = mock(PaymentInfo.class);
+        PaymentCancelInfoDTO paymentCancelInfoDTO = mock(PaymentCancelInfoDTO.class);
+
+        given(applicantRepository.findById(anyLong())).willReturn(Optional.of(applicant));
+        given(applicant.getPaymentInfo()).willReturn(paymentInfo);
+
+        // When
+        applicantDomainService.updatePaymentCancelInfoById(paymentCancelInfoDTO);
+
+        // Then
+        verify(applicantRepository).findById(anyLong());
+        verify(applicantRepository).save(applicant);
+    }
+
+    @Test
+    public void givenValidIdAndIsSelected_whenUpdateIsSelectedById_thenShouldUpdateIsSelect() {
         // Given
         Long applicantId = 1L;
         Long jobId = 2L;

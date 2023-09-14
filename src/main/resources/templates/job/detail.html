@@ -182,6 +182,10 @@
 	    }
 
 	    function applicantAjax(supportAmount) {
+	        console.log(id);
+	        console.log(supportAmount);
+	        console.log(authToken);
+
 	        $.ajax({
 				url : "/api/applicant/",
 				type : "post",

@@ -14,7 +14,7 @@ public interface ApplicantApplicationService {
     Page<ApplicantResponse.List> getByJobId(Long jobId, int currentPage);
     void isAnnouncementMatchedByJobId(Long jobId);
     Applicant save(SaveApplicantRequest saveApplicantRequest, Long trainerId);
-    Applicant savePaymentInfo(PaymentInfoRequest request);
+    void savePaymentInfo(PaymentInfoRequest request);
     Applicant saveMatchInfo(SaveMatchInfoRequest saveMatchInfoRequest, int status);
     void updatePaymentCancelInfoById(Long id, IamPortCancelResponse iamPortCancelResponse);
     void updateIsSelectedById(Long id, int isSelected);

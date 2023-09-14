@@ -21,7 +21,7 @@ public class PaymentCancelInfo {
             String impUid,
             String channel,
             String cancelReason,
-            Integer cancel_amount
+            Integer cancelAmount
     ) {
         this.id = id;
         this.impUid = impUid;
@@ -34,9 +34,9 @@ public class PaymentCancelInfo {
             String impUid,
             String channel,
             String cancel_reason,
-            Integer cancel_amount
+            Integer cancelAmount
     ) {
         Long id = LongIdGeneratorUtil.gen();
-        return new PaymentCancelInfo(id, impUid, channel, cancel_reason, cancel_amount);
+        return new PaymentCancelInfo(id, impUid, channel, cancel_reason, cancelAmount);
     }
 }

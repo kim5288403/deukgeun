@@ -5,6 +5,7 @@ import com.example.deukgeun.applicant.domain.model.entity.MatchInfo;
 import com.example.deukgeun.applicant.domain.model.entity.PaymentCancelInfo;
 import com.example.deukgeun.applicant.domain.model.entity.PaymentInfo;
 import com.example.deukgeun.applicant.domain.repository.ApplicantRepository;
+import com.example.deukgeun.applicant.infrastructure.persistence.mapper.ApplicantMapper;
 import com.example.deukgeun.applicant.infrastructure.persistence.model.entity.ApplicantEntity;
 import com.example.deukgeun.applicant.infrastructure.persistence.model.entity.MatchInfoEntity;
 import com.example.deukgeun.applicant.infrastructure.persistence.model.entity.PaymentCancelInfoEntity;
@@ -21,6 +22,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ApplicantRepositoryAdapter implements ApplicantRepository {
     private final ApplicantJpaRepository applicantJpaRepository;
+    private final ApplicantMapper applicantMapper;
 
     /**
      * 공고 식별자(jobId)로 매칭 정보(matchInfoId)가 있는지 확인합니다.
@@ -54,7 +56,7 @@ public class ApplicantRepositoryAdapter implements ApplicantRepository {
     @Override
     public Optional<Applicant> findById(Long id) {
         Optional<ApplicantEntity> applicantEntity = applicantJpaRepository.findById(id);
-        return applicantEntity.map(this::convert);
+        return applicantEntity.map(applicantMapper.INSTANCE::toApplicant);
     }
 
     /**
@@ -78,8 +80,18 @@ public class ApplicantRepositoryAdapter implements ApplicantRepository {
      */
     @Override
     public Applicant save(Applicant applicant) {
-        ApplicantEntity applicantEntity = applicantJpaRepository.save(convert(applicant));
-        return convert(applicantEntity);
+        ApplicantEntity applicantEntity = applicantJpaRepository
+                .save(convert(applicant));
+
+        System.out.println(applicantEntity.getMatchInfoEntity());
+        System.out.println(applicantEntity.getPaymentInfoEntity());
+        System.out.println(applicantEntity.getId());
+        System.out.println(applicantEntity.getJobId());
+        System.out.println(applicantEntity.getTrainerId());
+        System.out.println(applicantEntity.getSupportAmount());
+        System.out.println(applicantEntity.getIsSelected());
+
+        return applicantMapper.INSTANCE.toApplicant(applicantEntity);
     }
 
     private Applicant convert(ApplicantEntity applicantEntity) {
@@ -90,6 +102,7 @@ public class ApplicantRepositoryAdapter implements ApplicantRepository {
                 applicantEntity.getSupportAmount(),
                 applicantEntity.getIsSelected()
                 );
+
         applicant.setPaymentInfo(convert(applicantEntity.getPaymentInfoEntity()));
         applicant.setMatchInfo(convert(applicantEntity.getMatchInfoEntity()));
         return applicant;
@@ -174,8 +187,8 @@ public class ApplicantRepositoryAdapter implements ApplicantRepository {
                 paymentCancelInfoEntity.getId(),
                 paymentCancelInfoEntity.getImpUid(),
                 paymentCancelInfoEntity.getChannel(),
-                paymentCancelInfoEntity.getCancel_reason(),
-                paymentCancelInfoEntity.getCancel_amount()
+                paymentCancelInfoEntity.getCancelReason(),
+                paymentCancelInfoEntity.getCancelAmount()
         );
     }
 
@@ -188,8 +201,8 @@ public class ApplicantRepositoryAdapter implements ApplicantRepository {
                 .id(paymentCancelInfo.getId())
                 .impUid(paymentCancelInfo.getImpUid())
                 .channel(paymentCancelInfo.getChannel())
-                .cancel_reason(paymentCancelInfo.getCancelReason())
-                .cancel_amount(paymentCancelInfo.getCancelAmount())
+                .cancelReason(paymentCancelInfo.getCancelReason())
+                .cancelAmount(paymentCancelInfo.getCancelAmount())
                 .build();
     }
 }
