@@ -3,7 +3,6 @@ package com.example.deukgeun.applicant.domain.model.aggregate;
 import com.example.deukgeun.applicant.domain.model.entity.MatchInfo;
 import com.example.deukgeun.applicant.domain.model.entity.PaymentInfo;
 import com.example.deukgeun.global.util.LongIdGeneratorUtil;
-import com.example.deukgeun.job.domain.model.aggregate.Job;
 import lombok.Getter;
 
 @Getter

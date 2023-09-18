@@ -2,18 +2,15 @@ package com.example.deukgeun.applicant.application.controller;
 
 import com.example.deukgeun.applicant.application.dto.request.CancelRequest;
 import com.example.deukgeun.applicant.application.dto.request.PaymentInfoRequest;
-import com.example.deukgeun.applicant.application.dto.response.ApplicantResponse;
 import com.example.deukgeun.applicant.application.dto.response.IamPortCancelResponse;
 import com.example.deukgeun.applicant.application.dto.response.PaymentResponse;
 import com.example.deukgeun.applicant.application.service.ApplicantApplicationService;
-import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
 import com.example.deukgeun.applicant.infrastructure.api.IamPortApiService;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
