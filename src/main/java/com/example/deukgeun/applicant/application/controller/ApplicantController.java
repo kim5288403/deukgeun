@@ -9,7 +9,7 @@ import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.job.application.service.JobApplicationService;
 import com.example.deukgeun.job.domain.model.aggregate.Job;
 import com.example.deukgeun.member.application.service.MemberApplicationService;
-import com.example.deukgeun.member.domain.entity.Member;
+import com.example.deukgeun.member.domain.aggregate.Member;
 import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
 import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +45,7 @@ public class ApplicantController {
     @RequestMapping(method = RequestMethod.GET, path = "/")
     public ResponseEntity<?> list(Long jobId, int currentPage) {
         // 지정된 ID와 페이지 번호로 지원자 목록을 가져옵니다.
-        Page<ApplicantResponse.List> list = applicantApplicationService.getByJobId(jobId, currentPage);
+        Page<ApplicantResponse.List> list = applicantApplicationService.getListByJobId(jobId, currentPage);
 
         return RestResponseUtil.ok("조회 성공했습니다.", list);
     }
@@ -62,8 +62,10 @@ public class ApplicantController {
     public ResponseEntity<?> save(HttpServletRequest request, @Valid SaveApplicantRequest saveApplicantRequest, BindingResult bindingResult) {
         // 요청에서 인증 토큰을 가져옵니다.
         String authToken = authTokenApplicationService.resolveAuthToken(request);
+
         // 토큰으로부터 사용자 이메일을 추출합니다.
         String email = authTokenApplicationService.getUserPk(authToken);
+
         // 이메일을 사용하여 트레이너 ID를 조회합니다.
         Trainer trainer = trainerApplicationService.findByEmail(email);
         Long trainerId = trainer.getId();
@@ -84,12 +86,15 @@ public class ApplicantController {
     public ResponseEntity<?> getApplicantInfo(@PathVariable Long id) {
         // 주어진 ID로 지원자 정보를 조회합니다
         Applicant applicant = applicantApplicationService.findById(id);
+
         // 지원한 채용 공고 정보를 조회합니다.
         Job job = jobApplicationService.findById(applicant.getJobId());
+
         // 지원한 채용 공고의 멤버 정보를 조회합니다.
         Member member = memberApplicationService.findById(job.getMemberId());
-        // 조회 결과를 ApplicantResponse.ApplicantInfo 객체로 만듭니다
-        ApplicantResponse.ApplicantInfo result = new ApplicantResponse.ApplicantInfo(applicant, member, job);
+
+        // 조회 결과를 ApplicantResponse.Info 객체로 만듭니다
+        ApplicantResponse.Info result = applicantApplicationService.getApplicantInfo(applicant, member, job);
 
         return RestResponseUtil.ok("조회 성공했습니다.", result);
     }

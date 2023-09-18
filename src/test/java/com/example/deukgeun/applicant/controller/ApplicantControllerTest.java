@@ -11,7 +11,7 @@ import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.job.application.service.JobApplicationService;
 import com.example.deukgeun.job.domain.model.aggregate.Job;
 import com.example.deukgeun.member.application.service.MemberApplicationService;
-import com.example.deukgeun.member.domain.entity.Member;
+import com.example.deukgeun.member.domain.aggregate.Member;
 import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
 import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
@@ -65,14 +65,14 @@ public class ApplicantControllerTest {
         Pageable pageable = mock(Pageable.class);
         Page<ApplicantResponse.List> page = new PageImpl<>(list, pageable, list.size());
 
-        given(applicantApplicationService.getByJobId(jobId, currentPage)).willReturn(page);
+        given(applicantApplicationService.getListByJobId(jobId, currentPage)).willReturn(page);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공했습니다.", page);
 
         // When
         ResponseEntity<?> response = applicantController.list(jobId, currentPage);
 
         // Then
-        verify(applicantApplicationService, times(1)).getByJobId(jobId, currentPage);
+        verify(applicantApplicationService, times(1)).getListByJobId(jobId, currentPage);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedResponse.getBody(), response.getBody());
     }
@@ -117,7 +117,7 @@ public class ApplicantControllerTest {
         given(job.getStartDate()).willReturn(LocalDateTime.now());
         given(job.getEndDate()).willReturn(LocalDateTime.now());
 
-        ApplicantResponse.ApplicantInfo result = new ApplicantResponse.ApplicantInfo(applicant, member, job);
+        ApplicantResponse.Info result = mock(ApplicantResponse.Info.class);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공했습니다.", result);
 
         // When

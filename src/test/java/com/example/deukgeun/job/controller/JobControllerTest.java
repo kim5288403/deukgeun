@@ -10,7 +10,7 @@ import com.example.deukgeun.job.application.dto.response.JobResponse;
 import com.example.deukgeun.job.application.service.JobApplicationService;
 import com.example.deukgeun.job.domain.model.aggregate.Job;
 import com.example.deukgeun.member.application.service.MemberApplicationService;
-import com.example.deukgeun.member.domain.entity.Member;
+import com.example.deukgeun.member.domain.aggregate.Member;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

@@ -5,9 +5,7 @@ import com.example.deukgeun.applicant.application.dto.request.SaveApplicantReque
 import com.example.deukgeun.applicant.application.dto.request.SaveMatchInfoRequest;
 import com.example.deukgeun.applicant.application.dto.response.ApplicantResponse;
 import com.example.deukgeun.applicant.application.dto.response.IamPortCancelResponse;
-import com.example.deukgeun.applicant.infrastructure.persistence.mapper.ApplicantMapper;
-import com.example.deukgeun.applicant.infrastructure.persistence.mapper.MatchMapper;
-import com.example.deukgeun.applicant.infrastructure.persistence.mapper.PaymentMapper;
+import com.example.deukgeun.applicant.application.dto.response.PaymentResponse;
 import com.example.deukgeun.applicant.application.service.ApplicantApplicationService;
 import com.example.deukgeun.applicant.domain.dto.PaymentCancelInfoDTO;
 import com.example.deukgeun.applicant.domain.dto.SaveApplicantDTO;
@@ -15,6 +13,11 @@ import com.example.deukgeun.applicant.domain.dto.SaveMatchInfoDTO;
 import com.example.deukgeun.applicant.domain.dto.SavePaymentInfoDTO;
 import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
 import com.example.deukgeun.applicant.domain.service.ApplicantDomainService;
+import com.example.deukgeun.applicant.infrastructure.persistence.mapper.ApplicantMapper;
+import com.example.deukgeun.applicant.infrastructure.persistence.mapper.MatchMapper;
+import com.example.deukgeun.applicant.infrastructure.persistence.mapper.PaymentMapper;
+import com.example.deukgeun.job.domain.model.aggregate.Job;
+import com.example.deukgeun.member.domain.aggregate.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 
 @Service
@@ -32,6 +36,7 @@ public class ApplicantApplicationServiceImpl implements ApplicantApplicationServ
     private final PaymentMapper paymentMapper;
     private final ApplicantMapper applicantMapper;
     private final MatchMapper matchMapper;
+
 
     /**
      * 지정된 ID를 사용하여 매치 정보를 삭제하는 메서드입니다.
@@ -62,11 +67,26 @@ public class ApplicantApplicationServiceImpl implements ApplicantApplicationServ
      * @return 페이지네이션된 지원자 목록을 포함하는 Page 객체
      */
     @Override
-    public Page<ApplicantResponse.List> getByJobId(Long jobId, int currentPage) {
+    public Page<ApplicantResponse.List> getListByJobId(Long jobId, int currentPage) {
         PageRequest pageRequest = PageRequest.of(currentPage, 10);
 
-        return applicantDomainService.getByJobId(jobId, pageRequest)
-                .map(applicantMapper.INSTANCE::toApplicantResponseList);
+        return applicantDomainService.findPageByJobId(jobId, pageRequest)
+                .map(applicantMapper::toApplicantResponseList);
+    }
+
+    @Override
+    public ApplicantResponse.Info getApplicantInfo(Applicant applicant, Member member, Job job) {
+        LocalDateTime startDate = job.getStartDate();
+        LocalDateTime endDate = job.getEndDate();
+
+        Period period = Period.between(startDate.toLocalDate(), endDate.toLocalDate());
+
+        return applicantMapper.toApplicantResponseInfo(applicant, member, job, period.getDays());
+    }
+
+    @Override
+    public PaymentResponse.Info getPaymentInfo(Long id) {
+        return paymentMapper.toPaymentInfoResponse(findById(id).getPaymentInfo());
     }
 
     /**
@@ -96,7 +116,7 @@ public class ApplicantApplicationServiceImpl implements ApplicantApplicationServ
     public Applicant save(SaveApplicantRequest saveApplicantRequest, Long trainerId) {
         applicantDomainService.existsByJobIdAndTrainerId(saveApplicantRequest.getJobId(), trainerId);
 
-        SaveApplicantDTO saveApplicantDTO = ApplicantMapper.INSTANCE.toSaveApplicantDto(trainerId, saveApplicantRequest);
+        SaveApplicantDTO saveApplicantDTO = applicantMapper.toSaveApplicantDto(trainerId, saveApplicantRequest);
 
         return applicantDomainService.save(saveApplicantDTO);
     }
@@ -113,7 +133,7 @@ public class ApplicantApplicationServiceImpl implements ApplicantApplicationServ
         // 요청에서 'paidAt' 값을 파싱하여 LocalDateTime 객체로 변환
         LocalDateTime paidAt = LocalDateTime.parse(request.getPaidAt(), formatter);
 
-        SavePaymentInfoDTO savePaymentInfoDTO = PaymentMapper.INSTANCE.toSavePaymentInfoDto(paidAt, request);
+        SavePaymentInfoDTO savePaymentInfoDTO = paymentMapper.toSavePaymentInfoDto(paidAt, request);
 
         applicantDomainService.savePaymentInfo(savePaymentInfoDTO);
     }
@@ -127,7 +147,7 @@ public class ApplicantApplicationServiceImpl implements ApplicantApplicationServ
      */
     @Override
     public Applicant saveMatchInfo(SaveMatchInfoRequest saveMatchInfoRequest, int status) {
-        SaveMatchInfoDTO saveMatchInfoDTO = matchMapper.INSTANCE.toSaveMatchInfoDto(status, saveMatchInfoRequest);
+        SaveMatchInfoDTO saveMatchInfoDTO = matchMapper.toSaveMatchInfoDto(status, saveMatchInfoRequest);
 
         return applicantDomainService.saveMatchInfo(saveMatchInfoDTO);
     }
@@ -140,7 +160,7 @@ public class ApplicantApplicationServiceImpl implements ApplicantApplicationServ
      */
     @Override
     public void updatePaymentCancelInfoById(Long id, IamPortCancelResponse iamPortCancelResponse) {
-        PaymentCancelInfoDTO paymentCancelInfoDTO = paymentMapper.INSTANCE.toPaymentCancelInfoDto(id, iamPortCancelResponse);
+        PaymentCancelInfoDTO paymentCancelInfoDTO = paymentMapper.toPaymentCancelInfoDto(id, iamPortCancelResponse);
 
         applicantDomainService.updatePaymentCancelInfoById(paymentCancelInfoDTO);
     }

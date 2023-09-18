@@ -81,7 +81,7 @@ public class ApplicantApplicationServiceTest {
     }
 
     @Test
-    public void givenJobIdAndCurrentPage_whenGetByJobId_thenReturnApplicantListResponsePage() {
+    public void givenJobIdAndCurrentPage_whenGetListByJobId_thenReturnApplicantListResponsePage() {
         // Given
         Long jobId = 123L;
         int currentPage = 0;
@@ -92,10 +92,10 @@ public class ApplicantApplicationServiceTest {
         applicantsList.add(new Applicant(2L, jobId, 789L, 1500, 0));
         Page<Applicant> applicantsPage = new PageImpl<>(applicantsList, pageRequest, applicantsList.size());
 
-        given(applicantDomainService.getByJobId(jobId, pageRequest)).willReturn(applicantsPage);
+        given(applicantDomainService.findPageByJobId(jobId, pageRequest)).willReturn(applicantsPage);
 
         // When
-        Page<ApplicantResponse.List> applicantResponsePage = applicantApplicationService.getByJobId(jobId, currentPage);
+        Page<ApplicantResponse.List> applicantResponsePage = applicantApplicationService.getListByJobId(jobId, currentPage);
 
         // Then
         assertEquals(applicantsList.size(), applicantResponsePage.getContent().size());

@@ -77,7 +77,7 @@ public class ApplicantDomainServiceImpl implements ApplicantDomainService {
      * @return 페이지네이션된 지원자 목록을 포함하는 Page 객체
      */
     @Override
-    public Page<Applicant> getByJobId(Long jobId, PageRequest pageRequest) {
+    public Page<Applicant> findPageByJobId(Long jobId, PageRequest pageRequest) {
         return applicantRepository.findPageByJobId(jobId, pageRequest);
     }
 
@@ -191,13 +191,11 @@ public class ApplicantDomainServiceImpl implements ApplicantDomainService {
      *
      * @param id 업데이트할 지원자의 고유 ID
      * @param isSelected 새로운 선택 여부 값을 나타내는 정수 값
-     * @throws EntityNotFoundException 만약 해당 ID에 대한 정보를 찾을 수 없는 경우 발생하는 예외
      */
     @Override
     public void updateIsSelectedById(Long id, int isSelected) {
-        // 고유 ID를 사용하여 지원자 정보 조회. 정보가 없을 경우 EntityNotFoundException 발생
-        Applicant applicant = applicantRepository.findById(id).
-                orElseThrow(() -> new EntityNotFoundException("찾을수 없는 정보입니다."));
+        // 고유 ID를 사용하여 지원자 정보 조회
+        Applicant applicant = findById(id);
 
         // 선택 여부(isSelected) 업데이트
         applicant.updateIsSelect(isSelected);

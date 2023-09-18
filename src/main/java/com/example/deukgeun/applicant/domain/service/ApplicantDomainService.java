@@ -12,7 +12,7 @@ public interface ApplicantDomainService {
     void deleteMatchInfoById(Long id);
     void existsByJobIdAndTrainerId(Long jobId, Long trainerId);
     Applicant findById(Long id);
-    Page<Applicant> getByJobId(Long jobId, PageRequest pageRequest);
+    Page<Applicant> findPageByJobId(Long jobId, PageRequest pageRequest);
     boolean isAnnouncementMatchedByJobId(Long jobId);
     Applicant save(SaveApplicantDTO saveApplicantDTO);
     void savePaymentInfo(SavePaymentInfoDTO savePaymentInfoDTO);

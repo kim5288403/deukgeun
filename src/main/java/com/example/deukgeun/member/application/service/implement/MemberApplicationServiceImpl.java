@@ -2,7 +2,7 @@ package com.example.deukgeun.member.application.service.implement;
 
 import com.example.deukgeun.member.application.dto.request.JoinRequest;
 import com.example.deukgeun.member.application.service.MemberApplicationService;
-import com.example.deukgeun.member.domain.entity.Member;
+import com.example.deukgeun.member.domain.aggregate.Member;
 import com.example.deukgeun.member.domain.service.MemberDomainService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

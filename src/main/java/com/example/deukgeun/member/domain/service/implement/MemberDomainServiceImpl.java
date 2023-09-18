@@ -2,7 +2,7 @@ package com.example.deukgeun.member.domain.service.implement;
 
 import com.example.deukgeun.global.util.PasswordEncoderUtil;
 import com.example.deukgeun.member.application.dto.request.JoinRequest;
-import com.example.deukgeun.member.domain.entity.Member;
+import com.example.deukgeun.member.domain.aggregate.Member;
 import com.example.deukgeun.member.domain.repository.MemberRepository;
 import com.example.deukgeun.member.domain.service.MemberDomainService;
 import lombok.RequiredArgsConstructor;

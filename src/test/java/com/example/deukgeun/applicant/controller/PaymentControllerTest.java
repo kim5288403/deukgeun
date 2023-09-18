@@ -5,6 +5,7 @@ import com.example.deukgeun.applicant.application.dto.request.CancelRequest;
 import com.example.deukgeun.applicant.application.dto.request.PaymentInfoRequest;
 import com.example.deukgeun.applicant.application.dto.response.ApplicantResponse;
 import com.example.deukgeun.applicant.application.dto.response.IamPortCancelResponse;
+import com.example.deukgeun.applicant.application.dto.response.PaymentResponse;
 import com.example.deukgeun.applicant.application.service.implement.ApplicantApplicationServiceImpl;
 import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
 import com.example.deukgeun.applicant.domain.model.entity.PaymentInfo;
@@ -91,7 +92,7 @@ public class PaymentControllerTest {
         given(applicantApplicationService.findById(applicantId)).willReturn(applicant);
         given(applicant.getPaymentInfo()).willReturn(mock(PaymentInfo.class));
 
-        ApplicantResponse.PaymentInfoResponse response = new ApplicantResponse.PaymentInfoResponse(applicant.getPaymentInfo());
+        PaymentResponse.Info response = mock(PaymentResponse.Info.class);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공했습니다.", response);
 
         // When

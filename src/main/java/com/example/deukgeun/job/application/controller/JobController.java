@@ -7,7 +7,7 @@ import com.example.deukgeun.job.application.dto.response.JobResponse;
 import com.example.deukgeun.job.application.service.JobApplicationService;
 import com.example.deukgeun.job.domain.model.aggregate.Job;
 import com.example.deukgeun.member.application.service.MemberApplicationService;
-import com.example.deukgeun.member.domain.entity.Member;
+import com.example.deukgeun.member.domain.aggregate.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;

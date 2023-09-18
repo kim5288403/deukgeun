@@ -23,7 +23,7 @@ public class PaymentInfo {
 
     private LocalDateTime deleteDate;
 
-    private PaymentCancelInfo paymentCancelInfo;
+    private PaymentCancelInfo paymentCancelInfo = null;
 
     private Long paymentCancelInfoId = null;
 
@@ -34,8 +34,7 @@ public class PaymentInfo {
             String pgTid,
             String channel,
             Integer amount,
-            LocalDateTime paidAt,
-            PaymentCancelInfo paymentCancelInfo
+            LocalDateTime paidAt
             ) {
         this.id = id;
         this.impUid = impUid;
@@ -44,7 +43,6 @@ public class PaymentInfo {
         this.channel = channel;
         this.amount = amount;
         this.paidAt = paidAt;
-        this.paymentCancelInfo = paymentCancelInfo;
     }
 
     public static PaymentInfo create(
@@ -56,7 +54,7 @@ public class PaymentInfo {
             LocalDateTime paidAt
     ) {
         Long id = LongIdGeneratorUtil.gen();
-        return new PaymentInfo(id, impUid, pgProvider, pgTid, channel, amount, paidAt, null);
+        return new PaymentInfo(id, impUid, pgProvider, pgTid, channel, amount, paidAt);
     }
 
     public void delete() {
@@ -65,6 +63,8 @@ public class PaymentInfo {
 
     public void setPaymentCancelInfo(PaymentCancelInfo paymentCancelInfo) {
         this.paymentCancelInfo = paymentCancelInfo;
-        this.paymentCancelInfoId = paymentCancelInfo.getId();
+        if (paymentCancelInfo != null) {
+            this.paymentCancelInfoId = paymentCancelInfo.getId();
+        }
     }
 }

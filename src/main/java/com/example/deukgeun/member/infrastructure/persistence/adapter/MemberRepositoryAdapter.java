@@ -1,6 +1,6 @@
 package com.example.deukgeun.member.infrastructure.persistence.adapter;
 
-import com.example.deukgeun.member.domain.entity.Member;
+import com.example.deukgeun.member.domain.aggregate.Member;
 import com.example.deukgeun.member.domain.repository.MemberRepository;
 import com.example.deukgeun.member.infrastructure.persistence.entity.MemberEntity;
 import com.example.deukgeun.member.infrastructure.persistence.repository.MemberJpaRepository;

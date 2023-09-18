@@ -1,4 +1,4 @@
-package com.example.deukgeun.member.domain.entity;
+package com.example.deukgeun.member.domain.aggregate;
 
 import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.global.util.LongIdGeneratorUtil;

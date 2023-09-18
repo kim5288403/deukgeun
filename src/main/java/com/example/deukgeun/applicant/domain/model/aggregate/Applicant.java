@@ -56,11 +56,19 @@ public class Applicant {
 
     public void setMatchInfo(MatchInfo matchInfo) {
         this.matchInfo = matchInfo;
-//        this.matchInfoId = matchInfo.getId();
+        if (matchInfo != null) {
+            this.matchInfoId = matchInfo.getId();
+        }
     }
     public void setPaymentInfo(PaymentInfo paymentInfo) {
         this.paymentInfo = paymentInfo;
-//        this.paymentInfoId = paymentInfo.getId();
+        if (paymentInfo != null) {
+            this.paymentInfoId = paymentInfo.getId();
+        }
+    }
+
+    public void savePaymentInfoId(Long id) {
+        this.paymentInfoId = id;
     }
 
     public void updateIsSelect(int isSelected) {

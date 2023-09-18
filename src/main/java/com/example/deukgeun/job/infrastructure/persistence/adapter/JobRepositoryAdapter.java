@@ -5,7 +5,7 @@ import com.example.deukgeun.job.domain.repository.JobRepository;
 import com.example.deukgeun.job.infrastructure.persistence.model.entity.JobEntity;
 import com.example.deukgeun.job.infrastructure.persistence.model.valueobject.JobAddressVo;
 import com.example.deukgeun.job.infrastructure.persistence.repository.JobJpaRepository;
-import com.example.deukgeun.member.domain.entity.Member;
+import com.example.deukgeun.member.domain.aggregate.Member;
 import com.example.deukgeun.member.infrastructure.persistence.entity.MemberEntity;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
 import lombok.RequiredArgsConstructor;

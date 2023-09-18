@@ -82,7 +82,7 @@ public class ApplicantDomainServiceTest {
     }
 
     @Test
-    void givenExistingJobId_whenGetByJobId_thenShouldReturnApplicantPage() {
+    void givenExistingJobId_whenFindPageByJobId_thenShouldReturnApplicantPage() {
         // Given
         Long jobId = 1L;
         int currentPage = 0;
@@ -99,7 +99,7 @@ public class ApplicantDomainServiceTest {
         given(applicantRepository.findPageByJobId(jobId, pageable)).willReturn(page);
 
         // When
-        Page<Applicant> result = applicantDomainService.getByJobId(jobId, pageable);
+        Page<Applicant> result = applicantDomainService.findPageByJobId(jobId, pageable);
 
         // Then
         assertNotNull(result);

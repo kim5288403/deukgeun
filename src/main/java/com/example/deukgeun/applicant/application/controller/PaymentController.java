@@ -4,6 +4,7 @@ import com.example.deukgeun.applicant.application.dto.request.CancelRequest;
 import com.example.deukgeun.applicant.application.dto.request.PaymentInfoRequest;
 import com.example.deukgeun.applicant.application.dto.response.ApplicantResponse;
 import com.example.deukgeun.applicant.application.dto.response.IamPortCancelResponse;
+import com.example.deukgeun.applicant.application.dto.response.PaymentResponse;
 import com.example.deukgeun.applicant.application.service.ApplicantApplicationService;
 import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
 import com.example.deukgeun.applicant.infrastructure.api.IamPortApiService;
@@ -72,9 +73,7 @@ public class PaymentController {
     @RequestMapping(method = RequestMethod.GET, path = "/{id}")
     public ResponseEntity<?> getPaymentInfo(@PathVariable(value= "id") Long id) {
         // 지원자 정보 조회
-        Applicant applicant = applicantApplicationService.findById(id);
-        // 결제 정보 가져오기
-        ApplicantResponse.PaymentInfoResponse paymentInfo = new ApplicantResponse.PaymentInfoResponse(applicant.getPaymentInfo());
+        PaymentResponse.Info paymentInfo = applicantApplicationService.getPaymentInfo(id);
 
         return RestResponseUtil.ok("조회 성공했습니다.", paymentInfo);
     }

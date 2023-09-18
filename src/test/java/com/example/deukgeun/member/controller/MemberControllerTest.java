@@ -5,7 +5,7 @@ import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.member.application.controller.MemberController;
 import com.example.deukgeun.member.application.dto.request.JoinRequest;
 import com.example.deukgeun.member.application.service.implement.MemberApplicationServiceImpl;
-import com.example.deukgeun.member.domain.entity.Member;
+import com.example.deukgeun.member.domain.aggregate.Member;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
