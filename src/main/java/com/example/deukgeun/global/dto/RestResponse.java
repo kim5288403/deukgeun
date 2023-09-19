@@ -1,4 +1,4 @@
-package com.example.deukgeun.authMail.application.dto.response;
+package com.example.deukgeun.global.dto;
 
 import lombok.Builder;
 import lombok.Data;

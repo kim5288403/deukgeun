@@ -1,6 +1,6 @@
 package com.example.deukgeun.job.controller;
 
-import com.example.deukgeun.authToken.application.dto.response.RestResponse;
+import com.example.deukgeun.global.dto.RestResponse;
 import com.example.deukgeun.authToken.application.service.implement.AuthTokenApplicationServiceImpl;
 import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.global.util.RestResponseUtil;
@@ -83,17 +83,18 @@ public class JobControllerTest {
     public void givenJobService_whenDetail_thenReturnResponseEntity() {
         // Given
         long id = 5L;
-        Job job = mock(Job.class);
-        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공했습니다.", job);
-        given(jobApplicationService.findById(id)).willReturn(job);
+        JobResponse.Detail jobDetail = mock(JobResponse.Detail.class);
+        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공했습니다.", jobDetail);
+        given(jobApplicationService.getDetail(id)).willReturn(jobDetail);
 
         // When
         ResponseEntity<?> responseEntity = jobController.detail(id);
 
         // Then
-        verify(jobApplicationService, times(1)).findById(id);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
+
+        verify(jobApplicationService, times(1)).getDetail(anyLong());
     }
 
     @Test

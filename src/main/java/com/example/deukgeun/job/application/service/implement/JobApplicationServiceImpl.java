@@ -19,6 +19,11 @@ public class JobApplicationServiceImpl implements JobApplicationService {
     private final JobDomainService jobDomainService;
     private final JobMapper jobMapper;
 
+    @Override
+    public JobResponse.Detail getDetail(Long id) {
+        return jobMapper.toJobResponseDetail(findById(id));
+    }
+
     /**
      * 공고의 식별자와 회원의 식별자를 사용하여 공고가 존재하는지 확인합니다.
      *
@@ -56,9 +61,11 @@ public class JobApplicationServiceImpl implements JobApplicationService {
         // 검색 키워드에 와일드카드를 추가합니다.
         String likeKeyword = "%" + keyword + "%";
         // 공고 도메인 서비스를 사용하여 키워드를 기반으로 공고 목록을 페이징하여 조회합니다.
-        Page<Job> job = jobDomainService.getListByKeyword(likeKeyword, pageRequest);
-
-        return job.map(JobResponse.List::new);
+        Page<Job> job = jobDomainService.findListByKeyword(likeKeyword, pageRequest);
+        System.out.println("================================");
+        System.out.println(job.getContent().get(0).getJobAddress().getDetailAddress());
+        System.out.println("================================");
+        return job.map(jobMapper::toJobResponseList);
     }
 
     /**
@@ -73,9 +80,9 @@ public class JobApplicationServiceImpl implements JobApplicationService {
         // 현재 페이지 번호와 페이지 크기를 사용하여 PageRequest를 생성합니다.
         PageRequest pageRequest = PageRequest.of(currentPage, 10);
         // 공고 도메인 서비스를 사용하여 회원의 식별자를 기반으로 공고 목록을 페이징하여 조회합니다.
-        Page<Job> job = jobDomainService.getListByMemberId(memberId, pageRequest);
+        Page<Job> job = jobDomainService.findListByMemberId(memberId, pageRequest);
 
-        return job.map(JobResponse.List::new);
+        return job.map(jobMapper::toJobResponseList);
     }
 
     /**

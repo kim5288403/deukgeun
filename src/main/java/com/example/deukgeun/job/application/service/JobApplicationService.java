@@ -6,6 +6,7 @@ import com.example.deukgeun.job.domain.model.aggregate.Job;
 import org.springframework.data.domain.Page;
 
 public interface JobApplicationService {
+    JobResponse.Detail getDetail(Long id);
     boolean existsByIdAndMemberId(Long id, Long memberId);
     Job findById(Long id);
     Page<JobResponse.List> getListByKeyword(String keyword, int currentPage);

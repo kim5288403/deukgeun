@@ -1,6 +1,7 @@
 package com.example.deukgeun.job.infrastructure.persistence.model.valueobject;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,7 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-@Getter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class JobAddressVo {

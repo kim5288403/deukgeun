@@ -9,8 +9,8 @@ import org.springframework.data.domain.PageRequest;
 public interface JobDomainService {
     boolean existsByIdAndMemberId(Long id, Long memberId);
     Job findById(Long id);
-    Page<Job> getListByKeyword(String keyword, PageRequest pageRequest);
-    Page<Job> getListByMemberId(Long memberId, PageRequest pageRequest);
+    Page<Job> findListByKeyword(String keyword, PageRequest pageRequest);
+    Page<Job> findListByMemberId(Long memberId, PageRequest pageRequest);
     Job save(SaveJobDTO saveJobDTO);
     Job updateIsActiveByJobId(int isActive, Long id);
 }

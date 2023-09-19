@@ -1,5 +1,6 @@
 package com.example.deukgeun.authToken.application.service;
 
+import com.example.deukgeun.authToken.application.dto.response.LoginResponse;
 import com.example.deukgeun.authToken.domain.model.entity.AuthToken;
 import org.springframework.security.core.Authentication;
 
@@ -24,4 +25,6 @@ public interface AuthTokenApplicationService {
     void setHeaderAuthToken(HttpServletResponse response, String authToken);
     void updateAuthToken(String authToken, String newAuthToken);
     boolean validateToken(String token);
+    LoginResponse getLoginResponse(String authToken, String role);
+
 }

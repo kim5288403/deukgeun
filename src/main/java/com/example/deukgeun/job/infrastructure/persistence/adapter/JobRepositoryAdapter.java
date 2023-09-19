@@ -2,12 +2,9 @@ package com.example.deukgeun.job.infrastructure.persistence.adapter;
 
 import com.example.deukgeun.job.domain.model.aggregate.Job;
 import com.example.deukgeun.job.domain.repository.JobRepository;
+import com.example.deukgeun.job.infrastructure.persistence.mapper.JobMapper;
 import com.example.deukgeun.job.infrastructure.persistence.model.entity.JobEntity;
-import com.example.deukgeun.job.infrastructure.persistence.model.valueobject.JobAddressVo;
 import com.example.deukgeun.job.infrastructure.persistence.repository.JobJpaRepository;
-import com.example.deukgeun.member.domain.aggregate.Member;
-import com.example.deukgeun.member.infrastructure.persistence.entity.MemberEntity;
-import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +16,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class JobRepositoryAdapter implements JobRepository {
     private final JobJpaRepository jobJpaRepository;
+    private final JobMapper jobMapper;
 
     /**
      * 공고의 식별자와 회원의 식별자를 사용하여 해당 공고가 해당 회원에 의해 소유되었는지를 확인합니다.
@@ -41,7 +39,7 @@ public class JobRepositoryAdapter implements JobRepository {
     @Override
     public Optional<Job> findById(Long id) {
         Optional<JobEntity> jobEntity = jobJpaRepository.findById(id);
-        return jobEntity.map(this::convert);
+        return jobEntity.map(jobMapper::toJob);
     }
 
     /**
@@ -54,7 +52,7 @@ public class JobRepositoryAdapter implements JobRepository {
     @Override
     public Page<Job> findByMemberId(Long memberId, PageRequest pageRequest) {
         Page<JobEntity> jobEntities = jobJpaRepository.findByMemberId(memberId, pageRequest);
-        return jobEntities.map(this::convert);
+        return jobEntities.map(jobMapper::toJob);
     }
 
     /**
@@ -67,7 +65,8 @@ public class JobRepositoryAdapter implements JobRepository {
     @Override
     public Page<Job> findByLikeKeyword(String keyword, PageRequest pageRequest) {
         Page<JobEntity> jobEntities = jobJpaRepository.findByLikeKeyword(keyword, pageRequest);
-        return jobEntities.map(this::convert);
+
+        return jobEntities.map(jobMapper::toJob);
     }
 
     /**
@@ -78,73 +77,8 @@ public class JobRepositoryAdapter implements JobRepository {
      */
     @Override
     public Job save(Job job) {
-        JobEntity jobEntity = jobJpaRepository.save(convert(job));
+        JobEntity jobEntity = jobJpaRepository.save(jobMapper.toJobEntity(job));
 
-        return convert(jobEntity);
-    }
-
-    private Job convert(JobEntity jobEntity) {
-        return new Job(
-                jobEntity.getId(),
-                jobEntity.getMemberId(),
-                jobEntity.getTitle(),
-                jobEntity.getRequirementLicense(),
-                jobEntity.getRequirementEtc(),
-                new Address(
-                        jobEntity.getJobAddressVo().getPostcode(),
-                        jobEntity.getJobAddressVo().getJibunAddress(),
-                        jobEntity.getJobAddressVo().getRoadAddress(),
-                        jobEntity.getJobAddressVo().getDetailAddress(),
-                        jobEntity.getJobAddressVo().getExtraAddress()
-                        ),
-                jobEntity.getIsActive(),
-                jobEntity.getStartDate(),
-                jobEntity.getEndDate()
-        );
-    }
-
-    private JobEntity convert(Job job) {
-        return JobEntity
-                .builder()
-                .id(job.getId())
-                .memberId(job.getMemberId())
-                .title(job.getTitle())
-                .requirementLicense(job.getRequirementLicense())
-                .requirementEtc(job.getRequirementEtc())
-                .jobAddressVo(new JobAddressVo(
-                        job.getAddress().getPostcode(),
-                        job.getAddress().getRoadAddress(),
-                        job.getAddress().getJibunAddress(),
-                        job.getAddress().getRoadAddress(),
-                        job.getAddress().getExtraAddress()
-                        ))
-                .isActive(job.getIsActive())
-                .startDate(job.getStartDate())
-                .endDate(job.getEndDate())
-                .memberId(job.getMemberId())
-                .build();
-    }
-
-    private Member convert(MemberEntity memberEntity) {
-        return new Member(
-                memberEntity.getId(),
-                memberEntity.getEmail(),
-                memberEntity.getPassword(),
-                memberEntity.getName(),
-                memberEntity.getAge(),
-                memberEntity.getGender()
-        );
-    }
-
-    private MemberEntity convert(Member member) {
-        return MemberEntity
-                .builder()
-                .id(member.getId())
-                .email(member.getEmail())
-                .password(member.getPassword())
-                .name(member.getName())
-                .age(member.getAge())
-                .gender(member.getGender())
-                .build();
+        return jobMapper.toJob(jobEntity);
     }
 }

@@ -2,9 +2,10 @@ package com.example.deukgeun.job.service.domain;
 
 import com.example.deukgeun.job.domain.dto.SaveJobDTO;
 import com.example.deukgeun.job.domain.model.aggregate.Job;
+import com.example.deukgeun.job.domain.model.valueobject.JobAddress;
 import com.example.deukgeun.job.domain.repository.JobRepository;
 import com.example.deukgeun.job.domain.service.implement.JobDomainServiceImpl;
-import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
+import com.example.deukgeun.job.infrastructure.persistence.mapper.JobMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,9 +33,10 @@ import static org.mockito.Mockito.*;
 public class JobDomainServiceTest {
     @InjectMocks
     private JobDomainServiceImpl jobDomainService;
-
     @Mock
     private JobRepository jobRepository;
+    @Mock
+    private JobMapper jobMapper;
 
     @Test
     void givenCheckJobOwnershipRequest_whenExistsByIdAndMemberId_thenTure() {
@@ -115,7 +117,7 @@ public class JobDomainServiceTest {
         given(jobRepository.findByLikeKeyword(likeKeyword, pageable)).willReturn(page);
 
         // When
-        Page<Job> result = jobDomainService.getListByKeyword(likeKeyword, pageable);
+        Page<Job> result = jobDomainService.findListByKeyword(likeKeyword, pageable);
 
         // Then
         assertNotNull(result);
@@ -141,7 +143,7 @@ public class JobDomainServiceTest {
         given(jobRepository.findByMemberId(memberId, pageable)).willReturn(page);
 
         // When
-        Page<Job> result = jobDomainService.getListByMemberId(memberId, pageable);
+        Page<Job> result = jobDomainService.findListByMemberId(memberId, pageable);
 
         // Then
         assertNotNull(result);
@@ -158,6 +160,7 @@ public class JobDomainServiceTest {
         saveJobDTO.setPostcode("12-3");
         saveJobDTO.setStartDate("2023-08-08T12:51");
         saveJobDTO.setEndDate("2023-08-08T12:51");
+        given(jobMapper.toJobAddress(any(SaveJobDTO.class))).willReturn(mock(JobAddress.class));
 
         // When
         jobDomainService.save(saveJobDTO);
@@ -178,7 +181,7 @@ public class JobDomainServiceTest {
                 "test",
                 1,
                 "test",
-                mock(Address.class),
+                mock(JobAddress.class),
                 1,
                 LocalDateTime.now(),
                 LocalDateTime.now()

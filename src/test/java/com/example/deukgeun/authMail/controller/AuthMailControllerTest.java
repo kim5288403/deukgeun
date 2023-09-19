@@ -4,7 +4,7 @@ import com.example.deukgeun.authMail.application.controller.AuthMailController;
 import com.example.deukgeun.authMail.application.dto.request.AuthMailRequest;
 import com.example.deukgeun.authMail.application.dto.request.EmailRequest;
 import com.example.deukgeun.authMail.application.service.AuthMailApplicationService;
-import com.example.deukgeun.authToken.application.dto.response.RestResponse;
+import com.example.deukgeun.global.dto.RestResponse;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

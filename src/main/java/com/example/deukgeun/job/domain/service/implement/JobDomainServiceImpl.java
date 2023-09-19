@@ -1,11 +1,11 @@
 package com.example.deukgeun.job.domain.service.implement;
 
-import com.example.deukgeun.job.application.dto.request.SaveJobRequest;
 import com.example.deukgeun.job.domain.dto.SaveJobDTO;
 import com.example.deukgeun.job.domain.model.aggregate.Job;
+import com.example.deukgeun.job.domain.model.valueobject.JobAddress;
 import com.example.deukgeun.job.domain.repository.JobRepository;
 import com.example.deukgeun.job.domain.service.JobDomainService;
-import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
+import com.example.deukgeun.job.infrastructure.persistence.mapper.JobMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +17,7 @@ import javax.persistence.EntityNotFoundException;
 @RequiredArgsConstructor
 public class JobDomainServiceImpl implements JobDomainService {
     private final JobRepository jobRepository;
+    private final JobMapper jobMapper;
 
     /**
      * 공고의 식별자와 회원의 식별자를 사용하여 공고가 해당 회원에 의해 소유되었는지를 확인합니다.
@@ -52,7 +53,7 @@ public class JobDomainServiceImpl implements JobDomainService {
      * @return 회원의 공고 목록을 페이징한 페이지 객체입니다.
      */
     @Override
-    public Page<Job> getListByMemberId(Long memberId, PageRequest pageRequest) {
+    public Page<Job> findListByMemberId(Long memberId, PageRequest pageRequest) {
         return jobRepository.findByMemberId(memberId, pageRequest);
     }
 
@@ -64,7 +65,7 @@ public class JobDomainServiceImpl implements JobDomainService {
      * @return 키워드에 따라 페이징한 공고 목록을 담은 페이지 객체입니다.
      */
     @Override
-    public Page<Job> getListByKeyword(String keyword, PageRequest pageRequest) {
+    public Page<Job> findListByKeyword(String keyword, PageRequest pageRequest) {
         return jobRepository.findByLikeKeyword(keyword, pageRequest);
     }
 
@@ -77,18 +78,14 @@ public class JobDomainServiceImpl implements JobDomainService {
     @Override
     public Job save(SaveJobDTO saveJobDTO) {
         // 공고 객체를 생성하고 요청 정보를 사용하여 초기화합니다.
+        JobAddress jobAddress = jobMapper.toJobAddress(saveJobDTO);
+
         Job job = Job.create(
                 saveJobDTO.getMemberId(),
                 saveJobDTO.getTitle(),
                 saveJobDTO.getRequirementLicense(),
                 saveJobDTO.getRequirementEtc(),
-                new Address(
-                        saveJobDTO.getPostcode(),
-                        saveJobDTO.getJibunAddress(),
-                        saveJobDTO.getRoadAddress(),
-                        saveJobDTO.getDetailAddress(),
-                        saveJobDTO.getExtraAddress()
-                ),
+                jobAddress,
                 1,
                 saveJobDTO.getStartDate(),
                 saveJobDTO.getEndDate()

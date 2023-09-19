@@ -1,6 +1,6 @@
 package com.example.deukgeun.trainer.controller;
 
-import com.example.deukgeun.authToken.application.dto.response.RestResponse;
+import com.example.deukgeun.global.dto.RestResponse;
 import com.example.deukgeun.authToken.application.service.AuthTokenApplicationService;
 import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.global.util.RestResponseUtil;

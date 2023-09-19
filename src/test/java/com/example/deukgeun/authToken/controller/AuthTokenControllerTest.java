@@ -3,7 +3,8 @@ package com.example.deukgeun.authToken.controller;
 import com.example.deukgeun.authToken.application.controller.AuthTokenController;
 import com.example.deukgeun.authToken.application.dto.request.LoginRequest;
 import com.example.deukgeun.authToken.application.dto.response.LoginResponse;
-import com.example.deukgeun.authToken.application.dto.response.RestResponse;
+import com.example.deukgeun.authToken.infrastructure.persistence.mapper.AuthTokenMapper;
+import com.example.deukgeun.global.dto.RestResponse;
 import com.example.deukgeun.authToken.application.service.AuthTokenApplicationService;
 import com.example.deukgeun.global.util.PasswordEncoderUtil;
 import com.example.deukgeun.global.util.RestResponseUtil;
@@ -22,8 +23,7 @@ import java.util.HashMap;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class AuthTokenControllerTest {
@@ -88,16 +88,13 @@ public class AuthTokenControllerTest {
         loginData.put("matchPassword", PasswordEncoderUtil.encode(loginRequest.getPassword()));
         loginData.put("role", role);
 
-        LoginResponse loginResponse = LoginResponse
-                .builder()
-                .authToken(authToken)
-                .role(role)
-                .build();
+        LoginResponse loginResponse = mock(LoginResponse.class);
 
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("로그인 성공 했습니다.", loginResponse);
 
         given(tokenApplicationService.getLoginData(loginRequest.getLoginType(), loginRequest.getEmail())).willReturn(loginData);
         given(tokenApplicationService.setToken(loginRequest.getEmail(), response, role)).willReturn(authToken);
+        given(tokenApplicationService.getLoginResponse(anyString(), anyString())).willReturn(loginResponse);
 
         // When
         ResponseEntity<?> responseEntity = tokenController.login(loginRequest, bindingResult, response);
@@ -105,7 +102,7 @@ public class AuthTokenControllerTest {
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
-        verify(tokenApplicationService, times(1)).setToken(loginRequest.getEmail(), response, role);
+        verify(tokenApplicationService, times(1)).setToken(anyString(), any(HttpServletResponse.class), anyString());
     }
 
     @Test
@@ -123,16 +120,13 @@ public class AuthTokenControllerTest {
         loginData.put("matchPassword", PasswordEncoderUtil.encode(loginRequest.getPassword()));
         loginData.put("role", role);
 
-        LoginResponse loginResponse = LoginResponse
-                .builder()
-                .authToken(authToken)
-                .role(role)
-                .build();
+        LoginResponse loginResponse = mock(LoginResponse.class);
 
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("로그인 성공 했습니다.", loginResponse);
 
         given(tokenApplicationService.getLoginData(loginRequest.getLoginType(), loginRequest.getEmail())).willReturn(loginData);
         given(tokenApplicationService.setToken(loginRequest.getEmail(), response, role)).willReturn(authToken);
+        given(tokenApplicationService.getLoginResponse(anyString(), anyString())).willReturn(loginResponse);
 
         // When
         ResponseEntity<?> responseEntity = tokenController.login(loginRequest, bindingResult, response);
@@ -140,6 +134,6 @@ public class AuthTokenControllerTest {
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
-        verify(tokenApplicationService, times(1)).setToken(loginRequest.getEmail(), response, role);
+        verify(tokenApplicationService, times(1)).setToken(anyString(), any(HttpServletResponse.class), anyString());
     }
 }

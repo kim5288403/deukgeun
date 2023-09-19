@@ -1,7 +1,7 @@
 package com.example.deukgeun.job.domain.model.aggregate;
 
 import com.example.deukgeun.global.util.LongIdGeneratorUtil;
-import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
+import com.example.deukgeun.job.domain.model.valueobject.JobAddress;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -25,7 +25,7 @@ public class Job {
 
     private LocalDateTime endDate;
 
-    private Address address;
+    private JobAddress jobAddress;
 
     public Job(
             Long id,
@@ -33,7 +33,7 @@ public class Job {
             String title,
             Integer requirementLicense,
             String requirementEtc,
-            Address address,
+            JobAddress jobAddress,
             Integer isActive,
             LocalDateTime startDate,
             LocalDateTime endDate
@@ -43,7 +43,7 @@ public class Job {
         this.title = title;
         this.requirementLicense = requirementLicense;
         this.requirementEtc = requirementEtc;
-        this.address = address;
+        this.jobAddress = jobAddress;
         this.isActive = isActive;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -54,7 +54,7 @@ public class Job {
             String title,
             Integer requirementLicense,
             String requirementEtc,
-            Address address,
+            JobAddress jobAddress,
             Integer isActive,
             String startDate,
             String endDate
@@ -69,7 +69,7 @@ public class Job {
                 title,
                 requirementLicense,
                 requirementEtc,
-                address,
+                jobAddress,
                 isActive,
                 convertStartDate,
                 convertEndDate

@@ -42,11 +42,7 @@ public class AuthTokenController {
     String authToken = authTokenApplicationService.setToken(request.getEmail(), response, loginData.get("role"));
 
     // 로그인 응답 객체 생성
-    LoginResponse loginResponse = LoginResponse
-            .builder()
-            .authToken(authToken)
-            .role(loginData.get("role"))
-            .build();
+    LoginResponse loginResponse = authTokenApplicationService.getLoginResponse(authToken, loginData.get("role"));
 
     return RestResponseUtil.ok("로그인 성공 했습니다.", loginResponse);
   }

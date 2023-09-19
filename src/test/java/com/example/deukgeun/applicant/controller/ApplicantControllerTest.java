@@ -5,7 +5,7 @@ import com.example.deukgeun.applicant.application.dto.request.SaveApplicantReque
 import com.example.deukgeun.applicant.application.dto.response.ApplicantResponse;
 import com.example.deukgeun.applicant.application.service.ApplicantApplicationService;
 import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
-import com.example.deukgeun.authToken.application.dto.response.RestResponse;
+import com.example.deukgeun.global.dto.RestResponse;
 import com.example.deukgeun.authToken.application.service.AuthTokenApplicationService;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.job.application.service.JobApplicationService;

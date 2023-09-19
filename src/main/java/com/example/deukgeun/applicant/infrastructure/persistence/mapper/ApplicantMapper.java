@@ -25,8 +25,8 @@ public interface ApplicantMapper {
     @Mapping(target = "amount", expression = "java(workDay * source.getSupportAmount())")
     @Mapping(target = "id", source = "source.id")
     @Mapping(target = "title", source = "job.title")
-    @Mapping(target = "postcode", source = "job.address.postcode")
-    @Mapping(target = "roadAddress", source = "job.address.roadAddress")
+    @Mapping(target = "postcode", source = "job.jobAddress.postcode")
+    @Mapping(target = "roadAddress", source = "job.jobAddress.roadAddress")
     @Mapping(target = "email", source = "member.email")
     @Mapping(target = "name", source = "member.name")
     ApplicantResponse.Info toApplicantResponseInfo(Applicant source, Member member, Job job, int workDay);

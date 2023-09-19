@@ -1,6 +1,6 @@
 package com.example.deukgeun.member.controller;
 
-import com.example.deukgeun.authToken.application.dto.response.RestResponse;
+import com.example.deukgeun.global.dto.RestResponse;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.member.application.controller.MemberController;
 import com.example.deukgeun.member.application.dto.request.JoinRequest;

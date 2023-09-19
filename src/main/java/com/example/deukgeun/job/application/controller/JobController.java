@@ -5,7 +5,6 @@ import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.job.application.dto.request.SaveJobRequest;
 import com.example.deukgeun.job.application.dto.response.JobResponse;
 import com.example.deukgeun.job.application.service.JobApplicationService;
-import com.example.deukgeun.job.domain.model.aggregate.Job;
 import com.example.deukgeun.member.application.service.MemberApplicationService;
 import com.example.deukgeun.member.domain.aggregate.Member;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +53,7 @@ public class JobController {
      */
     @RequestMapping(method = RequestMethod.GET, path = "/{id}")
     public ResponseEntity<?> detail(@PathVariable Long id) {
-        Job detail = jobApplicationService.findById(id);
+        JobResponse.Detail detail = jobApplicationService.getDetail(id);
 
         return RestResponseUtil.ok("조회 성공했습니다.", detail);
     }
