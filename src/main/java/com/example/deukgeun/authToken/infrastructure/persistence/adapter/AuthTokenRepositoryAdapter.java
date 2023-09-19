@@ -3,6 +3,7 @@ package com.example.deukgeun.authToken.infrastructure.persistence.adapter;
 import com.example.deukgeun.authToken.domain.model.entity.AuthToken;
 import com.example.deukgeun.authToken.domain.repository.AuthTokenRepository;
 import com.example.deukgeun.authToken.infrastructure.persistence.entity.AuthTokenEntity;
+import com.example.deukgeun.authToken.infrastructure.persistence.mapper.AuthTokenMapper;
 import com.example.deukgeun.authToken.infrastructure.persistence.repository.AuthTokenJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,7 @@ import java.util.Optional;
 @Component
 public class AuthTokenRepositoryAdapter implements AuthTokenRepository {
     private final AuthTokenJpaRepository authTokenRepository;
+    private final AuthTokenMapper authTokenMapper;
 
     /**
      * 주어진 인증 토큰에 해당하는 토큰 정보를 삭제합니다.
@@ -33,7 +35,7 @@ public class AuthTokenRepositoryAdapter implements AuthTokenRepository {
     @Override
     public Optional<AuthToken> findByAuthToken(String authToken) {
         Optional<AuthTokenEntity> authTokenEntity = authTokenRepository.findByAuthToken(authToken);
-        return authTokenEntity.map(this::convert);
+        return authTokenEntity.map(authTokenMapper::toAuthToken);
     }
 
     /**
@@ -44,30 +46,10 @@ public class AuthTokenRepositoryAdapter implements AuthTokenRepository {
      */
     @Override
     public AuthToken save(AuthToken authToken) {
-        // 인증 토큰 정보를 엔티티로 변환합니다.
-        AuthTokenEntity authTokenEntity = convert(authToken);
-
         // 변환된 엔티티를 데이터베이스에 저장하고, 저장된 엔티티를 반환합니다.
-        AuthTokenEntity saveAuthToken = authTokenRepository.save(authTokenEntity);
+        AuthTokenEntity saveAuthToken = authTokenRepository.save(authTokenMapper.toAuthTokenEntity(authToken));
 
         // 저장된 엔티티를 다시 도메인 객체로 변환하여 반환합니다.
-        return convert(saveAuthToken);
+        return authTokenMapper.toAuthToken(saveAuthToken);
     }
-
-    private AuthTokenEntity convert(AuthToken authToken) {
-        return AuthTokenEntity.builder()
-                .id(authToken.getId())
-                .authToken(authToken.getAuthToken())
-                .refreshToken(authToken.getRefreshToken())
-                .build();
-    }
-
-    private AuthToken convert(AuthTokenEntity authTokenEntity) {
-        return new AuthToken(
-                authTokenEntity.getId(),
-                authTokenEntity.getAuthToken(),
-                authTokenEntity.getRefreshToken()
-        );
-    }
-
 }
