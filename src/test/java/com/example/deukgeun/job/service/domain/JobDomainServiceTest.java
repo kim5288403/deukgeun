@@ -1,6 +1,6 @@
 package com.example.deukgeun.job.service.domain;
 
-import com.example.deukgeun.job.application.dto.request.SaveJobRequest;
+import com.example.deukgeun.job.domain.dto.SaveJobDTO;
 import com.example.deukgeun.job.domain.model.aggregate.Job;
 import com.example.deukgeun.job.domain.repository.JobRepository;
 import com.example.deukgeun.job.domain.service.implement.JobDomainServiceImpl;
@@ -150,17 +150,17 @@ public class JobDomainServiceTest {
     }
 
     @Test
-    void givenSaveJobRequest_whenSave_thenIsSaved() {
+    void givenSaveJobDTO_whenSave_thenIsSaved() {
         // Given
-        Long memberId = 123L;
-        SaveJobRequest saveJobRequest = new SaveJobRequest();
-        saveJobRequest.setTitle("test");
-        saveJobRequest.setPostcode("12-3");
-        saveJobRequest.setStartDate("2023-08-08T12:51");
-        saveJobRequest.setEndDate("2023-08-08T12:51");
+        SaveJobDTO saveJobDTO = new SaveJobDTO();
+        saveJobDTO.setMemberId(1L);
+        saveJobDTO.setTitle("test");
+        saveJobDTO.setPostcode("12-3");
+        saveJobDTO.setStartDate("2023-08-08T12:51");
+        saveJobDTO.setEndDate("2023-08-08T12:51");
 
         // When
-        jobDomainService.save(saveJobRequest, memberId);
+        jobDomainService.save(saveJobDTO);
 
         // Then
         verify(jobRepository, times(1)).save(any(Job.class));

@@ -1,6 +1,7 @@
 package com.example.deukgeun.job.domain.service.implement;
 
 import com.example.deukgeun.job.application.dto.request.SaveJobRequest;
+import com.example.deukgeun.job.domain.dto.SaveJobDTO;
 import com.example.deukgeun.job.domain.model.aggregate.Job;
 import com.example.deukgeun.job.domain.repository.JobRepository;
 import com.example.deukgeun.job.domain.service.JobDomainService;
@@ -70,28 +71,27 @@ public class JobDomainServiceImpl implements JobDomainService {
     /**
      * 공고 저장합니다.
      *
-     * @param saveJobRequest 공고 정보를 담은 요청 객체입니다.
-     * @param memberId       공고를 소유하는 회원의 식별자입니다.
+     * @param saveJobDTO 공고 정보를 담은 요청 객체입니다.
      * @return 저장된 공고 객체입니다.
      */
     @Override
-    public Job save(SaveJobRequest saveJobRequest, Long memberId) {
+    public Job save(SaveJobDTO saveJobDTO) {
         // 공고 객체를 생성하고 요청 정보를 사용하여 초기화합니다.
         Job job = Job.create(
-                memberId,
-                saveJobRequest.getTitle(),
-                saveJobRequest.getRequirementLicense(),
-                saveJobRequest.getRequirementEtc(),
+                saveJobDTO.getMemberId(),
+                saveJobDTO.getTitle(),
+                saveJobDTO.getRequirementLicense(),
+                saveJobDTO.getRequirementEtc(),
                 new Address(
-                        saveJobRequest.getPostcode(),
-                        saveJobRequest.getJibunAddress(),
-                        saveJobRequest.getRoadAddress(),
-                        saveJobRequest.getDetailAddress(),
-                        saveJobRequest.getExtraAddress()
+                        saveJobDTO.getPostcode(),
+                        saveJobDTO.getJibunAddress(),
+                        saveJobDTO.getRoadAddress(),
+                        saveJobDTO.getDetailAddress(),
+                        saveJobDTO.getExtraAddress()
                 ),
                 1,
-                saveJobRequest.getStartDate(),
-                saveJobRequest.getEndDate()
+                saveJobDTO.getStartDate(),
+                saveJobDTO.getEndDate()
         );
 
         return jobRepository.save(job);

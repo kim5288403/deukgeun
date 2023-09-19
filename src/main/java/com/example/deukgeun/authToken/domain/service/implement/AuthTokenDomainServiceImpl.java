@@ -3,8 +3,6 @@ package com.example.deukgeun.authToken.domain.service.implement;
 import com.example.deukgeun.authToken.domain.model.entity.AuthToken;
 import com.example.deukgeun.authToken.domain.repository.AuthTokenRepository;
 import com.example.deukgeun.authToken.domain.service.AuthTokenDomainService;
-import com.example.deukgeun.member.domain.repository.MemberRepository;
-import com.example.deukgeun.trainer.domain.repository.TrainerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,8 +10,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthTokenDomainServiceImpl implements AuthTokenDomainService {
     private final AuthTokenRepository authTokenRepository;
-    private final MemberRepository memberRepository;
-    private final TrainerRepository trainerRepository;
 
     /**
      * 주어진 인증 토큰과 갱신 토큰을 사용하여 새로운 토큰 정보를 생성하고 저장합니다.

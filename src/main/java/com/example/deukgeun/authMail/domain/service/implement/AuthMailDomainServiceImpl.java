@@ -1,6 +1,5 @@
 package com.example.deukgeun.authMail.domain.service.implement;
 
-import com.example.deukgeun.authMail.application.dto.request.AuthMailRequest;
 import com.example.deukgeun.authMail.domain.dto.ConfirmDTO;
 import com.example.deukgeun.authMail.domain.model.entity.AuthMail;
 import com.example.deukgeun.authMail.domain.model.valueobject.MailStatus;

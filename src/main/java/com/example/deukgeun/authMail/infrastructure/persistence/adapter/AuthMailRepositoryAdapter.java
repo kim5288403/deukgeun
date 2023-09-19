@@ -3,6 +3,7 @@ package com.example.deukgeun.authMail.infrastructure.persistence.adapter;
 import com.example.deukgeun.authMail.domain.model.entity.AuthMail;
 import com.example.deukgeun.authMail.domain.repository.AuthMailRepository;
 import com.example.deukgeun.authMail.infrastructure.persistence.entity.AuthMailEntity;
+import com.example.deukgeun.authMail.infrastructure.persistence.mapper.AuthMailMapper;
 import com.example.deukgeun.authMail.infrastructure.persistence.repository.AuthMailJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,7 @@ import java.util.Optional;
 @Component
 public class AuthMailRepositoryAdapter implements AuthMailRepository {
     private final AuthMailJpaRepository authMailRepository;
+    private final AuthMailMapper authMailMapper;
 
     /**
      * 주어진 이메일 주소와 코드에 해당하는 인증 메일이 존재하는지 확인합니다.
@@ -47,7 +49,7 @@ public class AuthMailRepositoryAdapter implements AuthMailRepository {
     public Optional<AuthMail> findByEmail(String email) {
         Optional<AuthMailEntity> authMailEntity = authMailRepository.findByEmail(email);
 
-        return authMailEntity.map(this::convert);
+        return authMailEntity.map(authMailMapper::toAuthMail);
     }
 
     /**
@@ -60,7 +62,7 @@ public class AuthMailRepositoryAdapter implements AuthMailRepository {
     @Override
     public Optional<AuthMail> findByEmailAndCode(String email, String code) {
         Optional<AuthMailEntity> authMailEntity = authMailRepository.findByEmailAndCode(email, code);
-        return authMailEntity.map(this::convert);
+        return authMailEntity.map(authMailMapper::toAuthMail);
     }
 
     /**
@@ -81,8 +83,8 @@ public class AuthMailRepositoryAdapter implements AuthMailRepository {
      */
     @Override
     public AuthMail save(AuthMail authMail) {
-        AuthMailEntity authMailEntity = authMailRepository.save(convert(authMail));
-        return convert(authMailEntity);
+        AuthMailEntity authMailEntity = authMailRepository.save(authMailMapper.toAuthMailEntity(authMail));
+        return authMailMapper.toAuthMail(authMailEntity);
     }
 
     /**
@@ -94,24 +96,6 @@ public class AuthMailRepositoryAdapter implements AuthMailRepository {
     @Override
     public Optional<AuthMail> findById(Long id) {
         Optional<AuthMailEntity> authMailEntity = authMailRepository.findById(id);
-        return authMailEntity.map(this::convert);
-    }
-
-    private AuthMailEntity convert(AuthMail authMail) {
-        return AuthMailEntity.builder()
-                .id(authMail.getId())
-                .email(authMail.getEmail())
-                .code(authMail.getCode())
-                .mailStatus(authMail.getMailStatus())
-                .build();
-    }
-
-    private AuthMail convert(AuthMailEntity authMail) {
-        return new AuthMail(
-                authMail.getId(),
-                authMail.getEmail(),
-                authMail.getCode(),
-                authMail.getMailStatus()
-        );
+        return authMailEntity.map(authMailMapper::toAuthMail);
     }
 }

@@ -3,8 +3,10 @@ package com.example.deukgeun.job.application.service.implement;
 import com.example.deukgeun.job.application.dto.request.SaveJobRequest;
 import com.example.deukgeun.job.application.dto.response.JobResponse;
 import com.example.deukgeun.job.application.service.JobApplicationService;
+import com.example.deukgeun.job.domain.dto.SaveJobDTO;
 import com.example.deukgeun.job.domain.model.aggregate.Job;
 import com.example.deukgeun.job.domain.service.JobDomainService;
+import com.example.deukgeun.job.infrastructure.persistence.mapper.JobMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 public class JobApplicationServiceImpl implements JobApplicationService {
 
     private final JobDomainService jobDomainService;
+    private final JobMapper jobMapper;
 
     /**
      * 공고의 식별자와 회원의 식별자를 사용하여 공고가 존재하는지 확인합니다.
@@ -84,7 +87,9 @@ public class JobApplicationServiceImpl implements JobApplicationService {
      */
     @Override
     public Job save(SaveJobRequest saveJobRequest, Long memberId) {
-        return jobDomainService.save(saveJobRequest, memberId);
+        SaveJobDTO saveJobDTO = jobMapper.toSaveJobDto(memberId, saveJobRequest);
+
+        return jobDomainService.save(saveJobDTO);
     }
 
     /**
