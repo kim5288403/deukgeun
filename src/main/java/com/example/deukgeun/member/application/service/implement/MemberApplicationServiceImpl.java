@@ -4,6 +4,7 @@ import com.example.deukgeun.member.application.dto.request.JoinRequest;
 import com.example.deukgeun.member.application.service.MemberApplicationService;
 import com.example.deukgeun.member.domain.aggregate.Member;
 import com.example.deukgeun.member.domain.service.MemberDomainService;
+import com.example.deukgeun.member.infrastructure.persistence.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MemberApplicationServiceImpl implements MemberApplicationService {
     private final MemberDomainService memberDomainService;
+    private final MemberMapper memberMapper;
 
     /**
      * 회원 정보를 저장합니다.
@@ -20,7 +22,7 @@ public class MemberApplicationServiceImpl implements MemberApplicationService {
      */
     @Override
     public Member save(JoinRequest request) {
-        return memberDomainService.save(request);
+        return memberDomainService.save(memberMapper.toMemberJoinDto(request));
     }
 
     /**

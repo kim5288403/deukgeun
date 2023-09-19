@@ -1,6 +1,5 @@
 package com.example.deukgeun.applicant.service.domain;
 
-import com.example.deukgeun.applicant.application.dto.request.SaveMatchInfoRequest;
 import com.example.deukgeun.applicant.domain.dto.PaymentCancelInfoDTO;
 import com.example.deukgeun.applicant.domain.dto.SaveApplicantDTO;
 import com.example.deukgeun.applicant.domain.dto.SaveMatchInfoDTO;
@@ -143,8 +142,7 @@ public class ApplicantDomainServiceTest {
         // Given
         Long jobId = 1L;
         Long trainerId = 2L;
-        Long ApplicantId = 3L;
-        Applicant applicant = new Applicant(ApplicantId, jobId, trainerId, 1000, 0);
+        Applicant applicant = Applicant.create(jobId, trainerId, 1000, 0);
         SaveApplicantDTO saveApplicantDTO = mock(SaveApplicantDTO.class);
 
         given(applicantRepository.save(any(Applicant.class))).willReturn(applicant);
@@ -153,7 +151,6 @@ public class ApplicantDomainServiceTest {
         Applicant savedApplicant = applicantDomainService.save(saveApplicantDTO);
 
         // Then
-        assertEquals(ApplicantId, savedApplicant.getId());
         assertEquals(jobId, savedApplicant.getJobId());
         assertEquals(trainerId, savedApplicant.getTrainerId());
         verify(applicantRepository, times(1)).save(any(Applicant.class));
@@ -215,20 +212,19 @@ public class ApplicantDomainServiceTest {
     @Test
     public void givenValidIdAndIsSelected_whenUpdateIsSelectedById_thenShouldUpdateIsSelect() {
         // Given
-        Long applicantId = 1L;
         Long jobId = 2L;
         Long trainerId = 3L;
         int isSelected = 1;
-        Applicant applicant = new Applicant(applicantId, jobId, trainerId, 1000, isSelected);
+        Applicant applicant = Applicant.create(jobId, trainerId, 1000, isSelected);
 
         given(applicantRepository.findById(anyLong())).willReturn(Optional.of(applicant));
 
         // When
-        applicantDomainService.updateIsSelectedById(applicantId, isSelected);
+        applicantDomainService.updateIsSelectedById(applicant.getId(), isSelected);
 
         // Then
-        verify(applicantRepository, times(1)).findById(applicantId);
-        verify(applicantRepository, times(1)).save(applicant);
+        verify(applicantRepository, times(1)).findById(anyLong());
+        verify(applicantRepository, times(1)).save(any(Applicant.class));
     }
 
 

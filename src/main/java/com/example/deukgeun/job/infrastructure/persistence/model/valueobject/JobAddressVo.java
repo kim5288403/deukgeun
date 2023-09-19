@@ -1,15 +1,13 @@
 package com.example.deukgeun.job.infrastructure.persistence.model.valueobject;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-@Data
+@Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class JobAddressVo {

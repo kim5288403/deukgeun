@@ -98,11 +98,11 @@ public class ApplicantApplicationServiceTest {
         int currentPage = 0;
         PageRequest pageRequest = PageRequest.of(currentPage, 10);
         List<Applicant> applicantsList = new ArrayList<>();
-        applicantsList.add(new Applicant(1L, jobId, trainerId, supportAmount, 0));
-        applicantsList.add(new Applicant(2L, jobId, trainerId, supportAmount, 0));
+        applicantsList.add(Applicant.create(jobId, trainerId, supportAmount, 0));
+        applicantsList.add(Applicant.create(jobId, trainerId, supportAmount, 0));
         Page<Applicant> applicantsPage = new PageImpl<>(applicantsList, pageRequest, applicantsList.size());
         ApplicantResponse.List applicantResponseList = new ApplicantResponse.List();
-        applicantResponseList.setId(1L);
+        applicantResponseList.setId(applicantsList.get(0).getId());
         applicantResponseList.setJobId(jobId);
         applicantResponseList.setTrainerId(trainerId);
         applicantResponseList.setSupportAmount(supportAmount);
@@ -185,7 +185,7 @@ public class ApplicantApplicationServiceTest {
         Long trainerId = 456L;
         SaveApplicantDTO saveApplicantDTO = mock(SaveApplicantDTO.class);
         SaveApplicantRequest saveApplicantRequest = new SaveApplicantRequest(123L, 1000);
-        Applicant expectedSavedApplicant = new Applicant(1L, saveApplicantRequest.getJobId(), trainerId, saveApplicantRequest.getSupportAmount(), 0);
+        Applicant expectedSavedApplicant = Applicant.create(saveApplicantRequest.getJobId(), trainerId, saveApplicantRequest.getSupportAmount(), 0);
 
         given(applicantMapper.toSaveApplicantDto(anyLong(), any(SaveApplicantRequest.class))).willReturn(saveApplicantDTO);
         given(applicantDomainService.save(any(SaveApplicantDTO.class))).willReturn(expectedSavedApplicant);

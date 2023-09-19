@@ -1,11 +1,13 @@
 package com.example.deukgeun.applicant.domain.model.entity;
 
 import com.example.deukgeun.global.util.LongIdGeneratorUtil;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@AllArgsConstructor
 public class PaymentInfo {
     private Long id;
 
@@ -23,27 +25,9 @@ public class PaymentInfo {
 
     private LocalDateTime deleteDate;
 
-    private PaymentCancelInfo paymentCancelInfo = null;
+    private PaymentCancelInfo paymentCancelInfo;
 
-    private Long paymentCancelInfoId = null;
-
-    public PaymentInfo (
-            Long id,
-            String impUid,
-            String pgProvider,
-            String pgTid,
-            String channel,
-            Integer amount,
-            LocalDateTime paidAt
-            ) {
-        this.id = id;
-        this.impUid = impUid;
-        this.pgProvider = pgProvider;
-        this.pgTid = pgTid;
-        this.channel = channel;
-        this.amount = amount;
-        this.paidAt = paidAt;
-    }
+    private Long paymentCancelInfoId;
 
     public static PaymentInfo create(
             String impUid,
@@ -54,7 +38,7 @@ public class PaymentInfo {
             LocalDateTime paidAt
     ) {
         Long id = LongIdGeneratorUtil.gen();
-        return new PaymentInfo(id, impUid, pgProvider, pgTid, channel, amount, paidAt);
+        return new PaymentInfo(id, impUid, pgProvider, pgTid, channel, amount, paidAt, null, null, null);
     }
 
     public void delete() {

@@ -3,41 +3,29 @@ package com.example.deukgeun.applicant.domain.model.aggregate;
 import com.example.deukgeun.applicant.domain.model.entity.MatchInfo;
 import com.example.deukgeun.applicant.domain.model.entity.PaymentInfo;
 import com.example.deukgeun.global.util.LongIdGeneratorUtil;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class Applicant {
     private Long id;
 
     private Long jobId;
 
-    private Long matchInfoId = null;
+    private Long matchInfoId;
 
-    private Long paymentInfoId = null;
+    private Long paymentInfoId;
 
     private Long trainerId;
 
     private Integer supportAmount;
 
-    private Integer isSelected = 0;
+    private Integer isSelected;
 
-    private MatchInfo matchInfo = null;
+    private MatchInfo matchInfo;
 
-    private PaymentInfo paymentInfo = null;
-
-    public Applicant(
-            Long id,
-            Long jobId,
-            Long trainerId,
-            Integer supportAmount,
-            Integer isSelected
-    ) {
-        this.id = id;
-        this.jobId = jobId;
-        this.trainerId = trainerId;
-        this.supportAmount = supportAmount;
-        this.isSelected = isSelected;
-    }
+    private PaymentInfo paymentInfo;
 
     public static Applicant create(
             Long jobId,
@@ -46,7 +34,7 @@ public class Applicant {
             Integer isSelected
     ) {
         Long id = LongIdGeneratorUtil.gen();
-        return new Applicant(id, jobId, trainerId, supportAmount, isSelected);
+        return new Applicant(id, jobId, null, null, trainerId, supportAmount, isSelected, null, null);
     }
 
     public void setMatchInfo(MatchInfo matchInfo) {

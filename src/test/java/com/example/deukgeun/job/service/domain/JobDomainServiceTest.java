@@ -181,11 +181,11 @@ public class JobDomainServiceTest {
                 "test",
                 1,
                 "test",
-                mock(JobAddress.class),
                 1,
                 LocalDateTime.now(),
-                LocalDateTime.now()
-        );
+                LocalDateTime.now(),
+                mock(JobAddress.class)
+                );
 
         given(jobRepository.findById(jobId)).willReturn(Optional.of(foundJob));
         given(jobRepository.save(any(Job.class))).willReturn(updateJob);

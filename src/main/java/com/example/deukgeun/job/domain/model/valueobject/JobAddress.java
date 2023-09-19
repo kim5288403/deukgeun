@@ -1,8 +1,10 @@
 package com.example.deukgeun.job.domain.model.valueobject;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@Data
+@Getter
+@AllArgsConstructor
 public class JobAddress {
     private String postcode;
     private String jibunAddress;

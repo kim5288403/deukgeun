@@ -1,9 +1,11 @@
 package com.example.deukgeun.applicant.domain.model.entity;
 
 import com.example.deukgeun.global.util.LongIdGeneratorUtil;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class PaymentCancelInfo {
 
     private Long id;
@@ -15,20 +17,6 @@ public class PaymentCancelInfo {
     private String cancelReason;
 
     private Integer cancelAmount;
-
-    public PaymentCancelInfo(
-            Long id,
-            String impUid,
-            String channel,
-            String cancelReason,
-            Integer cancelAmount
-    ) {
-        this.id = id;
-        this.impUid = impUid;
-        this.channel = channel;
-        this.cancelReason = cancelReason;
-        this.cancelAmount = cancelAmount;
-    }
 
     public static PaymentCancelInfo create(
             String impUid,

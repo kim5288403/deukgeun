@@ -1,8 +1,7 @@
 package com.example.deukgeun.member.domain.service.implement;
 
-import com.example.deukgeun.global.util.PasswordEncoderUtil;
-import com.example.deukgeun.member.application.dto.request.JoinRequest;
 import com.example.deukgeun.member.domain.aggregate.Member;
+import com.example.deukgeun.member.domain.dto.MemberJoinDTO;
 import com.example.deukgeun.member.domain.repository.MemberRepository;
 import com.example.deukgeun.member.domain.service.MemberDomainService;
 import lombok.RequiredArgsConstructor;
@@ -21,18 +20,18 @@ public class MemberDomainServiceImpl implements MemberDomainService {
     /**
      * 회원 정보를 저장합니다.
      *
-     * @param request 저장할 회원 정보를 포함하는 JoinRequest 객체입니다.
+     * @param memberJoinDTO 저장할 회원 정보를 포함하는 JoinRequest 객체입니다.
      * @return 저장된 회원 정보를 나타내는 객체입니다.
      */
     @Override
-    public Member save(JoinRequest request) {
+    public Member save(MemberJoinDTO memberJoinDTO) {
         // 회원 생성 메서드를 호출하여 회원 객체를 생성하고 저장합니다.
         Member member = Member
-                .create(request.getEmail(),
-                        PasswordEncoderUtil.encode(request.getPassword()),
-                        request.getName(),
-                        request.getAge(),
-                        request.getGender()
+                .create(memberJoinDTO.getEmail(),
+                        memberJoinDTO.getPassword(),
+                        memberJoinDTO.getName(),
+                        memberJoinDTO.getAge(),
+                        memberJoinDTO.getGender()
                 );
 
         return memberRepository.save(member);

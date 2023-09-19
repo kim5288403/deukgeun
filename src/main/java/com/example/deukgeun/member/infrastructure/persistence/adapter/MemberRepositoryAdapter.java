@@ -3,6 +3,7 @@ package com.example.deukgeun.member.infrastructure.persistence.adapter;
 import com.example.deukgeun.member.domain.aggregate.Member;
 import com.example.deukgeun.member.domain.repository.MemberRepository;
 import com.example.deukgeun.member.infrastructure.persistence.entity.MemberEntity;
+import com.example.deukgeun.member.infrastructure.persistence.mapper.MemberMapper;
 import com.example.deukgeun.member.infrastructure.persistence.repository.MemberJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,6 +16,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MemberRepositoryAdapter implements MemberRepository {
     private final MemberJpaRepository memberRepository;
+    private final MemberMapper memberMapper;
 
     /**
      * 회원 식별자를 사용하여 회원 정보를 조회합니다.
@@ -25,7 +27,7 @@ public class MemberRepositoryAdapter implements MemberRepository {
     @Override
     public Optional<Member> findById(Long id) {
         Optional<MemberEntity> memberEntity = memberRepository.findById(id);
-        return memberEntity.map(this::covert);
+        return memberEntity.map(memberMapper::toMember);
     }
 
     /**
@@ -37,7 +39,7 @@ public class MemberRepositoryAdapter implements MemberRepository {
     @Override
     public Optional<Member> findByEmail(String email) {
         Optional<MemberEntity> memberEntity = memberRepository.findByEmail(email);
-        return memberEntity.map(this::covert);
+        return memberEntity.map(memberMapper::toMember);
     }
 
     /**
@@ -61,31 +63,7 @@ public class MemberRepositoryAdapter implements MemberRepository {
      */
     @Override
     public Member save(Member member) {
-        MemberEntity memberEntity = covert(member);
-        MemberEntity saveMemberEntity = memberRepository.save(memberEntity);
-        return covert(saveMemberEntity);
-    }
-
-    private MemberEntity covert(Member member) {
-        return MemberEntity
-                .builder()
-                .id(member.getId())
-                .name(member.getName())
-                .age(member.getAge())
-                .password(member.getPassword())
-                .email(member.getEmail())
-                .gender(member.getGender())
-                .build();
-    }
-
-    private Member covert(MemberEntity memberEntity) {
-        return new Member(
-                memberEntity.getId(),
-                memberEntity.getEmail(),
-                memberEntity.getPassword(),
-                memberEntity.getName(),
-                memberEntity.getAge(),
-                memberEntity.getGender()
-        );
+        MemberEntity saveMemberEntity = memberRepository.save(memberMapper.toMemberEntity(member));
+        return memberMapper.toMember(saveMemberEntity);
     }
 }

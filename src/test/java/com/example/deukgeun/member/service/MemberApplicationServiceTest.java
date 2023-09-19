@@ -4,42 +4,39 @@ import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.member.application.dto.request.JoinRequest;
 import com.example.deukgeun.member.application.service.implement.MemberApplicationServiceImpl;
 import com.example.deukgeun.member.domain.aggregate.Member;
+import com.example.deukgeun.member.domain.dto.MemberJoinDTO;
 import com.example.deukgeun.member.domain.service.implement.MemberDomainServiceImpl;
+import com.example.deukgeun.member.infrastructure.persistence.mapper.MemberMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.persistence.EntityNotFoundException;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class MemberServiceTest {
+public class MemberApplicationServiceTest {
 
     @InjectMocks
     private MemberApplicationServiceImpl memberApplicationService;
     @Mock
     private MemberDomainServiceImpl memberDomainService;
     @Mock
-    private PasswordEncoder passwordEncoder;
+    private MemberMapper memberMapper;
 
     @Test
     void givenMember_whenSave_thenTrainerIsSavedAndReturned() {
         // Given
-        JoinRequest request = new JoinRequest();
-        request.setName("test");
-        request.setAge(123);
-        request.setEmail("test");
-        request.setPassword("test");
-        request.setGender(Gender.M);
+        JoinRequest request = mock(JoinRequest.class);
+        MemberJoinDTO memberJoinDTO = mock(MemberJoinDTO.class);
 
         Member member = Member.create(
                 request.getEmail(),
@@ -49,8 +46,8 @@ public class MemberServiceTest {
                 request.getGender()
                 );
 
-        given(memberDomainService.save(request)).willReturn(member);
-        given(passwordEncoder.encode(request.getPassword())).willReturn("encodePassword");
+        given(memberMapper.toMemberJoinDto(any(JoinRequest.class))).willReturn(memberJoinDTO);
+        given(memberDomainService.save(any(MemberJoinDTO.class))).willReturn(member);
 
         // When
         Member saveMember = memberApplicationService.save(request);
@@ -63,7 +60,7 @@ public class MemberServiceTest {
         assertEquals(member.getPassword(), "encodePassword");
 
         // Verify
-        verify(memberDomainService, times(1)).save(request);
+        verify(memberDomainService, times(1)).save(any(MemberJoinDTO.class));
     }
 
     @Test

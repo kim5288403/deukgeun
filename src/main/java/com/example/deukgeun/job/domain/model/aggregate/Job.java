@@ -2,12 +2,14 @@ package com.example.deukgeun.job.domain.model.aggregate;
 
 import com.example.deukgeun.global.util.LongIdGeneratorUtil;
 import com.example.deukgeun.job.domain.model.valueobject.JobAddress;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Getter
+@AllArgsConstructor
 public class Job {
     private Long id;
 
@@ -26,28 +28,6 @@ public class Job {
     private LocalDateTime endDate;
 
     private JobAddress jobAddress;
-
-    public Job(
-            Long id,
-            Long memberId,
-            String title,
-            Integer requirementLicense,
-            String requirementEtc,
-            JobAddress jobAddress,
-            Integer isActive,
-            LocalDateTime startDate,
-            LocalDateTime endDate
-    ) {
-        this.id = id;
-        this.memberId = memberId;
-        this.title = title;
-        this.requirementLicense = requirementLicense;
-        this.requirementEtc = requirementEtc;
-        this.jobAddress = jobAddress;
-        this.isActive = isActive;
-        this.startDate = startDate;
-        this.endDate = endDate;
-    }
 
     public static Job create(
             Long memberId,
@@ -69,11 +49,11 @@ public class Job {
                 title,
                 requirementLicense,
                 requirementEtc,
-                jobAddress,
                 isActive,
                 convertStartDate,
-                convertEndDate
-        );
+                convertEndDate,
+                jobAddress
+                );
     }
 
     public void updateIsActive(int isActive) {

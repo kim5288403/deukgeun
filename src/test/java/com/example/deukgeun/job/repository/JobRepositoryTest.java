@@ -42,13 +42,22 @@ public class JobRepositoryTest {
         // Given
         List<MemberEntity> member = memberRepository.findAll();
         Long memberId = member.get(0).getId();
-        JobAddressVo jobAddressVo = new JobAddressVo(
-                "test",
-                "test",
-                "test",
-                "test",
-                "test"
-        );
+        JobAddressVo jobAddressVo = JobAddressVo
+                .builder()
+                .postcode("test")
+                .detailAddress("test")
+                .extraAddress("test")
+                .jibunAddress("test")
+                .roadAddress("test")
+                .build();
+//                new JobAddressVo(
+//                "test",
+//                "test",
+//                "test",
+//                "test",
+//                "test"
+//        );
+
         JobEntity jobEntity1 = JobEntity
                 .builder()
                 .id(1L)
@@ -115,13 +124,14 @@ public class JobRepositoryTest {
         // Given
         List<MemberEntity> member = memberRepository.findAll();
         Long memberId = member.get(0).getId();
-        JobAddressVo jobAddressVo = new JobAddressVo(
-                "test",
-                "test",
-                "test",
-                "test",
-                "test"
-        );
+        JobAddressVo jobAddressVo = JobAddressVo
+                .builder()
+                .postcode("test")
+                .detailAddress("test")
+                .extraAddress("test")
+                .jibunAddress("test")
+                .roadAddress("test")
+                .build();
         JobEntity jobEntity1 = JobEntity
                 .builder()
                 .id(1L)
@@ -185,13 +195,14 @@ public class JobRepositoryTest {
         // Given
         List<MemberEntity> member = memberRepository.findAll();
         Long memberId = member.get(0).getId();
-        JobAddressVo jobAddressVo = new JobAddressVo(
-                "test",
-                "test",
-                "test",
-                "test",
-                "test"
-        );
+        JobAddressVo jobAddressVo = JobAddressVo
+                .builder()
+                .postcode("test")
+                .detailAddress("test")
+                .extraAddress("test")
+                .jibunAddress("test")
+                .roadAddress("test")
+                .build();
         JobEntity jobEntity = JobEntity
                 .builder()
                 .id(1L)
