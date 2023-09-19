@@ -2,7 +2,9 @@ package com.example.deukgeun.authMail.service.application;
 
 import com.example.deukgeun.authMail.application.dto.request.AuthMailRequest;
 import com.example.deukgeun.authMail.application.service.implement.AuthMailApplicationServiceImpl;
+import com.example.deukgeun.authMail.domain.dto.ConfirmDTO;
 import com.example.deukgeun.authMail.domain.service.AuthMailDomainService;
+import com.example.deukgeun.authMail.infrastructure.persistence.mapper.AuthMailMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -31,6 +33,8 @@ public class AuthMailApplicationServiceTest {
     @Autowired
     private JavaMailSender emailSender;
     @Mock
+    private AuthMailMapper authMailMapper;
+    @Mock
     private JavaMailSender mockEmailSender;
     @Mock
     private SpringTemplateEngine mockTemplateEngine;
@@ -39,12 +43,14 @@ public class AuthMailApplicationServiceTest {
     void givenAuthMailRequest_whenConfirmInvoked_thenInvokeConfirmMethod() throws EntityNotFoundException {
         // Given
         AuthMailRequest request = mock(AuthMailRequest.class);
+        ConfirmDTO confirmDTO = mock(ConfirmDTO.class);
+        given(authMailMapper.toConfirmDto(any(AuthMailRequest.class))).willReturn(confirmDTO);
 
         // When
         mockAuthMailApplicationService.confirm(request);
 
         // Then
-        verify(authMailDomainService, times(1)).confirm(request);
+        verify(authMailDomainService, times(1)).confirm(confirmDTO);
     }
 
     @Test
@@ -69,7 +75,7 @@ public class AuthMailApplicationServiceTest {
         String toEmail = "test@example.com";
         String authCode = "123456";
         String title = "득근득근 회원가입 인증 번호";
-        AuthMailApplicationServiceImpl authMailApplicationService = new AuthMailApplicationServiceImpl(emailSender, templateEngine, authMailDomainService);
+        AuthMailApplicationServiceImpl authMailApplicationService = new AuthMailApplicationServiceImpl(emailSender, templateEngine, authMailDomainService, authMailMapper);
 
         // When
         MimeMessage message = authMailApplicationService.createMailForm(toEmail, authCode);
@@ -173,7 +179,7 @@ public class AuthMailApplicationServiceTest {
         String authCode = "123456";
         MimeMessage mimeMessage = mock(MimeMessage.class);
         given(mockEmailSender.createMimeMessage()).willReturn(mimeMessage);
-        AuthMailApplicationServiceImpl authMailApplicationService = new AuthMailApplicationServiceImpl(mockEmailSender, mockTemplateEngine, authMailDomainService);
+        AuthMailApplicationServiceImpl authMailApplicationService = new AuthMailApplicationServiceImpl(mockEmailSender, mockTemplateEngine, authMailDomainService, authMailMapper);
         AuthMailRequest authMailRequest = new AuthMailRequest();
         authMailRequest.setEmail(toEmail);
         authMailRequest.setCode(authCode);
@@ -189,7 +195,7 @@ public class AuthMailApplicationServiceTest {
     void givenCode_whenSetContext_thenProcessTemplate() {
         // Given
         String code = "123456";
-        AuthMailApplicationServiceImpl authMailApplicationService = new AuthMailApplicationServiceImpl(emailSender, templateEngine, authMailDomainService);
+        AuthMailApplicationServiceImpl authMailApplicationService = new AuthMailApplicationServiceImpl(emailSender, templateEngine, authMailDomainService, authMailMapper);
 
         // When
         String result = authMailApplicationService.setContext(code);

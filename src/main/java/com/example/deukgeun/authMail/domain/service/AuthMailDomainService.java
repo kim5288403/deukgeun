@@ -1,12 +1,13 @@
 package com.example.deukgeun.authMail.domain.service;
 
 import com.example.deukgeun.authMail.application.dto.request.AuthMailRequest;
+import com.example.deukgeun.authMail.domain.dto.ConfirmDTO;
 import com.example.deukgeun.authMail.domain.model.entity.AuthMail;
 
 public interface AuthMailDomainService {
     void deleteByEmail(String email);
 
-    void confirm(AuthMailRequest request);
+    void confirm(ConfirmDTO confirmDTO);
 
     boolean existsByEmail(String email);
 

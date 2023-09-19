@@ -87,12 +87,8 @@ public class PaymentControllerTest {
     public void givenValidId_whenGetPaymentInfo_thenReturnReturnOkResponse() {
         // Given
         Long applicantId =1L;
-        Applicant applicant = mock(Applicant.class);
-
-        given(applicantApplicationService.findById(applicantId)).willReturn(applicant);
-        given(applicant.getPaymentInfo()).willReturn(mock(PaymentInfo.class));
-
         PaymentResponse.Info response = mock(PaymentResponse.Info.class);
+        given(applicantApplicationService.getPaymentInfo(applicantId)).willReturn(response);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공했습니다.", response);
 
         // When
@@ -102,7 +98,7 @@ public class PaymentControllerTest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
 
-        verify(applicantApplicationService, times(1)).findById(applicantId);
+        verify(applicantApplicationService, times(1)).getPaymentInfo(applicantId);
     }
 
     @Test

@@ -2,7 +2,9 @@ package com.example.deukgeun.authMail.application.service.implement;
 
 import com.example.deukgeun.authMail.application.dto.request.AuthMailRequest;
 import com.example.deukgeun.authMail.application.service.AuthMailApplicationService;
+import com.example.deukgeun.authMail.domain.dto.ConfirmDTO;
 import com.example.deukgeun.authMail.domain.service.AuthMailDomainService;
+import com.example.deukgeun.authMail.infrastructure.persistence.mapper.AuthMailMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -23,6 +25,7 @@ public class AuthMailApplicationServiceImpl implements AuthMailApplicationServic
     private final JavaMailSender emailSender;
     private final SpringTemplateEngine templateEngine;
     private final AuthMailDomainService authMailDomainService;
+    private final AuthMailMapper authMailMapper;
 
     @Value("${spring.mail.username}")
     private String FROM_MAIL;
@@ -33,7 +36,8 @@ public class AuthMailApplicationServiceImpl implements AuthMailApplicationServic
      * @param request 메일 인증 요청 객체
      */
     public void confirm(AuthMailRequest request) {
-        authMailDomainService.confirm(request);
+        ConfirmDTO confirmDTO = authMailMapper.toConfirmDto(request);
+        authMailDomainService.confirm(confirmDTO);
     }
 
     /**

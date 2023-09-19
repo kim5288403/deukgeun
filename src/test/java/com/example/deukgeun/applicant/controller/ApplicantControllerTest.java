@@ -14,7 +14,6 @@ import com.example.deukgeun.member.application.service.MemberApplicationService;
 import com.example.deukgeun.member.domain.aggregate.Member;
 import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
 import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
-import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -27,7 +26,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -108,16 +106,13 @@ public class ApplicantControllerTest {
         Applicant applicant = mock(Applicant.class);
         Member member = mock(Member.class);
         Job job = mock(Job.class);
+        ApplicantResponse.Info result = mock(ApplicantResponse.Info.class);
 
         given(applicantApplicationService.findById(anyLong())).willReturn(applicant);
         given(jobApplicationService.findById(anyLong())).willReturn(job);
         given(memberApplicationService.findById(anyLong())).willReturn(member);
+        given(applicantApplicationService.getApplicantInfo(any(Applicant.class), any(Member.class), any(Job.class))).willReturn(result);
 
-        given(job.getAddress()).willReturn(mock(Address.class));
-        given(job.getStartDate()).willReturn(LocalDateTime.now());
-        given(job.getEndDate()).willReturn(LocalDateTime.now());
-
-        ApplicantResponse.Info result = mock(ApplicantResponse.Info.class);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공했습니다.", result);
 
         // When

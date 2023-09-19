@@ -35,7 +35,7 @@ public class ApplicantDomainServiceImpl implements ApplicantDomainService {
         Applicant applicant = findById(id);
 
         // 지원자의 매칭 정보 삭제
-        applicant.deleteMatchInfo();
+        applicant.setMatchInfo(null);
 
         // 업데이트된 지원자 정보 저장
         applicantRepository.save(applicant);

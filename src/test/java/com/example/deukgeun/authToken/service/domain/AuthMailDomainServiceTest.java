@@ -1,6 +1,7 @@
 package com.example.deukgeun.authToken.service.domain;
 
 import com.example.deukgeun.authMail.application.dto.request.AuthMailRequest;
+import com.example.deukgeun.authMail.domain.dto.ConfirmDTO;
 import com.example.deukgeun.authMail.domain.model.entity.AuthMail;
 import com.example.deukgeun.authMail.domain.model.valueobject.MailStatus;
 import com.example.deukgeun.authMail.domain.repository.AuthMailRepository;
@@ -29,15 +30,15 @@ public class AuthMailDomainServiceTest {
     @Test
     public void givenAuthMailRequest_givenAuthMailExists_whenConfirmInvoked_thenUpdateMailStatusAndSaveAuthMail() {
         // Given
-        AuthMailRequest request = new AuthMailRequest();
-        request.setEmail("test@example.com");
-        request.setCode("123456");
+        ConfirmDTO confirmDTO = new ConfirmDTO();
+        confirmDTO.setEmail("test@example.com");
+        confirmDTO.setCode("123456");
 
-        AuthMail authMail = new AuthMail(123L,"test@example.com", "123456", MailStatus.N);
-        given(authMailRepository.findByEmailAndCode(request.getEmail(), request.getCode())).willReturn(Optional.of(authMail));
+        AuthMail authMail = new AuthMail(123L,confirmDTO.getEmail(), confirmDTO.getCode(), MailStatus.N);
+        given(authMailRepository.findByEmailAndCode(confirmDTO.getEmail(), confirmDTO.getCode())).willReturn(Optional.of(authMail));
 
         // When
-        authMailDomainService.confirm(request);
+        authMailDomainService.confirm(confirmDTO);
 
         // Then
         assertEquals(authMail.getMailStatus(), MailStatus.Y);

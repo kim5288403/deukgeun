@@ -1,6 +1,7 @@
 package com.example.deukgeun.authMail.domain.service.implement;
 
 import com.example.deukgeun.authMail.application.dto.request.AuthMailRequest;
+import com.example.deukgeun.authMail.domain.dto.ConfirmDTO;
 import com.example.deukgeun.authMail.domain.model.entity.AuthMail;
 import com.example.deukgeun.authMail.domain.model.valueobject.MailStatus;
 import com.example.deukgeun.authMail.domain.repository.AuthMailRepository;
@@ -19,11 +20,11 @@ public class AuthMailDomainServiceImpl implements AuthMailDomainService {
     /**
      * 이메일 주소와 인증 코드를 사용하여 인증 메일을 확인하고 상태를 업데이트합니다.
      *
-     * @param request 인증 메일 요청 객체
+     * @param confirmDTO 인증 메일 요청 객체
      */
     @Override
-    public void confirm(AuthMailRequest request) {
-        AuthMail authMail = this.findByEmailAndCode(request.getEmail(), request.getCode());
+    public void confirm(ConfirmDTO confirmDTO) {
+        AuthMail authMail = this.findByEmailAndCode(confirmDTO.getEmail(), confirmDTO.getCode());
         authMail.updateMailStatus(MailStatus.Y);
         authMailRepository.save(authMail);
     }

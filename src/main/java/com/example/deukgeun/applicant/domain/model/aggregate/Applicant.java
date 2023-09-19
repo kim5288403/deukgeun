@@ -48,26 +48,22 @@ public class Applicant {
         Long id = LongIdGeneratorUtil.gen();
         return new Applicant(id, jobId, trainerId, supportAmount, isSelected);
     }
-    public void deleteMatchInfo() {
-        this.matchInfo = null;
-        this.matchInfoId = null;
-    }
 
     public void setMatchInfo(MatchInfo matchInfo) {
         this.matchInfo = matchInfo;
-        if (matchInfo != null) {
+        if (matchInfo == null) {
+            this.matchInfoId = null;
+        } else {
             this.matchInfoId = matchInfo.getId();
         }
     }
     public void setPaymentInfo(PaymentInfo paymentInfo) {
         this.paymentInfo = paymentInfo;
-        if (paymentInfo != null) {
+        if (paymentInfo == null) {
+            this.paymentInfoId = null;
+        } else {
             this.paymentInfoId = paymentInfo.getId();
         }
-    }
-
-    public void savePaymentInfoId(Long id) {
-        this.paymentInfoId = id;
     }
 
     public void updateIsSelect(int isSelected) {
