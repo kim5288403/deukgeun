@@ -1,11 +1,12 @@
 package com.example.deukgeun.trainer.controller;
 
+import com.example.deukgeun.authToken.application.service.AuthTokenApplicationService;
 import com.example.deukgeun.global.dto.RestResponse;
-import com.example.deukgeun.authToken.application.service.implement.AuthTokenApplicationServiceImpl;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.trainer.application.controller.PostController;
 import com.example.deukgeun.trainer.application.dto.request.PostRequest;
-import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
+import com.example.deukgeun.trainer.application.service.PostApplicationService;
+import com.example.deukgeun.trainer.infrastructure.s3.S3Service;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -30,9 +31,11 @@ public class PostControllerTest {
     @InjectMocks
     private PostController postController;
     @Mock
-    private TrainerApplicationService trainerApplicationService;
+    private PostApplicationService postApplicationService;
     @Mock
-    private AuthTokenApplicationServiceImpl authTokenApplicationService;
+    private S3Service s3Service;
+    @Mock
+    private AuthTokenApplicationService authTokenApplicationService;
     @Mock
     private HttpServletRequest request;
     @Mock
@@ -41,13 +44,13 @@ public class PostControllerTest {
     private HttpServletResponse response;
 
     @Test
-    public void givenPostService_whenDeletePost_thenDeletePostAndReturnSuccessResponse() throws IOException {
+    public void givenPostService_whenDeletePost_thenReturnSuccessResponse() throws IOException {
         // Given
         String authToken = "exampleAuthToken";
         String email = "test";
         String src = "test";
-        given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
-        given(authTokenApplicationService.getUserPk(authToken)).willReturn(email);
+        given(authTokenApplicationService.resolveAuthToken(any(HttpServletRequest.class))).willReturn(authToken);
+        given(authTokenApplicationService.getUserPk(anyString())).willReturn(email);
 
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("게시글 삭제 성공했습니다.", null);
 
@@ -55,26 +58,14 @@ public class PostControllerTest {
         ResponseEntity<?> responseEntity = postController.deletePost(request, src);
 
         // Then
-        verify(trainerApplicationService).deletePostByEmail(email);
-        verify(trainerApplicationService).deleteImageToS3(src);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
+        verify(postApplicationService, times(1)).deletePost(anyString());
+        verify(s3Service, times(1)).delete(anyString());
     }
 
     @Test
-    public void givenPostService_whenDeleteS3Image_thenDeleteFile() throws IOException {
-        // Given
-        String src = "example/src/image.jpg";
-
-        // When
-        postController.deleteS3Image(src);
-
-        // Then
-        verify(trainerApplicationService, times(1)).deleteImageToS3(src);
-    }
-
-    @Test
-    public void givenTokenServicePostService_whenUploadPost_thenReturnResponseEntity() throws Exception {
+    public void givenTokenServicePostService_whenUploadPost_thenReturnResponseEntity() {
         // Given
         PostRequest postRequest = new PostRequest();
 
@@ -82,21 +73,21 @@ public class PostControllerTest {
         String email = "test";
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("게시글 저장 성공했습니다.", null);
 
-        given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
-        given(authTokenApplicationService.getUserPk(authToken)).willReturn(email);
+        given(authTokenApplicationService.resolveAuthToken(any(HttpServletRequest.class))).willReturn(authToken);
+        given(authTokenApplicationService.getUserPk(anyString())).willReturn(email);
 
         // When
         ResponseEntity<?> responseEntity = postController.uploadPost(request, postRequest, bindingResult);
 
         // Then
-        verify(authTokenApplicationService, times(1)).resolveAuthToken(request);
-        verify(trainerApplicationService, times(1)).uploadPost(email, postRequest);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
+        verify(postApplicationService, times(1)).uploadPost(anyString(), any(PostRequest.class));
+        verify(authTokenApplicationService, times(1)).resolveAuthToken(any(HttpServletRequest.class));
     }
 
     @Test
-    public void givenPostService_whenUploadS3Image_thenSaveImageAndWriteJsonResponse() throws Exception {
+    public void givenPostService_whenUploadS3Image_thenReturnJsonResponse() throws Exception {
         // Given
         PrintWriter writer = mock(PrintWriter.class);
 
@@ -104,14 +95,14 @@ public class PostControllerTest {
         responseData.put("key1", "value1");
         responseData.put("key2", "value2");
 
-        given(trainerApplicationService.saveImageToS3(request, response)).willReturn(responseData);
+        given(s3Service.saveImageToS3(any(HttpServletRequest.class))).willReturn(responseData);
         given(response.getWriter()).willReturn(writer);
 
         // When
         postController.uploadS3Image(request, response);
 
         // Then
-        verify(trainerApplicationService, times(1)).saveImageToS3(request, response);
+        verify(s3Service, times(1)).saveImageToS3(any(HttpServletRequest.class));
         verify(response, times(1)).setContentType("application/json");
         verify(response, times(1)).setCharacterEncoding("UTF-8");
         verify(writer).write("{\"key1\":\"value1\",\"key2\":\"value2\"}");

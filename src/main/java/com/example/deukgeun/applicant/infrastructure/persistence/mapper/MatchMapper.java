@@ -16,6 +16,7 @@ public interface MatchMapper {
 
     @Named("toMatchInfo")
     MatchInfo toMatchInfo(MatchInfoEntity matchInfoEntity);
+
     @Named("toMatchInfoEntity")
     MatchInfoEntity toMatchInfoEntity(MatchInfo matchInfo);
 }

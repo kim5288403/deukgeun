@@ -1,7 +1,7 @@
 package com.example.deukgeun.trainer.controller;
 
-import com.example.deukgeun.global.dto.RestResponse;
 import com.example.deukgeun.authToken.application.service.AuthTokenApplicationService;
+import com.example.deukgeun.global.dto.RestResponse;
 import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.trainer.application.controller.TrainerController;
@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -47,42 +48,19 @@ public class TrainerControllerTest {
     private HttpServletRequest request;
     @Mock
     private BindingResult bindingResult;
-    @Mock
-    private HttpServletResponse response;
-    @Mock
-    private PasswordEncoder passwordEncoder;
 
     @Test
     void givenValidAuthToken_whenGetInfo_thenReturnSuccessResponse() {
         // Given
         String authToken = "validAuthToken";
         String email = "Test";
-        Trainer expectedTrainer = new Trainer(
-                123L,
-                "test",
-                email,
-                "test",
-                new Group(
-                        GroupStatus.Y,
-                        "test"
-                ),
-                new Address(
-                        "test",
-                        "test",
-                        "test",
-                        "test",
-                        "test"
-                ),
-                Gender.M,
-                3000,
-                "test"
-        );
-        TrainerResponse.Info response = new TrainerResponse.Info(expectedTrainer);
-        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("마이 페이지 조회 성공했습니다.", response);
+        TrainerResponse.Info response = mock(TrainerResponse.Info.class);
 
-        given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
-        given(authTokenApplicationService.getUserPk(authToken)).willReturn(email);
-        given(trainerApplicationService.findByEmail(email)).willReturn(expectedTrainer);
+        given(authTokenApplicationService.resolveAuthToken(any(HttpServletRequest.class))).willReturn(authToken);
+        given(authTokenApplicationService.getUserPk(anyString())).willReturn(email);
+        given(trainerApplicationService.getInfoByEmail(anyString())).willReturn(response);
+
+        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("마이 페이지 조회 성공했습니다.", response);
 
         // When
         ResponseEntity<?> responseEntity = trainerController.getInfo(request);
@@ -91,9 +69,9 @@ public class TrainerControllerTest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
 
-        verify(authTokenApplicationService, times(1)).resolveAuthToken(request);
-        verify(authTokenApplicationService, times(1)).getUserPk(authToken);
-        verify(trainerApplicationService, times(1)).findByEmail(email);
+        verify(authTokenApplicationService, times(1)).resolveAuthToken(any(HttpServletRequest.class));
+        verify(authTokenApplicationService, times(1)).getUserPk(anyString());
+        verify(trainerApplicationService, times(1)).getInfoByEmail(anyString());
     }
 
     @Test
@@ -101,35 +79,13 @@ public class TrainerControllerTest {
         // Given
         String authToken = "validAuthToken";
         String email = "Test";
-        Trainer expectedTrainer = new Trainer(
-                123L,
-                "test",
-                email,
-                "test",
-                new Group(
-                        GroupStatus.Y,
-                        "test"
-                ),
-                new Address(
-                        "test",
-                        "test",
-                        "test",
-                        "test",
-                        "test"
-                ),
-                Gender.M,
-                3000,
-                "test",
-                mock(List.class),
-                mock(Profile.class),
-                mock(Post.class)
-        );
-        TrainerResponse.Detail response = new TrainerResponse.Detail(expectedTrainer);
-        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("마이 페이지 조회 성공했습니다.", response);
+        TrainerResponse.Detail response = mock(TrainerResponse.Detail.class);
 
-        given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
-        given(authTokenApplicationService.getUserPk(authToken)).willReturn(email);
-        given(trainerApplicationService.findByEmail(email)).willReturn(expectedTrainer);
+        given(authTokenApplicationService.resolveAuthToken(any(HttpServletRequest.class))).willReturn(authToken);
+        given(authTokenApplicationService.getUserPk(anyString())).willReturn(email);
+        given(trainerApplicationService.getDetailByEmail(anyString())).willReturn(response);
+
+        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("마이 페이지 조회 성공했습니다.", response);
 
         // When
         ResponseEntity<?> responseEntity = trainerController.getDetail(request);
@@ -138,38 +94,16 @@ public class TrainerControllerTest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
 
-        verify(authTokenApplicationService, times(1)).resolveAuthToken(request);
-        verify(authTokenApplicationService, times(1)).getUserPk(authToken);
-        verify(trainerApplicationService, times(1)).findByEmail(email);
+        verify(authTokenApplicationService, times(1)).resolveAuthToken(any(HttpServletRequest.class));
+        verify(authTokenApplicationService, times(1)).getUserPk(anyString());
+        verify(trainerApplicationService, times(1)).findByEmail(anyString());
     }
 
     @Test
     void givenValidJoinRequest_whenSave_thenReturnSuccessResponse() throws IOException {
         // Given
-        Trainer expectedTrainer = new Trainer(
-                123L,
-                "test",
-                "test",
-                "test",
-                new Group(
-                        GroupStatus.Y,
-                        "test"
-                ),
-                new Address(
-                        "test",
-                        "test",
-                        "test",
-                        "test",
-                        "test"
-                ),
-                Gender.M,
-                3000,
-                "test"
-        );
         JoinRequest joinRequest = mock(JoinRequest.class);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("회원 가입 성공 했습니다.", null);
-
-        given(trainerApplicationService.save(joinRequest)).willReturn(expectedTrainer);
 
         // When
         ResponseEntity<?> responseEntity = trainerController.save(joinRequest, bindingResult);
@@ -177,8 +111,7 @@ public class TrainerControllerTest {
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
-
-        verify(trainerApplicationService, times(1)).save(joinRequest);
+        verify(trainerApplicationService, times(1)).save(any(JoinRequest.class));
     }
 
     @Test
@@ -193,7 +126,7 @@ public class TrainerControllerTest {
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
-        verify(trainerApplicationService).updateInfo(updateInfoRequest);
+        verify(trainerApplicationService, times(1)).updateInfo(any(UpdateInfoRequest.class));
     }
 
     @Test
@@ -208,7 +141,7 @@ public class TrainerControllerTest {
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
-        verify(trainerApplicationService).updatePassword(updatePasswordRequest);
+        verify(trainerApplicationService, times(1)).updatePassword(any(UpdatePasswordRequest.class));
     }
 
     @Test
@@ -218,7 +151,7 @@ public class TrainerControllerTest {
         WithdrawalUserRequest withdrawalUserRequest = mock(WithdrawalUserRequest.class);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("회원 탈퇴 성공했습니다.", null);
 
-        given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
+        given(authTokenApplicationService.resolveAuthToken(any(HttpServletRequest.class))).willReturn(authToken);
 
         // When
         ResponseEntity<?> responseEntity = trainerController.withdrawal(request, withdrawalUserRequest, null);
@@ -227,8 +160,8 @@ public class TrainerControllerTest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
 
-        verify(trainerApplicationService, times(1)).delete(withdrawalUserRequest.getEmail());
-        verify(authTokenApplicationService, times(1)).resolveAuthToken(request);
+        verify(trainerApplicationService, times(1)).delete(anyString());
+        verify(authTokenApplicationService, times(1)).resolveAuthToken(any(HttpServletRequest.class));
         verify(authTokenApplicationService, times(1)).deleteByAuthToken(anyString());
     }
 }

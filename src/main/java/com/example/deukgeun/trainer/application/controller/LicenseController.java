@@ -5,7 +5,7 @@ import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.trainer.application.dto.request.RemoveLicenseRequest;
 import com.example.deukgeun.trainer.application.dto.request.SaveLicenseRequest;
 import com.example.deukgeun.trainer.application.dto.response.LicenseResponse;
-import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
+import com.example.deukgeun.trainer.application.service.LicenseApplicationService;
 import com.example.deukgeun.trainer.infrastructure.api.LicenseOpenApiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LicenseController {
     private final LicenseOpenApiService licenseOpenApiService;
-    private final TrainerApplicationService trainerApplicationService;
+    private final LicenseApplicationService licenseApplicationService;
     private final AuthTokenApplicationServiceImpl authTokenApplicationService;
 
     /**
@@ -35,7 +35,7 @@ public class LicenseController {
      */
     @RequestMapping(method = RequestMethod.GET, path = "/{id}")
     public ResponseEntity<?> getLicensesById(@PathVariable Long id) {
-        List<LicenseResponse.List> response = trainerApplicationService.getLicensesById(id);
+        List<LicenseResponse.List> response = licenseApplicationService.getLicensesById(id);
 
         return RestResponseUtil.ok("자격증 조회 성공했습니다.", response);
     }
@@ -53,7 +53,7 @@ public class LicenseController {
         // 추출한 인증 토큰을 사용하여 현재 로그인한 사용자의 이메일을 얻습니다.
         String email = authTokenApplicationService.getUserPk(authToken);
         // 트레이너 애플리케이션 서비스를 사용하여 현재 사용자의 자격증 목록을 조회합니다.
-        List<LicenseResponse.List> response = trainerApplicationService.getLicensesByEmail(email);
+        List<LicenseResponse.List> response = licenseApplicationService.getLicensesByEmail(email);
 
         return RestResponseUtil.ok("자격증 조회 성공했습니다.", response);
     }
@@ -71,10 +71,6 @@ public class LicenseController {
         // 자격증을 검증하고 결과를 얻어옵니다.
         LicenseResponse.Result licenseResult = licenseOpenApiService.getLicenseVerificationResult(saveLicenseRequest);
 
-        // 요청 DTO에서 얻은 자격증 정보를 결과 객체에 설정합니다.
-        licenseResult.setCertificatename(saveLicenseRequest.getCertificateName());
-        licenseResult.setNo(saveLicenseRequest.getNo());
-
         // HTTP 요청에서 인증 토큰을 추출합니다.
         String authToken = authTokenApplicationService.resolveAuthToken(request);
 
@@ -82,7 +78,7 @@ public class LicenseController {
         String email = authTokenApplicationService.getUserPk(authToken);
 
         // 트레이너 애플리케이션 서비스를 사용하여 자격증을 저장합니다.
-        trainerApplicationService.saveLicense(email, licenseResult);
+        licenseApplicationService.saveLicense(email, licenseResult);
 
         return RestResponseUtil
                 .ok("자격증 등록 성공했습니다.", null);
@@ -105,9 +101,7 @@ public class LicenseController {
         String email = authTokenApplicationService.getUserPk(authToken);
 
         // 삭제할 자격증 ID 목록을 반복하며 각 자격증을 삭제합니다.
-        removeLicenseRequest
-                .getIds()
-                .forEach(licenceId -> trainerApplicationService.deleteLicenseByLicenseId(email, licenceId));
+        licenseApplicationService.deleteLicenseByEmailAndLicenseId(email, removeLicenseRequest);
 
         return RestResponseUtil.ok("자격증 삭제 성공했습니다.", null);
     }

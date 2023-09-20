@@ -9,7 +9,6 @@ import com.example.deukgeun.trainer.application.dto.request.UpdatePasswordReques
 import com.example.deukgeun.trainer.application.dto.request.WithdrawalUserRequest;
 import com.example.deukgeun.trainer.application.dto.response.TrainerResponse;
 import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
-import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +26,6 @@ import java.io.IOException;
 @RequestMapping("/api/trainer")
 @RequiredArgsConstructor
 public class TrainerController {
-
     private final TrainerApplicationService trainerApplicationService;
     private final AuthTokenApplicationService authTokenApplicationService;
 
@@ -45,11 +43,8 @@ public class TrainerController {
         // 추출한 인증 토큰을 사용하여 사용자의 이메일 정보를 얻습니다.
         String email = authTokenApplicationService.getUserPk(authToken);
 
-        // 이메일 정보를 기반으로 해당 사용자의 트레이너 정보를 조회합니다.
-        Trainer trainer = trainerApplicationService.findByEmail(email);
-
         // 조회된 트레이너 정보를 트레이너 응답 객체로 변환합니다.
-        TrainerResponse.Info response = new TrainerResponse.Info(trainer);
+        TrainerResponse.Info response = trainerApplicationService.getInfoByEmail(email);
 
         return RestResponseUtil.ok("마이 페이지 조회 성공했습니다.", response);
     }
@@ -68,11 +63,8 @@ public class TrainerController {
         // 추출한 인증 토큰을 사용하여 사용자의 이메일 정보를 얻습니다.
         String email = authTokenApplicationService.getUserPk(authToken);
 
-        // 이메일 정보를 기반으로 해당 사용자의 트레이너 정보를 조회합니다.
-        Trainer trainer = trainerApplicationService.findByEmail(email);
-
         // 조회된 트레이너 정보를 트레이너 상세 응답 객체로 변환합니다.
-        TrainerResponse.Detail response = new TrainerResponse.Detail(trainer);
+        TrainerResponse.Detail response = trainerApplicationService.getDetailByEmail(email);
 
         return RestResponseUtil.ok("마이 페이지 조회 성공했습니다.", response);
     }
@@ -90,7 +82,7 @@ public class TrainerController {
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> save(@Valid JoinRequest request, BindingResult bindingResult) throws IOException {
         // JoinRequest 객체를 사용하여 새로운 트레이너 회원을 등록하고 저장합니다.
-        Trainer saveTrainer = trainerApplicationService.save(request);
+        trainerApplicationService.save(request);
 
         return RestResponseUtil.ok("회원 가입 성공 했습니다.", null);
     }

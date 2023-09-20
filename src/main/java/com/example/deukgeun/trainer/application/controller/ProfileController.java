@@ -4,9 +4,7 @@ import com.example.deukgeun.authToken.application.service.AuthTokenApplicationSe
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.trainer.application.dto.UpdateProfileRequest;
 import com.example.deukgeun.trainer.application.dto.response.ProfileResponse;
-import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
-import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
-import com.example.deukgeun.trainer.domain.model.entity.Profile;
+import com.example.deukgeun.trainer.application.service.ProfileApplicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -22,7 +20,7 @@ import javax.validation.Valid;
 @RequestMapping("/api/trainer/profile")
 @RequiredArgsConstructor
 public class ProfileController {
-    private final TrainerApplicationService trainerApplicationService;
+    private final ProfileApplicationService profileApplicationService;
     private final AuthTokenApplicationService authTokenApplicationService;
 
     /**
@@ -32,13 +30,9 @@ public class ProfileController {
      * @return 조회된 트레이너의 프로필 정보를 포함한 응답 객체입니다.
      */
     @RequestMapping(method = RequestMethod.GET, path = "/{id}")
-    public ResponseEntity<?> getProfileById(@PathVariable Long id) {
+    public ResponseEntity<?> getProfile(@PathVariable Long id) {
         // 고유 식별자(id)를 사용하여 트레이너 정보를 조회합니다.
-        Trainer trainer = trainerApplicationService.findById(id);
-
-        // 조회된 트레이너의 프로필 정보를 가져옵니다.
-        Profile profile = trainer.getProfile();
-        ProfileResponse profileResponse = new ProfileResponse(profile.getPath());
+        ProfileResponse profileResponse = profileApplicationService.getProfileId(id);
 
         return RestResponseUtil.ok("트레이너 상세보기 성공했습니다.", profileResponse);
     }
@@ -50,7 +44,7 @@ public class ProfileController {
      * @return 조회된 트레이너 프로필 정보를 포함한 응답 객체입니다.
      */
     @RequestMapping(method = RequestMethod.GET, path = "/")
-    public ResponseEntity<?> getProfileByAuthToken(HttpServletRequest request) {
+    public ResponseEntity<?> getProfile(HttpServletRequest request) {
         // 요청에서 인증 토큰을 추출합니다.
         String authToken = authTokenApplicationService.resolveAuthToken(request);
 
@@ -58,7 +52,7 @@ public class ProfileController {
         String email = authTokenApplicationService.getUserPk(authToken);
 
         // 사용자의 이메일 정보를 기반으로 트레이너 프로필 정보를 조회합니다.
-        ProfileResponse profileResponse = trainerApplicationService.getProfileByEmail(email);
+        ProfileResponse profileResponse = profileApplicationService.getProfileByEmail(email);
 
         return RestResponseUtil.ok("트레이너 상세보기 성공했습니다.", profileResponse);
     }
@@ -84,7 +78,7 @@ public class ProfileController {
         String email = authTokenApplicationService.getUserPk(authToken);
 
         // 업데이트할 프로필 정보를 트레이너 서비스를 통해 업데이트합니다.
-        trainerApplicationService.updateProfile(email, updateProfileRequest.getProfile());
+        profileApplicationService.updateProfile(email, updateProfileRequest.getProfile());
 
         return RestResponseUtil.ok("프로필 정보 수정 성공했습니다.", null);
     }

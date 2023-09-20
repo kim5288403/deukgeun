@@ -6,6 +6,7 @@ import com.example.deukgeun.trainer.application.dto.request.UpdateInfoRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdatePasswordRequest;
 import com.example.deukgeun.trainer.application.dto.response.LicenseResponse;
 import com.example.deukgeun.trainer.application.dto.response.ProfileResponse;
+import com.example.deukgeun.trainer.application.dto.response.TrainerResponse;
 import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,20 +18,12 @@ import java.util.Map;
 
 public interface TrainerApplicationService {
     void delete(String email) throws IOException;
-    void deleteLicenseByLicenseId(String email, Long licenseId);
-    void deletePostByEmail(String email);
-    void deleteImageToS3(String email) throws IOException;
     boolean existsByEmail(String email);
     Trainer findById(Long id);
     Trainer findByEmail(String src);
-    ProfileResponse getProfileByEmail(String email);
-    List<LicenseResponse.List> getLicensesById(Long id);
-    List<LicenseResponse.List> getLicensesByEmail(String email);
+    TrainerResponse.Info getInfoByEmail(String email);
+    TrainerResponse.Detail getDetailByEmail(String email);
     Trainer save(JoinRequest request) throws IOException;
-    Trainer saveLicense(String email, LicenseResponse.Result licenseResult);
-    Map<Object, Object> saveImageToS3(HttpServletRequest request, HttpServletResponse response) throws Exception;
     void updateInfo(UpdateInfoRequest request);
-    void updateProfile(String email, MultipartFile file) throws Exception;
     void updatePassword(UpdatePasswordRequest request);
-    void uploadPost(String email, PostRequest postRequest);
 }

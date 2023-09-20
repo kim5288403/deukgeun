@@ -8,10 +8,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +44,35 @@ public class S3Service {
             // 객체가 존재하는 경우, 해당 객체를 Amazon S3 버킷에서 삭제합니다.
             amazonS3Client.deleteObject(AWS_S3_BUCKET, deletePath);
         }
+    }
+
+    /**
+     * 클라이언트로부터 이미지 파일을 수신하여 Amazon S3에 업로드하고 업로드된 이미지의 링크를 반환합니다.
+     *
+     * @param request  HTTP 요청 객체
+     * @return 이미지 업로드된 링크를 포함하는 맵 객체
+     * @throws Exception 이미지 업로드 및 유효성 검사 중 발생할 수 있는 예외
+     */
+    public Map<Object, Object> saveImageToS3(HttpServletRequest request) throws Exception {
+        // HTTP 요청에서 파일 파트를 가져옵니다.
+        Part filePart = request.getPart("file");
+        // 파일의 컨텐츠 타입을 확인합니다.
+        String contentType = filePart.getContentType();
+
+        // 요청의 컨텐츠 타입이 "multipart/form-data"인지 확인합니다.
+        MultipartFileUtil.validContentType(request.getContentType());
+
+        // 파일의 MIME 타입이 허용되는 이미지 타입인지 확인합니다.
+        MultipartFileUtil.validMimeType(contentType);
+
+        // 이미지 파일을 Amazon S3에 업로드하고 업로드된 이미지의 링크를 가져옵니다.
+        String filePath = uploadByPart(filePart);
+
+        // 업로드된 이미지의 링크를 responseData 맵에 저장합니다.
+        Map<Object, Object> responseData = new HashMap<>();
+        responseData.put("link", filePath);
+
+        return responseData;
     }
 
     /**

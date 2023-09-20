@@ -3,7 +3,8 @@ package com.example.deukgeun.trainer.application.controller;
 import com.example.deukgeun.authToken.application.service.implement.AuthTokenApplicationServiceImpl;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.trainer.application.dto.request.PostRequest;
-import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
+import com.example.deukgeun.trainer.application.service.PostApplicationService;
+import com.example.deukgeun.trainer.infrastructure.s3.S3Service;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,8 @@ import java.util.Map;
 @RestController
 public class PostController {
 
-    private final TrainerApplicationService trainerApplicationService;
+    private final S3Service s3Service;
+    private final PostApplicationService postApplicationService;
     private final AuthTokenApplicationServiceImpl authTokenApplicationService;
 
     /**
@@ -43,8 +45,8 @@ public class PostController {
         String email = authTokenApplicationService.getUserPk(authToken);
 
         // 사용자의 이메일과 게시글 식별자(src)를 이용하여 게시글을 삭제합니다.
-        trainerApplicationService.deletePostByEmail(email);
-        trainerApplicationService.deleteImageToS3(src);
+        postApplicationService.deletePost(email);
+        s3Service.delete(src);
 
         return RestResponseUtil.ok("게시글 삭제 성공했습니다.", null);
     }
@@ -53,11 +55,10 @@ public class PostController {
      * Amazon S3에서 이미지를 삭제합니다.
      *
      * @param src 삭제할 이미지의 식별자(src)를 나타내는 매개변수입니다.
-     * @throws IOException 이미지 삭제 과정에서 발생하는 입출력 예외를 처리합니다.
      */
     @RequestMapping(method = RequestMethod.DELETE, path = "/image")
-    public void deleteS3Image(@RequestParam("src") String src) throws IOException {
-        trainerApplicationService.deleteImageToS3(src);
+    public void deleteS3Image(@RequestParam("src") String src) {
+        s3Service.delete(src);
     }
 
     /**
@@ -75,7 +76,7 @@ public class PostController {
         String email = authTokenApplicationService.getUserPk(authToken);
 
         // 추출된 이메일로 게시글을 업로드하는 서비스 메서드를 호출합니다.
-        trainerApplicationService.uploadPost(email, postRequest);
+        postApplicationService.uploadPost(email, postRequest);
 
         return RestResponseUtil.ok("게시글 저장 성공했습니다.", null);
     }
@@ -90,7 +91,7 @@ public class PostController {
     @RequestMapping(method = RequestMethod.POST, path = "/image")
     public void uploadS3Image(HttpServletRequest request, HttpServletResponse response) throws Exception {
         // 사용자가 업로드한 이미지를 Amazon S3에 저장하고 결과 데이터를 받아옵니다.
-        Map<Object, Object> responseData = trainerApplicationService.saveImageToS3(request, response);
+        Map<Object, Object> responseData = s3Service.saveImageToS3(request);
 
         // 결과 데이터를 JSON 형식으로 변환합니다.
         String jsonResponseData = new Gson().toJson(responseData);

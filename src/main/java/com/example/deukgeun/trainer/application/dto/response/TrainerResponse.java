@@ -14,12 +14,8 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Data
-@AllArgsConstructor
 public class TrainerResponse {
-
     @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
     public static class Info {
         private String email;
 
@@ -34,22 +30,8 @@ public class TrainerResponse {
         private String introduction;
 
         private Integer price;
-
-        public Info(Trainer trainer) {
-            this.email = trainer.getEmail();
-            this.name = trainer.getName();
-            this.group = trainer.getGroup();
-            this.address = trainer.getAddress();
-            this.gender = trainer.getGender();
-            this.price = trainer.getPrice();
-            this.introduction = trainer.getIntroduction();
-        }
-
     }
-
     @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
     public static class Detail {
         private String email;
 
@@ -70,22 +52,6 @@ public class TrainerResponse {
         private Post post;
 
         private List<License> licenses;
-
-        public Detail(Trainer trainer) {
-            this.email = trainer.getEmail();
-            this.name = trainer.getName();
-            this.price = trainer.getPrice();
-            this.introduction = trainer.getIntroduction();
-            this.gender = trainer.getGender();
-            this.group = trainer.getGroup();
-            this.address = trainer.getAddress();
-            this.profile = trainer.getProfile();
-            this.licenses = trainer.getLicenses();
-            this.post = trainer.getPost();
-        }
-
     }
-
-
 
 }

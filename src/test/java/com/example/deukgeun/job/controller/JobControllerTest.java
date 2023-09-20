@@ -17,12 +17,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.validation.BindingResult;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
@@ -102,7 +107,9 @@ public class JobControllerTest {
         // Given
         String keyword = "test";
         int currentPage = 0;
-        Page<JobResponse.List> page = mock(Page.class);
+        PageRequest pageable = PageRequest.of(currentPage, 10);
+        List<JobResponse.List> list = new ArrayList<>();
+        Page<JobResponse.List> page = new PageImpl<>(list, pageable, list.size());
 
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공했습니다.", page);
         given(jobApplicationService.getListByKeyword(keyword, currentPage)).willReturn(page);
@@ -123,15 +130,11 @@ public class JobControllerTest {
         int currentPage = 0;
         String authToken = "testAuthToken";
         String email = "testEmail";
-        Member member = new Member(
-                123L,
-                email,
-                "test",
-                "test",
-                23,
-                Gender.M
-        );
-        Page<JobResponse.List> page = mock(Page.class);
+        Member member = mock(Member.class);
+
+        PageRequest pageable = PageRequest.of(currentPage, 10);
+        List<JobResponse.List> list = new ArrayList<>();
+        Page<JobResponse.List> page = new PageImpl<>(list, pageable, list.size());
 
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공했습니다.", page);
         given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);

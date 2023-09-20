@@ -1,10 +1,9 @@
 package com.example.deukgeun.trainer.domain.service.implement;
 
-import com.example.deukgeun.global.util.PasswordEncoderUtil;
-import com.example.deukgeun.trainer.application.dto.request.JoinRequest;
-import com.example.deukgeun.trainer.application.dto.request.UpdateInfoRequest;
-import com.example.deukgeun.trainer.application.dto.request.UpdatePasswordRequest;
-import com.example.deukgeun.trainer.application.dto.response.LicenseResponse;
+import com.example.deukgeun.trainer.domain.dto.SaveLicenseDTO;
+import com.example.deukgeun.trainer.domain.dto.SaveTrainerDTO;
+import com.example.deukgeun.trainer.domain.dto.UpdateInfoDTO;
+import com.example.deukgeun.trainer.domain.dto.UpdatePasswordDTO;
 import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import com.example.deukgeun.trainer.domain.model.entity.License;
 import com.example.deukgeun.trainer.domain.model.entity.Post;
@@ -44,7 +43,7 @@ public class TrainerDomainServiceImpl implements TrainerDomainService {
      * @throws EntityNotFoundException 주어진 이메일 또는 자격증 ID와 일치하는 데이터를 찾을 수 없을 때 발생
      */
     @Override
-    public void deleteLicenseByLicenseId(String email, Long licenseId) {
+    public void deleteLicenseByEmailAndLicenseId(String email, Long licenseId) {
         // 주어진 이메일로 트레이너 정보를 찾습니다.
         Trainer trainer = findByEmail(email);
 
@@ -68,12 +67,12 @@ public class TrainerDomainServiceImpl implements TrainerDomainService {
      * @param email 게시물을 작성한 트레이너의 이메일
      */
     @Override
-    public void deletePost(String email) {
+    public void deletePostByEmail(String email) {
         // 주어진 이메일로 트레이너 정보를 찾습니다.
         Trainer trainer = findByEmail(email);
 
         // 트레이너의 게시물을 삭제합니다.
-        trainer.deletePost();
+        trainer.setPost(null);
 
         // 변경된 트레이너 정보를 데이터베이스에 저장합니다.
         trainerRepository.save(trainer);
@@ -131,41 +130,40 @@ public class TrainerDomainServiceImpl implements TrainerDomainService {
     /**
      * 회원가입 요청을 처리하고, 새로운 트레이너 정보를 저장합니다.
      *
-     * @param request   회원가입 요청 정보
-     * @param fileName  프로필 이미지 파일 이름
+     * @param saveTrainerDTO   회원가입 요청 정보
      * @return 저장된 트레이너 정보
      */
     @Override
-    public Trainer save(JoinRequest request, String fileName) {
+    public Trainer save(SaveTrainerDTO saveTrainerDTO) {
         // 그룹 정보를 생성합니다.
         Group group = new Group(
-                request.getGroupStatus(),
-                request.getGroupName()
+                saveTrainerDTO.getGroupStatus(),
+                saveTrainerDTO.getGroupName()
         );
 
         // 주소 정보를 생성합니다.
         Address address =  new Address(
-                request.getPostcode(),
-                request.getJibunAddress(),
-                request.getRoadAddress(),
-                request.getDetailAddress(),
-                request.getExtraAddress()
+                saveTrainerDTO.getPostcode(),
+                saveTrainerDTO.getJibunAddress(),
+                saveTrainerDTO.getRoadAddress(),
+                saveTrainerDTO.getDetailAddress(),
+                saveTrainerDTO.getExtraAddress()
         );
 
         // 새로운 트레이너 정보를 생성합니다.
         Trainer trainer = Trainer.create(
-                request.getName(),
-                request.getEmail(),
-                PasswordEncoderUtil.encode(request.getPassword()),
+                saveTrainerDTO.getName(),
+                saveTrainerDTO.getEmail(),
+                saveTrainerDTO.getPassword(),
                 group,
                 address,
-                request.getGender(),
-                request.getPrice(),
-                request.getIntroduction()
+                saveTrainerDTO.getGender(),
+                saveTrainerDTO.getPrice(),
+                saveTrainerDTO.getIntroduction()
         );
 
         // 프로필 정보를 생성하고 트레이너에 연결합니다.
-        Profile profile = Profile.create(fileName);
+        Profile profile = Profile.create(saveTrainerDTO.getFileName());
         trainer.setProfile(profile);
 
         // 생성된 트레이너 정보를 저장하고 반환합니다.
@@ -175,20 +173,19 @@ public class TrainerDomainServiceImpl implements TrainerDomainService {
     /**
      * 트레이너의 자격증 정보를 저장하고, 트레이너 정보를 업데이트합니다.
      *
-     * @param email         자격증을 추가할 트레이너의 이메일 주소
-     * @param licenseResult 자격증 정보
+     * @param saveLicenseDTO 자격증 정보
      * @return 업데이트된 트레이너 정보
      */
     @Override
-    public Trainer saveLicense(String email, LicenseResponse.Result licenseResult) {
+    public Trainer saveLicense(SaveLicenseDTO saveLicenseDTO) {
         // 주어진 이메일로 트레이너 정보를 찾습니다.
-        Trainer trainer = findByEmail(email);
+        Trainer trainer = findByEmail(saveLicenseDTO.getEmail());
 
         // 자격증 정보를 생성합니다.
-        License license = License.create(licenseResult.getCertificatename(), licenseResult.getNo(), trainer.getId());
+        License license = License.create(saveLicenseDTO.getCertificatename(), saveLicenseDTO.getNo(), trainer.getId());
 
         // 트레이너의 자격증 목록에 생성한 자격증을 추가합니다.
-        trainer.getLicenses().add(license);
+        trainer.setLicenses(license);
 
         // 업데이트된 트레이너 정보를 저장하고 반환합니다.
         return trainerRepository.save(trainer);
@@ -197,15 +194,15 @@ public class TrainerDomainServiceImpl implements TrainerDomainService {
     /**
      * 주어진 이메일 주소에 해당하는 트레이너 정보를 업데이트합니다.
      *
-     * @param request 업데이트할 정보를 담은 요청 객체
+     * @param updateInfoDTO 업데이트할 정보를 담은 요청 객체
      */
     @Override
-    public void updateInfoByEmail(UpdateInfoRequest request) {
+    public void updateInfoByEmail(UpdateInfoDTO updateInfoDTO) {
         // 주어진 이메일로 트레이너 정보를 찾습니다.
-        Trainer trainer = findByEmail(request.getEmail());
+        Trainer trainer = findByEmail(updateInfoDTO.getEmail());
 
         // 트레이너 정보를 주어진 요청 객체를 사용하여 업데이트합니다.
-        trainer.updateInfo(request);
+        trainer.updateInfo(updateInfoDTO);
 
         // 변경된 트레이너 정보를 저장합니다.
         trainerRepository.save(trainer);
@@ -240,45 +237,32 @@ public class TrainerDomainServiceImpl implements TrainerDomainService {
     /**
      * 주어진 이메일 주소에 해당하는 트레이너의 비밀번호를 업데이트합니다.
      *
-     * @param request 비밀번호 업데이트 요청 정보
+     * @param updatePasswordDTO 비밀번호 업데이트 요청 정보
      */
     @Override
-    public void updatePasswordByEmail(UpdatePasswordRequest request) {
-        // 새로운 비밀번호를 암호화합니다.
-        String newPassword = PasswordEncoderUtil.encode(request.getNewPassword());
-
+    public void updatePasswordByEmail(UpdatePasswordDTO updatePasswordDTO) {
         // 주어진 이메일로 트레이너 정보를 찾습니다.
-        Trainer foundTrainer = findByEmail(request.getEmail());
+        Trainer foundTrainer = findByEmail(updatePasswordDTO.getEmail());
 
         // 트레이너의 비밀번호를 업데이트합니다.
-        foundTrainer.updatePassword(newPassword);
+        foundTrainer.updatePassword(updatePasswordDTO.getNewPassword());
 
         // 변경된 트레이너 정보를 저장합니다.
         trainerRepository.save(foundTrainer);
     }
 
-    /**
-     * 주어진 이메일 주소에 해당하는 트레이너의 게시물을 업로드하거나 업데이트합니다.
-     *
-     * @param email 주소에 해당하는 트레이너의 이메일
-     * @param html  게시물의 HTML 내용
-     */
+
     @Override
     public void uploadPostByEmail(String email, String html) {
         // 주어진 이메일로 트레이너 정보를 찾습니다.
         Trainer trainer = findByEmail(email);
 
-        // 트레이너가 이미 게시물을 가지고 있는지 확인합니다.
-        if (trainer.doesPostExist()) {
-            // 트레이너가 게시물을 가지고 있으면 HTML 내용을 업데이트합니다.
-            trainer.getPost().updateHtml(html);
-        } else {
-            // 트레이너가 게시물을 가지고 있지 않으면 새로운 게시물을 생성합니다.
-            Post post = Post.create(html);
-            trainer.setPost(post);
-        }
+        // 새로운 게시물을 생성합니다.
+        Post post = Post.create(html);
+        trainer.setPost(post);
 
         // 변경된 트레이너 정보를 저장합니다.
         trainerRepository.save(trainer);
     }
+
 }

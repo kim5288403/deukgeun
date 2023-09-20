@@ -2,21 +2,27 @@ package com.example.deukgeun.trainer.domain.model.aggregate;
 
 import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.global.util.LongIdGeneratorUtil;
-import com.example.deukgeun.trainer.application.dto.request.UpdateInfoRequest;
+import com.example.deukgeun.trainer.domain.dto.UpdateInfoDTO;
 import com.example.deukgeun.trainer.domain.model.entity.License;
 import com.example.deukgeun.trainer.domain.model.entity.Post;
 import com.example.deukgeun.trainer.domain.model.entity.Profile;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.Group;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@AllArgsConstructor
 public class Trainer {
 
   private Long id;
+
+  private Long profileId;
+
+  private Long postId;
 
   private String name;
 
@@ -34,61 +40,11 @@ public class Trainer {
 
   private String introduction;
 
-  private List<License> licenses = new ArrayList<>();
+  private List<License> licenses;
 
   private Profile profile;
 
   private Post post;
-
-  public Trainer(
-          Long id,
-          String name,
-          String email,
-          String password,
-          Group group,
-          Address address,
-          Gender gender,
-          Integer price,
-          String introduction,
-          List<License> license,
-          Profile profile,
-          Post post
-  ) {
-    this.id = id;
-    this.name = name;
-    this.email = email;
-    this.password = password;
-    this.group = group;
-    this.address = address;
-    this.gender = gender;
-    this.price = price;
-    this.introduction = introduction;
-    this.licenses = license;
-    this.profile = profile;
-    this.post = post;
-  }
-
-  public Trainer(
-          Long id,
-          String name,
-          String email,
-          String password,
-          Group group,
-          Address address,
-          Gender gender,
-          Integer price,
-          String introduction
-  ) {
-    this.id = id;
-    this.name = name;
-    this.email = email;
-    this.password = password;
-    this.group = group;
-    this.address = address;
-    this.gender = gender;
-    this.price = price;
-    this.introduction = introduction;
-  }
 
   public static Trainer create(
           String name,
@@ -103,47 +59,60 @@ public class Trainer {
     Long id = LongIdGeneratorUtil.gen();
     return new Trainer(
             id,
+            null,
+            null,
             name,
             email,
             password,
+            gender,
             group,
             address,
-            gender,
             price,
-            introduction
+            introduction,
+            new ArrayList<>(),
+            null,
+            null
             );
   }
-  public boolean doesPostExist() {
-    return this.post != null;
-  }
 
-  public void deletePost() {
-      this.post = null;
+  public void setLicenses(License license) {
+    this.licenses.add(license);
   }
   public void setProfile(Profile profile) {
     this.profile = profile;
+    if (profile == null) {
+      this.profileId = null;
+    } else {
+      this.profileId = profile.getId();
+    }
   }
   public void setPost(Post post) {
     this.post = post;
+    if (post == null) {
+      this.postId = null;
+    } else {
+      this.postId = post.getId();
+    }
   }
-  public void updateInfo(UpdateInfoRequest request) {
-    this.email = request.getEmail();
-    this.name = request.getName();
-    this.gender = request.getGender();
+  public void updateInfo(UpdateInfoDTO updateInfoDTO) {
+    this.email = updateInfoDTO.getEmail();
+    this.name = updateInfoDTO.getName();
+    this.gender = updateInfoDTO.getGender();
     this.address = new Address(
-                    request.getPostcode(),
-                    request.getJibunAddress(),
-                    request.getRoadAddress(),
-                    request.getDetailAddress(),
-                    request.getExtraAddress()
+            updateInfoDTO.getPostcode(),
+            updateInfoDTO.getJibunAddress(),
+            updateInfoDTO.getRoadAddress(),
+            updateInfoDTO.getDetailAddress(),
+            updateInfoDTO.getExtraAddress()
             );
-    this.price = request.getPrice();
+    this.price = updateInfoDTO.getPrice();
     this.group = new Group(
-            request.getGroupStatus(),
-            request.getGroupName()
+            updateInfoDTO.getGroupStatus(),
+            updateInfoDTO.getGroupName()
     );
-    this.introduction = request.getIntroduction();
+    this.introduction = updateInfoDTO.getIntroduction();
   }
+
   public void updatePassword(String newPassword) {
     this.password = newPassword;
   }
