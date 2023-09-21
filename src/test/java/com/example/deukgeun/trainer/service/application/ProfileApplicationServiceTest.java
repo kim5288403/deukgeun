@@ -5,6 +5,7 @@ import com.example.deukgeun.trainer.application.service.implement.ProfileApplica
 import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import com.example.deukgeun.trainer.domain.model.entity.Profile;
 import com.example.deukgeun.trainer.domain.service.TrainerDomainService;
+import com.example.deukgeun.trainer.infrastructure.persistence.mapper.ProfileMapper;
 import com.example.deukgeun.trainer.infrastructure.s3.S3Service;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -26,6 +27,8 @@ public class ProfileApplicationServiceTest {
     private TrainerDomainService trainerDomainService;
     @Mock
     private S3Service s3Service;
+    @Mock
+    private ProfileMapper profileMapper;
 
     @Test
     public void givenValidEmail_whenGetProfileByEmail_thenReturnProfileResponse() {
@@ -34,8 +37,10 @@ public class ProfileApplicationServiceTest {
         String path = "/path/to/profile";
         Trainer trainer = mock(Trainer.class);
         Profile profile = Profile.create(path);
+        ProfileResponse profileResponse = new ProfileResponse(path);
 
         given(trainerDomainService.findByEmail(anyString())).willReturn(trainer);
+        given(profileMapper.toProfileResponse(any(Profile.class))).willReturn(profileResponse);
         given(trainer.getProfile()).willReturn(profile);
 
         // When

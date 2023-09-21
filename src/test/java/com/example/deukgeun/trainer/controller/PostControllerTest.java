@@ -17,7 +17,6 @@ import org.springframework.validation.BindingResult;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +43,7 @@ public class PostControllerTest {
     private HttpServletResponse response;
 
     @Test
-    public void givenPostService_whenDeletePost_thenReturnSuccessResponse() throws IOException {
+    public void givenValidSrc_whenDeletePost_thenReturnSuccessResponse() {
         // Given
         String authToken = "exampleAuthToken";
         String email = "test";
@@ -65,10 +64,9 @@ public class PostControllerTest {
     }
 
     @Test
-    public void givenTokenServicePostService_whenUploadPost_thenReturnResponseEntity() {
+    public void givenValidPostRequest_whenUploadPost_thenReturnSuccessResponse() {
         // Given
-        PostRequest postRequest = new PostRequest();
-
+        PostRequest postRequest = mock(PostRequest.class);
         String authToken = "exampleAuthToken";
         String email = "test";
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("게시글 저장 성공했습니다.", null);
@@ -87,7 +85,7 @@ public class PostControllerTest {
     }
 
     @Test
-    public void givenPostService_whenUploadS3Image_thenReturnJsonResponse() throws Exception {
+    public void givenValidRequestAndResponse_whenUploadS3Image_thenReturnJsonResponse() throws Exception {
         // Given
         PrintWriter writer = mock(PrintWriter.class);
 

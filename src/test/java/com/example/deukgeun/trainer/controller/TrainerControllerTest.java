@@ -2,7 +2,6 @@ package com.example.deukgeun.trainer.controller;
 
 import com.example.deukgeun.authToken.application.service.AuthTokenApplicationService;
 import com.example.deukgeun.global.dto.RestResponse;
-import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.trainer.application.controller.TrainerController;
 import com.example.deukgeun.trainer.application.dto.request.JoinRequest;
@@ -11,25 +10,16 @@ import com.example.deukgeun.trainer.application.dto.request.UpdatePasswordReques
 import com.example.deukgeun.trainer.application.dto.request.WithdrawalUserRequest;
 import com.example.deukgeun.trainer.application.dto.response.TrainerResponse;
 import com.example.deukgeun.trainer.application.service.TrainerApplicationService;
-import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
-import com.example.deukgeun.trainer.domain.model.entity.Post;
-import com.example.deukgeun.trainer.domain.model.entity.Profile;
-import com.example.deukgeun.trainer.domain.model.valueobjcet.Address;
-import com.example.deukgeun.trainer.domain.model.valueobjcet.Group;
-import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -93,10 +83,9 @@ public class TrainerControllerTest {
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
-
         verify(authTokenApplicationService, times(1)).resolveAuthToken(any(HttpServletRequest.class));
         verify(authTokenApplicationService, times(1)).getUserPk(anyString());
-        verify(trainerApplicationService, times(1)).findByEmail(anyString());
+        verify(trainerApplicationService, times(1)).getDetailByEmail(anyString());
     }
 
     @Test
@@ -152,6 +141,7 @@ public class TrainerControllerTest {
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("회원 탈퇴 성공했습니다.", null);
 
         given(authTokenApplicationService.resolveAuthToken(any(HttpServletRequest.class))).willReturn(authToken);
+        given(withdrawalUserRequest.getEmail()).willReturn("email");
 
         // When
         ResponseEntity<?> responseEntity = trainerController.withdrawal(request, withdrawalUserRequest, null);

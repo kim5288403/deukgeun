@@ -211,9 +211,9 @@ class TrainerDomainServiceTest {
                 "introduction"
         );
         UpdateInfoDTO updateInfoDTO = mock(UpdateInfoDTO.class);
-        updateInfoDTO.setEmail("updateEmail");
 
         given(trainerRepository.findByEmail(anyString())).willReturn(Optional.of(trainer));
+        given(updateInfoDTO.getEmail()).willReturn("updateEmail");
 
         // When
         trainerDomainService.updateInfoByEmail(updateInfoDTO);

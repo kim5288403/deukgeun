@@ -101,10 +101,10 @@ public class LicenseControllerTest {
         LicenseResponse.Result licenseResult = mock(LicenseResponse.Result.class);
 
         given(licenseOpenApiService.getLicenseVerificationResult(any(SaveLicenseRequest.class))).willReturn(licenseResult);
-        given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
-        given(authTokenApplicationService.getUserPk(authToken)).willReturn(email);
-        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("자격증 등록 성공했습니다.", null);
+        given(authTokenApplicationService.resolveAuthToken(any(HttpServletRequest.class))).willReturn(authToken);
+        given(authTokenApplicationService.getUserPk(anyString())).willReturn(email);
 
+        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("자격증 등록 성공했습니다.", null);
 
         // When
         ResponseEntity<?> responseEntity = licenseController.saveLicense(request, saveLicenseRequest, null);

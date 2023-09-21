@@ -1,6 +1,6 @@
 package com.example.deukgeun.trainer.application.controller;
 
-import com.example.deukgeun.authToken.application.service.implement.AuthTokenApplicationServiceImpl;
+import com.example.deukgeun.authToken.application.service.AuthTokenApplicationService;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.trainer.application.dto.request.PostRequest;
 import com.example.deukgeun.trainer.application.service.PostApplicationService;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.Map;
 
 @RequestMapping("/api/trainer/post")
@@ -27,7 +26,7 @@ public class PostController {
 
     private final S3Service s3Service;
     private final PostApplicationService postApplicationService;
-    private final AuthTokenApplicationServiceImpl authTokenApplicationService;
+    private final AuthTokenApplicationService authTokenApplicationService;
 
     /**
      * 게시글을 삭제합니다.
@@ -37,7 +36,7 @@ public class PostController {
      * @return 게시글 삭제 결과를 나타내는 ResponseEntity 객체입니다.
      */
     @RequestMapping(method = RequestMethod.DELETE, path = "/")
-    public ResponseEntity<?> deletePost(HttpServletRequest request, @RequestParam("src") String src) throws IOException {
+    public ResponseEntity<?> deletePost(HttpServletRequest request, @RequestParam("src") String src) {
         // HTTP 요청에서 인증 토큰을 추출합니다.
         String authToken = authTokenApplicationService.resolveAuthToken(request);
 

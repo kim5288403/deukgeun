@@ -1,8 +1,7 @@
 package com.example.deukgeun.job.controller;
 
-import com.example.deukgeun.global.dto.RestResponse;
 import com.example.deukgeun.authToken.application.service.implement.AuthTokenApplicationServiceImpl;
-import com.example.deukgeun.global.enums.Gender;
+import com.example.deukgeun.global.dto.RestResponse;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.job.application.controller.JobController;
 import com.example.deukgeun.job.application.dto.request.SaveJobRequest;
@@ -25,7 +24,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.validation.BindingResult;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,46 +49,41 @@ public class JobControllerTest {
     private HttpServletRequest request;
 
     @Test
-    public void givenJobService_whenCheckJobOwnership_thenReturnResponseEntity() {
+    public void givenValidIdAndAuthToken_whenCheckJobOwnership_thenReturnSuccessResponse() {
         // Given
         Long id = 1L;
-        Long memberId = 1L;
         String authToken = "testAuthToken";
         String email = "testEmail";
-        Member member = new Member(
-                memberId,
-                email,
-                "test",
-                "test",
-                23,
-                Gender.M
-        );
+        Member member = mock(Member.class);
+
+        given(authTokenApplicationService.resolveAuthToken(any(HttpServletRequest.class))).willReturn(authToken);
+        given(authTokenApplicationService.getUserPk(anyString())).willReturn(email);
+        given(memberApplicationService.findByEmail(anyString())).willReturn(member);
+        given(jobApplicationService.existsByIdAndMemberId(anyLong(), anyLong())).willReturn(true);
 
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("체크 성공했습니다.", true);
-        given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
-        given(authTokenApplicationService.getUserPk(authToken)).willReturn(email);
-        given(memberApplicationService.findByEmail(email)).willReturn(member);
-        given(jobApplicationService.existsByIdAndMemberId(id, member.getId())).willReturn(true);
 
         // When
         ResponseEntity<?> responseEntity = jobController.checkJobOwnership(request, id);
 
         // Then
-        verify(authTokenApplicationService, times(1)).resolveAuthToken(request);
-        verify(authTokenApplicationService, times(1)).getUserPk(authToken);
-        verify(memberApplicationService, times(1)).findByEmail(email);
-        verify(jobApplicationService, times(1)).existsByIdAndMemberId(id, memberId);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
+        verify(authTokenApplicationService, times(1)).resolveAuthToken(any(HttpServletRequest.class));
+        verify(authTokenApplicationService, times(1)).getUserPk(anyString());
+        verify(memberApplicationService, times(1)).findByEmail(anyString());
+        verify(jobApplicationService, times(1)).existsByIdAndMemberId(anyLong(), anyLong());
     }
 
     @Test
-    public void givenJobService_whenDetail_thenReturnResponseEntity() {
+    public void givenValidId_whenDetail_thenReturnReturnSuccessResponse() {
         // Given
         long id = 5L;
         JobResponse.Detail jobDetail = mock(JobResponse.Detail.class);
+
+        given(jobApplicationService.getDetail(anyLong())).willReturn(jobDetail);
+
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공했습니다.", jobDetail);
-        given(jobApplicationService.getDetail(id)).willReturn(jobDetail);
 
         // When
         ResponseEntity<?> responseEntity = jobController.detail(id);
@@ -98,35 +91,34 @@ public class JobControllerTest {
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
-
         verify(jobApplicationService, times(1)).getDetail(anyLong());
     }
 
     @Test
-    public void givenJobService_whenGetListByKeyword_thenReturnResponseEntity() {
+    public void givenValidKeywordAndCurrentPage_whenGetListByKeyword_thenReturnSuccessResponse() {
         // Given
         String keyword = "test";
         int currentPage = 0;
         PageRequest pageable = PageRequest.of(currentPage, 10);
         List<JobResponse.List> list = new ArrayList<>();
-        Page<JobResponse.List> page = new PageImpl<>(list, pageable, list.size());
+        Page<JobResponse.List> page = new PageImpl<>(list, pageable, 0);
+
+        given(jobApplicationService.getListByKeyword(anyString(), anyInt())).willReturn(page);
 
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공했습니다.", page);
-        given(jobApplicationService.getListByKeyword(keyword, currentPage)).willReturn(page);
 
         // When
         ResponseEntity<?> responseEntity = jobController.getListByKeyword(keyword, currentPage);
 
         // Then
-        verify(jobApplicationService, times(1)).getListByKeyword(keyword, currentPage);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
+        verify(jobApplicationService, times(1)).getListByKeyword(anyString(), anyInt());
     }
 
     @Test
-    public void givenJobService_whenGetListByMemberId_thenReturnResponseEntity() {
+    public void givenValidAuthToken_whenGetList_thenReturnSuccessResponse() {
         // Given
-        Long memberId = 123L;
         int currentPage = 0;
         String authToken = "testAuthToken";
         String email = "testEmail";
@@ -134,44 +126,40 @@ public class JobControllerTest {
 
         PageRequest pageable = PageRequest.of(currentPage, 10);
         List<JobResponse.List> list = new ArrayList<>();
-        Page<JobResponse.List> page = new PageImpl<>(list, pageable, list.size());
+        Page<JobResponse.List> page = new PageImpl<>(list, pageable, 0);
+
+        given(authTokenApplicationService.resolveAuthToken(any(HttpServletRequest.class))).willReturn(authToken);
+        given(authTokenApplicationService.getUserPk(anyString())).willReturn(email);
+        given(memberApplicationService.findByEmail(anyString())).willReturn(member);
+        given(jobApplicationService.getListByMemberId(anyLong(), anyInt())).willReturn(page);
 
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공했습니다.", page);
-        given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
-        given(authTokenApplicationService.getUserPk(authToken)).willReturn(email);
-        given(memberApplicationService.findByEmail(email)).willReturn(member);
-        given(jobApplicationService.getListByMemberId(memberId, currentPage)).willReturn(page);
 
         // When
-        ResponseEntity<?> responseEntity = jobController.getListByMemberId(request, currentPage);
+        ResponseEntity<?> responseEntity = jobController.getList(request, currentPage);
 
         // Then
-        verify(jobApplicationService, times(1)).getListByMemberId(memberId, currentPage);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
+        verify(jobApplicationService, times(1)).getListByMemberId(anyLong(), anyInt());
     }
 
     @Test
-    public void givenJobService_whenSave_thenReturnResponseEntity() {
+    public void givenValidSaveJobRequest_whenSave_thenReturnSuccessResponse() {
         // Given
         String authToken = "testAuthToken";
         String userPk = "testUserPk";
         Job job = mock(Job.class);
-        Member member = new Member(
-                123L,
-                userPk,
-                "test",
-                "test",
-                23,
-                Gender.M
-        );
-        SaveJobRequest saveJobRequest = mock(SaveJobRequest.class);
-        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("등록 성공했습니다.", null);
+        Member member = mock(Member.class);
 
-        given(authTokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
-        given(authTokenApplicationService.getUserPk(authToken)).willReturn(userPk);
-        given(memberApplicationService.findByEmail(userPk)).willReturn(member);
-        given(jobApplicationService.save(saveJobRequest, member.getId())).willReturn(job);
+        SaveJobRequest saveJobRequest = mock(SaveJobRequest.class);
+
+        given(authTokenApplicationService.resolveAuthToken(any(HttpServletRequest.class))).willReturn(authToken);
+        given(authTokenApplicationService.getUserPk(anyString())).willReturn(userPk);
+        given(memberApplicationService.findByEmail(anyString())).willReturn(member);
+        given(jobApplicationService.save(any(SaveJobRequest.class), anyLong())).willReturn(job);
+
+        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("등록 성공했습니다.", null);
 
         // When
         ResponseEntity<?> responseEntity = jobController.save(request, saveJobRequest, bindingResult);
@@ -179,10 +167,9 @@ public class JobControllerTest {
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
-
-        verify(authTokenApplicationService, times(1)).resolveAuthToken(request);
-        verify(authTokenApplicationService, times(1)).getUserPk(authToken);
-        verify(memberApplicationService, times(1)).findByEmail(userPk);
-        verify(jobApplicationService, times(1)).save(saveJobRequest, member.getId());
+        verify(authTokenApplicationService, times(1)).resolveAuthToken(any(HttpServletRequest.class));
+        verify(authTokenApplicationService, times(1)).getUserPk(anyString());
+        verify(memberApplicationService, times(1)).findByEmail(anyString());
+        verify(jobApplicationService, times(1)).save(any(SaveJobRequest.class), anyLong());
     }
 }

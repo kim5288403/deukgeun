@@ -1,6 +1,6 @@
 package com.example.deukgeun.trainer.application.controller;
 
-import com.example.deukgeun.authToken.application.service.implement.AuthTokenApplicationServiceImpl;
+import com.example.deukgeun.authToken.application.service.AuthTokenApplicationService;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.trainer.application.dto.request.RemoveLicenseRequest;
 import com.example.deukgeun.trainer.application.dto.request.SaveLicenseRequest;
@@ -25,7 +25,7 @@ import java.util.List;
 public class LicenseController {
     private final LicenseOpenApiService licenseOpenApiService;
     private final LicenseApplicationService licenseApplicationService;
-    private final AuthTokenApplicationServiceImpl authTokenApplicationService;
+    private final AuthTokenApplicationService authTokenApplicationService;
 
     /**
      * 특정 ID에 해당하는 트레이너의 자격증 목록을 조회합니다.

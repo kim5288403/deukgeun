@@ -1,6 +1,5 @@
 package com.example.deukgeun.trainer.service.application;
 
-import com.example.deukgeun.global.util.MultipartFileUtil;
 import com.example.deukgeun.trainer.application.dto.request.JoinRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdateInfoRequest;
 import com.example.deukgeun.trainer.application.dto.request.UpdatePasswordRequest;
@@ -11,8 +10,8 @@ import com.example.deukgeun.trainer.domain.dto.UpdatePasswordDTO;
 import com.example.deukgeun.trainer.domain.model.aggregate.Trainer;
 import com.example.deukgeun.trainer.domain.model.entity.Profile;
 import com.example.deukgeun.trainer.domain.service.TrainerDomainService;
+import com.example.deukgeun.trainer.infrastructure.persistence.mapper.TrainerMapper;
 import com.example.deukgeun.trainer.infrastructure.s3.S3Service;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -30,12 +29,14 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class TrainerApplicationServiceTest {
+    @InjectMocks
+    private TrainerApplicationServiceImpl trainerApplicationService;
     @Mock
     private TrainerDomainService trainerDomainService;
     @Mock
     private S3Service s3Service;
-    @InjectMocks
-    private TrainerApplicationServiceImpl trainerApplicationService;
+    @Mock
+    private TrainerMapper trainerMapper;
 
     @Test
     void givenValidEmail_whenDelete_thenS3ServiceAndTrainerDeleteCalled() {
@@ -129,6 +130,7 @@ class TrainerApplicationServiceTest {
         given(request.getProfile()).willReturn(mock(MockMultipartFile.class));
         given(s3Service.uploadByMultiPartFile(any(MultipartFile.class))).willReturn("fileName");
         given(trainerDomainService.save(saveTrainerDTO)).willReturn(trainer);
+        given(trainerMapper.toSaveTrainerDto(anyString(), any(JoinRequest.class))).willReturn(saveTrainerDTO);
 
         // When
         Trainer result = trainerApplicationService.save(request);
@@ -143,10 +145,11 @@ class TrainerApplicationServiceTest {
     void givenValidUpdateInfoRequest_whenUpdateInfo_thenUpdateInfoByEmailCalled() throws EntityNotFoundException {
         // Given
         UpdateInfoRequest request = new UpdateInfoRequest();
-        request.setEmail("johndoe@example.com");
+        UpdateInfoDTO updateInfoDTO = mock(UpdateInfoDTO.class);
         Trainer trainer = mock(Trainer.class);
 
         given(trainerDomainService.findByEmail(anyString())).willReturn(trainer);
+        given(trainerMapper.toUpdateInfoDto(any(UpdateInfoRequest.class))).willReturn(updateInfoDTO);
 
         // When
         trainerApplicationService.updateInfo(request);
@@ -159,6 +162,9 @@ class TrainerApplicationServiceTest {
     void givenValidUpdatePasswordRequest_whenUpdatePassword_thenUpdatePasswordByEmailCalled() {
         // Given
         UpdatePasswordRequest request = mock(UpdatePasswordRequest.class);
+        UpdatePasswordDTO updatePasswordDTO = mock(UpdatePasswordDTO.class);
+
+        given(trainerMapper.toUpdatePasswordDto(any(UpdatePasswordRequest.class))).willReturn(updatePasswordDTO);
 
         // When
         trainerApplicationService.updatePassword(request);

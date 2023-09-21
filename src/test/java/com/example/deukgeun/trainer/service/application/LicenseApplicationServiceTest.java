@@ -37,13 +37,17 @@ public class LicenseApplicationServiceTest {
     public void givenValidEmailAndRemoveLicenseRequest_whenDeleteLicenseByLicenseId_thenLicenseDeleteCalled() {
         // Given
         String email = "email";
-        RemoveLicenseRequest removeLicenseRequest = mock(RemoveLicenseRequest.class);
+        List<Long> ids = new ArrayList<>();
+        ids.add(1L);
+        ids.add(2L);
+        RemoveLicenseRequest removeLicenseRequest = new RemoveLicenseRequest();
+        removeLicenseRequest.setIds(ids);
 
         // When
         licenseApplicationService.deleteLicenseByEmailAndLicenseId(email, removeLicenseRequest);
 
         // Then
-        verify(trainerDomainService, times(1)).deleteLicenseByEmailAndLicenseId(anyString(), anyLong());
+        verify(trainerDomainService, times(ids.size())).deleteLicenseByEmailAndLicenseId(anyString(), anyLong());
     }
 
     @Test

@@ -81,9 +81,11 @@ public class ProfileControllerTest {
         String email = "test@example.com";
         String authToken = "validAuthToken";
         UpdateProfileRequest updateRequest = mock(UpdateProfileRequest.class);
+        MultipartFile multipartFile = mock(MultipartFile.class);
 
         given(authTokenApplicationService.resolveAuthToken(any(HttpServletRequest.class))).willReturn(authToken);
-        given(authTokenApplicationService.getUserPk(authToken)).willReturn(email);
+        given(authTokenApplicationService.getUserPk(anyString())).willReturn(email);
+        given(updateRequest.getProfile()).willReturn(multipartFile);
 
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("프로필 정보 수정 성공했습니다.", null);
 

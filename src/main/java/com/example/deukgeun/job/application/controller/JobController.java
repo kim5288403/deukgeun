@@ -80,7 +80,7 @@ public class JobController {
      * @return 사용자의 공고 목록을 담은 응답입니다.
      */
     @RequestMapping(method = RequestMethod.GET, path = "/member")
-    public ResponseEntity<?> getListByMemberId(HttpServletRequest request, int currentPage) {
+    public ResponseEntity<?> getList(HttpServletRequest request, int currentPage) {
         String token = authTokenApplicationService.resolveAuthToken(request);
         String userPk = authTokenApplicationService.getUserPk(token);
         Member member = memberApplicationService.findByEmail(userPk);
