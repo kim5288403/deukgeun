@@ -1,4 +1,4 @@
-package com.example.deukgeun.applicant.service;
+package com.example.deukgeun.applicant.service.application;
 
 import com.example.deukgeun.applicant.application.dto.request.PaymentInfoRequest;
 import com.example.deukgeun.applicant.application.dto.response.IamPortCancelResponse;

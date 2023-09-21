@@ -1,4 +1,4 @@
-package com.example.deukgeun.applicant.service;
+package com.example.deukgeun.applicant.service.application;
 
 import com.example.deukgeun.applicant.application.dto.request.SaveMatchInfoRequest;
 import com.example.deukgeun.applicant.application.service.implement.MatchApplicationServiceImpl;

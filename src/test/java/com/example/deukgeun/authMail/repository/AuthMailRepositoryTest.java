@@ -27,7 +27,7 @@ public class AuthMailRepositoryTest {
     }
 
     @Test
-    void givenAuthMail_whenDeleteByEmail_thenIsDeleted() {
+    void givenValidAuthMail_whenDeleteByEmail_thenAuthMailIsDeleted() {
         // Given
         String email = "testEmail@test.com";
         String code = "1t2e3s4t";
@@ -51,7 +51,7 @@ public class AuthMailRepositoryTest {
     }
 
     @Test
-    void givenAuthMail_whenExistsByEmail_thenReturnsTrue() {
+    void givenValidEmail_whenExistsByEmail_thenReturnsTrue() {
         // Given
         String email = "testEmail@test.com";
         String code = "1t2e3s4t";
@@ -74,7 +74,7 @@ public class AuthMailRepositoryTest {
     }
 
     @Test
-    void givenAuthMail_whenExistsByEmailAndCode_thenReturnsTrue() {
+    void givenValidEmailAndCode_whenExistsByEmailAndCode_thenReturnsTrue() {
         // Given
         String email = "testEmail@test.com";
         String code = "1t2e3s4t";
@@ -97,7 +97,7 @@ public class AuthMailRepositoryTest {
     }
 
     @Test
-    void givenAuthMail_whenFindById_thenReturnValid() {
+    void givenValidId_whenFindById_thenReturnFoundIsAuthMail() {
         // Given
         String email = "testEmail@test.com";
         String code = "1t2e3s4t";
@@ -122,7 +122,7 @@ public class AuthMailRepositoryTest {
     }
 
     @Test
-    void givenAuthMail_whenFindByEmail_thenReturnValid() {
+    void givenValidEmail_whenFindByEmail_thenReturnFoundIsAuthMail() {
         // Given
         String email = "testEmail@test.com";
         String code = "1t2e3s4t";
@@ -147,7 +147,7 @@ public class AuthMailRepositoryTest {
     }
 
     @Test
-    void givenAuthMail_whenFindByEmailAndCode_thenReturnValid() {
+    void givenValidEmailAndCode_whenFindByEmailAndCode_thenReturnFoundIsAuthMail() {
         // Given
         String email = "testEmail@test.com";
         String code = "1t2e3s4t";
@@ -172,7 +172,7 @@ public class AuthMailRepositoryTest {
     }
 
     @Test
-    void givenAuthMail_whenSaved_thenReturnValid() {
+    void givenValidAuthMail_whenSave_thenReturnSavedIsAuthMail() {
         // Given
         String email = "testEmail@test.com";
         String code = "1t2e3s4t";

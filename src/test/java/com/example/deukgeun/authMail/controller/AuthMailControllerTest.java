@@ -19,9 +19,10 @@ import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class AuthMailControllerTest {
@@ -30,42 +31,44 @@ public class AuthMailControllerTest {
     @Mock
     private AuthMailApplicationService authMailApplicationService;
     @Mock
-    private KafkaTemplate<String, String> kafkaTemplate;
+    private KafkaTemplate<String, AuthMailRequest> kafkaTemplate;
     @Mock
     private BindingResult bindingResult;
 
     @Test
-    public void givenValidEmailRequest_WhenSend_ThenSendEmailAndReturnOkResponse() throws MessagingException, UnsupportedEncodingException {
+    public void givenValidEmailRequest_whenSend_thenReturnSuccessResponse() throws MessagingException, UnsupportedEncodingException {
         // Given
         EmailRequest emailRequest = new EmailRequest();
         emailRequest.setEmail("dummyEmail");
-        String toEmail = emailRequest.getEmail();
-        String authCode = "dummyAuthCode";
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("인증 메일 보내기 성공했습니다.", null);
-        given(authMailApplicationService.createCode()).willReturn(authCode);
+
+        given(authMailApplicationService.createCode()).willReturn("createCode");
 
         // When
         ResponseEntity<?> responseEntity = authMailController.send(emailRequest, bindingResult);
 
         // Then
-        verify(authMailApplicationService, times(1)).deleteByEmail(toEmail);
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseEntity.getBody()).isEqualTo(expectedResponse.getBody());
+        verify(authMailApplicationService, times(1)).deleteByEmail(anyString());
+        verify(authMailApplicationService, times(1)).createCode();
+        verify(authMailApplicationService, times(1)).save(any(AuthMailRequest.class));
+        verify(kafkaTemplate, times(1)).send(anyString(), any(AuthMailRequest.class));
     }
 
     @Test
-    public void givenValidAuthMailRequest_WhenConfirm_ThenCallMailServiceAndReturnOkResponse() {
+    public void givenValidAuthMailRequest_whenConfirm_thenReturnSuccessResponse() {
         // Given
-        AuthMailRequest authMailRequest = new AuthMailRequest();
+        AuthMailRequest authMailRequest = mock(AuthMailRequest.class);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("메일 인증 성공 했습니다.", null);
 
         // When
         ResponseEntity<?> responseEntity = authMailController.confirm(authMailRequest, bindingResult);
 
         // Then
-        verify(authMailApplicationService).confirm(authMailRequest);
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseEntity.getBody()).isEqualTo(expectedResponse.getBody());
+        verify(authMailApplicationService, times(1)).confirm(any(AuthMailRequest.class));
     }
 
 }

@@ -56,7 +56,7 @@ public class AuthMailController {
     authMailApplicationService.save(authMailRequest);
 
     // Kafka 를 사용하여 인증 메일 요청을 토픽에 전송
-    kafkaTemplate.send("authMail", authMailRequest);
+    kafkaTemplate.send("send", authMailRequest);
 
     return RestResponseUtil
     .ok("인증 메일 보내기 성공했습니다.", null);

@@ -23,7 +23,7 @@ public class AuthMailDomainServiceImpl implements AuthMailDomainService {
      */
     @Override
     public void confirm(ConfirmDTO confirmDTO) {
-        AuthMail authMail = this.findByEmailAndCode(confirmDTO.getEmail(), confirmDTO.getCode());
+        AuthMail authMail = findByEmailAndCode(confirmDTO.getEmail(), confirmDTO.getCode());
         authMail.updateMailStatus(MailStatus.Y);
         authMailRepository.save(authMail);
     }
@@ -35,9 +35,7 @@ public class AuthMailDomainServiceImpl implements AuthMailDomainService {
      */
     @Override
     public void deleteByEmail(String email) {
-        if (this.existsByEmail(email)) {
-            authMailRepository.deleteByEmail(email);
-        }
+        authMailRepository.deleteByEmail(email);
     }
 
     /**
@@ -99,7 +97,7 @@ public class AuthMailDomainServiceImpl implements AuthMailDomainService {
      */
     @Override
     public boolean isEmailAuthenticated(String email) {
-        AuthMail authMail = this.findByEmail(email);
+        AuthMail authMail = findByEmail(email);
 
         return authMail.isEmailAuthenticated();
     }

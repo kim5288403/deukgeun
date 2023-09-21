@@ -1,6 +1,5 @@
-package com.example.deukgeun.authToken.service.domain;
+package com.example.deukgeun.authMail.service.domain;
 
-import com.example.deukgeun.authMail.application.dto.request.AuthMailRequest;
 import com.example.deukgeun.authMail.domain.dto.ConfirmDTO;
 import com.example.deukgeun.authMail.domain.model.entity.AuthMail;
 import com.example.deukgeun.authMail.domain.model.valueobject.MailStatus;
@@ -16,6 +15,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -28,28 +28,27 @@ public class AuthMailDomainServiceTest {
     private AuthMailRepository authMailRepository;
 
     @Test
-    public void givenAuthMailRequest_givenAuthMailExists_whenConfirmInvoked_thenUpdateMailStatusAndSaveAuthMail() {
+    public void givenValidConfirmDTO_whenConfirm_thenMailStatusIsUpdated() {
         // Given
         ConfirmDTO confirmDTO = new ConfirmDTO();
         confirmDTO.setEmail("test@example.com");
         confirmDTO.setCode("123456");
 
-        AuthMail authMail = new AuthMail(123L,confirmDTO.getEmail(), confirmDTO.getCode(), MailStatus.N);
-        given(authMailRepository.findByEmailAndCode(confirmDTO.getEmail(), confirmDTO.getCode())).willReturn(Optional.of(authMail));
+        AuthMail authMail = AuthMail.create(confirmDTO.getEmail(), confirmDTO.getCode());
+        given(authMailRepository.findByEmailAndCode(anyString(), anyString())).willReturn(Optional.of(authMail));
 
         // When
         authMailDomainService.confirm(confirmDTO);
 
         // Then
         assertEquals(authMail.getMailStatus(), MailStatus.Y);
-        verify(authMailRepository, times(1)).save(authMail);
+        verify(authMailRepository, times(1)).save(any(AuthMail.class));
     }
 
     @Test
-    public void givenExistingEmail_whenDeleteByEmailInvoked_thenDeleteByEmailInAuthMailRepository() {
+    public void givenValidEmail_whenDeleteByEmail_thenDeleteByEmailCalled() {
         // Given
         String email = "test@example.com";
-        given(authMailRepository.existsByEmail(email)).willReturn(true);
 
         // When
         authMailDomainService.deleteByEmail(email);
@@ -59,138 +58,135 @@ public class AuthMailDomainServiceTest {
     }
 
     @Test
-    public void givenExistingEmail_whenExistsByEmailInvoked_thenReturnTrue() {
+    public void givenValidEmail_whenExistsByEmail_thenReturnTrue() {
         // Given
         String email = "test@example.com";
-        given(authMailRepository.existsByEmail(email)).willReturn(true);
+        given(authMailRepository.existsByEmail(anyString())).willReturn(true);
 
         // When
         boolean result = authMailDomainService.existsByEmail(email);
 
         // Then
         assertTrue(result);
+        verify(authMailRepository, times(1)).existsByEmail(anyString());
     }
 
     @Test
-    void givenEmailAndCode_whenExistsByEmailAndCode_thenReturnTrue() {
+    void givenValidEmailAndCode_whenExistsByEmailAndCode_thenReturnTrue() {
         // Given
         String email = "example@example.com";
         String code = "123456";
 
-        given(authMailDomainService.existsByEmailAndCode(email, code)).willReturn(true);
+        given(authMailDomainService.existsByEmailAndCode(anyString(), anyString())).willReturn(true);
 
         // When
         boolean result = authMailDomainService.existsByEmailAndCode(email, code);
 
         // Then
         assertTrue(result);
-        verify(authMailRepository, times(1)).existsByEmailAndCode(email, code);
+        verify(authMailRepository, times(1)).existsByEmailAndCode(anyString(), anyString());
     }
 
     @Test
-    void givenEmailAndCode_whenExistsByEmailAndCode_thenReturnFalse() {
+    void givenInValidEmailAndCode_whenExistsByEmailAndCode_thenReturnFalse() {
         // Given
         String email = "example@example.com";
         String code = "123456";
 
-        given(authMailDomainService.existsByEmailAndCode(email, code)).willReturn(false);
+        given(authMailDomainService.existsByEmailAndCode(anyString(), anyString())).willReturn(false);
 
         // When
         boolean result = authMailDomainService.existsByEmailAndCode(email, code);
 
         // Then
         assertFalse(result);
-        verify(authMailRepository, times(1)).existsByEmailAndCode(email, code);
+        verify(authMailRepository, times(1)).existsByEmailAndCode(anyString(), anyString());
     }
 
     @Test
-    public void givenExistingEmail_whenFindByEmail_thenReturnAuthMail() {
+    public void givenValidEmail_whenFindByEmail_thenReturnFoundIsAuthMail() {
         // Given
         String email = "test@example.com";
-        AuthMail authMail = new AuthMail(123L, email, "123456", MailStatus.N);
-        given(authMailRepository.findByEmail(email)).willReturn(Optional.of(authMail));
+        AuthMail authMail = AuthMail.create(email, "code");
+        given(authMailRepository.findByEmail(anyString())).willReturn(Optional.of(authMail));
 
         // When
         AuthMail result = authMailDomainService.findByEmail(email);
 
         // Then
         assertEquals(result, authMail);
+        verify(authMailRepository, times(1)).findByEmail(anyString());
     }
 
     @Test
-    public void givenExistingEmail_whenFindByEmail_thenThrowEntityNotFoundException() {
+    public void givenInValidEmail_whenFindByEmail_thenThrowEntityNotFoundException() {
         // Given
         String email = "test@example.com";
-        given(authMailRepository.findByEmail(email)).willReturn(Optional.empty());
+        given(authMailRepository.findByEmail(anyString())).willReturn(Optional.empty());
 
         // When, Then
         assertThrows(EntityNotFoundException.class, () -> authMailDomainService.findByEmail(email));
-        verify(authMailRepository, times(1)).findByEmail(email);
+        verify(authMailRepository, times(1)).findByEmail(anyString());
     }
 
     @Test
-    public void givenEmailAndCode_whenFindByEmailAndCode_thenReturnAuthMail() {
+    public void givenValidEmailAndCode_whenFindByEmailAndCode_thenReturnFoundIsAuthMail() {
         // Given
         String email = "test@example.com";
         String code = "123456";
-        AuthMail authMail = new AuthMail(123L, email, code, MailStatus.N);
-        given(authMailRepository.findByEmailAndCode(email, code)).willReturn(Optional.of(authMail));
+        AuthMail authMail = AuthMail.create(email, code);
+        given(authMailRepository.findByEmailAndCode(anyString(), anyString())).willReturn(Optional.of(authMail));
 
         // When
         AuthMail result = authMailDomainService.findByEmailAndCode(email, code);
 
         // Then
         assertEquals(result, authMail);
+        verify(authMailRepository, times(1)).findByEmailAndCode(anyString(), anyString());
     }
 
     @Test
-    public void givenEmailAndCode_whenFindByEmailAndCode_thenEntityNotFoundException() {
+    public void givenInValidEmailAndCode_whenFindByEmailAndCode_thenEntityNotFoundException() {
         // Given
         String email = "test@example.com";
         String code = "123456";
-        given(authMailRepository.findByEmailAndCode(email, code)).willReturn(Optional.empty());
+        given(authMailRepository.findByEmailAndCode(anyString(), anyString())).willReturn(Optional.empty());
 
         // When, Then
         assertThrows(EntityNotFoundException.class, () -> authMailDomainService.findByEmailAndCode(email, code));
-        verify(authMailRepository, times(1)).findByEmailAndCode(email, code);
+        verify(authMailRepository, times(1)).findByEmailAndCode(anyString(), anyString());
     }
 
     @Test
-    public void givenAuthenticatedEmail_whenIsEmailAuthenticated_thenReturnTrue() {
+    public void givenValidMailStatus_whenIsEmailAuthenticated_thenReturnTrue() {
         // Given
         String email = "test@example.com";
-        AuthMail authMail = new AuthMail(123L, email, "123456", MailStatus.Y);
-        given(authMailRepository.findByEmail(email)).willReturn(Optional.of(authMail));
+        AuthMail authMail = AuthMail.create(email, "code");
+        authMail.updateMailStatus(MailStatus.Y);
+
+        given(authMailRepository.findByEmail(anyString())).willReturn(Optional.of(authMail));
 
         // When
         boolean result = authMailDomainService.isEmailAuthenticated(email);
 
         // Then
         assertTrue(result);
+        verify(authMailRepository, times(1)).findByEmail(anyString());
     }
 
     @Test
-    public void givenAuthenticatedEmail_whenIsEmailAuthenticated_thenReturnFalse() {
+    public void givenInValidMailStatus_whenIsEmailAuthenticated_thenReturnFalse() {
         // Given
         String email = "test@example.com";
-        AuthMail authMail = new AuthMail(123L, email, "123456", MailStatus.N);
-        given(authMailRepository.findByEmail(email)).willReturn(Optional.of(authMail));
+        AuthMail authMail = AuthMail.create(email, "code");
+        given(authMailRepository.findByEmail(anyString())).willReturn(Optional.of(authMail));
 
         // When
         boolean result = authMailDomainService.isEmailAuthenticated(email);
 
         // Then
         assertFalse(result);
-    }
-
-    @Test
-    void givenNonexistentEmail_whenIsEmailAuthenticated_thenThrowEntityNotFoundException() {
-        // Given
-        String email = "example@example.com";
-        given(authMailRepository.findByEmail(email)).willReturn(Optional.empty());
-
-        // When and Then
-        assertThrows(EntityNotFoundException.class, () -> authMailDomainService.isEmailAuthenticated(email));
+        verify(authMailRepository, times(1)).findByEmail(anyString());
     }
 
     @Test

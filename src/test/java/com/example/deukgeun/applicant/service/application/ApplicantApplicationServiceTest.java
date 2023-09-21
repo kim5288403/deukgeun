@@ -1,20 +1,12 @@
-package com.example.deukgeun.applicant.service;
+package com.example.deukgeun.applicant.service.application;
 
-import com.example.deukgeun.applicant.application.dto.request.PaymentInfoRequest;
 import com.example.deukgeun.applicant.application.dto.request.SaveApplicantRequest;
-import com.example.deukgeun.applicant.application.dto.request.SaveMatchInfoRequest;
 import com.example.deukgeun.applicant.application.dto.response.ApplicantResponse;
-import com.example.deukgeun.applicant.application.dto.response.IamPortCancelResponse;
 import com.example.deukgeun.applicant.application.service.implement.ApplicantApplicationServiceImpl;
-import com.example.deukgeun.applicant.domain.dto.PaymentCancelInfoDTO;
 import com.example.deukgeun.applicant.domain.dto.SaveApplicantDTO;
-import com.example.deukgeun.applicant.domain.dto.SaveMatchInfoDTO;
-import com.example.deukgeun.applicant.domain.dto.SavePaymentInfoDTO;
 import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
 import com.example.deukgeun.applicant.domain.service.ApplicantDomainService;
 import com.example.deukgeun.applicant.infrastructure.persistence.mapper.ApplicantMapper;
-import com.example.deukgeun.applicant.infrastructure.persistence.mapper.MatchMapper;
-import com.example.deukgeun.applicant.infrastructure.persistence.mapper.PaymentMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -23,9 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
-import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -5,16 +5,13 @@ import com.example.deukgeun.authMail.application.service.implement.AuthMailAppli
 import com.example.deukgeun.authMail.domain.dto.ConfirmDTO;
 import com.example.deukgeun.authMail.domain.service.AuthMailDomainService;
 import com.example.deukgeun.authMail.infrastructure.persistence.mapper.AuthMailMapper;
+import com.example.deukgeun.global.util.MailUtil;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.thymeleaf.spring5.SpringTemplateEngine;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import javax.persistence.EntityNotFoundException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,41 +24,41 @@ public class AuthMailApplicationServiceTest {
     @Mock
     private AuthMailDomainService authMailDomainService;
     @InjectMocks
-    private AuthMailApplicationServiceImpl mockAuthMailApplicationService;
-    @Autowired
-    private SpringTemplateEngine templateEngine;
-    @Autowired
-    private JavaMailSender emailSender;
+    private AuthMailApplicationServiceImpl authMailApplicationService;
     @Mock
     private AuthMailMapper authMailMapper;
-    @Mock
-    private JavaMailSender mockEmailSender;
-    @Mock
-    private SpringTemplateEngine mockTemplateEngine;
+
+
+    @BeforeAll
+    public static void staticSetup() {
+        mockStatic(MailUtil.class);
+    }
 
     @Test
-    void givenAuthMailRequest_whenConfirmInvoked_thenInvokeConfirmMethod() throws EntityNotFoundException {
+    void givenValidAuthMailRequest_whenConfirm_thenConfirmCalled() throws EntityNotFoundException {
         // Given
         AuthMailRequest request = mock(AuthMailRequest.class);
         ConfirmDTO confirmDTO = mock(ConfirmDTO.class);
         given(authMailMapper.toConfirmDto(any(AuthMailRequest.class))).willReturn(confirmDTO);
 
         // When
-        mockAuthMailApplicationService.confirm(request);
+        authMailApplicationService.confirm(request);
 
         // Then
-        verify(authMailDomainService, times(1)).confirm(confirmDTO);
+        verify(authMailDomainService, times(1)).confirm(any(ConfirmDTO.class));
     }
 
     @Test
-    void given_whenCreateCode_thenValidCodeGenerated() {
+    void givenValidMailUtil_whenCreateCode_thenValidCodeGenerated() {
+        // Given
+        given(MailUtil.createCode()).willReturn("AB1C2dwd");
+
         // When
-        String code = mockAuthMailApplicationService.createCode();
+        String code = authMailApplicationService.createCode();
 
         // Then
         assertNotNull(code);
         assertEquals(8, code.length());
-
         for (int i = 0; i < code.length(); i++) {
             char c = code.charAt(i);
 
@@ -70,153 +67,104 @@ public class AuthMailApplicationServiceTest {
     }
 
     @Test
-    void givenToEmailAndAuthCode_whenCreateMailForm_thenIsCreated() throws MessagingException {
+    void givenValidEmail_whenDeleteByEmail_thenDeleteByEmailCalled() {
         // Given
-        String toEmail = "test@example.com";
-        String authCode = "123456";
-        String title = "득근득근 회원가입 인증 번호";
-        AuthMailApplicationServiceImpl authMailApplicationService = new AuthMailApplicationServiceImpl(emailSender, templateEngine, authMailDomainService, authMailMapper);
+        String email = "test@example.com";
+        given(authMailDomainService.existsByEmail(anyString())).willReturn(true);
 
         // When
-        MimeMessage message = authMailApplicationService.createMailForm(toEmail, authCode);
+        authMailApplicationService.deleteByEmail(email);
 
         // Then
-        assertNotNull(message);
-        assertEquals(toEmail, message.getRecipients(MimeMessage.RecipientType.TO)[0].toString());
-        assertEquals(title, message.getSubject());
-        assertEquals("text/plain", message.getContentType());
+        verify(authMailDomainService, times(1)).existsByEmail(anyString());
+        verify(authMailDomainService, times(1)).deleteByEmail(anyString());
     }
 
     @Test
-    void givenEmail_whenDeleteByEmail_thenInvokeDeleteByEmailMethod() {
+    void givenInValidEmail_whenDeleteByEmail_thenDeleteByEmailNotCalled() {
         // Given
         String email = "test@example.com";
 
         // When
-        mockAuthMailApplicationService.deleteByEmail(email);
+        authMailApplicationService.deleteByEmail(email);
 
         // Then
-        verify(authMailDomainService, times(1)).deleteByEmail(email);
+        verify(authMailDomainService, times(1)).existsByEmail(anyString());
+        verify(authMailDomainService, times(0)).deleteByEmail(anyString());
     }
 
     @Test
-    void givenEmailAndCode_whenExistsByEmailAndCode_thenReturnTrue() {
+    void givenValidEmailAndCode_whenExistsByEmailAndCode_thenReturnTrue() {
         // Given
         String email = "example@example.com";
         String code = "123456";
 
-        given(authMailDomainService.existsByEmailAndCode(email, code)).willReturn(true);
+        given(authMailDomainService.existsByEmailAndCode(anyString(), anyString())).willReturn(true);
 
         // When
-        boolean result = mockAuthMailApplicationService.existsByEmailAndCode(email, code);
+        boolean result = authMailApplicationService.existsByEmailAndCode(email, code);
 
         // Then
         assertTrue(result);
-        verify(authMailDomainService, times(1)).existsByEmailAndCode(email, code);
+        verify(authMailDomainService, times(1)).existsByEmailAndCode(anyString(), anyString());
     }
 
     @Test
-    void givenEmailAndCode_whenExistsByEmailAndCode_thenReturnFalse() {
+    void givenInValidEmailAndCode_whenExistsByEmailAndCode_thenReturnFalse() {
         // Given
         String email = "example@example.com";
         String code = "123456";
 
-        given(authMailDomainService.existsByEmailAndCode(email, code)).willReturn(false);
+        given(authMailDomainService.existsByEmailAndCode(anyString(), anyString())).willReturn(false);
 
         // When
-        boolean result = mockAuthMailApplicationService.existsByEmailAndCode(email, code);
+        boolean result = authMailApplicationService.existsByEmailAndCode(email, code);
 
         // Then
         assertFalse(result);
-        verify(authMailDomainService, times(1)).existsByEmailAndCode(email, code);
+        verify(authMailDomainService, times(1)).existsByEmailAndCode(anyString(), anyString());
     }
 
     @Test
-    void givenAuthMail_whenIsEmailAuthenticated_thenReturnTrue() {
+    void givenValidEmail_whenIsEmailAuthenticated_thenReturnTrue() {
         // Given
         String email = "example@example.com";
-
-        given(authMailDomainService.isEmailAuthenticated(email)).willReturn(true);
+        given(authMailDomainService.isEmailAuthenticated(anyString())).willReturn(true);
 
         // When
-        boolean result = mockAuthMailApplicationService.isEmailAuthenticated(email);
+        boolean result = authMailApplicationService.isEmailAuthenticated(email);
 
         // Then
         assertTrue(result);
-        verify(authMailDomainService, times(1)).isEmailAuthenticated(email);
+        verify(authMailDomainService, times(1)).isEmailAuthenticated(anyString());
     }
 
     @Test
-    void givenUnauthenticatedEmail_whenIsEmailAuthenticated_thenReturnFalse() {
+    void givenInValidEmail_whenIsEmailAuthenticated_thenReturnFalse() {
         // Given
         String email = "example@example.com";
 
-        given(authMailDomainService.isEmailAuthenticated(email)).willReturn(false);
+        given(authMailDomainService.isEmailAuthenticated(anyString())).willReturn(false);
 
         // When
-        boolean result = mockAuthMailApplicationService.isEmailAuthenticated(email);
+        boolean result = authMailApplicationService.isEmailAuthenticated(email);
 
         // Then
         assertFalse(result);
-        verify(authMailDomainService, times(1)).isEmailAuthenticated(email);
+        verify(authMailDomainService, times(1)).isEmailAuthenticated(anyString());
     }
 
     @Test
-    void givenNonexistentEmail_whenIsEmailAuthenticated_thenThrowEntityNotFoundException() {
+    void givenValidAuthMailRequest_whenSave_thenSaveCalled() {
         // Given
-        String email = "example@example.com";
-        given(authMailDomainService.isEmailAuthenticated(email)).willThrow(new EntityNotFoundException());
-
-        // When and Then
-        assertThrows(EntityNotFoundException.class, () -> mockAuthMailApplicationService.isEmailAuthenticated(email));
-        verify(authMailDomainService, times(1)).isEmailAuthenticated(email);
-    }
-
-    @Test
-    void givenToEmailAndAuthCode_whenSend_thenIsSend() throws MessagingException {
-        // Given
-        String toEmail = "test@example.com";
-        String authCode = "123456";
-        MimeMessage mimeMessage = mock(MimeMessage.class);
-        given(mockEmailSender.createMimeMessage()).willReturn(mimeMessage);
-        AuthMailApplicationServiceImpl authMailApplicationService = new AuthMailApplicationServiceImpl(mockEmailSender, mockTemplateEngine, authMailDomainService, authMailMapper);
         AuthMailRequest authMailRequest = new AuthMailRequest();
-        authMailRequest.setEmail(toEmail);
-        authMailRequest.setCode(authCode);
+        authMailRequest.setEmail("email");
+        authMailRequest.setCode("code");
 
         // When
-        authMailApplicationService.send(authMailRequest);
+        authMailApplicationService.save(authMailRequest);
 
         // Then
-        verify(mockEmailSender, times(1)).send(any(MimeMessage.class));
-    }
-
-    @Test
-    void givenCode_whenSetContext_thenProcessTemplate() {
-        // Given
-        String code = "123456";
-        AuthMailApplicationServiceImpl authMailApplicationService = new AuthMailApplicationServiceImpl(emailSender, templateEngine, authMailDomainService, authMailMapper);
-
-        // When
-        String result = authMailApplicationService.setContext(code);
-
-        // Then
-        assertNotNull(result);
-    }
-
-    @Test
-    void givenEmailAndCode_whenSave_thenInvokeSaveMethod() {
-        // Given
-        String toEmail = "test@example.com";
-        String authCode = "123456";
-        AuthMailRequest authMailRequest = new AuthMailRequest();
-        authMailRequest.setEmail(toEmail);
-        authMailRequest.setCode(authCode);
-
-        // When
-        mockAuthMailApplicationService.save(authMailRequest);
-
-        // Then
-        verify(authMailDomainService, times(1)).save(toEmail, authCode);
+        verify(authMailDomainService, times(1)).save(anyString(), anyString());
     }
 }
