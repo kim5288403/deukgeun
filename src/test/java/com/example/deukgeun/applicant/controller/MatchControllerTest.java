@@ -3,6 +3,7 @@ package com.example.deukgeun.applicant.controller;
 import com.example.deukgeun.applicant.application.controller.MatchController;
 import com.example.deukgeun.applicant.application.dto.request.SaveMatchInfoRequest;
 import com.example.deukgeun.applicant.application.service.ApplicantApplicationService;
+import com.example.deukgeun.applicant.application.service.MatchApplicationService;
 import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
 import com.example.deukgeun.global.dto.RestResponse;
 import com.example.deukgeun.global.util.RestResponseUtil;
@@ -33,6 +34,9 @@ public class MatchControllerTest {
     private JobApplicationService jobApplicationService;
     @Mock
     private ApplicantApplicationService applicantApplicationService;
+
+    @Mock
+    private MatchApplicationService matchApplicationService;
     @Mock
     private BindingResult bindingResult;
 
@@ -66,7 +70,7 @@ public class MatchControllerTest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
 
-        verify(applicantApplicationService, times(1)).deleteMatchInfoById(id);
+        verify(matchApplicationService, times(1)).deleteMatchInfoById(id);
         verify(applicantApplicationService, times(1)).updateIsSelectedById(id, 0);
     }
 
@@ -83,7 +87,7 @@ public class MatchControllerTest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
 
-        verify(applicantApplicationService, times(1)).isAnnouncementMatchedByJobId(jobId);
+        verify(matchApplicationService, times(1)).isAnnouncementMatchedByJobId(jobId);
     }
 
     @Test
@@ -94,7 +98,7 @@ public class MatchControllerTest {
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("매칭 성공했습니다.", null);
 
 
-        given(applicantApplicationService.saveMatchInfo(saveMatchInfoRequest, 1)).willReturn(applicant);
+        given(matchApplicationService.saveMatchInfo(saveMatchInfoRequest, 1)).willReturn(applicant);
 
         // When
         ResponseEntity<?> responseEntity = matchController.matching(saveMatchInfoRequest, bindingResult);
@@ -103,7 +107,7 @@ public class MatchControllerTest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
 
-        verify(applicantApplicationService, times(1)).saveMatchInfo(saveMatchInfoRequest, 1);
+        verify(matchApplicationService, times(1)).saveMatchInfo(saveMatchInfoRequest, 1);
         verify(applicantApplicationService, times(1)).updateIsSelectedById(saveMatchInfoRequest.getApplicantId(), 1);
         verify(jobApplicationService, times(1)).updateIsActiveByJobId(2, saveMatchInfoRequest.getJobId());
     }

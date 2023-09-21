@@ -4,7 +4,8 @@ import com.example.deukgeun.applicant.application.dto.request.CancelRequest;
 import com.example.deukgeun.applicant.application.dto.request.PaymentInfoRequest;
 import com.example.deukgeun.applicant.application.dto.response.IamPortCancelResponse;
 import com.example.deukgeun.applicant.application.dto.response.PaymentResponse;
-import com.example.deukgeun.applicant.application.service.ApplicantApplicationService;
+import com.example.deukgeun.applicant.application.service.MatchApplicationService;
+import com.example.deukgeun.applicant.application.service.PaymentApplicationService;
 import com.example.deukgeun.applicant.infrastructure.api.IamPortApiService;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.siot.IamportRestClient.exception.IamportResponseException;
@@ -25,7 +26,8 @@ import java.io.IOException;
 @RequestMapping("/api/payment")
 @RequiredArgsConstructor
 public class PaymentController {
-    private final ApplicantApplicationService applicantApplicationService;
+    private final MatchApplicationService matchApplicationService;
+    private final PaymentApplicationService paymentApplicationService;
     private final IamPortApiService iamPortApiService;
 
     /**
@@ -42,8 +44,8 @@ public class PaymentController {
         IamPortCancelResponse response = iamPortApiService.cancelIamPort(request);
 
         // 결제 취소 정보를 applicantApplicationService를 사용하여 처리합니다.
-        applicantApplicationService.deleteMatchInfoById(request.getId());
-        applicantApplicationService.updatePaymentCancelInfoById(request.getId(), response);
+        matchApplicationService.deleteMatchInfoById(request.getId());
+        paymentApplicationService.updatePaymentCancelInfoById(request.getId(), response);
 
         return RestResponseUtil.ok("결제 취소 성공했습니다.", response.getResponse());
     }
@@ -70,7 +72,7 @@ public class PaymentController {
     @RequestMapping(method = RequestMethod.GET, path = "/{id}")
     public ResponseEntity<?> getPaymentInfo(@PathVariable(value= "id") Long id) {
         // 지원자 정보 조회
-        PaymentResponse.Info paymentInfo = applicantApplicationService.getPaymentInfo(id);
+        PaymentResponse.Info paymentInfo = paymentApplicationService.getPaymentInfo(id);
 
         return RestResponseUtil.ok("조회 성공했습니다.", paymentInfo);
     }
@@ -99,7 +101,7 @@ public class PaymentController {
      */
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> payment(@Valid PaymentInfoRequest request, BindingResult bindingResult) {
-        applicantApplicationService.savePaymentInfo(request);
+        paymentApplicationService.savePaymentInfo(request);
 
         return RestResponseUtil.ok("저장 성공했습니다.", null);
     }

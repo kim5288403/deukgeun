@@ -144,7 +144,7 @@ public class ApplicantDomainServiceImpl implements ApplicantDomainService {
      * @return 업데이트된 지원자 정보를 포함하는 Applicant 객체
      */
     @Override
-    public Applicant saveMatchInfo(SaveMatchInfoDTO saveMatchInfoDTO ) {
+    public Applicant saveMatchInfo(SaveMatchInfoDTO saveMatchInfoDTO) {
         // 지원자 ID를 사용하여 해당 지원자 정보 조회
         Applicant applicant = findById(saveMatchInfoDTO.getApplicantId());
 

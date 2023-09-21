@@ -41,47 +41,29 @@ public class ApplicantApplicationServiceTest {
     private ApplicantDomainService applicantDomainService;
     @Mock
     private ApplicantMapper applicantMapper;
-    @Mock
-    private PaymentMapper paymentMapper;
-    @Mock
-    private MatchMapper matchMapper;
 
     @Test
-    public void givenApplicantId_whenDeleteMatchInfoById_thenCallApplicantDomainService() {
-        // Given
-        Long applicantId = 1L;
-
-        // When
-        applicantApplicationService.deleteMatchInfoById(applicantId);
-
-        // Then
-        verify(applicantDomainService).deleteMatchInfoById(applicantId);
-    }
-
-    @Test
-    public void givenExistingApplicantId_whenFindById_thenReturnApplicantInfo() {
+    public void givenValidId_whenFindById_thenReturnFoundApplicant() {
         // Given
         Long applicantId = 1L;
         Applicant existingApplicant = mock(Applicant.class);
 
-        given(applicantDomainService.findById(applicantId)).willReturn(existingApplicant);
+        given(applicantDomainService.findById(anyLong())).willReturn(existingApplicant);
 
         // When
-        Applicant applicantInfo = applicantApplicationService.findById(applicantId);
+        Applicant applicant = applicantApplicationService.findById(applicantId);
 
         // Then
-        assertNotNull(applicantInfo);
-        assertEquals(existingApplicant.getId(), applicantInfo.getId());
-        assertEquals(existingApplicant.getJobId(), applicantInfo.getJobId());
-        assertEquals(existingApplicant.getTrainerId(), applicantInfo.getTrainerId());
+        assertNotNull(applicant);
+        verify(applicantDomainService, times(1)).findById(anyLong());
     }
 
     @Test
-    public void givenNonExistingApplicantId_whenFindById_thenEntityNotFoundException() {
+    public void givenInValidId_whenFindById_thenEntityNotFoundException() {
         // Given
         Long applicantId = 999L;
 
-        given(applicantDomainService.findById(applicantId)).willThrow(EntityNotFoundException.class);
+        given(applicantDomainService.findById(anyLong())).willThrow(EntityNotFoundException.class);
 
         // When, Then
         assertThrows(EntityNotFoundException.class, () -> {
@@ -90,25 +72,27 @@ public class ApplicantApplicationServiceTest {
     }
 
     @Test
-    public void givenJobIdAndCurrentPage_whenGetListByJobId_thenReturnApplicantListResponsePage() {
+    public void givenValidJobIdAndCurrentPage_whenGetListByJobId_thenReturnApplicantListResponsePage() {
         // Given
-        Long jobId = 3L;
-        Long trainerId = 4L;
+        Long jobId = 1L;
+        Long trainerId = 1L;
         int supportAmount = 10000;
         int currentPage = 0;
+        int isSelected = 0;
         PageRequest pageRequest = PageRequest.of(currentPage, 10);
         List<Applicant> applicantsList = new ArrayList<>();
-        applicantsList.add(Applicant.create(jobId, trainerId, supportAmount, 0));
-        applicantsList.add(Applicant.create(jobId, trainerId, supportAmount, 0));
+        applicantsList.add(Applicant.create(jobId, trainerId, supportAmount, isSelected));
+        applicantsList.add(Applicant.create(jobId, trainerId, supportAmount, isSelected));
         Page<Applicant> applicantsPage = new PageImpl<>(applicantsList, pageRequest, applicantsList.size());
+
         ApplicantResponse.List applicantResponseList = new ApplicantResponse.List();
         applicantResponseList.setId(applicantsList.get(0).getId());
         applicantResponseList.setJobId(jobId);
         applicantResponseList.setTrainerId(trainerId);
         applicantResponseList.setSupportAmount(supportAmount);
-        applicantResponseList.setIsSelected(0);
+        applicantResponseList.setIsSelected(isSelected);
 
-        given(applicantDomainService.findPageByJobId(jobId, pageRequest)).willReturn(applicantsPage);
+        given(applicantDomainService.findPageByJobId(anyLong(), any(PageRequest.class))).willReturn(applicantsPage);
         given(applicantMapper.toApplicantResponseList(any(Applicant.class))).willReturn(applicantResponseList);
 
         // When
@@ -119,70 +103,13 @@ public class ApplicantApplicationServiceTest {
         assertEquals(applicantsList.get(0).getId(), applicantResponsePage.getContent().get(0).getId());
         assertEquals(applicantsList.get(0).getTrainerId(), applicantResponsePage.getContent().get(0).getTrainerId());
         assertEquals(applicantsList.get(0).getSupportAmount(), applicantResponsePage.getContent().get(0).getSupportAmount());
+        verify(applicantDomainService, times(1)).findPageByJobId(anyLong(), any(PageRequest.class));
     }
 
     @Test
-    public void givenJobIdWithNoAnnouncement_whenIsAnnouncementMatchedByJobId_thenNoExceptionThrown() {
+    public void givenValidSaveApplicantRequestAndTrainerId_whenSave_thenReturnSavedApplicant() {
         // Given
-        Long jobId = 1L;
-
-        given(applicantDomainService.isAnnouncementMatchedByJobId(jobId)).willReturn(false);
-
-        // When and Then
-        assertDoesNotThrow(() -> applicantApplicationService.isAnnouncementMatchedByJobId(jobId));
-        verify(applicantDomainService, times(1)).isAnnouncementMatchedByJobId(jobId);
-    }
-
-    @Test
-    public void givenJobIdWithAnnouncement_whenIsAnnouncementMatchedByJobId_thenEntityExistsExceptionThrown() {
-        // Given
-        Long jobId = 1L;
-
-        given(applicantDomainService.isAnnouncementMatchedByJobId(jobId)).willReturn(true);
-
-        // When and Then
-        assertThrows(EntityExistsException.class, () -> applicantApplicationService.isAnnouncementMatchedByJobId(jobId));
-        verify(applicantDomainService, times(1)).isAnnouncementMatchedByJobId(jobId);
-    }
-
-    @Test
-    public void givenSaveMatchInfoRequest_whenMatching_thenCallApplicantDomainService() {
-        // Given
-        int PAYMENT_WAITING = 1;
-        SaveMatchInfoRequest saveMatchInfoRequest = mock(SaveMatchInfoRequest.class);
-        SaveMatchInfoDTO saveMatchInfoDTO = mock(SaveMatchInfoDTO.class);
-        Applicant applicant = mock(Applicant.class);
-
-        given(matchMapper.toSaveMatchInfoDto(anyInt(), any(SaveMatchInfoRequest.class))).willReturn(saveMatchInfoDTO);
-        given(applicantDomainService.saveMatchInfo(any(SaveMatchInfoDTO.class))).willReturn(applicant);
-
-        // When
-        Applicant matchedApplicant = applicantApplicationService.saveMatchInfo(saveMatchInfoRequest, PAYMENT_WAITING);
-
-        // Then
-        verify(applicantDomainService).saveMatchInfo(any(SaveMatchInfoDTO.class));
-        assertEquals(applicant, matchedApplicant);
-    }
-
-    @Test
-    public void givenPaymentInfoRequest_whenPayment_thenShouldCreatePaymentInfo() {
-        // Given
-        PaymentInfoRequest paymentInfoRequest = new PaymentInfoRequest();
-        paymentInfoRequest.setPaidAt("2022-12-15T13:00:00.123+09:00");
-        SavePaymentInfoDTO savePaymentInfoDTO = mock(SavePaymentInfoDTO.class);
-        given(paymentMapper.toSavePaymentInfoDto(any(LocalDateTime.class), any(PaymentInfoRequest.class))).willReturn(savePaymentInfoDTO);
-
-        // When
-        applicantApplicationService.savePaymentInfo(paymentInfoRequest);
-
-        // Then
-        verify(applicantDomainService).savePaymentInfo(any(SavePaymentInfoDTO.class));
-    }
-
-    @Test
-    public void givenSaveApplicantRequestAndTrainerId_whenSave_thenReturnSavedApplicant() {
-        // Given
-        Long trainerId = 456L;
+        Long trainerId = 1L;
         SaveApplicantDTO saveApplicantDTO = mock(SaveApplicantDTO.class);
         SaveApplicantRequest saveApplicantRequest = new SaveApplicantRequest(123L, 1000);
         Applicant expectedSavedApplicant = Applicant.create(saveApplicantRequest.getJobId(), trainerId, saveApplicantRequest.getSupportAmount(), 0);
@@ -198,28 +125,11 @@ public class ApplicantApplicationServiceTest {
         assertEquals(expectedSavedApplicant.getJobId(), savedApplicant.getJobId());
         assertEquals(expectedSavedApplicant.getTrainerId(), savedApplicant.getTrainerId());
         assertEquals(expectedSavedApplicant.getSupportAmount(), savedApplicant.getSupportAmount());
+        verify(applicantDomainService,times(1)).save(any(SaveApplicantDTO.class));
     }
 
     @Test
-    public void givenIdAndIamPortCancelResponse_whenUpdatePaymentCancelInfoById_thenShouldUpdatePaymentInfo() {
-        // Given
-        Long applicantId = 1L;
-        IamPortCancelResponse iamPortCancelResponse = mock(IamPortCancelResponse.class);
-        Applicant applicant = mock(Applicant.class);
-        PaymentCancelInfoDTO paymentCancelInfoDTO = mock(PaymentCancelInfoDTO.class);
-
-        given(applicantDomainService.findById(applicantId)).willReturn(applicant);
-        given(paymentMapper.toPaymentCancelInfoDto(anyLong(), any(IamPortCancelResponse.class))).willReturn(paymentCancelInfoDTO);
-
-        // When
-        applicantApplicationService.updatePaymentCancelInfoById(applicantId, iamPortCancelResponse);
-
-        // Then
-        verify(applicantDomainService).updatePaymentCancelInfoById(any(PaymentCancelInfoDTO.class));
-    }
-
-    @Test
-    public void givenApplicantIdAndIsSelected_whenUpdateIsSelectedById_thenCallApplicantDomainService() {
+    public void givenValidIdAndIsSelected_whenUpdateIsSelectedById_thenUpdateIsSelectedByIdCalled() {
         // Given
         Long applicantId = 1L;
         int isSelected = 1;
@@ -228,6 +138,6 @@ public class ApplicantApplicationServiceTest {
         applicantApplicationService.updateIsSelectedById(applicantId, isSelected);
 
         // Then
-        verify(applicantDomainService).updateIsSelectedById(applicantId, isSelected);
+        verify(applicantDomainService).updateIsSelectedById(anyLong(), anyInt());
     }
 }

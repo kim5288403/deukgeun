@@ -5,7 +5,9 @@ import com.example.deukgeun.applicant.application.dto.request.CancelRequest;
 import com.example.deukgeun.applicant.application.dto.request.PaymentInfoRequest;
 import com.example.deukgeun.applicant.application.dto.response.IamPortCancelResponse;
 import com.example.deukgeun.applicant.application.dto.response.PaymentResponse;
-import com.example.deukgeun.applicant.application.service.implement.ApplicantApplicationServiceImpl;
+import com.example.deukgeun.applicant.application.service.ApplicantApplicationService;
+import com.example.deukgeun.applicant.application.service.MatchApplicationService;
+import com.example.deukgeun.applicant.application.service.PaymentApplicationService;
 import com.example.deukgeun.applicant.infrastructure.api.IamPortApiService;
 import com.example.deukgeun.global.dto.RestResponse;
 import com.example.deukgeun.global.util.RestResponseUtil;
@@ -33,7 +35,9 @@ public class PaymentControllerTest {
     @InjectMocks
     private PaymentController paymentController;
     @Mock
-    private ApplicantApplicationServiceImpl applicantApplicationService;
+    private PaymentApplicationService paymentApplicationService;
+    @Mock
+    private MatchApplicationService matchApplicationService;
     @Mock
     private IamPortApiService iamPortApiService;
     @Mock
@@ -57,8 +61,8 @@ public class PaymentControllerTest {
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
 
         verify(iamPortApiService, times(1)).cancelIamPort(cancelRequest);
-        verify(applicantApplicationService, times(1)).deleteMatchInfoById(cancelRequest.getId());
-        verify(applicantApplicationService, times(1)).updatePaymentCancelInfoById(cancelRequest.getId(), iamPortCancelResponse);
+        verify(matchApplicationService, times(1)).deleteMatchInfoById(cancelRequest.getId());
+        verify(paymentApplicationService, times(1)).updatePaymentCancelInfoById(cancelRequest.getId(), iamPortCancelResponse);
     }
 
     @Test
@@ -85,7 +89,7 @@ public class PaymentControllerTest {
         // Given
         Long applicantId =1L;
         PaymentResponse.Info response = mock(PaymentResponse.Info.class);
-        given(applicantApplicationService.getPaymentInfo(applicantId)).willReturn(response);
+        given(paymentApplicationService.getPaymentInfo(applicantId)).willReturn(response);
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("조회 성공했습니다.", response);
 
         // When
@@ -95,7 +99,7 @@ public class PaymentControllerTest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
 
-        verify(applicantApplicationService, times(1)).getPaymentInfo(applicantId);
+        verify(paymentApplicationService, times(1)).getPaymentInfo(applicantId);
     }
 
     @Test
@@ -129,6 +133,6 @@ public class PaymentControllerTest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
 
-        verify(applicantApplicationService, times(1)).savePaymentInfo(request);
+        verify(paymentApplicationService, times(1)).savePaymentInfo(request);
     }
 }

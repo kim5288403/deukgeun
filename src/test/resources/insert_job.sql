@@ -17,7 +17,7 @@ is_active
 )
 values
 (
-123L,
+1L,
 null,
 null,
 (select member_id from member ORDER BY member_id DESC LIMIT 1),

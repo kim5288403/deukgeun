@@ -1,21 +1,12 @@
 package com.example.deukgeun.applicant.application.service.implement;
 
-import com.example.deukgeun.applicant.application.dto.request.PaymentInfoRequest;
 import com.example.deukgeun.applicant.application.dto.request.SaveApplicantRequest;
-import com.example.deukgeun.applicant.application.dto.request.SaveMatchInfoRequest;
 import com.example.deukgeun.applicant.application.dto.response.ApplicantResponse;
-import com.example.deukgeun.applicant.application.dto.response.IamPortCancelResponse;
-import com.example.deukgeun.applicant.application.dto.response.PaymentResponse;
 import com.example.deukgeun.applicant.application.service.ApplicantApplicationService;
-import com.example.deukgeun.applicant.domain.dto.PaymentCancelInfoDTO;
 import com.example.deukgeun.applicant.domain.dto.SaveApplicantDTO;
-import com.example.deukgeun.applicant.domain.dto.SaveMatchInfoDTO;
-import com.example.deukgeun.applicant.domain.dto.SavePaymentInfoDTO;
 import com.example.deukgeun.applicant.domain.model.aggregate.Applicant;
 import com.example.deukgeun.applicant.domain.service.ApplicantDomainService;
 import com.example.deukgeun.applicant.infrastructure.persistence.mapper.ApplicantMapper;
-import com.example.deukgeun.applicant.infrastructure.persistence.mapper.MatchMapper;
-import com.example.deukgeun.applicant.infrastructure.persistence.mapper.PaymentMapper;
 import com.example.deukgeun.job.domain.model.aggregate.Job;
 import com.example.deukgeun.member.domain.aggregate.Member;
 import lombok.RequiredArgsConstructor;
@@ -23,30 +14,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityExistsException;
 import java.time.LocalDateTime;
 import java.time.Period;
-import java.time.format.DateTimeFormatter;
 
 @Service
 @RequiredArgsConstructor
 public class ApplicantApplicationServiceImpl implements ApplicantApplicationService {
-
     private final ApplicantDomainService applicantDomainService;
-    private final PaymentMapper paymentMapper;
     private final ApplicantMapper applicantMapper;
-    private final MatchMapper matchMapper;
-
-
-    /**
-     * 지정된 ID를 사용하여 매치 정보를 삭제하는 메서드입니다.
-     *
-     * @param id 삭제할 매치 정보의 고유 ID
-     */
-    @Override
-    public void deleteMatchInfoById(Long id) {
-        applicantDomainService.deleteMatchInfoById(id);
-    }
 
     /**
      * 지정된 ID를 사용하여 지원자 정보를 조회하는 메서드입니다.
@@ -84,27 +59,6 @@ public class ApplicantApplicationServiceImpl implements ApplicantApplicationServ
         return applicantMapper.toApplicantResponseInfo(applicant, member, job, period.getDays());
     }
 
-    @Override
-    public PaymentResponse.Info getPaymentInfo(Long id) {
-        return paymentMapper.toPaymentInfoResponse(findById(id).getPaymentInfo());
-    }
-
-    /**
-     * 지정된 공고 ID로 공고에 매칭된 지원자가 있는지 확인하는 메서드입니다.
-     *
-     * @param jobId 공고 ID를 나타내는 고유 ID
-     * @throws EntityExistsException 만약 매칭된 지원자가 이미 존재하는 경우 발생하는 예외
-     */
-    @Override
-    public void isAnnouncementMatchedByJobId(Long jobId) {
-        boolean isAnnouncement = applicantDomainService.isAnnouncementMatchedByJobId(jobId);
-
-        // 매칭된 지원자가 이미 존재하는 경우 EntityExistsException 발생시킵니다.
-        if (isAnnouncement) {
-            throw new EntityExistsException("이미 선택한 지원자가 있습니다.");
-        }
-    }
-
     /**
      * SaveApplicantRequest 트레이너 ID를 사용하여 지원자 정보를 저장하는 메서드입니다.
      *
@@ -119,50 +73,6 @@ public class ApplicantApplicationServiceImpl implements ApplicantApplicationServ
         SaveApplicantDTO saveApplicantDTO = applicantMapper.toSaveApplicantDto(trainerId, saveApplicantRequest);
 
         return applicantDomainService.save(saveApplicantDTO);
-    }
-
-    /**
-     * PaymentInfoRequest 사용하여 결제 정보를 처리하고 지원자 정보를 반환하는 메서드입니다.
-     *
-     * @param request 결제 정보를 나타내는 PaymentInfoRequest 객체
-     */
-    @Override
-    public void savePaymentInfo(PaymentInfoRequest request) {
-        // 날짜 형식 지정을 위한 DateTimeFormatter 객체 생성
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-        // 요청에서 'paidAt' 값을 파싱하여 LocalDateTime 객체로 변환
-        LocalDateTime paidAt = LocalDateTime.parse(request.getPaidAt(), formatter);
-
-        SavePaymentInfoDTO savePaymentInfoDTO = paymentMapper.toSavePaymentInfoDto(paidAt, request);
-
-        applicantDomainService.savePaymentInfo(savePaymentInfoDTO);
-    }
-
-    /**
-     * SaveMatchInfoRequest, 상태(status) 정보를 사용하여 지원자와 매칭하는 메서드입니다.
-     *
-     * @param saveMatchInfoRequest 매칭 정보를 저장하는 데 사용되는 요청 객체
-     * @param status 매칭 상태를 나타내는 정수 값
-     * @return 매칭된 지원자 정보를 포함하는 Applicant 객체
-     */
-    @Override
-    public Applicant saveMatchInfo(SaveMatchInfoRequest saveMatchInfoRequest, int status) {
-        SaveMatchInfoDTO saveMatchInfoDTO = matchMapper.toSaveMatchInfoDto(status, saveMatchInfoRequest);
-
-        return applicantDomainService.saveMatchInfo(saveMatchInfoDTO);
-    }
-
-    /**
-     * 지정된 ID를 사용하여 결제를 취소하는 메서드입니다.
-     *
-     * @param id 결제를 취소할 지원자(ID)의 고유 ID
-     * @param iamPortCancelResponse IamPort 결제 취소 응답 객체
-     */
-    @Override
-    public void updatePaymentCancelInfoById(Long id, IamPortCancelResponse iamPortCancelResponse) {
-        PaymentCancelInfoDTO paymentCancelInfoDTO = paymentMapper.toPaymentCancelInfoDto(id, iamPortCancelResponse);
-
-        applicantDomainService.updatePaymentCancelInfoById(paymentCancelInfoDTO);
     }
 
     /**

@@ -2,6 +2,7 @@ package com.example.deukgeun.applicant.application.controller;
 
 import com.example.deukgeun.applicant.application.dto.request.SaveMatchInfoRequest;
 import com.example.deukgeun.applicant.application.service.ApplicantApplicationService;
+import com.example.deukgeun.applicant.application.service.MatchApplicationService;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.job.application.service.JobApplicationService;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +18,8 @@ import javax.validation.constraints.NotBlank;
 @RequestMapping("/api/match")
 @RequiredArgsConstructor
 public class MatchController {
-
     private final ApplicantApplicationService applicantApplicationService;
+    private final MatchApplicationService matchApplicationService;
     private final JobApplicationService jobApplicationService;
     @Value("${status.applicant.select}")
     private int APPLICANT_SELECT;
@@ -39,7 +40,7 @@ public class MatchController {
     @RequestMapping(method = RequestMethod.DELETE, path = "/")
     public ResponseEntity<?> cancel(@RequestParam @NotBlank(message = "id is required")Long id) {
         // 주어진 ID로 지원자의 매칭 정보를 삭제합니다.
-        applicantApplicationService.deleteMatchInfoById(id);
+        matchApplicationService.deleteMatchInfoById(id);
         // 선택 여부를 APPLICANT_WAITING 으로 업데이트하여 취소 처리합니다.
         applicantApplicationService.updateIsSelectedById(id, APPLICANT_WAITING);
 
@@ -54,7 +55,7 @@ public class MatchController {
      */
     @RequestMapping(method = RequestMethod.GET, path = "/check/{jobId}")
     public ResponseEntity<?> isAnnouncementMatched(@PathVariable Long jobId) {
-        applicantApplicationService.isAnnouncementMatchedByJobId(jobId);
+        matchApplicationService.isAnnouncementMatchedByJobId(jobId);
 
         return RestResponseUtil.ok("검사 성공했습니다.", null);
     }
@@ -68,7 +69,7 @@ public class MatchController {
      */
     @RequestMapping(method = RequestMethod.POST, path = "/")
     public ResponseEntity<?> matching(@Valid SaveMatchInfoRequest saveMatchInfoRequest, BindingResult bindingResult) {
-        applicantApplicationService.saveMatchInfo(saveMatchInfoRequest, PAYMENT_WAITING);
+        matchApplicationService.saveMatchInfo(saveMatchInfoRequest, PAYMENT_WAITING);
         applicantApplicationService.updateIsSelectedById(saveMatchInfoRequest.getApplicantId(), APPLICANT_SELECT);
         jobApplicationService.updateIsActiveByJobId(JOB_INACTIVE, saveMatchInfoRequest.getJobId());
 

@@ -2,8 +2,6 @@ package com.example.deukgeun.applicant.repository;
 
 import com.example.deukgeun.applicant.infrastructure.persistence.model.entity.ApplicantEntity;
 import com.example.deukgeun.applicant.infrastructure.persistence.repository.ApplicantJpaRepository;
-import com.example.deukgeun.job.infrastructure.persistence.model.entity.JobEntity;
-import com.example.deukgeun.job.infrastructure.persistence.repository.JobJpaRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -14,8 +12,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
@@ -25,25 +21,20 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ApplicantRepositoryTest {
     @Autowired
     private ApplicantJpaRepository applicantJpaRepository;
-    @Autowired
-    private JobJpaRepository jobRepository;
-
 
     @Test
     void shouldNotNullRepository() {
         assertNotNull(applicantJpaRepository);
-        assertNotNull(jobRepository);
     }
 
     @Test
     @Sql({"/insert_member.sql", "/insert_job.sql"})
-    void givenApplicant_whenSave_thenReturnValid() {
+    void givenValidApplicant_whenSave_thenApplicantIsSaved() {
         // Given
-        List<JobEntity> jobEntity = jobRepository.findAll();
         ApplicantEntity applicantEntity = ApplicantEntity
                 .builder()
-                .jobId(jobEntity.get(0).getId())
-                .trainerId(123L)
+                .jobId(1L)
+                .trainerId(1L)
                 .supportAmount(30000)
                 .build();
 
@@ -58,20 +49,18 @@ public class ApplicantRepositoryTest {
 
     @Test
     @Sql({"/insert_member.sql", "/insert_job.sql"})
-    void givenApplicant_whenFindByJobId_thenReturnValid() {
+    void givenValidApplicantWithJobId_whenFindByJobId_thenApplicantIsFound() {
         // Given
-        List<JobEntity> jobEntity = jobRepository.findAll();
-        Long jobId = jobEntity.get(0).getId();
         ApplicantEntity applicantEntity1 = ApplicantEntity
                 .builder()
-                .jobId(jobId)
-                .trainerId(123L)
+                .jobId(1L)
+                .trainerId(1L)
                 .supportAmount(30000)
                 .build();
         ApplicantEntity applicantEntity2 = ApplicantEntity
                 .builder()
-                .jobId(jobId)
-                .trainerId(123L)
+                .jobId(1L)
+                .trainerId(1L)
                 .supportAmount(30000)
                 .build();
 
@@ -81,18 +70,19 @@ public class ApplicantRepositoryTest {
         PageRequest pageable = PageRequest.of(0, 10);
 
         // When
-        Page<ApplicantEntity> result = applicantJpaRepository.findPageByJobId(jobId, pageable);
+        Page<ApplicantEntity> result = applicantJpaRepository.findPageByJobId(1L, pageable);
 
         // Then
-        assertEquals(jobId, result.getContent().get(0).getJobId());
-        assertEquals(jobId, result.getContent().get(1).getJobId());
+        assertEquals(1L, result.getContent().get(0).getJobId());
+        assertEquals(1L, result.getContent().get(1).getJobId());
+        assertEquals(2, result.getContent().size());
     }
 
     @Test
     @Sql({"/insert_member.sql", "/insert_job.sql"})
-    public void givenJobIdAndTrainerId_whenExists_thenReturnTrue() {
+    public void givenValidJobIdAndTrainerId_whenExists_thenReturnTrue() {
         // Given
-        Long jobId = 123L;
+        Long jobId = 1L;
         Long trainerId = 1L;
         ApplicantEntity applicant = ApplicantEntity
                 .builder()
@@ -111,7 +101,7 @@ public class ApplicantRepositoryTest {
     }
 
     @Test
-    public void givenJobIdAndTrainerId_whenNotExists_thenReturnFalse() {
+    public void givenValidJobIdAndTrainerId_whenNotExists_thenReturnFalse() {
         // Given
         Long jobId = 1L;
         Long trainerId = 1L;

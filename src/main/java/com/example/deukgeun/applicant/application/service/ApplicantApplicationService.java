@@ -12,16 +12,10 @@ import com.example.deukgeun.member.domain.aggregate.Member;
 import org.springframework.data.domain.Page;
 
 public interface ApplicantApplicationService {
-    void deleteMatchInfoById(Long id);
     Applicant findById(Long id);
     Page<ApplicantResponse.List> getListByJobId(Long jobId, int currentPage);
     ApplicantResponse.Info getApplicantInfo(Applicant applicant, Member member, Job job);
-    PaymentResponse.Info getPaymentInfo(Long id);
-    void isAnnouncementMatchedByJobId(Long jobId);
     Applicant save(SaveApplicantRequest saveApplicantRequest, Long trainerId);
-    void savePaymentInfo(PaymentInfoRequest request);
-    Applicant saveMatchInfo(SaveMatchInfoRequest saveMatchInfoRequest, int status);
-    void updatePaymentCancelInfoById(Long id, IamPortCancelResponse iamPortCancelResponse);
     void updateIsSelectedById(Long id, int isSelected);
 
 }

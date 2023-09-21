@@ -2,7 +2,6 @@ package com.example.deukgeun.trainer.repository;
 
 import com.example.deukgeun.global.enums.Gender;
 import com.example.deukgeun.trainer.domain.model.valueobjcet.GroupStatus;
-import com.example.deukgeun.trainer.infrastructure.persistence.model.entity.LicenseEntity;
 import com.example.deukgeun.trainer.infrastructure.persistence.model.entity.TrainerEntity;
 import com.example.deukgeun.trainer.infrastructure.persistence.model.valueobject.AddressVo;
 import com.example.deukgeun.trainer.infrastructure.persistence.model.valueobject.GroupVo;
@@ -14,7 +13,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,29 +31,20 @@ public class TrainerRepositoryTest {
     }
 
     @Test
-    void givenTrainer_whenDeleteById_thenReturnValid() {
+    void givenValidTrainer_whenDeleteById_thenTrainerDeleted() {
         // Given
         String email = "testEmail@test.com";
+        GroupVo groupVo = new GroupVo(GroupStatus.Y, "test");
+        AddressVo addressVo = new AddressVo("postCode", "jibunAddress", "roadAddress", "detailAddress", "extraAddress");
         TrainerEntity trainer = TrainerEntity.builder()
-                .id(123L)
+                .id(1L)
                 .name("테스트")
                 .email(email)
                 .password("test1234!")
                 .gender(Gender.F)
                 .introduction("test")
-                .groupVo(
-                        new GroupVo(
-                                GroupStatus.Y,
-                                "test"
-                        )
-                )
-                .addressVo(new AddressVo(
-                        "test",
-                        "test",
-                        "test",
-                        "test",
-                        "test"
-                ))
+                .groupVo(groupVo)
+                .addressVo(addressVo)
                 .price(3000)
                 .build();
 
@@ -70,31 +59,23 @@ public class TrainerRepositoryTest {
     }
 
     @Test
-    void givenTrainer_whenExistsByEmail_thenReturnTrue() {
+    void givenValidTrainerAndEmail_whenExistsByEmail_thenReturnTrue() {
         // Given
         String email = "testEmail@test.com";
+        GroupVo groupVo = new GroupVo(GroupStatus.Y, "test");
+        AddressVo addressVo = new AddressVo("postCode", "jibunAddress", "roadAddress", "detailAddress", "extraAddress");
         TrainerEntity trainer = TrainerEntity.builder()
-                .id(123L)
+                .id(1L)
                 .name("테스트")
                 .email(email)
                 .password("test1234!")
                 .gender(Gender.F)
                 .introduction("test")
-                .groupVo(
-                        new GroupVo(
-                                GroupStatus.Y,
-                                "test"
-                        )
-                )
-                .addressVo(new AddressVo(
-                        "test",
-                        "test",
-                        "test",
-                        "test",
-                        "test"
-                ))
+                .groupVo(groupVo)
+                .addressVo(addressVo)
                 .price(3000)
                 .build();
+
         trainerJpaRepository.save(trainer);
 
         // When
@@ -105,32 +86,23 @@ public class TrainerRepositoryTest {
     }
 
     @Test
-    void givenTrainer_whenFindByEmail_thenReturnValid() {
+    void givenValidEmail_whenFindByEmail_thenTrainerIsFound() {
         // Given
         String email = "testEmail@test.com";
-        TrainerEntity trainer = TrainerEntity
-                .builder()
+        GroupVo groupVo = new GroupVo(GroupStatus.Y, "test");
+        AddressVo addressVo = new AddressVo("postCode", "jibunAddress", "roadAddress", "detailAddress", "extraAddress");
+        TrainerEntity trainer = TrainerEntity.builder()
                 .id(123L)
                 .name("테스트")
                 .email(email)
                 .password("test1234!")
                 .gender(Gender.F)
-                .groupVo(
-                        new GroupVo(
-                                GroupStatus.Y,
-                                "test"
-                        )
-                )
                 .introduction("test")
-                .addressVo(new AddressVo(
-                        "test",
-                        "test",
-                        "test",
-                        "test",
-                        "test"
-                ))
+                .groupVo(groupVo)
+                .addressVo(addressVo)
                 .price(3000)
                 .build();
+
         trainerJpaRepository.save(trainer);
 
         // When
@@ -142,42 +114,22 @@ public class TrainerRepositoryTest {
     }
 
     @Test
-    void givenTrainer_whenSave_thenReturnValid() {
+    void givenValidTrainerEntity_whenSave_thenTrainerIsSaved() {
         // Given
-        TrainerEntity trainer = TrainerEntity
-                .builder()
-                .id(123L)
+        String email = "testEmail@test.com";
+        GroupVo groupVo = new GroupVo(GroupStatus.Y, "test");
+        AddressVo addressVo = new AddressVo("postCode", "jibunAddress", "roadAddress", "detailAddress", "extraAddress");
+        TrainerEntity trainer = TrainerEntity.builder()
+                .id(1L)
                 .name("테스트")
-                .email("testEmail@test.com")
+                .email(email)
                 .password("test1234!")
                 .gender(Gender.F)
                 .introduction("test")
-                .groupVo(
-                        new GroupVo(
-                                GroupStatus.Y,
-                                "test"
-                        )
-                )
-                .addressVo(new AddressVo(
-                        "test",
-                        "test",
-                        "test",
-                        "test",
-                        "test"
-                ))
+                .groupVo(groupVo)
+                .addressVo(addressVo)
                 .price(3000)
-                .licenseEntities(new ArrayList<>())
                 .build();
-
-        LicenseEntity licenseEntity = LicenseEntity
-                .builder()
-                .id(123435L)
-                .trainerId(123L)
-                .licenseNumber("123145")
-                .certificateName("test")
-                .build();
-
-        trainer.getLicenseEntities().add(licenseEntity);
 
         // When
         TrainerEntity saveTrainer = trainerJpaRepository.save(trainer);
