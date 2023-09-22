@@ -28,16 +28,16 @@ public class MemberRepositoryTest {
     }
 
     @Test
-    void givenMember_whenSaved_thenReturnValid() {
+    void givenValidMember_whenSave_thenMemberIsSaved() {
         // Given
         MemberEntity memberEntity = MemberEntity
                 .builder()
-                .id(123L)
-                .age(23)
+                .id(1L)
+                .age(20)
                 .gender(Gender.M)
-                .name("test")
-                .email("Test")
-                .password("test")
+                .name("name")
+                .email("email")
+                .password("password")
                 .build();
 
         // When
@@ -45,22 +45,23 @@ public class MemberRepositoryTest {
 
         // Then
         MemberEntity foundMemberEntity = memberRepository.findById(saveMemberEntity.getId()).orElse(null);
+
         assertNotNull(foundMemberEntity);
         assertEquals(saveMemberEntity.getEmail(), foundMemberEntity.getEmail());
         assertEquals(saveMemberEntity.getName(), foundMemberEntity.getName());
     }
     @Test
-    void givenTrainer_whenFindByEmail_thenReturnValid() {
+    void givenValidEmail_whenFindByEmail_thenReturnFoundIsMember() {
         // Given
-        String email = "test";
+        String email = "email";
         MemberEntity memberEntity = MemberEntity
                 .builder()
-                .id(123L)
-                .age(23)
+                .id(1L)
+                .age(20)
                 .gender(Gender.M)
-                .name("test")
-                .email("test")
-                .password("test")
+                .name("name")
+                .email(email)
+                .password("password")
                 .build();
 
         memberRepository.save(memberEntity);

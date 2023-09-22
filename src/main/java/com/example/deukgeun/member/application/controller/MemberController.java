@@ -2,7 +2,7 @@ package com.example.deukgeun.member.application.controller;
 
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.member.application.dto.request.JoinRequest;
-import com.example.deukgeun.member.application.service.implement.MemberApplicationServiceImpl;
+import com.example.deukgeun.member.application.service.MemberApplicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -17,7 +17,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class MemberController {
 
-    private final MemberApplicationServiceImpl memberApplicationService;
+    private final MemberApplicationService memberApplicationService;
 
     /**
      * 새로운 회원을 가입시킵니다.

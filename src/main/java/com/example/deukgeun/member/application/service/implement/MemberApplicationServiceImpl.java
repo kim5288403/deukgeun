@@ -15,17 +15,6 @@ public class MemberApplicationServiceImpl implements MemberApplicationService {
     private final MemberMapper memberMapper;
 
     /**
-     * 회원 정보를 저장합니다.
-     *
-     * @param request 저장할 회원 정보를 포함하는 JoinRequest 객체입니다.
-     * @return 저장된 회원 객체입니다.
-     */
-    @Override
-    public Member save(JoinRequest request) {
-        return memberDomainService.save(memberMapper.toMemberJoinDto(request));
-    }
-
-    /**
      * 회원 식별자를 사용하여 회원 정보를 조회합니다.
      *
      * @param id 조회할 회원의 식별자입니다.
@@ -46,4 +35,16 @@ public class MemberApplicationServiceImpl implements MemberApplicationService {
     public Member findByEmail(String email) {
         return memberDomainService.findByEmail(email);
     }
+
+    /**
+     * 회원 정보를 저장합니다.
+     *
+     * @param request 저장할 회원 정보를 포함하는 JoinRequest 객체입니다.
+     * @return 저장된 회원 객체입니다.
+     */
+    @Override
+    public Member save(JoinRequest request) {
+        return memberDomainService.save(memberMapper.toMemberJoinDto(request));
+    }
+
 }

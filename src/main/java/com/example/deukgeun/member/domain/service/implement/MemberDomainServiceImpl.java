@@ -18,26 +18,6 @@ public class MemberDomainServiceImpl implements MemberDomainService {
     private final MemberRepository memberRepository;
 
     /**
-     * 회원 정보를 저장합니다.
-     *
-     * @param memberJoinDTO 저장할 회원 정보를 포함하는 JoinRequest 객체입니다.
-     * @return 저장된 회원 정보를 나타내는 객체입니다.
-     */
-    @Override
-    public Member save(MemberJoinDTO memberJoinDTO) {
-        // 회원 생성 메서드를 호출하여 회원 객체를 생성하고 저장합니다.
-        Member member = Member
-                .create(memberJoinDTO.getEmail(),
-                        memberJoinDTO.getPassword(),
-                        memberJoinDTO.getName(),
-                        memberJoinDTO.getAge(),
-                        memberJoinDTO.getGender()
-                );
-
-        return memberRepository.save(member);
-    }
-
-    /**
      * 회원 식별자를 사용하여 회원 정보를 조회합니다.
      *
      * @param id 조회할 회원의 식별자입니다.
@@ -73,5 +53,25 @@ public class MemberDomainServiceImpl implements MemberDomainService {
     @Override
     public UserDetails loadUserByMemberUsername(String email) throws UsernameNotFoundException {
         return memberRepository.loadUserByUsername(email);
+    }
+
+    /**
+     * 회원 정보를 저장합니다.
+     *
+     * @param memberJoinDTO 저장할 회원 정보를 포함하는 JoinRequest 객체입니다.
+     * @return 저장된 회원 정보를 나타내는 객체입니다.
+     */
+    @Override
+    public Member save(MemberJoinDTO memberJoinDTO) {
+        // 회원 생성 메서드를 호출하여 회원 객체를 생성하고 저장합니다.
+        Member member = Member
+                .create(memberJoinDTO.getEmail(),
+                        memberJoinDTO.getPassword(),
+                        memberJoinDTO.getName(),
+                        memberJoinDTO.getAge(),
+                        memberJoinDTO.getGender()
+                );
+
+        return memberRepository.save(member);
     }
 }

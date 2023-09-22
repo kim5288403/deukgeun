@@ -8,8 +8,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import javax.persistence.EntityNotFoundException;
 
 public interface MemberDomainService {
-    Member save(MemberJoinDTO memberJoinDTO);
     Member findById(Long id) throws EntityNotFoundException;
     Member findByEmail(String email) throws EntityNotFoundException;
     UserDetails loadUserByMemberUsername(String email) throws UsernameNotFoundException;
+    Member save(MemberJoinDTO memberJoinDTO);
 }
