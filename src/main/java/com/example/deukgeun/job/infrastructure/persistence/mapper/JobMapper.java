@@ -13,6 +13,12 @@ import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring")
 public interface JobMapper {
+
+    @Mapping(target = "jobAddress.postcode", source = "saveJobRequest.postcode")
+    @Mapping(target = "jobAddress.jibunAddress", source = "saveJobRequest.jibunAddress")
+    @Mapping(target = "jobAddress.roadAddress", source = "saveJobRequest.roadAddress")
+    @Mapping(target = "jobAddress.detailAddress", source = "saveJobRequest.detailAddress")
+    @Mapping(target = "jobAddress.extraAddress", source = "saveJobRequest.extraAddress")
     SaveJobDTO toSaveJobDto(Long memberId, SaveJobRequest saveJobRequest);
 
     @Mapping(target = "address",

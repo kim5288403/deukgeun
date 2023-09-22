@@ -3,8 +3,7 @@ package com.example.deukgeun.job.repository;
 import com.example.deukgeun.job.infrastructure.persistence.model.entity.JobEntity;
 import com.example.deukgeun.job.infrastructure.persistence.model.valueobject.JobAddressVo;
 import com.example.deukgeun.job.infrastructure.persistence.repository.JobJpaRepository;
-import com.example.deukgeun.member.infrastructure.persistence.entity.MemberEntity;
-import com.example.deukgeun.member.infrastructure.persistence.repository.MemberJpaRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -16,7 +15,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,42 +25,36 @@ import static org.junit.jupiter.api.Assertions.*;
 public class JobRepositoryTest {
     @Autowired
     private JobJpaRepository jobRepository;
-    @Autowired
-    private MemberJpaRepository memberRepository;
+
+    private JobAddressVo jobAddressVo;
+    @BeforeEach
+    void setup() {
+        jobAddressVo = JobAddressVo
+                .builder()
+                .postcode("postcode")
+                .detailAddress("detailAddress")
+                .extraAddress("extraAddress")
+                .jibunAddress("jibunAddress")
+                .roadAddress("roadAddress")
+                .build();
+    }
 
     @Test
     void shouldNotNullRepository() {
         assertNotNull(jobRepository);
-        assertNotNull(memberRepository);
     }
 
     @Test
     @Sql("/insert_member.sql")
-    void givenJobs_whenFindByLikeKeyword_thenReturnValid() {
+    void givenValidKeyword_whenFindByLikeKeyword_thenReturnFoundIsJobs() {
         // Given
-        List<MemberEntity> member = memberRepository.findAll();
-        Long memberId = member.get(0).getId();
-        JobAddressVo jobAddressVo = JobAddressVo
-                .builder()
-                .postcode("test")
-                .detailAddress("test")
-                .extraAddress("test")
-                .jibunAddress("test")
-                .roadAddress("test")
-                .build();
-//                new JobAddressVo(
-//                "test",
-//                "test",
-//                "test",
-//                "test",
-//                "test"
-//        );
+        Long memberId = 123L;
 
         JobEntity jobEntity1 = JobEntity
                 .builder()
                 .id(1L)
                 .memberId(memberId)
-                .title("test")
+                .title("title")
                 .jobAddressVo(jobAddressVo)
                 .startDate(LocalDateTime.now())
                 .endDate(LocalDateTime.now())
@@ -72,7 +64,7 @@ public class JobRepositoryTest {
                 .builder()
                 .id(2L)
                 .memberId(memberId)
-                .title("test")
+                .title("title")
                 .jobAddressVo(jobAddressVo)
                 .startDate(LocalDateTime.now())
                 .endDate(LocalDateTime.now())
@@ -81,7 +73,7 @@ public class JobRepositoryTest {
         jobRepository.save(jobEntity1);
         jobRepository.save(jobEntity2);
 
-        String keyword = "test";
+        String keyword = "title";
         String converterKeyword = "%" + keyword +"%";
         PageRequest pageable = PageRequest.of(0, 10);
 
@@ -95,15 +87,15 @@ public class JobRepositoryTest {
 
     @Test
     @Sql("/insert_member.sql")
-    void givenJob_whenFindById_thenReturnValid() {
+    void givenValidId_whenFindById_thenReturnFoundIsJob() {
         // Given
-        List<MemberEntity> member = memberRepository.findAll();
-        Long memberId = member.get(0).getId();
+        Long jobId = 1L;
         JobEntity jobEntity = JobEntity
                 .builder()
-                .id(5L)
-                .memberId(memberId)
-                .title("test")
+                .id(jobId)
+                .memberId(123L)
+                .title("title")
+                .jobAddressVo(jobAddressVo)
                 .startDate(LocalDateTime.now())
                 .endDate(LocalDateTime.now())
                 .build();
@@ -111,7 +103,7 @@ public class JobRepositoryTest {
         JobEntity saveJobEntity = jobRepository.save(jobEntity);
 
         // When
-        JobEntity foundJobEntity = jobRepository.findById(saveJobEntity.getId()).orElse(null);
+        JobEntity foundJobEntity = jobRepository.findById(jobId).orElse(null);
 
         // Then
         assertNotNull(foundJobEntity);
@@ -120,32 +112,25 @@ public class JobRepositoryTest {
 
     @Test
     @Sql("/insert_member.sql")
-    void givenJob_whenFindByMemberId_thenReturnValid() {
+    void givenValidMemberId_whenFindByMemberId_thenReturnFoundIsJob() {
         // Given
-        List<MemberEntity> member = memberRepository.findAll();
-        Long memberId = member.get(0).getId();
-        JobAddressVo jobAddressVo = JobAddressVo
-                .builder()
-                .postcode("test")
-                .detailAddress("test")
-                .extraAddress("test")
-                .jibunAddress("test")
-                .roadAddress("test")
-                .build();
+        Long memberId = 123L;
+
         JobEntity jobEntity1 = JobEntity
                 .builder()
                 .id(1L)
                 .memberId(memberId)
-                .title("test1")
+                .title("title")
                 .jobAddressVo(jobAddressVo)
                 .startDate(LocalDateTime.now())
                 .endDate(LocalDateTime.now())
                 .build();
+
         JobEntity jobEntity2 = JobEntity
                 .builder()
                 .id(2L)
                 .memberId(memberId)
-                .title("test2")
+                .title("title")
                 .jobAddressVo(jobAddressVo)
                 .startDate(LocalDateTime.now())
                 .endDate(LocalDateTime.now())
@@ -165,17 +150,17 @@ public class JobRepositoryTest {
     }
     @Test
     @Sql("/insert_member.sql")
-    void givenJob_whenSaved_thenReturnValid() {
+    void givenValidJob_whenSave_thenJobIsSaved() {
         // Given
-        List<MemberEntity> member = memberRepository.findAll();
-        Long memberId = member.get(0).getId();
-        String title = "test";
+        Long memberId =123L;
+        String title = "title";
         JobEntity jobEntity = JobEntity
                 .builder()
                 .id(1L)
                 .title(title)
                 .memberId(memberId)
                 .isActive(1)
+                .jobAddressVo(jobAddressVo)
                 .startDate(LocalDateTime.now())
                 .endDate(LocalDateTime.now().plusDays(5))
                 .build();
@@ -191,22 +176,13 @@ public class JobRepositoryTest {
 
     @Test
     @Sql("/insert_member.sql")
-    public void givenIdAndMemberId_whenExistsByIdAndMemberId_thenTrue() {
+    public void givenValidIdAndMemberId_whenExistsByIdAndMemberId_thenReturnTrue() {
         // Given
-        List<MemberEntity> member = memberRepository.findAll();
-        Long memberId = member.get(0).getId();
-        JobAddressVo jobAddressVo = JobAddressVo
-                .builder()
-                .postcode("test")
-                .detailAddress("test")
-                .extraAddress("test")
-                .jibunAddress("test")
-                .roadAddress("test")
-                .build();
+        Long memberId = 123L;
         JobEntity jobEntity = JobEntity
                 .builder()
                 .id(1L)
-                .title("test")
+                .title("title")
                 .memberId(memberId)
                 .isActive(1)
                 .jobAddressVo(jobAddressVo)
@@ -224,10 +200,10 @@ public class JobRepositoryTest {
     }
 
     @Test
-    public void givenIdAndMemberId_whenExistsByIdAndMemberId_thenFalse() {
+    public void givenInValidIdAndMemberId_whenExistsByIdAndMemberId_thenFalse() {
         // Given
         Long id = 1L;
-        Long memberId = 123L;
+        Long memberId = 1L;
 
         // When
         boolean result = jobRepository.existsByIdAndMemberId(id, memberId);

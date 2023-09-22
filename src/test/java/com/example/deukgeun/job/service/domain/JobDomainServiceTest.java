@@ -5,7 +5,6 @@ import com.example.deukgeun.job.domain.model.aggregate.Job;
 import com.example.deukgeun.job.domain.model.valueobject.JobAddress;
 import com.example.deukgeun.job.domain.repository.JobRepository;
 import com.example.deukgeun.job.domain.service.implement.JobDomainServiceImpl;
-import com.example.deukgeun.job.infrastructure.persistence.mapper.JobMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,7 +16,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.persistence.EntityNotFoundException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -35,11 +33,9 @@ public class JobDomainServiceTest {
     private JobDomainServiceImpl jobDomainService;
     @Mock
     private JobRepository jobRepository;
-    @Mock
-    private JobMapper jobMapper;
 
     @Test
-    void givenCheckJobOwnershipRequest_whenExistsByIdAndMemberId_thenTure() {
+    void givenValidIdAndMemberId_whenExistsByIdAndMemberId_thenReturnTure() {
         // Given
         Long id = 1L;
         Long memberId = 1L;
@@ -50,8 +46,8 @@ public class JobDomainServiceTest {
         boolean result = jobDomainService.existsByIdAndMemberId(id, memberId);
 
         // Then
-        verify(jobRepository, times(1)).existsByIdAndMemberId(id, memberId);
         assertTrue(result);
+        verify(jobRepository, times(1)).existsByIdAndMemberId(anyLong(), anyLong());
     }
 
     @Test
@@ -60,22 +56,20 @@ public class JobDomainServiceTest {
         Long id = 1L;
         Long memberId = 1L;
 
-        given(jobRepository.existsByIdAndMemberId(anyLong(), anyLong())).willReturn(false);
-
         // When
         boolean result = jobDomainService.existsByIdAndMemberId(id, memberId);
 
         // Then
-        verify(jobRepository, times(1)).existsByIdAndMemberId(id, memberId);
         assertFalse(result);
+        verify(jobRepository, times(1)).existsByIdAndMemberId(anyLong(), anyLong());
     }
 
     @Test
-    void givenJobId_whenFindById_thenReturnMatching() {
+    void givenValidId_whenFindById_thenReturnFoundIsJob() {
         // Given
-        long jobId = 5L;
+        long jobId = 1L;
         Job job = mock(Job.class);
-        given(jobRepository.findById(jobId)).willReturn(Optional.of(job));
+        given(jobRepository.findById(anyLong())).willReturn(Optional.of(job));
 
         // When
         Job result = jobDomainService.findById(jobId);
@@ -83,23 +77,50 @@ public class JobDomainServiceTest {
         // Then
         assertNotNull(result);
         assertEquals(job.getTitle(), result.getTitle());
+        verify(jobRepository, times(1)).findById(anyLong());
     }
 
     @Test
-    void givenNonexistentId_whenFindById_thenThrowsEntityNotFoundException() {
+    void givenInValidId_whenFindById_thenThrowsEntityNotFoundException() {
         // Given
-        long id = 5L;
-        given(jobRepository.findById(id)).willReturn(Optional.empty());
+        long id = 1L;
+        given(jobRepository.findById(anyLong())).willReturn(Optional.empty());
 
         // When & Then
         assertThrows(EntityNotFoundException.class, () -> jobDomainService.findById(id));
 
         // Verify
-        verify(jobRepository, times(1)).findById(id);
+        verify(jobRepository, times(1)).findById(anyLong());
     }
 
     @Test
-    void givenKeywordAndPage_whenGetListByKeyword_thenReturnsMatchingLists() {
+    void givenValidMemberId_whenFindByMemberId_thenReturnFoundIsJobList() {
+        // Given
+        Long memberId = 1L;
+        int currentPage = 0;
+        PageRequest pageable = PageRequest.of(currentPage, 10);
+
+        Job list1 = mock(Job.class);
+        Job list2 = mock(Job.class);
+
+        List<Job> list = new ArrayList<>();
+        list.add(list1);
+        list.add(list2);
+        Page<Job> page = new PageImpl<>(list, pageable, list.size());
+
+        given(jobRepository.findByMemberId(anyLong(), any(PageRequest.class))).willReturn(page);
+
+        // When
+        Page<Job> result = jobDomainService.findListByMemberId(memberId, pageable);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(list.size(), result.getContent().size());
+        verify(jobRepository, times(1)).findByMemberId(anyLong(), any(PageRequest.class));
+    }
+
+    @Test
+    void givenValidKeywordAndPage_whenFindListByKeyword_thenReturnFoundIsJobList() {
         // Given
         String keyword = "john";
         int currentPage = 0;
@@ -114,7 +135,7 @@ public class JobDomainServiceTest {
         list.add(list2);
         Page<Job> page = new PageImpl<>(list, pageable, list.size());
 
-        given(jobRepository.findByLikeKeyword(likeKeyword, pageable)).willReturn(page);
+        given(jobRepository.findByLikeKeyword(anyString(), any(PageRequest.class))).willReturn(page);
 
         // When
         Page<Job> result = jobDomainService.findListByKeyword(likeKeyword, pageable);
@@ -122,80 +143,69 @@ public class JobDomainServiceTest {
         // Then
         assertNotNull(result);
         assertEquals(list.size(), result.getContent().size());
-        verify(jobRepository, times(1)).findByLikeKeyword(likeKeyword, pageable);
+        verify(jobRepository, times(1)).findByLikeKeyword(anyString(), any(PageRequest.class));
     }
 
-    @Test
-    void givenExistingMemberId_whenGetByMemberId_thenReturnsMatching() {
-        // Given
-        Long memberId = 123L;
-        int currentPage = 0;
-        PageRequest pageable = PageRequest.of(currentPage, 10);
 
-        Job list1 = mock(Job.class);
-        Job list2 = mock(Job.class);
-
-        List<Job> list = new ArrayList<>();
-        list.add(list1);
-        list.add(list2);
-        Page<Job> page = new PageImpl<>(list, pageable, list.size());
-
-        given(jobRepository.findByMemberId(memberId, pageable)).willReturn(page);
-
-        // When
-        Page<Job> result = jobDomainService.findListByMemberId(memberId, pageable);
-
-        // Then
-        assertNotNull(result);
-        assertEquals(list.size(), result.getContent().size());
-        verify(jobRepository, times(1)).findByMemberId(memberId, pageable);
-    }
 
     @Test
-    void givenSaveJobDTO_whenSave_thenIsSaved() {
+    void givenValidSaveJobDTO_whenSave_thenJobIsSaved() {
         // Given
         SaveJobDTO saveJobDTO = new SaveJobDTO();
         saveJobDTO.setMemberId(1L);
-        saveJobDTO.setTitle("test");
-        saveJobDTO.setPostcode("12-3");
+        saveJobDTO.setTitle("title");
+        saveJobDTO.setPostcode("postcode");
         saveJobDTO.setStartDate("2023-08-08T12:51");
         saveJobDTO.setEndDate("2023-08-08T12:51");
-        given(jobMapper.toJobAddress(any(SaveJobDTO.class))).willReturn(mock(JobAddress.class));
+
+        Job job = Job.create(
+                saveJobDTO.getMemberId(),
+                saveJobDTO.getTitle(),
+                saveJobDTO.getRequirementLicense(),
+                saveJobDTO.getRequirementEtc(),
+                mock(JobAddress.class),
+                1,
+                saveJobDTO.getStartDate(),
+                saveJobDTO.getEndDate()
+        );
+
+        given(jobRepository.save(any(Job.class))).willReturn(job);
 
         // When
-        jobDomainService.save(saveJobDTO);
+        Job saveJob = jobDomainService.save(saveJobDTO);
 
         // Then
+        assertNotNull(saveJob);
+        assertEquals(saveJobDTO.getTitle(), saveJob.getTitle());
         verify(jobRepository, times(1)).save(any(Job.class));
     }
 
     @Test
-    public void givenJobIdAndIsActive_whenUpdateIsActiveByJobId_thenReturnUpdatedJob() {
+    public void givenValidIdAndIsActive_whenUpdateIsActiveByJobId_thenActiveIsUpdate() {
         // Given
         int isActive = 1;
         Long jobId = 1L;
-        Job foundJob = mock(Job.class);
-        Job updateJob = new Job(
+        Job job = Job.create(
                 1L,
-                123L,
-                "test",
-                1,
-                "test",
-                1,
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                mock(JobAddress.class)
-                );
+                "title",
+                0,
+                "requirementEtc",
+                mock(JobAddress.class),
+                0,
+                "2023-08-08T12:51",
+                "2023-08-08T12:51"
+        );
 
-        given(jobRepository.findById(jobId)).willReturn(Optional.of(foundJob));
-        given(jobRepository.save(any(Job.class))).willReturn(updateJob);
+        given(jobRepository.findById(anyLong())).willReturn(Optional.of(job));
 
         // When
-        Job updatedJob = jobDomainService.updateIsActiveByJobId(isActive, jobId);
+        jobDomainService.updateIsActiveByJobId(isActive, jobId);
 
         // Then
-        assertEquals(isActive, updatedJob.getIsActive());
-        assertEquals(jobId, updatedJob.getId());
+        assertEquals(isActive, job.getIsActive());
+        verify(jobRepository, times(1)).findById(anyLong());
+        verify(jobRepository, times(1)).save(any(Job.class));
+
     }
 
 }

@@ -62,9 +62,7 @@ public class JobApplicationServiceImpl implements JobApplicationService {
         String likeKeyword = "%" + keyword + "%";
         // 공고 도메인 서비스를 사용하여 키워드를 기반으로 공고 목록을 페이징하여 조회합니다.
         Page<Job> job = jobDomainService.findListByKeyword(likeKeyword, pageRequest);
-        System.out.println("================================");
-        System.out.println(job.getContent().get(0).getJobAddress().getDetailAddress());
-        System.out.println("================================");
+
         return job.map(jobMapper::toJobResponseList);
     }
 

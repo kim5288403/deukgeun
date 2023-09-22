@@ -1,6 +1,6 @@
 package com.example.deukgeun.job.controller;
 
-import com.example.deukgeun.authToken.application.service.implement.AuthTokenApplicationServiceImpl;
+import com.example.deukgeun.authToken.application.service.AuthTokenApplicationService;
 import com.example.deukgeun.global.dto.RestResponse;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import com.example.deukgeun.job.application.controller.JobController;
@@ -40,7 +40,7 @@ public class JobControllerTest {
     @Mock
     private JobApplicationService jobApplicationService;
     @Mock
-    private AuthTokenApplicationServiceImpl authTokenApplicationService;
+    private AuthTokenApplicationService authTokenApplicationService;
     @Mock
     private MemberApplicationService memberApplicationService;
     @Mock
