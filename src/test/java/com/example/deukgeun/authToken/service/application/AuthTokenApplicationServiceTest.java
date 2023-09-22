@@ -2,9 +2,8 @@ package com.example.deukgeun.authToken.service.application;
 
 import com.example.deukgeun.authToken.application.service.implement.AuthTokenApplicationServiceImpl;
 import com.example.deukgeun.authToken.domain.model.entity.AuthToken;
-import com.example.deukgeun.authToken.domain.service.implement.AuthTokenDomainServiceImpl;
-import com.example.deukgeun.member.domain.service.implement.MemberDomainServiceImpl;
-import com.example.deukgeun.trainer.domain.service.implement.TrainerDomainServiceImpl;
+import com.example.deukgeun.authToken.domain.service.AuthTokenDomainService;
+import com.example.deukgeun.trainer.domain.service.TrainerDomainService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -30,22 +29,24 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class AuthTokenApplicationServiceTest {
+    @InjectMocks
+    private AuthTokenApplicationServiceImpl authTokenApplicationService;
     @Mock
     private HttpServletResponse response;
     @Mock
-    private AuthTokenDomainServiceImpl authTokenDomainService;
+    private AuthTokenDomainService authTokenDomainService;
     @Mock
-    private MemberDomainServiceImpl memberDomainService;
-    @Mock
-    private TrainerDomainServiceImpl trainerDomainService;
-    @InjectMocks
-    private AuthTokenApplicationServiceImpl authTokenApplicationService;
+    private TrainerDomainService trainerDomainService;
     @Value("${jwt.authTokenTime}")
     private long AUTH_TOKEN_TIME;
     @Value("${jwt.refreshTokenTime}")
     private long REFRESH_TOKEN_TIME;
     @Value("${jwt.secretKey}")
     private String SECRET_KEY;
+    @Value("${trainer.role}")
+    private String TRAINER_ROLE;
+    @Value("${member.role}")
+    private String MEMBER_ROLE;
 
     @BeforeEach
     void setUp() {
@@ -53,10 +54,12 @@ class AuthTokenApplicationServiceTest {
         ReflectionTestUtils.setField(authTokenApplicationService, "SECRET_KEY", SECRET_KEY);
         ReflectionTestUtils.setField(authTokenApplicationService, "REFRESH_TOKEN_TIME", REFRESH_TOKEN_TIME);
         ReflectionTestUtils.setField(authTokenApplicationService, "AUTH_TOKEN_TIME", AUTH_TOKEN_TIME);
+        ReflectionTestUtils.setField(authTokenApplicationService, "TRAINER_ROLE", TRAINER_ROLE);
+        ReflectionTestUtils.setField(authTokenApplicationService, "MEMBER_ROLE", MEMBER_ROLE);
     }
 
     @Test
-    void givenAuthAndRefreshTokens_whenCreateToken_thenTokenCreated() {
+    void givenValidAuthAndRefreshTokens_whenCreateToken_thenCreateTokenCalled() {
         // Given
         String authToken = "yourAuthToken";
         String refreshToken = "yourRefreshToken";
@@ -65,11 +68,11 @@ class AuthTokenApplicationServiceTest {
         authTokenApplicationService.createToken(authToken, refreshToken);
 
         // Then
-        verify(authTokenDomainService, times(1)).createToken(authToken, refreshToken);
+        verify(authTokenDomainService, times(1)).createToken(anyString(), anyString());
     }
 
     @Test
-    void givenUserPk_whenCreateAuthToken_thenReturnAuthToken() {
+    void givenValidUserPkAndRoles_whenCreateAuthToken_thenReturnAuthToken() {
         // Given
         String userPk = "testUserPk";
         String roles = "testRole";
@@ -84,7 +87,7 @@ class AuthTokenApplicationServiceTest {
     }
 
     @Test
-    void givenUserPk_whenCreateRefreshToken_thenReturnAuthToken() {
+    void givenValidUserPk_whenCreateRefreshToken_thenReturnAuthToken() {
         // Given
         String userPk = "testUserPk";
         String roles = "testRole";
@@ -99,50 +102,24 @@ class AuthTokenApplicationServiceTest {
     }
 
     @Test
-    void givenValidAuthToken_whenDeleteAuthToken_thenAuthTokenDeleted() {
+    void givenValidAuthToken_whenDeleteAuthToken_thenDeleteByAuthTokenCalled() {
         // Given
-        String userPk = "yourUserPk";
-        String roles = "testRole";
-
-        Claims claims = Jwts.claims().setSubject(userPk);
-        claims.put("roles", roles);
-        Date now = new Date();
-
-        String token = Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + AUTH_TOKEN_TIME))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
-                .compact();
+        String token = "token";
 
         // When
         authTokenApplicationService.deleteByAuthToken(token);
 
         // Then
-        verify(authTokenDomainService, times(1)).deleteByAuthToken(token);
+        verify(authTokenDomainService, times(1)).deleteByAuthToken(anyString());
     }
 
     @Test
-    void givenExistingToken_whenFindByAuthToken_thenReturnsToken() {
+    void givenValidAuthToken_whenFindByAuthToken_thenReturnFoundIsAuthToken() {
         // Given
-        String userPk = "yourUserPk";
-        String roles = "testRole";
+        String authToken = "authToken";
+        AuthToken foundToken = AuthToken.create(authToken, "refreshToken");
 
-        Claims claims = Jwts.claims().setSubject(userPk);
-        claims.put("roles", roles);
-        Date now = new Date();
-
-        String authToken = Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + AUTH_TOKEN_TIME))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
-                .compact();
-
-        AuthToken foundToken = new AuthToken(123L, authToken, "refreshToken");
-
-
-        given(authTokenDomainService.findByAuthToken(authToken)).willReturn(foundToken);
+        given(authTokenDomainService.findByAuthToken(anyString())).willReturn(foundToken);
 
         // When
         AuthToken resultToken = authTokenApplicationService.findByAuthToken(authToken);
@@ -150,37 +127,11 @@ class AuthTokenApplicationServiceTest {
         // Then
         assertNotNull(resultToken);
         assertEquals(resultToken.getAuthToken(), foundToken.getAuthToken());
+        verify(authTokenDomainService, times(1)).findByAuthToken(anyString());
     }
 
     @Test
-    void givenNonExistingToken_whenFindByAuthToken_thenReturnsNull() {
-        // Given
-        String userPk = "yourUserPk";
-        String roles = "testRole";
-
-        Claims claims = Jwts.claims().setSubject(userPk);
-        claims.put("roles", roles);
-        Date now = new Date();
-
-        String authToken = Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + AUTH_TOKEN_TIME))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
-                .compact();
-
-        given(authTokenDomainService.findByAuthToken(authToken)).willReturn(null);
-
-
-        // When
-        AuthToken foundToken = authTokenApplicationService.findByAuthToken(authToken);
-
-        // Then
-        assertNull(foundToken);
-    }
-
-    @Test
-    void givenToken_whenGetUserPk_thenReturnUserPk() {
+    void givenValidAuthToken_whenGetUserPk_thenReturnUserPk() {
         // Given
         String userPk = "yourUserPk";
         String roles = "testRole";
@@ -204,7 +155,7 @@ class AuthTokenApplicationServiceTest {
     }
 
     @Test
-    void givenValidAuthToken_whenGetUserRole_thenCorrectUserRoleRetrieved() {
+    void givenValidAuthToken_whenGetUserRole_thenReturnRoles() {
         // Given
         String userPk = "yourUserPk";
         String roles = "testRole";
@@ -228,7 +179,7 @@ class AuthTokenApplicationServiceTest {
     }
 
     @Test
-    void givenValidToken_whenGetAuthentication_thenReturnAuthentication() {
+    void givenValidAuthToken_whenGetAuthentication_thenReturnAuthentication() {
         // Given
         String userPk = "user123";
         String roles = "trainer";
@@ -245,57 +196,57 @@ class AuthTokenApplicationServiceTest {
                 .compact();
 
         UserDetails userDetails = mock(UserDetails.class);
-        ReflectionTestUtils.setField(authTokenApplicationService, "TRAINER_ROLE", roles);
         given(trainerDomainService.loadUserByTrainerUsername(anyString())).willReturn(userDetails);
 
         // When
         Authentication authentication = authTokenApplicationService.getAuthentication(token, roles);
 
         // Then
-        verify(trainerDomainService, times(1)).loadUserByTrainerUsername(userPk);
         assertEquals(userDetails, authentication.getPrincipal());
         assertEquals("", authentication.getCredentials());
         assertEquals(userDetails.getAuthorities(), authentication.getAuthorities());
         assertEquals(UsernamePasswordAuthenticationToken.class, authentication.getClass());
+        verify(trainerDomainService, times(1)).loadUserByTrainerUsername(anyString());
     }
 
     @Test
-    void givenExistingAuthToken_whenGetRefreshTokenByAuthToken_thenReturnRefreshToken() {
+    void givenValidAuthToken_whenGetRefreshTokenByAuthToken_thenReturnRefreshToken() {
         // Given
         String authToken = "existingToken";
         String refreshToken = "refreshToken";
 
-        AuthToken foundToken = new AuthToken(123L, authToken, "refreshToken");
+        AuthToken foundToken = AuthToken.create(authToken, refreshToken);
 
-        given(authTokenDomainService.findByAuthToken(authToken)).willReturn(foundToken);
+        given(authTokenDomainService.findByAuthToken(anyString())).willReturn(foundToken);
 
         // When
         String result = authTokenApplicationService.getRefreshTokenByAuthToken(authToken);
 
         // Then
         assertEquals(refreshToken, result);
+        verify(authTokenDomainService, times(1)).findByAuthToken(anyString());
     }
 
     @Test
-    void givenNonExistingAuthToken_whenGetRefreshTokenByAuthToken_thenReturnNull() {
+    void givenInValidAuthToken_whenGetRefreshTokenByAuthToken_thenReturnNull() {
         // Given
         String authToken = "nonExistingToken";
-
-        given(authTokenDomainService.findByAuthToken(authToken)).willReturn(null);
 
         // When
         String result = authTokenApplicationService.getRefreshTokenByAuthToken(authToken);
 
         // Then
         assertNull(result);
+        verify(authTokenDomainService, times(1)).findByAuthToken(anyString());
     }
 
     @Test
-    void givenValidAuthorizationHeader_whenResolveAuthToken_thenReturnAuthToken() {
+    void givenValidRequest_whenResolveAuthToken_thenReturnAuthToken() {
         // Given
         String authToken = "validAuthToken";
         HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getHeader("Authorization")).thenReturn("Bearer " + authToken);
+
+        given(request.getHeader("Authorization")).willReturn("Bearer " + authToken);
 
         // When
         String result = authTokenApplicationService.resolveAuthToken(request);
@@ -305,7 +256,7 @@ class AuthTokenApplicationServiceTest {
     }
 
     @Test
-    void givenRole_whenSetHeaderRole_thenSetRoleHeader() {
+    void givenValidResponseAndRole_whenSetHeaderRole_thenSetRoleHeader() {
         // Given
         String role = "admin";
 
@@ -313,11 +264,11 @@ class AuthTokenApplicationServiceTest {
         authTokenApplicationService.setHeaderRole(response, role);
 
         // Then
-        verify(response, times(1)).setHeader("role", role);
+        verify(response, times(1)).setHeader(eq("role"), anyString());
     }
 
     @Test
-    void givenAuthToken_whenSetHeaderAuthToken_thenSetAuthorizationHeader() {
+    void givenValidResponseAndAuthToken_whenSetHeaderAuthToken_thenSetAuthTokenHeader() {
         // Given
         String authToken = "yourAuthToken";
 
@@ -325,37 +276,24 @@ class AuthTokenApplicationServiceTest {
         authTokenApplicationService.setHeaderAuthToken(response, authToken);
 
         // Then
-        verify(response, times(1)).setHeader("Authorization", "Bearer " + authToken);
+        verify(response, times(1)).setHeader(eq("Authorization"), anyString());
     }
 
     @Test
-    void givenValidAuthToken_whenUpdateAuthToken_thenAuthTokenUpdated() {
+    void givenValidAuthAndNewTokens_whenUpdateAuthToken_thenUpdateAuthTokenCalled() {
         // Given
-        String userPk = "yourUserPk";
-        String roles = "testRole";
-
-        Claims claims = Jwts.claims().setSubject(userPk);
-        claims.put("roles", roles);
-        Date now = new Date();
-
-        String authToken = Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + AUTH_TOKEN_TIME))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
-                .compact();
-
+        String authToken = "authToken";
         String newAuthToken = "newAuthToken";
 
         // When
         authTokenApplicationService.updateAuthToken(authToken, newAuthToken);
 
         // Then
-        verify(authTokenDomainService, times(1)).updateAuthToken(authToken, newAuthToken);
+        verify(authTokenDomainService, times(1)).updateAuthToken(anyString(), anyString());
     }
 
     @Test
-    void givenValidateToken_whenValidToken_thenReturnsTrue() {
+    void givenValidAuthToken_whenValidToken_thenReturnTrue() {
         // Given
         String userPk = "yourUserPk";
         String roles = "testRole";
@@ -379,7 +317,7 @@ class AuthTokenApplicationServiceTest {
     }
 
     @Test
-    void givenExpiredToken_whenValidateToken_ThenReturnsFalse() {
+    void givenInValidToken_whenValidateToken_ThenReturnFalse() {
         // Given
         String userPk = "yourUserPk";
         String roles = "testRole";

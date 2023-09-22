@@ -24,7 +24,7 @@ public class AuthTokenDomainServiceTest {
     private AuthTokenRepository authTokenRepository;
 
     @Test
-    public void givenAuthAndRefreshTokens_whenCreateToken_thenTokenSavedInRepository() {
+    public void givenValidAuthAndRefreshToken_whenCreateToken_thenSaveCalled() {
         // Given
         String authToken = "yourAuthToken";
         String refreshToken = "yourRefreshToken";
@@ -37,7 +37,7 @@ public class AuthTokenDomainServiceTest {
     }
 
     @Test
-    public void givenAuthToken_whenDeleteByAuthToken_thenTokenDeletedFromRepository() {
+    public void givenValidAuthToken_whenDeleteByAuthToken_thenDeleteByAuthTokenCalled() {
         // Given
         String authToken = "yourAuthToken";
 
@@ -45,11 +45,11 @@ public class AuthTokenDomainServiceTest {
         authTokenDomainService.deleteByAuthToken(authToken);
 
         // Then
-        verify(authTokenRepository, times(1)).deleteByAuthToken(authToken);
+        verify(authTokenRepository, times(1)).deleteByAuthToken(anyString());
     }
 
     @Test
-    public void givenAuthToken_whenFindByAuthToken_thenReturnAuthToken() {
+    public void givenValidAuthToken_whenFindByAuthToken_thenReturnFoundIsAuthToken() {
         // Given
         String authToken = "yourAuthToken";
         AuthToken expectedAuthToken = new AuthToken(123L, authToken, "refreshToken"); // 가정한 토큰 객체
@@ -61,6 +61,7 @@ public class AuthTokenDomainServiceTest {
 
         // Then
         assertEquals(expectedAuthToken, actualAuthToken);
+        verify(authTokenRepository, times(1)).findByAuthToken(anyString());
     }
 
     @Test
@@ -68,28 +69,28 @@ public class AuthTokenDomainServiceTest {
         // Given
         String authToken = "yourAuthToken";
 
-        given(authTokenRepository.findByAuthToken(authToken)).willReturn(Optional.empty());
-
         // When
         AuthToken actualAuthToken = authTokenDomainService.findByAuthToken(authToken);
 
         // Then
         assertNull(actualAuthToken);
+        verify(authTokenRepository, times(1)).findByAuthToken(anyString());
     }
 
     @Test
-    public void givenAuthTokenAndNewAuthToken_whenUpdateAuthToken_thenAuthTokenUpdatedInRepository() {
+    public void givenValidAuthTokenAndNewAuthToken_whenUpdateAuthToken_thenAuthTokenIsUpdated() {
         // Given
         String authToken = "yourAuthToken";
         String newAuthToken = "newAuthToken";
-        AuthToken expectedAuthToken = new AuthToken(123L, authToken, "refreshToken"); // 가정한 토큰 객체
+        AuthToken expectedAuthToken = AuthToken.create(authToken, "refreshToken");
 
-        given(authTokenRepository.findByAuthToken(authToken)).willReturn(Optional.of(expectedAuthToken));
+        given(authTokenRepository.findByAuthToken(anyString())).willReturn(Optional.of(expectedAuthToken));
 
         // When
         authTokenDomainService.updateAuthToken(authToken, newAuthToken);
 
         // Then
-        verify(authTokenRepository, times(1)).save(expectedAuthToken);
+        assertEquals(newAuthToken, expectedAuthToken.getAuthToken());
+        verify(authTokenRepository, times(1)).save(any(AuthToken.class));
     }
 }

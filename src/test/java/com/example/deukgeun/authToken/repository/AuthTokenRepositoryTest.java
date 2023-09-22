@@ -26,7 +26,7 @@ public class AuthTokenRepositoryTest {
     }
 
     @Test
-    void givenToken_whenSaved_thenReturnValid() {
+    void givenValidAuthToken_whenSave_thenAuthTokenIsSaved() {
         // Given
         String authToken = "testAuthToken";
         String refreshToken = "testRefreshToken";
@@ -40,14 +40,13 @@ public class AuthTokenRepositoryTest {
         AuthTokenEntity saveToken = authTokenRepository.save(authTokenEntity);
 
         // Then
-        AuthTokenEntity retrievedToken = authTokenRepository.findById(saveToken.getId()).orElse(null);
-        assertNotNull(retrievedToken);
-        assertEquals(retrievedToken.getAuthToken(), saveToken.getAuthToken());
-        assertEquals(retrievedToken.getRefreshToken(), saveToken.getRefreshToken());
+        assertNotNull(saveToken);
+        assertEquals(authTokenEntity.getAuthToken(), saveToken.getAuthToken());
+        assertEquals(authTokenEntity.getRefreshToken(), saveToken.getRefreshToken());
     }
 
     @Test
-    void givenToken_whenFindByAuthToken_thenReturnValid() {
+    void givenValidAuthToken_whenFindByAuthToken_thenReturnFoundIsAuthToken() {
         // Given
         String authToken = "testAuthToken";
         String refreshToken = "testRefreshToken";

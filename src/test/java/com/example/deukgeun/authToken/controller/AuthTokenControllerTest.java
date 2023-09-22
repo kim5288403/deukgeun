@@ -3,9 +3,8 @@ package com.example.deukgeun.authToken.controller;
 import com.example.deukgeun.authToken.application.controller.AuthTokenController;
 import com.example.deukgeun.authToken.application.dto.request.LoginRequest;
 import com.example.deukgeun.authToken.application.dto.response.LoginResponse;
-import com.example.deukgeun.authToken.infrastructure.persistence.mapper.AuthTokenMapper;
-import com.example.deukgeun.global.dto.RestResponse;
 import com.example.deukgeun.authToken.application.service.AuthTokenApplicationService;
+import com.example.deukgeun.global.dto.RestResponse;
 import com.example.deukgeun.global.util.PasswordEncoderUtil;
 import com.example.deukgeun.global.util.RestResponseUtil;
 import org.junit.jupiter.api.Test;
@@ -39,50 +38,11 @@ public class AuthTokenControllerTest {
     private BindingResult bindingResult;
 
     @Test
-    public void givenAuthToken_WhenLogout_ThenDeleteAuthTokenAndReturnOkResponse() {
-        // Given
-        String authToken = "dummyAuthToken";
-        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("로그아웃 성공 했습니다.", null);
-        given(tokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
-
-        // When
-        ResponseEntity<?> responseEntity = tokenController.logout(request);
-
-        // Then
-        verify(tokenApplicationService).deleteByAuthToken(authToken);
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseEntity.getBody()).isEqualTo(expectedResponse.getBody());
-    }
-
-    @Test
-    public void givenAuthToken_WhenGetUserPK_ThenResolveAuthTokenAndReturnUserPK() {
-        // Given
-        String authToken = "dummyAuthToken";
-        String userPK = "dummyUserPK";
-        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("이메일 조회 성공했습니다.", userPK);
-        given(tokenApplicationService.resolveAuthToken(request)).willReturn(authToken);
-        given(tokenApplicationService.getUserPk(authToken)).willReturn(userPK);
-
-        // When
-        ResponseEntity<?> responseEntity = tokenController.getUserPK(request);
-
-        // Then
-        verify(tokenApplicationService).resolveAuthToken(request);
-        verify(tokenApplicationService).getUserPk(authToken);
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseEntity.getBody()).isEqualTo(expectedResponse.getBody());
-    }
-
-    @Test
     void givenValidLoginRequest_whenTrainerLogin_thenReturnSuccessResponse() {
         // Given
         String authToken = "validAuthToken";
         String role = "trainer";
-
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setEmail("test");
-        loginRequest.setPassword("test");
-        loginRequest.setLoginType(role);
+        LoginRequest loginRequest = new LoginRequest("email", "password", role);
 
         HashMap<String, String> loginData = new HashMap<>();
         loginData.put("matchPassword", PasswordEncoderUtil.encode(loginRequest.getPassword()));
@@ -90,11 +50,11 @@ public class AuthTokenControllerTest {
 
         LoginResponse loginResponse = mock(LoginResponse.class);
 
-        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("로그인 성공 했습니다.", loginResponse);
-
-        given(tokenApplicationService.getLoginData(loginRequest.getLoginType(), loginRequest.getEmail())).willReturn(loginData);
-        given(tokenApplicationService.setToken(loginRequest.getEmail(), response, role)).willReturn(authToken);
+        given(tokenApplicationService.getLoginData(anyString(), anyString())).willReturn(loginData);
+        given(tokenApplicationService.setToken(anyString(), any(HttpServletResponse.class), anyString())).willReturn(authToken);
         given(tokenApplicationService.getLoginResponse(anyString(), anyString())).willReturn(loginResponse);
+
+        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("로그인 성공 했습니다.", loginResponse);
 
         // When
         ResponseEntity<?> responseEntity = tokenController.login(loginRequest, bindingResult, response);
@@ -102,7 +62,9 @@ public class AuthTokenControllerTest {
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
+        verify(tokenApplicationService, times(1)).getLoginData(anyString(), anyString());
         verify(tokenApplicationService, times(1)).setToken(anyString(), any(HttpServletResponse.class), anyString());
+        verify(tokenApplicationService, times(1)).getLoginResponse(anyString(), anyString());
     }
 
     @Test
@@ -111,10 +73,7 @@ public class AuthTokenControllerTest {
         String authToken = "validAuthToken";
         String role = "member";
 
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setEmail("test");
-        loginRequest.setPassword("test");
-        loginRequest.setLoginType("member");
+        LoginRequest loginRequest = new LoginRequest("email", "password", role);
 
         HashMap<String, String> loginData = new HashMap<>();
         loginData.put("matchPassword", PasswordEncoderUtil.encode(loginRequest.getPassword()));
@@ -124,8 +83,8 @@ public class AuthTokenControllerTest {
 
         ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("로그인 성공 했습니다.", loginResponse);
 
-        given(tokenApplicationService.getLoginData(loginRequest.getLoginType(), loginRequest.getEmail())).willReturn(loginData);
-        given(tokenApplicationService.setToken(loginRequest.getEmail(), response, role)).willReturn(authToken);
+        given(tokenApplicationService.getLoginData(anyString(), anyString())).willReturn(loginData);
+        given(tokenApplicationService.setToken(anyString(), any(HttpServletResponse.class), anyString())).willReturn(authToken);
         given(tokenApplicationService.getLoginResponse(anyString(), anyString())).willReturn(loginResponse);
 
         // When
@@ -134,6 +93,48 @@ public class AuthTokenControllerTest {
         // Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getBody(), responseEntity.getBody());
+        verify(tokenApplicationService, times(1)).getLoginData(anyString(), anyString());
         verify(tokenApplicationService, times(1)).setToken(anyString(), any(HttpServletResponse.class), anyString());
+        verify(tokenApplicationService, times(1)).getLoginResponse(anyString(), anyString());
     }
+
+    @Test
+    public void givenValidAuthToken_whenLogout_thenReturnSuccessResponse() {
+        // Given
+        String authToken = "dummyAuthToken";
+        given(tokenApplicationService.resolveAuthToken(any(HttpServletRequest.class))).willReturn(authToken);
+
+        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("로그아웃 성공 했습니다.", null);
+
+        // When
+        ResponseEntity<?> responseEntity = tokenController.logout(request);
+
+        // Then
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(responseEntity.getBody()).isEqualTo(expectedResponse.getBody());
+        verify(tokenApplicationService, times(1)).resolveAuthToken(any(HttpServletRequest.class));
+        verify(tokenApplicationService, times(1)).deleteByAuthToken(anyString());
+    }
+
+    @Test
+    public void givenValidAuthToken_WhenGetUserPK_ThenReturnSuccessResponse() {
+        // Given
+        String authToken = "dummyAuthToken";
+        String userPK = "dummyUserPK";
+        given(tokenApplicationService.resolveAuthToken(any(HttpServletRequest.class))).willReturn(authToken);
+        given(tokenApplicationService.getUserPk(anyString())).willReturn(userPK);
+
+        ResponseEntity<RestResponse> expectedResponse = RestResponseUtil.ok("이메일 조회 성공했습니다.", userPK);
+
+        // When
+        ResponseEntity<?> responseEntity = tokenController.getUserPK(request);
+
+        // Then
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(responseEntity.getBody()).isEqualTo(expectedResponse.getBody());
+        verify(tokenApplicationService, times(1)).resolveAuthToken(any(HttpServletRequest.class));
+        verify(tokenApplicationService, times(1)).getUserPk(anyString());
+    }
+
+
 }
