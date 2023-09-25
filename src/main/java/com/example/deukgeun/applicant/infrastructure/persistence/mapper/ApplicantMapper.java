@@ -9,15 +9,12 @@ import com.example.deukgeun.job.domain.model.aggregate.Job;
 import com.example.deukgeun.member.domain.aggregate.Member;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 
 @Mapper(
         componentModel = "spring",
         uses = {MatchMapper.class, PaymentMapper.class}
 )
 public interface ApplicantMapper {
-    ApplicantMapper INSTANCE = Mappers.getMapper(ApplicantMapper.class);
-
     ApplicantResponse.List toApplicantResponseList(Applicant source);
 
     SaveApplicantDTO toSaveApplicantDto(Long trainerId, SaveApplicantRequest saveApplicantRequest);

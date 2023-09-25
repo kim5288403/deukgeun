@@ -12,13 +12,10 @@ import com.example.deukgeun.applicant.infrastructure.persistence.model.entity.Pa
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-import org.mapstruct.factory.Mappers;
 
 import java.time.LocalDateTime;
 @Mapper(componentModel = "spring")
 public interface PaymentMapper {
-    PaymentMapper INSTANCE = Mappers.getMapper(PaymentMapper.class);
-
     @Mapping(source = "iamPortCancelResponse.response.imp_uid", target = "imp_uid")
     @Mapping(source = "iamPortCancelResponse.response.channel", target = "channel")
     @Mapping(source = "iamPortCancelResponse.response.cancel_reason", target = "cancel_reason")

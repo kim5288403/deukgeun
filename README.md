@@ -15,6 +15,8 @@
 
 - Test Driven Development (TDD) 개발: BDD 스타일로 TDD를 수행하여 소프트웨어의 품질을 유지했습니다.
 
+- MapStruct를 활용한 매핑 구현: 레이어간의 종속성을 최소화하고, 각 도메인 간의 매핑을 구현했습니다.
+
 - 인증 및 인가 관리: Spring Security와 JWT(Json Web Token)를 사용하여 사용자의 인증 및 인가를 관리했습니다.
 
 - 캐시 관리: Redis와 Spring Cache를 활용하여 캐시를 효율적으로 관리했습니다.
