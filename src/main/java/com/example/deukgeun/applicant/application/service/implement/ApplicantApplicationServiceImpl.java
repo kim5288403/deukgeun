@@ -49,6 +49,14 @@ public class ApplicantApplicationServiceImpl implements ApplicantApplicationServ
                 .map(applicantMapper::toApplicantResponseList);
     }
 
+    /**
+     * 특정 공고 및 작성자에 대한 지원자 정보를 가져옵니다.
+     *
+     * @param applicant 지원 정보.
+     * @param member 공고 작성자 정보.
+     * @param job 공고 정보.
+     * @return 지원자 정보를 담은 ApplicantResponse.Info 객체.
+     */
     @Override
     public ApplicantResponse.Info getApplicantInfo(Applicant applicant, Member member, Job job) {
         LocalDateTime startDate = job.getStartDate();
