@@ -114,7 +114,11 @@ public class ApplicantDomainServiceImpl implements ApplicantDomainService {
         return applicantRepository.save(applicant);
     }
 
-
+    /**
+     * 결제 정보를 저장하는 메서드입니다.
+     *
+     * @param savePaymentInfoDTO 결제 정보를 저장할 DTO 객체
+     */
     @Override
     public void savePaymentInfo(SavePaymentInfoDTO savePaymentInfoDTO) {
         // 지원자 ID를 사용하여 해당 지원자 정보 조회
