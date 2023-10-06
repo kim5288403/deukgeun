@@ -29,6 +29,11 @@ public class AuthMailApplicationServiceImpl implements AuthMailApplicationServic
         authMailDomainService.confirm(confirmDTO);
     }
 
+    /**
+     * 이 메서드는 MailUtil 클래스를 사용하여 인증 코드를 생성합니다.
+     *
+     * @return MailUtil을 사용하여 생성된 인증 코드
+     */
     @Override
     public String createCode() {
         return MailUtil.createCode();
