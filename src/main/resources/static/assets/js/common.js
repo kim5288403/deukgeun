@@ -118,7 +118,7 @@ function getUserPKAjax(authToken){
 		},
 		error : function(res) {
 			if (res.responseJSON.code === 400) {
-				defaultErrorAlert(res.responseJSON.data.message, "실패");
+				defaultErrorAlert(res.responseJSON.message, "실패");
 			}
 		}
 	});

@@ -38,8 +38,6 @@ public interface JobMapper {
     @Named("toJobAddress")
     JobAddress toJobAddress(JobAddressVo jobAddressVo);
 
-    JobAddress toJobAddress(SaveJobDTO saveJobDTO);
-
     @Named("toJobAddressVo")
     JobAddressVo toJobAddressVo(JobAddress jobAddress);
 }
