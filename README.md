@@ -13,7 +13,7 @@
 
 - Domain Driven Development (DDD) 설계: 도메인 주도 개발 방식을 채택하여 각 도메인을 모델링하고 개발했습니다.
 
-- Test Driven Development (TDD) 개발: BDD 스타일로 TDD를 수행하여 소프트웨어의 품질을 유지했습니다.
+- Test Driven Development (TDD) 개발: TDD를 수행하여 소프트웨어의 품질을 유지했습니다.
 
 - MapStruct를 활용한 매핑 구현: 레이어간의 종속성을 최소화하고, 각 도메인 간의 매핑을 구현했습니다.
 
