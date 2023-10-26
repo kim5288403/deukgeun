@@ -24,37 +24,60 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	// rest
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2'
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	// mail
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.6.3'
+
+	// thymeleaf
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+
+	// security
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.security:spring-security-test'
-	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
+	// cache
 	implementation 'org.springframework.boot:spring-boot-starter-cache'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	// aws
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+	// kafak
 	implementation 'org.springframework.kafka:spring-kafka'
-	implementation 'com.google.code.gson:gson:2.9.0'
+
+	// iamport
 	implementation 'com.github.iamport:iamport-rest-client-java:0.2.23'
+
+	// etc
+	implementation 'com.google.code.gson:gson:2.9.0'
 	implementation 'commons-io:commons-io:2.11.0'
-	implementation 'io.jsonwebtoken:jjwt:0.9.1'
-	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
-	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.6.3'
-	compileOnly 'org.projectlombok:lombok'
-	implementation 'org.mapstruct:mapstruct:1.5.3.Final'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	// jpa
 	runtimeOnly 'com.mysql:mysql-connector-j'
-	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+	// lombok
+	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	// mapstruct
+	implementation 'org.mapstruct:mapstruct:1.5.3.Final'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	// test
+	testImplementation 'com.h2database:h2'
+	testImplementation 'org.mockito:mockito-inline:4.0.0'
 	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
 	testImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.2'
-	testImplementation 'org.mockito:mockito-inline:4.0.0'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
-	testImplementation 'com.h2database:h2'
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
 }
 
